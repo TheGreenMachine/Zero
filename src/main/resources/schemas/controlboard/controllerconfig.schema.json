@@ -1,0 +1,31 @@
+{
+    "type": "object",
+    "title": "ControllerConfig",
+    "additionalProperties": false,
+    "properties": {
+        "rumble": {
+            "type" : "boolean"
+        },
+        "joysticks": {
+            "type": "object",
+            "existingJavaType": "java.util.Map<String, JoystickConfig>",
+            "additionalProperties": false
+        },
+        "axes": {
+            "type": "object",
+            "$ref": "string.map.schema.json",
+            "additionalProperties": false
+        },
+        "dpad": {
+            "$ref": "dpadconfig.schema.json"
+        },
+        "buttonpad": {
+            "$ref": "buttonpadconfig.schema.json"
+        },
+        "buttons": {
+            "type": "object",
+            "$ref": "string.map.schema.json",
+            "additionalProperties": false
+        }
+    }
+}

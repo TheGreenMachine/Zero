@@ -1,0 +1,15 @@
+{
+    "type": "object",
+    "title": "Sensor Map Configuration",
+    "properties": {
+        "colorSensors": {
+            "$ref": "sensor.schema.json"
+        },
+        "beamBreaks": {
+            "$ref": "sensor.schema.json"
+        },
+        "hallEffects": {
+            "$ref": "sensor.schema.json"
+        }
+    }
+}

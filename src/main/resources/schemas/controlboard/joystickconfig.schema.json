@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "title": "Joystick Config",
+    "additionalProperties": "false",
+    "properties": {
+        "horizontal": {
+            "$ref": "axisconfig.schema.json"
+        },
+        "vertical": {
+            "$ref": "axisconfig.schema.json"
+        }
+    }
+}

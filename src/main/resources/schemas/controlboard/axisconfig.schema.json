@@ -1,0 +1,6 @@
+{
+    "type": "object",
+    "title": "Axis Config",
+    "existingJavaType": "java.lang.String",
+    "additionalProperties": false
+}

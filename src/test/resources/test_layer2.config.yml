@@ -1,0 +1,19 @@
+$extends: test_active
+subsystems:
+    turret: # Subsystem defined in both base and active, testing merge
+        implemented: false # Overriding base
+    shooter: # Defined in active and layer2
+        constants:
+            kP: 0.8 # Overriding constant
+    collector: # New subsystem defined only in layer2
+        falcons:
+            hopper: 4
+        constants:
+            spin: 1
+    invertMotorTest:
+        invertMotor:
+            - motorB # Adding to base invert array
+constants:
+    activeConstantOverridden: 18.16
+    layer2Constant: 3
+

@@ -1,0 +1,35 @@
+$extends: test_base
+subsystems:
+    turret: # Subsystem defined in both base and active, testing merge
+        implemented: true # Overriding base
+        talons:
+            turret: 13
+        constants:
+            minPos: -374 # Overriding base
+            maxPos: 2850 # Overriding base
+            newConstant: 34 # New constant defined only in active config
+    shooter: # New subsystem defined only in active config
+        implemented: true
+        falcons:
+            shooterMaster: -13
+            shooterFollowerB: -12
+        talons:
+            shooterFollowerA: -1 # 3
+            shooterFollowerC: -1 # 2
+        constants:
+            kP: 0.1 #0.30
+            kI: 0
+            kD: 0 #4.5
+            kF: 0.053 #0.00953253
+            currentFloorCheck: .12
+            currentEpsilonCheck: .2
+            rpmFloorCheck: 2000
+            rpmEpsilonCheck: 60
+            velocityThreshold: 500
+    invertMotorTest:
+        invertMotor:
+            - motorB # Adding to base invert array
+constants:
+    overriddenConstant: 0
+    activeConstant: 399.42
+    activeConstantOverridden: 16.18

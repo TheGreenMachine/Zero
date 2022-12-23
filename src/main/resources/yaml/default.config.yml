@@ -1,0 +1,106 @@
+subsystems:
+    drivetrain:
+        implemented: true
+        falcons:
+            FLDr: 7
+            FRDr: 10 #1
+            RLDr: 18 #13
+            RRDr: 15
+            FLAz: 8
+            FRAz: 11
+            RLAz: 19
+            RRAz: 14
+        canCoders:
+            FLEnc: 9 #TODO check values
+            FREnc: 12
+            RLEnc: 17
+            RREnc: 16
+        invertMotor:
+            - FLAz
+            - FRAz
+            - RLAz
+            - RRAz
+            - FRDr
+            - RRDr
+        invertCanCoder:
+            - FREnc
+            - BREnc
+        swerveModules:
+            modules:
+                frontLeft:
+                    drive: FLDr
+                    azimuth: FLAz
+                    canCoder: FLEnc
+                    constants:
+                        encoderOffset: -2121
+                        invertSensorPhase: 1
+                frontRight:
+                    drive: FRDr
+                    azimuth: FRAz
+                    canCoder: FREnc
+                    constants:
+                        encoderOffset: -1715
+                        invertSensorPhase: 1
+                backLeft:
+                    drive: RLDr
+                    azimuth: RLAz
+                    canCoder: RLEnc
+                    constants:
+                        encoderOffset: -3141
+                        invertSensorPhase: 1
+                backRight:
+                    drive: RRDr
+                    azimuth: RRAz
+                    canCoder: RREnc
+                    constants:
+                        encoderOffset: -2863
+                        invertSensorPhase: 1
+            drivePID:
+                slot0:
+                    kP: 0.1
+                    kI: 0.0001
+                    kD: 4.0
+                    kF: 0.0499
+            azimuthPID:
+                slot0:
+                    kP: 4.0 # 6.0
+                    kI: 0.0005
+                    kD: 30
+                    kF: 0
+        constants:
+            pigeonId: 13
+            pigeonOnTalon: -1
+            kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
+            kI: 0.0001 # 0.018
+            kD: 4.0 # 3.6
+            kF: 0.0475813
+            iZone: 0
+            currentFloorCheck: .12
+            currentEpsilonCheck: .2
+            rpmFloorCheck: 2000
+            rpmEpsilonCheck: 60
+            openLoopRampRate: 0.8
+            isSwerve: 1
+            encPPR: 21770
+            azimuthEncPPR: 4096
+            azimuthAllowableErrorTicks: 20
+            azimuthHomeAdjustmentDegrees: 1
+            isDemoMode: 0
+pcm: 8
+constants:
+    maxVelTicks100ms: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
+    maxRotVel: 11.5
+    maxVel: 120 # 160 # 240 # inches/s # 22560 native units ---30
+    maxAccel: 100 # inches/s^2
+    sensorPhase: 0
+    kTrackScrubFactor: 1.0
+    verbose: 0 # 0 or 1
+    ## Logging ##
+    logTeleOp: 0 # 0 or 1
+    logAuto: 1 # 0 or 1
+    badLogEnabled: 1 # 0 or 1
+    ## General ##
+    teleopFieldCentric: 1 # 0 or 1
+    compressorEnabled: 0 # 0 or 1
+    wheelDiameter: 4
+    kLooperDt: .020 # seconds

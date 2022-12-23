@@ -1,0 +1,193 @@
+{
+  "HALProvider": {
+    "Other Devices": {
+      "Compressor[8]": {
+        "header": {
+          "open": true
+        }
+      },
+      "window": {
+        "visible": false
+      }
+    }
+  },
+  "NTProvider": {
+    "/SmartDashboard/Starting Position": {
+      "window": {
+        "visible": true
+      }
+    },
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalOutput[1]": "Digital Output",
+      "/LiveWindow/Ungrouped/PIDController[10]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[11]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[12]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[13]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[14]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[15]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[16]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[17]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[18]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[19]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[20]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[21]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[22]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[23]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[24]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[25]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[26]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[27]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[28]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[29]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[30]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[31]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[32]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[33]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[34]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[35]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[36]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[37]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[38]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[39]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[40]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[41]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[42]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[43]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[44]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[45]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[46]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[47]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[48]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[49]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[50]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[51]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[52]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[53]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[54]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[6]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[7]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[8]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[9]": "PIDController",
+      "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/LiveWindow/drivetrain": "Gyro",
+      "/SmartDashboard/Alliance color": "String Chooser",
+      "/SmartDashboard/Auto mode": "String Chooser",
+      "/SmartDashboard/Demo Mode": "String Chooser",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Robot color": "String Chooser",
+      "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/SendableChooser[2]": "String Chooser",
+      "/SmartDashboard/Starting Position": "String Chooser",
+      "/SmartDashboard/Turret Sim": "Mechanism2d"
+    },
+    "windows": {
+      "/SmartDashboard/Auto mode": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Field": {
+        "April Tags": {
+          "arrows": false,
+          "color": [
+            0.8354430198669434,
+            0.0,
+            1.0,
+            255.0
+          ],
+          "length": 0.25,
+          "style": "Box/Image",
+          "weight": 2.0,
+          "width": 0.25
+        },
+        "EstimatedRobot": {
+          "arrowColor": [
+            0.5980392098426819,
+            0.5247501134872437,
+            0.5247501134872437,
+            55.0
+          ],
+          "arrowWeight": 0.20000000298023224,
+          "weight": 0.20000000298023224
+        },
+        "Robot": {
+          "arrowColor": [
+            0.5980392098426819,
+            0.5247501134872437,
+            0.5247501134872437,
+            255.0
+          ],
+          "arrowWeight": 2.0,
+          "weight": 2.0
+        },
+        "Trajectory": {
+          "arrows": false,
+          "selectable": false,
+          "style": "Line",
+          "weight": 1.0
+        },
+        "camera": {
+          "arrowSize": 0,
+          "arrows": false,
+          "color": [
+            0.30379724502563477,
+            0.0,
+            1.0,
+            255.0
+          ],
+          "length": 0.10000000149011612,
+          "width": 0.10000000149011612
+        },
+        "height": 8.229599952697754,
+        "image": "season.png",
+        "turret": {
+          "arrowWeight": 3.0,
+          "style": "Line"
+        },
+        "width": 16.459199905395508,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Robot color": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables": {
+    "LiveWindow": {
+      "drivetrain": {
+        "open": true
+      }
+    },
+    "SmartDashboard": {
+      "Drive": {
+        "open": true
+      },
+      "Field": {
+        "open": true
+      },
+      "Starting Position": {
+        "open": true
+      }
+    },
+    "photonvision": {
+      "open": true,
+      "zed": {
+        "open": true
+      }
+    }
+  },
+  "NetworkTables View": {
+    "visible": false
+  }
+}

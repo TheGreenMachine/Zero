@@ -1,0 +1,176 @@
+subsystems:
+    drivetrain:
+        implemented: true
+        falcons:
+            leftMain: 17
+            leftFollower: -1
+            leftFollowerTwo: -1
+            rightMain: 14
+            rightFollower: -1
+            rightFollowerTwo: -1
+        invertMotor:
+            - leftMain
+        pidConfig:
+            slot0:
+                kP: 0.1 # 0.18
+                kI: 0.0001 # 0.018
+                kD: 4.0 # 3.6
+                kF: 0.0475813
+        constants:
+            maxVelTicks100ms: 40275.7
+            encPPR: 22220.8
+            openLoopRampRate: 0.8
+            isSwerve: 0
+            maxRotVel: 7.2
+            trackWidth: 21 #inches
+            wheelbaseLength: 21.5 #inches
+            wheelDiameter: 4
+            kTrackScrubFactor: 1.0
+            maxVelOpenLoop: 3 # meters/s
+            maxVelPathFollowing: 2.2 # meters/s
+            maxAccel: 2.54 # meters/s^ 2
+            currentLimit: 40
+            isDemoMode: 1
+    ledmanager:
+        implemented: true
+        canifier: -1
+        candle: -1
+        constants:
+            raveEnabled: 0
+            raveSpeed: 0.05
+            cameraLed: 1
+            maxLevel: 255
+    turret:
+        implemented: true
+        pidConfig:
+            slot0:
+                kP: 1.25
+                kI: 0.0003
+                kD: 40.5
+                kF: 0 # Should be 0 for position control
+                allowableError: 40
+        talons:
+            turretMotor: 13
+        invertMotor:
+            - turretMotor
+        invertSensorPhase:
+            - turretMotor
+        constants:
+            deltaXScalar: 150 #value worked best at 150 in sim
+            revLimit: -700
+            fwdLimit: 3653
+            absPosTicksSouth: 1000 # absolute
+            absPPR: 4096
+            turretPPR: 4096
+    shooter:
+        implemented: true
+        falcons:
+            shooterMain: 2
+            shooterFollower: -1
+        solenoids:
+            hood: -1
+        pidConfig:
+            slot0:
+                kP: 0.38 #.45
+                kI: 0.0002
+                kD: 13.5 # 11 - 4.5
+                kF: 0.0487
+                allowableError: 100
+        constants:
+            usingPoseForSpeed: 0
+            maxVelTicks100ms: 20700
+            nearVel: 6000
+            midVel: 8450
+            tarmacTapeVel: 8125
+            launchpadVel: 10150
+            maxVel: 16500
+            coast: 0
+    elevator:
+        implemented: true
+        talons:
+            elevator: 5
+        pidConfig:
+            slot0:
+                kP: 0.060
+                kI: 0
+                kD: 2
+                kF: 0.05
+                allowableError: 3000
+        invertMotor:
+            - elevator
+        constants:
+            isVelocity: 0
+            maxVelTicks100ms: 20000
+            ballSensor: 0
+            firePow: 0.35
+            flushPow: -0.3
+            intakePow: 0
+    spindexer:
+        implemented: true
+        talons:
+            spindexer: 4
+        solenoids:
+            feederFlap: -1
+        invertMotor:
+            - spindexer
+        constants:
+            collectPow: 0.5
+            indexPow: -0.5
+            flushPow: -1
+            coastPow: 0
+            firePow: 0.85
+    collector:
+        implemented: true
+        talons:
+            intake: 11 # maxVelTicks100ms 10617
+        invertMotor:
+            - intake
+        solenoids:
+            arm: 0
+        pidConfig:
+            slot0:
+                kP: 0.0001 #tunned at 4000
+                kI: 0.0
+                kD: 0.006
+                kF: 0.0001
+                allowableError: 10
+        constants:
+            isVelocity: 0
+            maxVelTicks100ms: 10000
+            revving: 0 #.05
+            collecting: -0.5 #-3600
+            flush: 0.5 #.35
+    camera:
+        implemented: false
+        constants:
+            debug: 0
+            maxDist: 400
+            maxDeltaX: 1200
+            allowableDistanceError: 50
+infrastructure:
+    canivoreBusName: rio
+    # power distribution
+    pdId: 0
+    pdIsRev: false
+    # pneumatics control
+    compressorEnabled: false
+    pcmIsRev: false
+    pcmId: 8
+    # pigeon
+    pigeonId: 9
+    isPigeon2: false
+controlboard: example # demo
+constants:
+    # drivetrain misc
+    maxAllowablePoseError: 0.1
+    ## Logging ##
+    logTeleOp: 1 # 0 or 1
+    logAuto: 1 # 0 or 1
+    badLogEnabled: 1 # 0 or 1
+    configStatusFrames: 0 # 0 or 1
+    verbose: 0 # 0 or 1
+    ## General ##
+    EnableBucketTuning: 1
+    teleopFieldCentric: 1 # 0 or 1
+    kLooperDt: .035 # seconds
+    resetFactoryDefaults: 0 # whether motors get reset to factory default

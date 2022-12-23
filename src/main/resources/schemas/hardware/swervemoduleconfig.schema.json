@@ -1,0 +1,22 @@
+{
+    "type": "object",
+    "title": "Swerve Module Configuration",
+    "properties": {
+        "modules": {
+            "existingJavaType": "java.util.Map<String, ModuleConfiguration>"
+        },
+        "azimuthPID": {
+            "type": "object",
+            "existingJavaType": "java.util.Map<String, PIDSlotConfiguration>",
+            "additionalProperties": false
+        },
+        "drivePID": {
+            "type": "object",
+            "existingJavaType": "java.util.Map<String, PIDSlotConfiguration>",
+            "additionalProperties": false
+        },
+        "constants": {
+            "$ref": "double.map.schema.json"
+        }
+    }
+}

@@ -1,0 +1,79 @@
+{
+    "type": "object",
+    "title": "Subsystem Config",
+    "additionalProperties": false,
+    "properties": {
+        "implemented": {
+            "type": "boolean"
+        },
+        "required": ["implemented"],
+        "canifier": {
+            "type": "integer"
+        },
+        "candle": {
+            "type": "integer"
+        },
+        "constants": {
+            "$ref": "double.map.schema.json"
+        },
+        "talons": {
+            "$ref": "int.map.schema.json"
+        },
+        "falcons": {
+            "$ref": "int.map.schema.json"
+        },
+        "victors": {
+            "$ref": "int.map.schema.json"
+        },
+        "sparkmaxes": {
+            "$ref": "int.map.schema.json"
+        },
+        "canCoders": {
+            "$ref": "int.map.schema.json"
+        },
+        "sensors": {
+            "$ref": "sensorconfig.schema.json"
+        },
+        "swerveModules": {
+            "$ref": "swervemoduleconfig.schema.json"
+        },
+        "solenoids": {
+            "$ref": "int.map.schema.json"
+        },
+        "doubleSolenoids": {
+            "existingJavaType": "java.util.Map<String,DoubleSolenoidConfig>"
+        },
+        "invertMotor": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            }
+        },
+        "invertSensorPhase": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            }
+        },
+        "invertCanCoder": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            }
+        },
+        "pidConfig": {
+            "type": "object",
+            "existingJavaType": "java.util.Map<String, PIDSlotConfiguration>",
+            "additionalProperties": false
+        }
+    },
+    "anyOf": [
+        {
+            "required": ["implemented"]
+        }
+    ]
+}
+

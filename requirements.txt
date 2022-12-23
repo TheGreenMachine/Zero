@@ -1,0 +1,7 @@
+opencv-python~=4.5.5.64
+numpy~=1.22.3
+PyYAML~=6.0
+pynetworktables~=2021.0.0
+flask_opencv_streamer~=1.4
+
+pyzed~=3.7

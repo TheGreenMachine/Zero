@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+VERSION="0.1.0"
+ROBORIO_IP="10.18.16.2"
+
+function subcommand_fetch {
+    FNAME=$( ssh -q lvuser@$ROBORIO_IP "ls -rt /media/sda1/*.bag " 2>/dev/null | tail -1 )
+    echo "Getting $FNAME"
+    scp "lvuser@10.18.16.2:"$FNAME"" .
+    badlogvis -o "$(basename "$FNAME")"
+}
+
+function subcommand_eraseLocal {
+    rm -- *.bag
+    rm -- *.bag.html
+}
+
+function subcommand_eraseRemote {
+    echo "Deleting all .bag files from lvuser@$ROBORIO_IP:~"
+    ssh -q lvuser@ROBORIO_IP "rm *.bag"
+}
+
+function subcommand_help {
+    echo "logutil version $VERSION"
+    echo "Author: FRC 1816 The Green Machine (https://github.com/TheGreenMachine)"
+    echo ""
+    echo "commands:"
+    printf "\tfetch:\t\tFetch latest bag file from RoboRIO and open in browser using badlogvis\n"
+    printf "\teraseLocal:\tErase all bag and bag.html files from local directory\n"
+    printf "\teraseRemote:\tErase all bag files from RoboRIO user home\n"
+    printf "\thelp:\t\tPrint this help message\n"
+}
+
+
+case $1 in
+    fetch)
+        subcommand_fetch
+        ;;
+    eraseLocal)
+        subcommand_eraseLocal
+        ;;
+    eraseRemote)
+        subcommand_eraseRemote
+        ;;
+    *)
+        subcommand_help
+        ;;
+esac

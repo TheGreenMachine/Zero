@@ -1,0 +1,8 @@
+{
+    "type": "object",
+    "title": "I2C Port Configuration",
+    "properties": {
+        "portID": "int.map.schema.json",
+        "deviceID": "int.map.schema.json"
+    }
+}

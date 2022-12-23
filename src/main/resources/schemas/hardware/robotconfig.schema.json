@@ -1,0 +1,27 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://edinarobotics.com/robotconfig.json",
+    "type": "object",
+    "title": "Robot Configuration",
+    "properties": {
+        "subsystems": {
+            "type": "object",
+            "existingJavaType": "java.util.Map<String,SubsystemConfig>"
+        },
+        "infrastructure": {
+            "$ref": "infrastructureconfig.schema.json"
+        },
+        "constants": {
+            "$ref": "double.map.schema.json"
+        },
+        "controlboard": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": false,
+    "anyOf": [
+        {
+            "required": ["subsystems", "infrastructure", "constants", "controlboard"]
+        }
+    ]
+}

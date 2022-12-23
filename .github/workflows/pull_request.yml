@@ -1,0 +1,38 @@
+name: Verify Pull Request
+on: pull_request
+
+jobs:
+    compile:
+        name: Compilation
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+            -   uses: actions/setup-java@v2
+                with:
+                    distribution: 'zulu'
+                    java-version: 11
+            -   id: assemble
+                name: Gradle assemble
+                run: gradle assemble
+            -   id: tests
+                name: Run JUnit tests
+                continue-on-error: true
+                run: gradle test
+            -   name: JUnit Report
+                uses: mikepenz/action-junit-report@v2
+                with:
+                    report_paths: 'build/test-results/test/TEST-*.xml'
+                    github_token: ${{ secrets.GITHUB_TOKEN }}
+                    check_name: 'Unit Tests'
+    spotless_check:
+        name: Style (Spotless)
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+            -   uses: actions/setup-java@v2
+                with:
+                    distribution: 'zulu'
+                    java-version: 11
+            -   id: spotless
+                name: Run Spotless check
+                run: gradle spotlessCheck

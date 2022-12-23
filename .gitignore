@@ -1,0 +1,8 @@
+venv
+.idea
+build
+.gradle
+simgui-window.json
+bin/
+*.bag
+Compiler

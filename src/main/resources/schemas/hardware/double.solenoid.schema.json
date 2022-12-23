@@ -1,0 +1,12 @@
+{
+    "type": "object",
+    "title": "DoubleSolenoidConfig",
+    "properties": {
+        "forward": {
+            "type": "integer"
+        },
+        "reverse": {
+            "type": "integer"
+        }
+    }
+}

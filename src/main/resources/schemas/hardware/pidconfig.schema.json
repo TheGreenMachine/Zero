@@ -1,0 +1,25 @@
+{
+    "type": "object",
+    "title": "PID Slot Configuration",
+    "properties": {
+        "kP": {
+            "type": "number"
+        },
+        "kI": {
+            "type": "number"
+        },
+        "kD": {
+            "type": "number"
+        },
+        "kF": {
+            "type": "number"
+        },
+        "iZone": {
+            "type": "integer"
+        },
+        "allowableError": {
+            "type": "number"
+        }
+    }
+}
+

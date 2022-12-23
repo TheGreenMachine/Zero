@@ -1,0 +1,116 @@
+subsystems:
+    drivetrain:
+        implemented: true
+        talons:
+            leftMain: 15
+            leftFollower: -1
+            rightMain: 13
+            rightFollower: -1
+        pidConfig:
+            slot0:
+                kP: 1.6 #/ 0.18
+                kI: 0.001 # 0.018
+                kD: 15 # 3.6
+                kF: 0.538
+        invertMotor:
+            - rightMain
+        constants:
+            maxVelTicks100ms: 12275.7
+            openLoopRampRate: 0.8
+            isSwerve: 0
+            encPPR: 22220.8
+            currentLimit: 40
+            maxVelPathFollowing: 3 # meters/s
+            maxVelOpenLoop: 10 # meters/s
+            maxRotVel: 7.2
+            maxAccel: 0.5 # meters/s^2
+            trackWidth: 25 #inches
+            wheelbaseLength: 25 #inches
+            wheelDiameter: 6.32 #inches
+            kTrackScrubFactor: 1.0
+            isDemoMode: 1
+    turret:
+        implemented: true
+        talons:
+            turretMotor: 3
+        invertMotor:
+            - turretMotor
+        pidConfig:
+            slot0:
+                kP: 2
+                kI: 0
+                kD: 10
+                kF: 0 # Should be 0 for position control
+                allowableError: 40
+        constants:
+            absPPR: 4096
+            turretPPR: 4096
+            revLimit: -2250
+            fwdLimit: 2603
+            currentFloorCheck: 0
+            currentEpsilonCheck: .2
+            rpmFloorCheck: 0
+            absPosTicksSouth: -704
+            rpmEpsilonCheck: 60
+            deltaXScalar: 150
+            maxVelTicks100ms: 1
+    spindexer:
+        implemented: true
+        talons:
+            spindexer: 31
+        constants:
+            maxVelTicks100ms: 1
+            collectPow: 0.5
+            indexPow: -0.5
+            flushPow: -1
+            coastPow: 0.25
+            firePow: 0.85
+    collector:
+        implemented: true
+        sparkmaxes:
+            intake: 23 # maxVelTicks100ms 10617
+        invertMotor:
+            - intake
+        solenoids:
+            arm: -1 #2
+        pidConfig:
+            slot0:
+                kP: 0.0001 #tunned at 4000
+                kI: 0.0
+                kD: 0.006
+                kF: 0.0001
+                allowableError: 10
+        constants:
+            maxVelTicks100ms: 10000
+            isVelocity: 1
+            revving: 0 #.05
+            collecting: -.5 #-3600
+            flush: 0.5 #.35
+infrastructure:
+    canivoreBusName: rio
+    # power distribution
+    pdId: 0
+    pdIsRev: false
+    # pneumatics control
+    compressorEnabled: false
+    pcmIsRev: false
+    pcmId: 8
+    # pigeon
+    pigeonId: 9
+    isPigeon2: false
+controlboard: example
+constants:
+    ## Drivetrain Dimensions and Parameters ##
+    maxAllowablePoseError: 0.1
+    ## Logging Config ##
+    logTeleOp: 1
+    logAuto: 1
+    badLogEnabled: 1
+    configStatusFrames: 0
+    verbose: 0 # 0 or 1
+    ## General ##
+    kLooperDt: .020
+    resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
+
+
+

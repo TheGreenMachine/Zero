@@ -1,0 +1,341 @@
+:root {
+    --background-100: #f5f5f5;
+    --background-0: #fff;
+    --text-color: #232323;
+    --border-color: #ccc;
+    --background-contrast: rgb(48, 48, 54);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-100: rgb(32, 32, 36);
+        --background-0: rgb(48, 48, 54);
+        --background-contrast: #f5f5f5;
+        --border-color: #232323;
+        --text-color: #fdfdfd;
+    }
+}
+
+*:not(pre, code) {
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', "Helvetica Neue", Helvetica, 'Roboto', sans-serif;
+}
+
+html {
+    background-color: var(--background-100);
+    color: var(--text-color);
+}
+
+#title {
+	font-size: 28px;
+	margin: 20px auto 20px auto;
+	padding: 4px;
+	display: block;
+	border: none;
+	border-bottom: #aaa solid 1px;
+	text-align: center;
+	width: 500px;
+	color: var(--text-color);
+    background-color: transparent;
+}
+
+#title, #title:focus {
+	outline: none;
+}
+
+#title:focus {
+    border-color: #0070FF;
+}
+
+#canvases {
+    margin: 0 auto;
+    display: block;
+    position: relative;
+}
+
+#canvases canvas, #canvases svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#field.faded {
+    transition: opacity 350ms ease;
+    opacity: 0.5;
+}
+
+#interactive {
+    cursor: crosshair;
+}
+
+svg circle {
+    cursor: move;
+}
+
+svg circle[data-selected] {
+    stroke: #0070FF;
+    r: 16;
+    stroke-width: 2;
+}
+
+table {
+	width: 828px;
+	margin: 5px auto;
+	border-collapse: collapse;
+    border-radius: 4px;
+    background-color: var(--background-0);
+	box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+thead {
+	background-color: #0070FF;
+	color: white;
+}
+
+thead>tr>th {
+	padding: 8px 0;
+}
+
+th:first-child {
+    border-top-left-radius: 4px;
+}
+
+th:last-child {
+    border-top-right-radius: 4px;
+}
+
+tbody tr {
+    background-color: var(--background-0);
+    transition: box-shadow 0.2s ease;
+}
+
+.ui-sortable-placeholder {
+    height: 38px;
+}
+
+tr.ui-sortable-helper {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+}
+
+tbody:before, tbody:after {
+	content: '';
+	display: block;
+	height: 5px;
+}
+
+td {
+	text-align: center;
+	padding: 3px 0;
+	font-size: 14px;
+}
+
+td>input {
+	font-size: 14px;
+	padding: 2px;
+	border: none;
+	margin: 2px 0;
+	border-bottom: #AAA solid 1px;
+    background-color: var(--background-0);
+    color: var(--text-color);
+	text-align: center;
+	width: 50px;
+}
+
+td>input:focus {
+    border-color: #0070FF;
+}
+
+td > input:not([type=checkbox]) {
+    outline: none;
+}
+
+.drag-handler {
+    margin-left: 8px;
+    width: 20px;
+    height: 30px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    color: gray;
+    font-size: 24px;
+    line-height: 34px;
+    cursor: grab;
+}
+
+.drag-handler .material-icons {
+    vertical-align: text-bottom;
+}
+
+.drag-handler:active {
+    cursor: grabbing;
+}
+
+.comments>input, .comments>input:focus {
+	width: 200px;
+}
+
+.enabled>button {
+    background-color: #42BBFF;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.enabled>button:hover {
+    background-color: #42AAFF;
+}
+
+.delete>button {
+	background-color: #FF1900;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.delete>button:hover, .delete>button:focus-visible {
+	background-color: #ee1900;
+}
+
+.buttonContainer {
+	width: 828px;
+	margin: 10px auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.spacer {
+    flex-grow: 1;
+}
+
+button, .btn {
+	background-color: #0070FF;
+	border: none;
+	padding: 4px 12px;
+	border-radius: 4px;
+	color: #fff;
+	cursor: pointer;
+	font-size: 14px;
+	transition: background-color 0.25s;
+    height: 30px;
+    box-sizing: border-box;
+    display: inline-block;
+    line-height: 1.5;
+}
+
+.btn:link, .btn:any-link, .btn:visited {
+    text-decoration: none;
+}
+
+button:hover, .btn:hover,
+button:focus-visible, .btn:focus-visible {
+	background-color: #0053d0;
+}
+
+button:focus, .btn:focus {
+	outline: none;
+}
+
+.btn-pair-left, .btn-pair-center {
+    margin-right: -4px;
+    border-right: 1px solid #0045b7;
+}
+
+.btn-pair-left {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.btn-pair-center {
+    border-radius: 0;
+}
+
+.btn-pair-right {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.checkbox {
+	font-size: 15px;
+	padding: 3px
+}
+
+select {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 4px;
+    background-color: var(--background-0);
+    color: var(--text-color);
+}
+
+#waypointsDialog {
+    position: fixed;
+    top: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: 0 2px 10px 5px rgba(0,0,0,0.25);
+    color: var(--text-color);
+    background-color: var(--background-0);
+}
+
+pre {
+    background-color: var(--background-100);
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+pre, code {
+    font-family: 'SFMono-Regular', Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+}
+
+.close-button {
+    background-color: var(--background-100);
+    color: #888;
+    border-radius: 100%;
+    padding: 4px;
+    box-sizing: border-box;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    cursor: pointer;
+    position: absolute;
+    right: 16px;
+    line-height: 1;
+}
+
+.close-button:hover {
+    background-color: #888;
+    color: white;
+}
+
+.icon-button {
+    width: 30px;
+    height: 30px;
+    padding: 3px;
+}
+
+.modified-indicator {
+    display: none;
+}
+
+html[data-modified] .modified-indicator {
+    display: inline;
+}
+
+.toast {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    background-color: var(--background-contrast);
+    color: var(--background-0);
+    padding: 16px;
+    border-radius: 4px;
+    opacity: 0;
+    transform: translateY(32px);
+    transition:
+        transform 200ms ease,
+        opacity 200ms ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+}
+
+.toast.shown {
+    opacity: 1;
+    transform: translateY(0);
+}

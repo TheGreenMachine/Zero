@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "title": "Dpad Config",
+    "additionalProperties": "false",
+    "properties": {
+        "up": {
+            "$ref": "buttonconfig.schema.json"
+        },
+        "down": {
+            "$ref": "buttonconfig.schema.json"
+        },
+        "left": {
+            "$ref": "buttonconfig.schema.json"
+        },
+        "right": {
+            "$ref": "buttonconfig.schema.json"
+        }
+    }
+}

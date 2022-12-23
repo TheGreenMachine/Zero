@@ -1,0 +1,101 @@
+subsystems:
+    drivetrain:
+        implemented: true
+        talons:
+            FLDr: 3
+            FRDr: 13
+            RLDr: 1 #13
+            RRDr: 14
+            FLAz: 2
+            FRAz: 12
+            RLAz: 10
+            RRAz: 15
+        invertMotor:
+            - FRDr
+            - RRDr
+            - FLAz
+            - FRAz
+            - RLAz
+            - RRAz
+        invertSensorPhase:
+            - FLAz
+            - FRAz
+            - RLAz
+            - RRAz
+        swerveModules:
+            modules:
+                frontLeft:
+                    drive: FLDr
+                    azimuth: FLAz
+                    constants:
+                        encoderOffset: 2463
+                frontRight:
+                    drive: FRDr
+                    azimuth: FRAz
+                    constants:
+                        encoderOffset: 1482
+                backLeft:
+                    drive: RLDr
+                    azimuth: RLAz
+                    constants:
+                        encoderOffset: 506
+                backRight:
+                    drive: RRDr
+                    azimuth: RRAz
+                    constants:
+                        encoderOffset: 497
+            drivePID:
+                slot0:
+                    kP: .3
+                    kI: 0.0001
+                    kD: 4.0
+                    kF: 0.0499
+            azimuthPID:
+                slot0:
+                    kP: 6.0
+                    kI: 0.0000
+                    kD: 15.0
+                    kF: 0
+                    allowableError: 5
+        constants:
+            maxVelTicks100ms: 12275.7 # ticks per 100ms
+            openLoopRampRate: 0.8
+            isSwerve: 1
+            encPPR: 14255
+            azimuthEncPPR: 4096
+            maxRotVel: 14
+            trackWidth: 21 #inches
+            wheelbaseLength: 21.5 #inches
+            wheelDiameter: 4
+            kTrackScrubFactor: 1.0
+            maxVelOpenLoop: 3 # meters/s
+            maxVelPathFollowing: 3 # meters/s (2.2)
+            maxAccel: 2.54 # meters/s^ 2
+            isDemoMode: 0
+infrastructure:
+    canivoreBusName: rio
+    # power distribution
+    pdId: 9
+    pdIsRev: false
+    # pneumatics control
+    compressorEnabled: false
+    pcmIsRev: false
+    pcmId: 2
+    # pigeon
+    pigeonId: 32
+    isPigeon2: false
+controlboard: example
+constants:
+    # drivetrain misc
+    maxAllowablePoseError: 0.1
+    ## Logging ##
+    logTeleOp: 1 # 0 or 1
+    logAuto: 1 # 0 or 1
+    badLogEnabled: 1 # 0 or 1
+    configStatusFrames: 0 # 0 or 1
+    verbose: 0 # 0 or 1
+    ## General ##
+    EnableBucketTuning: 0
+    teleopFieldCentric: 1 # 0 or 1
+    kLooperDt: .035 # seconds
+    resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
