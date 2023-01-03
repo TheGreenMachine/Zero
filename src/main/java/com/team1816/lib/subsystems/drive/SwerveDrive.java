@@ -144,12 +144,14 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      * Reads outputs from hardware on the drivetrain such as sensors and handles the actual state of the swerve modules and
      * drivetrain speeds. Used to update odometry and other related data.
      * @see Infrastructure
+     * @see SwerveModule
      * @see RobotState
      */
     @Override
     public synchronized void readFromHardware() {
         for (int i = 0; i < 4; i++) {
             // logging actual angle and velocity of swerve motors (azimuth & drive)
+            swerveModules[i].update();
             actualModuleStates[i] = swerveModules[i].getActualState();
             actualModulePositions[i] = swerveModules[i].getActualPosition();
             // logging current temperatures of each module's drive motor
