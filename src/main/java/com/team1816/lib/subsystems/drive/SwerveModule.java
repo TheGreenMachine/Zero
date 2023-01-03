@@ -14,6 +14,7 @@ import com.team1816.lib.util.driveUtil.DriveConversions;
 import com.team1816.lib.util.driveUtil.SwerveKinematics;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -27,6 +28,7 @@ public class SwerveModule implements ISwerveModule {
     /** State */
     public double driveDemand;
     public double driveActual;
+    public double drivePosition;
     public double azimuthDemand;
     public double azimuthActual;
     public double motorTemp; // Drive Motor Temperature
@@ -95,6 +97,7 @@ public class SwerveModule implements ISwerveModule {
         );
 
         allowableError = 5; // TODO this is a dummy value for checkSystem
+        drivePosition = 0;
 
         /* Angle Encoder Config */
         this.canCoder = canCoder;
@@ -144,6 +147,19 @@ public class SwerveModule implements ISwerveModule {
         Rotation2d angleActual = Rotation2d.fromDegrees(azimuthActual);
         motorTemp = driveMotor.getTemperature(); // Celsius
         return new SwerveModuleState(driveActual, angleActual);
+    }
+
+    /**
+     * Returns the actual position of the swerve module
+     * @return swerve module position properties
+     * @see SwerveModulePosition
+     */
+    public SwerveModulePosition getActualPosition() {
+        drivePosition += driveActual * Constants.kLooperDt + drivePosition;
+        return new SwerveModulePosition(
+            drivePosition,
+            Rotation2d.fromDegrees(azimuthActual)
+        );
     }
 
     /**
@@ -207,6 +223,15 @@ public class SwerveModule implements ISwerveModule {
     @Override
     public double getActualDrive() {
         return driveActual;
+    }
+
+    /**
+     * Returns the "position" of the Drive motor
+     * @return drivePosition
+     */
+    @Override
+    public double getDrivePosition() {
+        return drivePosition;
     }
 
     /**

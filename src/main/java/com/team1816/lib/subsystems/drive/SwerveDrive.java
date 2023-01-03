@@ -12,10 +12,7 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -86,6 +83,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     /** States */
     public SwerveModuleState[] desiredModuleStates = new SwerveModuleState[4];
     SwerveModuleState[] actualModuleStates = new SwerveModuleState[4];
+    SwerveModulePosition[] actualModulePositions = new SwerveModulePosition[4];
     public double[] motorTemperatures = new double[4];
 
     /**
@@ -108,7 +106,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
-        swerveOdometry = new SwerveDriveOdometry(swerveKinematics, getActualHeading());
+        swerveOdometry =
+            new SwerveDriveOdometry(
+                swerveKinematics,
+                getActualHeading(),
+                actualModulePositions
+            );
     }
 
     /** Read/Write Periodic */
@@ -142,7 +145,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         for (int i = 0; i < 4; i++) {
             // logging actual angle and velocity of swerve motors (azimuth & drive)
             actualModuleStates[i] = swerveModules[i].getActualState();
-
+            actualModulePositions[i] = swerveModules[i].getActualPosition();
             // logging current temperatures of each module's drive motor
             motorTemperatures[i] = swerveModules[i].getMotorTemp();
         }
@@ -154,7 +157,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         infrastructure.update();
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
-        swerveOdometry.update(actualHeading, actualModuleStates);
+        swerveOdometry.update(actualHeading, actualModulePositions);
         updateRobotState();
     }
 
@@ -363,8 +366,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public void resetOdometry(Pose2d pose) {
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
-        swerveOdometry.resetPosition(pose, actualHeading);
-        swerveOdometry.update(actualHeading, actualModuleStates);
+        swerveOdometry.resetPosition(actualHeading, actualModulePositions, pose);
+        swerveOdometry.update(actualHeading, actualModulePositions);
         updateRobotState();
     }
 
