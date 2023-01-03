@@ -106,12 +106,18 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
+        actualModulePositions[kFrontLeft] = new SwerveModulePosition();
+        actualModulePositions[kFrontRight] = new SwerveModulePosition();
+        actualModulePositions[kBackLeft] = new SwerveModulePosition();
+        actualModulePositions[kBackRight] = new SwerveModulePosition();
+
         swerveOdometry =
             new SwerveDriveOdometry(
                 swerveKinematics,
-                getActualHeading(),
+                Constants.EmptyRotation,
                 actualModulePositions
             );
+        System.out.println("Swerve is initialized");
     }
 
     /** Read/Write Periodic */

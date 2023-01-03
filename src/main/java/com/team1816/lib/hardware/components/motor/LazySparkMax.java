@@ -10,7 +10,6 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
@@ -31,15 +30,15 @@ public class LazySparkMax implements IGreenMotor {
     protected CANSparkMax.ControlType lastControlMode = null;
 
     public LazySparkMax(int deviceNumber, String motorName) {
-        motor = new CANSparkMax(deviceNumber, CANSparkMaxLowLevel.MotorType.kBrushless);
-        pidController = motor.getPIDController();
-        encoder = motor.getEncoder();
+        //motor = new CANSparkMax(deviceNumber, CANSparkMaxLowLevel.MotorType.kBrushless);
+        //pidController = motor.getPIDController();
+        //encoder = motor.getEncoder();
         name = motorName;
     }
 
     @Override
     public void set(ControlMode mode, double demand) {
-        canMaxSet(mode, demand);
+        //canMaxSet(mode, demand);
     }
 
     @Override
@@ -49,21 +48,21 @@ public class LazySparkMax implements IGreenMotor {
         DemandType demand1Type,
         double demand1
     ) {
-        canMaxSet(mode, demand0);
+        //canMaxSet(mode, demand0);
     }
 
     private void canMaxSet(ControlMode mode, double demand) {
-        CANSparkMax.ControlType controlType = convertControlMode(mode);
-        if (demand != lastSet || controlType != lastControlMode) {
-            lastSet = demand;
-            lastControlMode = controlType;
-            pidController.setReference(demand, controlType); // note that this uses rpm for velocity!
-        }
+        //        CANSparkMax.ControlType controlType = convertControlMode(mode);
+        //        if (demand != lastSet || controlType != lastControlMode) {
+        //            lastSet = demand;
+        //            lastControlMode = controlType;
+        //            pidController.setReference(demand, controlType); // note that this uses rpm for velocity!
+        //        }
     }
 
-    public CANSparkMax getSpark() {
-        return motor;
-    }
+    //    public CANSparkMax getSpark() {
+    //        return motor;
+    //    }
 
     @Override
     public void neutralOutput() {}
@@ -73,7 +72,7 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public void setInverted(boolean isInverted) {
-        motor.setInverted(isInverted);
+        //motor.setInverted(isInverted);
     }
 
     @Override
@@ -81,12 +80,13 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public boolean getInverted() {
-        return motor.getInverted();
+        return false;
+        //return motor.getInverted();
     }
 
     @Override
     public ErrorCode configOpenloopRamp(double secondsFromNeutralToFull, int timeoutMs) {
-        motor.setOpenLoopRampRate(secondsFromNeutralToFull);
+        //motor.setOpenLoopRampRate(secondsFromNeutralToFull);
         return ErrorCode.OK;
     }
 
@@ -95,7 +95,7 @@ public class LazySparkMax implements IGreenMotor {
         double secondsFromNeutralToFull,
         int timeoutMs
     ) {
-        motor.setClosedLoopRampRate(secondsFromNeutralToFull);
+        //motor.setClosedLoopRampRate(secondsFromNeutralToFull);
         return ErrorCode.OK;
     }
 
@@ -559,7 +559,8 @@ public class LazySparkMax implements IGreenMotor {
     }
 
     public int getDeviceID() {
-        return motor.getDeviceId();
+        return 32;
+        //return motor.getDeviceId();
     }
 
     @Override
@@ -567,18 +568,18 @@ public class LazySparkMax implements IGreenMotor {
         return null;
     }
 
-    public static CANSparkMax.ControlType convertControlMode(ControlMode controlMode) {
-        if (controlMode == ControlMode.PercentOutput) {
-            return CANSparkMax.ControlType.kDutyCycle;
-        } else if (controlMode == ControlMode.Velocity) {
-            return CANSparkMax.ControlType.kVelocity;
-        } else if (controlMode == ControlMode.Position) {
-            return CANSparkMax.ControlType.kPosition;
-        } else {
-            System.out.println("spark motor not set to a control mode!");
-            return CANSparkMax.ControlType.kDutyCycle; // what should be default?
-        }
-    }
+    //    public static CANSparkMax.ControlType convertControlMode(ControlMode controlMode) {
+    //        if (controlMode == ControlMode.PercentOutput) {
+    //            return CANSparkMax.ControlType.kDutyCycle;
+    //        } else if (controlMode == ControlMode.Velocity) {
+    //            return CANSparkMax.ControlType.kVelocity;
+    //        } else if (controlMode == ControlMode.Position) {
+    //            return CANSparkMax.ControlType.kPosition;
+    //        } else {
+    //            System.out.println("spark motor not set to a control mode!");
+    //            return CANSparkMax.ControlType.kDutyCycle; // what should be default?
+    //        }
+    //    }
 
     @Override
     public ErrorCode configSelectedFeedbackSensor(
@@ -656,16 +657,17 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public void follow(IMotorController masterToFollow) { // only use if not inverted
-        motor.follow(((LazySparkMax) masterToFollow).getMotor());
+        //motor.follow(((LazySparkMax) masterToFollow).getMotor());
     }
 
     public void follow(IGreenMotor masterToFollow, boolean inverted) {
-        motor.follow(((LazySparkMax) masterToFollow).getMotor(), inverted);
+        //motor.follow(((LazySparkMax) masterToFollow).getMotor(), inverted);
     }
 
     @Override
     public double getOutputCurrent() {
-        return motor.getOutputCurrent();
+        return 0;
+        //return motor.getOutputCurrent();
     }
 
     @Override

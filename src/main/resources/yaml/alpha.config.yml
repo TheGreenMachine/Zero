@@ -28,7 +28,7 @@ subsystems:
             wheelbaseLength: 25 #inches
             wheelDiameter: 6.32 #inches
             kTrackScrubFactor: 1.0
-            isDemoMode: 1
+            isDemoMode: 0
     turret:
         implemented: true
         talons:

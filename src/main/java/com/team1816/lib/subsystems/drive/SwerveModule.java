@@ -155,7 +155,7 @@ public class SwerveModule implements ISwerveModule {
      * @see SwerveModulePosition
      */
     public SwerveModulePosition getActualPosition() {
-        drivePosition += driveActual * Constants.kLooperDt + drivePosition;
+        drivePosition += driveActual * Constants.kLooperDt;
         return new SwerveModulePosition(
             drivePosition,
             Rotation2d.fromDegrees(azimuthActual)
