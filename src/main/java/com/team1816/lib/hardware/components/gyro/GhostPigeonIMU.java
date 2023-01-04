@@ -12,10 +12,14 @@ public class GhostPigeonIMU implements IPigeonIMU {
 
     /** State */
     double simulatedYaw; // simulated yaw
+    double simulatedPitch;
+    double simulatedRoll;
 
     /** Instantiates a free ghost pigeon */
     public GhostPigeonIMU(int id) {
         simulatedYaw = 0;
+        simulatedPitch = 0;
+        simulatedRoll = 0;
     }
 
     /** Alternately instantiates a ghost pigeon attached to a motor */
@@ -29,6 +33,26 @@ public class GhostPigeonIMU implements IPigeonIMU {
     @Override
     public double getYaw() {
         return simulatedYaw;
+    }
+
+    /**
+     * Returns the simulatedPitch
+     * @return simulatedPitch
+     * @see IPigeonIMU#getPitch()
+     */
+    @Override
+    public double getPitch() {
+        return simulatedPitch;
+    }
+
+    /**
+     * Returns the simulatedRoll
+     * @return simulatedRoll
+     * @see IPigeonIMU#getRoll()
+     */
+    @Override
+    public double getRoll() {
+        return simulatedRoll;
     }
 
     /**
