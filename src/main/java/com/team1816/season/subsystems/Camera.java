@@ -81,7 +81,7 @@ public class Camera extends Subsystem {
                     Constants.kCameraMountingAngleY,
                     new Transform2d(
                         new Translation2d(-.12065, .13335),
-                        Constants.EmptyRotation
+                        Constants.EmptyRotation2d
                     ),
                     CAMERA_HEIGHT_METERS,
                     9000,

@@ -129,7 +129,7 @@ public class SwerveKinematics {
     ) {
         return current_pose.transformBy(
             new Transform2d(
-                Constants.EmptyPose,
+                Constants.EmptyPose2d,
                 new Pose2d(
                     forward_kinematics.dx,
                     forward_kinematics.dy,

@@ -18,9 +18,14 @@ public class Constants {
      */
     private static final RobotFactory factory = Robot.getFactory();
 
-    public static final Pose2d EmptyPose = new Pose2d();
-    public static final Rotation2d EmptyRotation = new Rotation2d();
-    public static final Transform2d EmptyTransform = new Transform2d();
+    public static final Pose2d EmptyPose2d = new Pose2d();
+    public static final Rotation2d EmptyRotation2d = new Rotation2d();
+    public static final Transform2d EmptyTransform2d = new Transform2d();
+
+    public static final Pose3d EmptyPose3d = new Pose3d();
+    public static final Rotation3d EmptyRotation3d = new Rotation3d();
+    public static final Transform3d EmptyTransform3d = new Transform3d();
+    public static final Quaternion EmptyQuaternion = new Quaternion();
 
     public static final double kLooperDt = factory.getConstant("kLooperDt", .020);
 
@@ -45,17 +50,17 @@ public class Constants {
     public static final Pose2d fieldCenterPose = new Pose2d(
         fieldCenterX,
         fieldCenterY,
-        EmptyRotation
+        EmptyRotation2d
     );
     public static final Pose2d targetPos = new Pose2d(
         fieldCenterX,
         fieldCenterY,
-        EmptyRotation
+        EmptyRotation2d
     );
     public static final Pose2d kDefaultZeroingPose = new Pose2d(
         0.5,
         fieldCenterY,
-        EmptyRotation
+        EmptyRotation2d
     );
 
     public static final Translation2d kTurretMountingOffset = new Translation2d(

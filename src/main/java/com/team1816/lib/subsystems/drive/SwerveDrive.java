@@ -114,7 +114,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         swerveOdometry =
             new SwerveDriveOdometry(
                 swerveKinematics,
-                Constants.EmptyRotation,
+                Constants.EmptyRotation2d,
                 actualModulePositions
             );
         System.out.println("Swerve is initialized");
@@ -177,10 +177,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      */
     public Rotation2d getTrajectoryHeadings() {
         if (headingsList == null) {
-            return Constants.EmptyRotation;
+            return Constants.EmptyRotation2d;
         } else if (trajectoryIndex > headingsList.size() - 1) {
             //System.out.println("heck the headings aren't long enough");
-            return Constants.EmptyRotation;
+            return Constants.EmptyRotation2d;
         }
         if (
             getTrajectoryTimestamp() >

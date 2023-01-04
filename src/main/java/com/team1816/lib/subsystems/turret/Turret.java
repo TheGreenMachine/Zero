@@ -343,7 +343,7 @@ public class Turret extends Subsystem implements PidProvider {
                     .transformBy(
                         new Transform2d(
                             Constants.kTurretMountingOffset,
-                            Constants.EmptyRotation
+                            Constants.EmptyRotation2d
                         )
                     )
                     .getTranslation(),
