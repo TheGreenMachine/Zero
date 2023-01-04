@@ -34,9 +34,9 @@ public class MotorUtil {
             return ((TalonFX) motor).getSupplyCurrent();
         } else if (motor instanceof TalonSRX) {
             return ((TalonSRX) motor).getSupplyCurrent();
-        } else if (motor instanceof CANSparkMax) {
-            return ((CANSparkMax) motor).getOutputCurrent();
-        }
+        } //else if (motor instanceof CANSparkMax) {
+//            return ((CANSparkMax) motor).getOutputCurrent();
+//        }
         return 0;
     }
 }
