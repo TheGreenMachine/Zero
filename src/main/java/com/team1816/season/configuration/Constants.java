@@ -44,7 +44,7 @@ public class Constants {
     public static final double kHeightFromCamToHub =
         kTargetHeight - kCameraMountingHeight; // inches
     public static final double kCameraMountingAngleY = 20; // degrees
-    public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters TODO: VERIFY VALUE
+    public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters
     public static final double fieldCenterY = 8.23 / 2.0;
     public static final double fieldCenterX = 16.46 / 2.0;
     public static final Pose2d fieldCenterPose = new Pose2d(
