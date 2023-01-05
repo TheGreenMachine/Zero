@@ -34,7 +34,7 @@ public class RobotState {
     /** Inertial characterization */
     public Pose3d fieldToCG = Constants.EmptyPose3d;
     public Rotation3d inertialOrientationState = Constants.EmptyRotation3d;
-    public Quaternion inertialReferenceOreintationState = Constants.EmptyQuaternion; // utilizes active multiplication
+    public Quaternion inertialReferenceOrientationState = Constants.EmptyQuaternion; // utilizes active multiplication
 
     /** Orchestrator states */
     public List<VisionPoint> visibleTargets = new ArrayList<>();
