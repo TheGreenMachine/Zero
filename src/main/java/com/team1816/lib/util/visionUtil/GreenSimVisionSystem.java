@@ -208,8 +208,16 @@ public class GreenSimVisionSystem {
                                 ),
                                 new Rotation3d()
                             ),
+                            new Transform3d(
+                                new Translation3d(
+                                    camToTargetTransform.getX(),
+                                    camToTargetTransform.getY(),
+                                    distVerticalMeters
+                                ),
+                                new Rotation3d()
+                            ),
                             0.25,
-                            List.of( // not doing target corners b/c not using them
+                            List.of( // not utilizing target corners
                                 new TargetCorner(0, 0),
                                 new TargetCorner(0, 0),
                                 new TargetCorner(0, 0),
