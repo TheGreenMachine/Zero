@@ -100,7 +100,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
         setOpenLoop(DriveSignal.NEUTRAL);
 
-        tankOdometry = new DifferentialDriveOdometry(getActualHeading());
+        tankOdometry =
+            new DifferentialDriveOdometry(
+                getActualHeading(),
+                leftActualDistance,
+                rightActualDistance
+            );
     }
 
     /**
@@ -217,7 +222,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      */
     @Override
     public void resetOdometry(Pose2d pose) {
-        tankOdometry.resetPosition(pose, getActualHeading());
+        tankOdometry.resetPosition(
+            getActualHeading(),
+            leftActualDistance,
+            rightActualDistance,
+            pose
+        );
         tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
     }

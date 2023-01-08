@@ -28,7 +28,7 @@ subsystems:
             wheelbaseLength: 25 #inches
             wheelDiameter: 6.32 #inches
             kTrackScrubFactor: 1.0
-            isDemoMode: 1
+            isDemoMode: 0
     turret:
         implemented: true
         talons:
@@ -54,38 +54,6 @@ subsystems:
             rpmEpsilonCheck: 60
             deltaXScalar: 150
             maxVelTicks100ms: 1
-    spindexer:
-        implemented: true
-        talons:
-            spindexer: 31
-        constants:
-            maxVelTicks100ms: 1
-            collectPow: 0.5
-            indexPow: -0.5
-            flushPow: -1
-            coastPow: 0.25
-            firePow: 0.85
-    collector:
-        implemented: true
-        sparkmaxes:
-            intake: 23 # maxVelTicks100ms 10617
-        invertMotor:
-            - intake
-        solenoids:
-            arm: -1 #2
-        pidConfig:
-            slot0:
-                kP: 0.0001 #tunned at 4000
-                kI: 0.0
-                kD: 0.006
-                kF: 0.0001
-                allowableError: 10
-        constants:
-            maxVelTicks100ms: 10000
-            isVelocity: 1
-            revving: 0 #.05
-            collecting: -.5 #-3600
-            flush: 0.5 #.35
 infrastructure:
     canivoreBusName: rio
     # power distribution

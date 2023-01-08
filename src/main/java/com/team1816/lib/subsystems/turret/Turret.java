@@ -343,7 +343,7 @@ public class Turret extends Subsystem implements PidProvider {
                     .transformBy(
                         new Transform2d(
                             Constants.kTurretMountingOffset,
-                            Constants.EmptyRotation
+                            Constants.EmptyRotation2d
                         )
                     )
                     .getTranslation(),
@@ -358,10 +358,6 @@ public class Turret extends Subsystem implements PidProvider {
     @Override
     public void writeToHardware() {
         switch (controlMode) {
-            case CAMERA_FOLLOWING:
-                autoHome();
-                positionControl(followingPos);
-                break;
             case FIELD_FOLLOWING:
                 trackGyro();
                 positionControl(followingPos);
@@ -397,9 +393,6 @@ public class Turret extends Subsystem implements PidProvider {
             case FIELD_FOLLOWING:
                 setControlMode(ControlMode.EJECT);
                 break;
-            case CAMERA_FOLLOWING:
-                setControlMode(ControlMode.TARGET_FOLLOWING);
-                break;
             case EJECT:
                 setControlMode(ControlMode.TARGET_FOLLOWING);
                 break;
@@ -431,17 +424,6 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     /**
-     * A variable feedback loop induced tracking offset for homing on a target based on the angle of the camera to the target.
-     * This is less effective than simply using TARGET_FOLLOWING.
-     * @return int offset
-     * @see Turret#targetFollowingOffset()
-     */
-    private int cameraFollowingOffset() {
-        var delta = -camera.getDeltaX();
-        return ((int) (delta * kDeltaXScalar));
-    }
-
-    /**
      * An offset that accounts for tracking a target based on its pose
      * @return int offset
      */
@@ -469,20 +451,6 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     /** actions for modes */
-
-    /**
-     * Sets the desired position of the turret based on a feedback loop demand basis with the Camera
-     * @see Turret#cameraFollowingOffset()
-     */
-    @Deprecated
-    private void autoHome() {
-        var cameraOffset = cameraFollowingOffset();
-        int adj = followingPos + cameraOffset;
-        if (adj != followingPos) {
-            followingPos = adj;
-            outputsChanged = true;
-        }
-    }
 
     /**
      * Sets the desired position of the turret for constant gyroscopic tracking of a direction
@@ -630,7 +598,6 @@ public class Turret extends Subsystem implements PidProvider {
 
     /** Control Modes */
     public enum ControlMode {
-        CAMERA_FOLLOWING,
         FIELD_FOLLOWING,
         TARGET_FOLLOWING,
         ABSOLUTE_FOLLOWING,

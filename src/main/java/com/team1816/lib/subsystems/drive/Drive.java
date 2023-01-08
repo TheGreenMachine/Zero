@@ -55,7 +55,7 @@ public abstract class Drive
 
     /** Localized state */
     protected ControlState controlState = ControlState.OPEN_LOOP;
-    protected Rotation2d actualHeading = Constants.EmptyRotation;
+    protected Rotation2d actualHeading = Constants.EmptyRotation2d;
     protected Rotation2d desiredHeading = new Rotation2d(); // only updated in trajectory following
     protected Pose2d desiredPose = new Pose2d(); // only updated in trajectory following
     protected ChassisSpeeds chassisSpeed = new ChassisSpeeds();

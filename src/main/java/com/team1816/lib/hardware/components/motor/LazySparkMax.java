@@ -326,7 +326,7 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public ErrorCode config_kF(int slotIdx, double value, int timeoutMs) {
-        pidController.setFF(value, slotIdx); // is FF the same as F? This may be wrong!
+        pidController.setFF(value, slotIdx); // Feedforward gain
         return ErrorCode.OK;
     }
 

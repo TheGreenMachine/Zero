@@ -196,11 +196,11 @@ public class GreenSimPhotonCamera extends GreenPhotonCamera {
             //            "; yaw= " +
             //            (int) t.getYaw() + // If yaw seems weird that's because it's an int
             "; X: " +
-            roundAvoid(t.getCameraToTarget().getX(), 3) +
+            roundAvoid(t.getBestCameraToTarget().getX(), 3) +
             "; Y: " +
-            roundAvoid(t.getCameraToTarget().getY(), 3) +
+            roundAvoid(t.getBestCameraToTarget().getY(), 3) +
             "; Z: " +
-            roundAvoid(t.getCameraToTarget().getZ(), 3)
+            roundAvoid(t.getBestCameraToTarget().getZ(), 3)
         );
     }
 

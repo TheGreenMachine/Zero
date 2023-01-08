@@ -78,11 +78,12 @@ public class ColorSensorV3 implements IColorSensor {
 
         m_simDevice = SimDevice.create("REV Color Sensor V3", port.value, kAddress);
         if (m_simDevice != null) {
-            m_simR = m_simDevice.createDouble("Red", false, 0.0);
-            m_simG = m_simDevice.createDouble("Green", false, 0.0);
-            m_simB = m_simDevice.createDouble("Blue", false, 0.0);
-            m_simIR = m_simDevice.createDouble("IR", false, 0.0);
-            m_simProx = m_simDevice.createDouble("Proximity", false, 0.0);
+            m_simR = m_simDevice.createDouble("Red", SimDevice.Direction.kInput, 0.0);
+            m_simG = m_simDevice.createDouble("Green", SimDevice.Direction.kInput, 0.0);
+            m_simB = m_simDevice.createDouble("Blue", SimDevice.Direction.kInput, 0.0);
+            m_simIR = m_simDevice.createDouble("IR", SimDevice.Direction.kInput, 0.0);
+            m_simProx =
+                m_simDevice.createDouble("Proximity", SimDevice.Direction.kInput, 0.0);
             return;
         }
 
@@ -102,11 +103,12 @@ public class ColorSensorV3 implements IColorSensor {
 
         m_simDevice = SimDevice.create("REV Color Sensor V3", m_i2c.getPort(), kAddress);
         if (m_simDevice != null) {
-            m_simR = m_simDevice.createDouble("Red", false, 0.0);
-            m_simG = m_simDevice.createDouble("Green", false, 0.0);
-            m_simB = m_simDevice.createDouble("Blue", false, 0.0);
-            m_simIR = m_simDevice.createDouble("IR", false, 0.0);
-            m_simProx = m_simDevice.createDouble("Proximity", false, 0.0);
+            m_simR = m_simDevice.createDouble("Red", SimDevice.Direction.kInput, 0.0);
+            m_simG = m_simDevice.createDouble("Green", SimDevice.Direction.kInput, 0.0);
+            m_simB = m_simDevice.createDouble("Blue", SimDevice.Direction.kInput, 0.0);
+            m_simIR = m_simDevice.createDouble("IR", SimDevice.Direction.kInput, 0.0);
+            m_simProx =
+                m_simDevice.createDouble("Proximity", SimDevice.Direction.kInput, 0.0);
             return;
         }
 

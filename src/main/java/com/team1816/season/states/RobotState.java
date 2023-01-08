@@ -22,14 +22,19 @@ public class RobotState {
 
     /** Odometry and field characterization */
     public final Field2d field = new Field2d();
-    public Pose2d fieldToVehicle = Constants.EmptyPose;
-    public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose;
-    public Rotation2d vehicleToTurret = Constants.EmptyRotation;
-    public Pose2d fieldToTurret = Constants.EmptyPose;
+    public Pose2d fieldToVehicle = Constants.EmptyPose2d;
+    public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose2d;
+    public Rotation2d vehicleToTurret = Constants.EmptyRotation2d;
+    public Pose2d fieldToTurret = Constants.EmptyPose2d;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds(); // velocities of vehicle
     public ChassisSpeeds calculatedVehicleAccel = new ChassisSpeeds(); // accel values calculated by watching drivetrain encoders
     public Double[] triAxialAcceleration = new Double[] { 0d, 0d, 0d };
     public boolean isPoseUpdated = true;
+
+    /** Inertial characterization */
+    public Pose3d fieldToCG = Constants.EmptyPose3d;
+    public Rotation3d inertialOrientationState = Constants.EmptyRotation3d;
+    public Quaternion inertialReferenceOrientationState = Constants.EmptyQuaternion; // utilizes active multiplication
 
     /** Orchestrator states */
     public List<VisionPoint> visibleTargets = new ArrayList<>();
@@ -121,7 +126,7 @@ public class RobotState {
                 .transformBy(
                     new Transform2d(
                         Constants.kTurretMountingOffset,
-                        Constants.EmptyRotation
+                        Constants.EmptyRotation2d
                     )
                 )
                 .getTranslation(),
