@@ -222,6 +222,12 @@ public class GreenSimVisionSystem {
                                 new TargetCorner(0, 0),
                                 new TargetCorner(0, 0),
                                 new TargetCorner(0, 0)
+                            ),
+                            List.of(
+                                new TargetCorner(0, 0),
+                                new TargetCorner(0, 0),
+                                new TargetCorner(0, 0),
+                                new TargetCorner(0, 0)
                             )
                         )
                     );
