@@ -8,8 +8,8 @@ plugins {
     id "com.diffplug.spotless" version "5.8.2"
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 def ROBOT_MAIN_CLASS = "com.team1816.season.Main"
 
@@ -119,6 +119,8 @@ jsonSchema2Pojo {
 
 spotless {
     java {
+        googleJavaFormat('1.15.0')
+
         target 'src/*/java/com/team1816/**/*.java'
         importOrder()
         removeUnusedImports()
