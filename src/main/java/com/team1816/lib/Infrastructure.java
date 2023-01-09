@@ -93,6 +93,24 @@ public class Infrastructure {
     }
 
     /**
+     * Returns the gyroscopic pitch of the pigeon
+     * @return pitch
+     * @see IPigeonIMU#getPitch()
+     */
+    public double getPitch() {
+        return pigeon.getPitch();
+    }
+
+    /**
+     * Returns the gyroscopic roll of the pigeon
+     * @return roll
+     * @see IPigeonIMU#getRoll()
+     */
+    public double getRoll() {
+        return pigeon.getRoll();
+    }
+
+    /**
      * Updates accelerometer readings from the pigeon on a timed loop basis
      * @see IPigeonIMU#getAcceleration()
      */

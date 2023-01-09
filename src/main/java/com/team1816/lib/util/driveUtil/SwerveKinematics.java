@@ -4,9 +4,11 @@ import static com.team1816.lib.subsystems.drive.SwerveDrive.*;
 
 import com.team1816.lib.Injector;
 import com.team1816.lib.subsystems.drive.Drive;
+import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.List;
  * https://www.chiefdelphi.com/t/paper-4-wheel-independent-drive-independent-steering-swerve/107383
  */
 
-public class SwerveKinematics {
+public class SwerveKinematics implements DriveKinematics{
 
     /** State */
     private static Translation2d[] moduleRelativePositions = kModulePositions;
@@ -137,6 +139,12 @@ public class SwerveKinematics {
                 )
             )
         );
+    }
+
+    public SwerveDriveSignal inverseKinematics(
+        ChassisSpeeds chassisSpeeds
+    ) {
+        return inverseKinematics(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond, chassisSpeeds.omegaRadiansPerSecond, true, true);
     }
 
     public static SwerveDriveSignal inverseKinematics(

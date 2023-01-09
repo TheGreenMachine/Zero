@@ -459,4 +459,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 .swerveModules.drivePID.getOrDefault("slot0", defaultPIDConfig)
             : defaultPIDConfig;
     }
+
+    /**
+     * Returns the associated kinematics of the drivetrain
+     * @return swerveKinematics
+     */
+    public SwerveDriveKinematics getKinematics() {
+        return swerveKinematics;
+    }
 }
