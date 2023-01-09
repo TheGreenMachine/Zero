@@ -26,6 +26,8 @@ public class SwerveModule implements ISwerveModule {
     public final CANCoder canCoder;
 
     /** State */
+    public SwerveModuleState moduleState;
+    public SwerveModulePosition modulePosition;
     public double driveDemand;
     public double driveActual;
     public double drivePosition;
@@ -99,6 +101,9 @@ public class SwerveModule implements ISwerveModule {
         allowableError = 5; // TODO this is a dummy value for checkSystem
         drivePosition = 0;
 
+        moduleState = new SwerveModuleState();
+        modulePosition = new SwerveModulePosition();
+
         /* Angle Encoder Config */
         this.canCoder = canCoder;
     }
@@ -142,7 +147,14 @@ public class SwerveModule implements ISwerveModule {
                 azimuthMotor.getSelectedSensorPosition(0) -
                 mModuleConfig.azimuthEncoderHomeOffset
             );
+
+        moduleState.speedMetersPerSecond = driveActual;
+        moduleState.angle = Rotation2d.fromDegrees(azimuthActual);
+
         drivePosition += driveActual * Constants.kLooperDt;
+        modulePosition.distanceMeters = drivePosition;
+        modulePosition.angle = Rotation2d.fromDegrees(azimuthActual);
+
         motorTemp = driveMotor.getTemperature(); // Celsius
     }
 
@@ -152,7 +164,7 @@ public class SwerveModule implements ISwerveModule {
      * @see SwerveModuleState
      */
     public SwerveModuleState getActualState() {
-        return new SwerveModuleState(driveActual, Rotation2d.fromDegrees(azimuthActual));
+        return moduleState;
     }
 
     /**
@@ -161,10 +173,7 @@ public class SwerveModule implements ISwerveModule {
      * @see SwerveModulePosition
      */
     public SwerveModulePosition getActualPosition() {
-        return new SwerveModulePosition(
-            drivePosition,
-            Rotation2d.fromDegrees(azimuthActual)
-        );
+        return modulePosition;
     }
 
     /**
