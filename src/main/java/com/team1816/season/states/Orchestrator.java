@@ -33,6 +33,8 @@ public class Orchestrator {
     private static Turret turret;
     private static LedManager ledManager;
 
+    private static Camera camera;
+
     /** State */
     private STATE superstructureState;
     private final double maxAllowablePoseError = factory.getConstant(
@@ -46,13 +48,15 @@ public class Orchestrator {
 
     /**
      * Instantiates an Orchestrator with all its subsystems
+     * @param cam Camera
      * @param df Drive.Factory (derives drivetrain)
      * @param tur Turret
      * @param led LedManager
      */
     @Inject
-    public Orchestrator(Drive.Factory df, Turret tur, LedManager led) {
+    public Orchestrator(Camera cam, Drive.Factory df, Turret tur, LedManager led) {
         drive = df.getInstance();
+        camera = cam;
         turret = tur;
         ledManager = led;
         superstructureState = STATE.FAT_BOY;
@@ -77,16 +81,16 @@ public class Orchestrator {
             (
                 Math.abs(
                     robotState.getCalculatedAccel().vxMetersPerSecond -
-                    robotState.triAxialAcceleration[0]
+                        robotState.triAxialAcceleration[0]
                 ) >
-                Constants.kMaxAccelDiffThreshold ||
-                Math.abs(
-                    robotState.getCalculatedAccel().vyMetersPerSecond -
-                    robotState.triAxialAcceleration[1]
-                ) >
-                Constants.kMaxAccelDiffThreshold ||
-                Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
-                Constants.kMaxAccelDiffThreshold
+                    Constants.kMaxAccelDiffThreshold ||
+                    Math.abs(
+                        robotState.getCalculatedAccel().vyMetersPerSecond -
+                            robotState.triAxialAcceleration[1]
+                    ) >
+                        Constants.kMaxAccelDiffThreshold ||
+                    Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
+                        Constants.kMaxAccelDiffThreshold
             );
         if (needsVisionUpdate) {
             robotState.isPoseUpdated = false;
@@ -111,20 +115,20 @@ public class Orchestrator {
             double x, y;
             x =
                 Units.inchesToMeters(Constants.kTargetRadius) *
-                target.getX() /
-                (
-                    Math.sqrt(
-                        target.getX() * target.getX() + target.getY() * target.getY()
-                    )
-                );
+                    target.getX() /
+                    (
+                        Math.sqrt(
+                            target.getX() * target.getX() + target.getY() * target.getY()
+                        )
+                    );
             y =
                 Units.inchesToMeters(Constants.kTargetRadius) *
-                target.getY() /
-                (
-                    Math.sqrt(
-                        target.getX() * target.getX() + target.getY() * target.getY()
-                    )
-                );
+                    target.getY() /
+                    (
+                        Math.sqrt(
+                            target.getX() * target.getX() + target.getY() * target.getY()
+                        )
+                    );
             X += x;
             Y += y;
         }
@@ -175,14 +179,14 @@ public class Orchestrator {
                     robotState.fieldToVehicle.getY() - newRobotPose.getY()
                 )
             ) <
-            maxAllowablePoseError &&
-            Math.abs(
-                Math.hypot(
-                    robotState.fieldToVehicle.getX() - newRobotPose.getX(),
-                    robotState.fieldToVehicle.getY() - newRobotPose.getY()
-                )
-            ) >
-            minAllowablePoseError
+                maxAllowablePoseError &&
+                Math.abs(
+                    Math.hypot(
+                        robotState.fieldToVehicle.getX() - newRobotPose.getX(),
+                        robotState.fieldToVehicle.getY() - newRobotPose.getY()
+                    )
+                ) >
+                    minAllowablePoseError
         ) {
             System.out.println(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);
