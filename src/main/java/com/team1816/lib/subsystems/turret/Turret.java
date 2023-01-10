@@ -11,7 +11,6 @@ import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.subsystems.Camera;
 import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -47,8 +46,6 @@ public class Turret extends Subsystem implements PidProvider {
     /** Components */
     private final IGreenMotor turretMotor;
 
-    private static Camera camera;
-
     private static LedManager led;
 
     /** State */
@@ -67,20 +64,17 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Instantiates a turret with a camera (only used for feedback loop based automatic homing) and standard subsystem components
-     * @param camera Camera
      * @param ledManager LEDManager
      * @param inf Infrastructure
      * @param rs RobotState
      */
     @Inject
     public Turret(
-        Camera camera,
         LedManager ledManager,
         Infrastructure inf,
         RobotState rs
     ) {
         super(NAME, inf, rs);
-        this.camera = camera;
         led = ledManager;
         turretMotor = factory.getMotor(NAME, "turretMotor");
         kDeltaXScalar = factory.getConstant(NAME, "deltaXScalar", 1);
