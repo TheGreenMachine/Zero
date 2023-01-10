@@ -1,4 +1,4 @@
-package com.team1816.examples;
+package com.team1816.example;
 
 import com.team1816.lib.auto.paths.AutoPath;
 import edu.wpi.first.math.geometry.Pose2d;

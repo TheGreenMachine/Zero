@@ -1,9 +1,8 @@
-package com.team1816.examples;
+package com.team1816.example;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.modes.AutoMode;
-import com.team1816.season.auto.paths.LivingRoomPath;
 
 import java.util.List;
 
