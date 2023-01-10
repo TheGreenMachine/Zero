@@ -11,12 +11,12 @@ import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.subsystems.*;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import org.photonvision.PhotonUtils;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,27 +111,6 @@ public class Orchestrator {
             new Rotation2d()
         );
         double X = target.getX(), Y = target.getY();
-        if (target.id == -1) { // adding hub radius target offset - this is for retro-reflective tape only
-            double x, y;
-            x =
-                Units.inchesToMeters(Constants.kTargetRadius) *
-                    target.getX() /
-                    (
-                        Math.sqrt(
-                            target.getX() * target.getX() + target.getY() * target.getY()
-                        )
-                    );
-            y =
-                Units.inchesToMeters(Constants.kTargetRadius) *
-                    target.getY() /
-                    (
-                        Math.sqrt(
-                            target.getX() * target.getX() + target.getY() * target.getY()
-                        )
-                    );
-            X += x;
-            Y += y;
-        }
         Pose2d p = targetPos.plus(
             new Transform2d(
                 new Translation2d(X, Y),
@@ -140,6 +119,24 @@ public class Orchestrator {
         ); // inverse axis angle
         return p;
     }
+
+    /**
+     * Calculates the absolute pose of the drivetrain based on a single target using PhotonVision's library
+     * @param target VisionPoint
+     * @return Pose2d
+     * @see org.photonvision.targeting.PhotonTrackedTarget
+     */
+    public Pose2d photonCalculateSingleTargetTranslation(PhotonTrackedTarget target) {
+        Pose2d targetPos = new Pose2d(
+            FieldConfig.fieldTargets.get(target.getFiducialId()).getX(),
+            FieldConfig.fieldTargets.get(target.getFiducialId()).getY(),
+            new Rotation2d()
+        );
+        Translation2d targetTranslation = target.getBestCameraToTarget().getTranslation().toTranslation2d();
+        Transform2d targetTransform = new Transform2d(targetTranslation, robotState.getLatestFieldToCamera());
+        return PhotonUtils.estimateFieldToCamera(targetTransform, targetPos);
+    }
+
 
     /**
      * Calculates the absolute pose of the drivetrain as a function of all visible targets

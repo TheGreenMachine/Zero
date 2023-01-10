@@ -13,7 +13,6 @@ import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
-import com.team1816.lib.subsystems.turret.Turret;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
@@ -48,8 +47,8 @@ public class Robot extends TimedRobot {
 
     /** Subsystems */
     private final Drive drive;
-    private final Turret turret;
-    private final Cooler cooler;
+
+    private final Camera camera;
     private final LedManager ledManager;
 
     /** Factory */
@@ -62,8 +61,6 @@ public class Robot extends TimedRobot {
     private double loopStart;
 
     /** Properties */
-    private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.ABSOLUTE_FOLLOWING;
     private boolean faulted;
 
     /**
@@ -76,8 +73,7 @@ public class Robot extends TimedRobot {
         enabledLoop = new Looper(this);
         disabledLoop = new Looper(this);
         drive = (Injector.get(Drive.Factory.class)).getInstance();
-        turret = Injector.get(Turret.class);
-        cooler = Injector.get(Cooler.class);
+        camera = Injector.get(Camera.class);
         ledManager = Injector.get(LedManager.class);
         robotState = Injector.get(RobotState.class);
         orchestrator = Injector.get(Orchestrator.class);
@@ -123,7 +119,7 @@ public class Robot extends TimedRobot {
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            subsystemManager.setSubsystems(drive, turret, ledManager, cooler);
+            subsystemManager.setSubsystems(drive, camera, ledManager);
 
             /** Register BadLogs */
             if (Constants.kIsBadlogEnabled) {
@@ -173,22 +169,6 @@ public class Robot extends TimedRobot {
                 );
                 BadLog.createValue("Drivetrain PID", drive.pidToString());
                 DrivetrainLogger.init(drive);
-                BadLog.createValue("Turret PID", turret.pidToString());
-                BadLog.createTopic(
-                    "Turret/ActPos",
-                    "NativeUnits",
-                    turret::getActualPosTicks,
-                    "hide",
-                    "join:Turret/Positions"
-                );
-                BadLog.createTopic(
-                    "Turret/TargetPos",
-                    "NativeUnits",
-                    turret::getDesiredPosTicks,
-                    "hide",
-                    "join:Turret/Positions"
-                );
-                BadLog.createTopic("Turret/ErrorPos", "NativeUnits", turret::getPosError);
                 BadLog.createTopic(
                     "PDP/Current",
                     "Amps",
@@ -210,6 +190,22 @@ public class Robot extends TimedRobot {
                     "G",
                     infrastructure::getZAcceleration
                 );
+
+                BadLog.createTopic(
+                    "Pigeon/Yaw",
+                    "degrees",
+                    infrastructure::getYaw
+                );
+                BadLog.createTopic(
+                    "Pigeon/Pitch",
+                    "degrees",
+                    infrastructure::getPitch
+                );
+                BadLog.createTopic(
+                    "Pigeon/Roll",
+                    "degrees",
+                    infrastructure::getRoll
+                );
                 logger.finishInitialization();
             }
             subsystemManager.registerEnabledLoops(enabledLoop);
@@ -226,8 +222,6 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("zeroPose"),
                         () -> {
-                            turret.setTurretAngle(Turret.kSouth);
-                            turret.setControlMode(Turret.ControlMode.ABSOLUTE_FOLLOWING);
                             drive.zeroSensors(Constants.kDefaultZeroingPose);
                         }
                     ),
@@ -238,36 +232,8 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
-                    ),
-                    // Operator Gamepad
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("turretJogLeft"),
-                        moving -> {
-                            turret.setTurretVelocity(moving ? Turret.kJogSpeed : 0);
-                            ledManager.indicateStatus(
-                                LedManager.RobotStatus.MANUAL_TURRET
-                            );
-                        }
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("turretJogRight"),
-                        moving -> {
-                            turret.setTurretVelocity(moving ? -Turret.kJogSpeed : 0);
-                            ledManager.indicateStatus(
-                                LedManager.RobotStatus.MANUAL_TURRET
-                            );
-                        }
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("toggleTurretMode"),
-                        toggle -> {
-                            if (toggle) {
-                                turret.setControlMode(
-                                    Turret.ControlMode.ABSOLUTE_FOLLOWING
-                                );
-                            }
-                        }
                     )
+                    // Operator Gamepad
                 );
         } catch (Throwable t) {
             faulted = true;
@@ -294,7 +260,6 @@ public class Robot extends TimedRobot {
             subsystemManager.stop();
 
             robotState.resetAllStates();
-            cooler.zeroSensors();
             drive.zeroSensors();
 
             disabledLoop.start();
@@ -313,7 +278,6 @@ public class Robot extends TimedRobot {
         ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
 
         drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
-        turret.zeroSensors();
 
         drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
         autoModeManager.startAuto();
@@ -329,11 +293,6 @@ public class Robot extends TimedRobot {
         try {
             disabledLoop.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.ENABLED);
-
-            turret.zeroSensors();
-
-            turret.setTurretAngle(Turret.kSouth);
-            turret.setControlMode(defaultTurretControlMode);
 
             infrastructure.startCompressor();
 
@@ -360,7 +319,6 @@ public class Robot extends TimedRobot {
 
             enabledLoop.stop();
             disabledLoop.start();
-            turret.zeroSensors();
             drive.zeroSensors();
 
             ledManager.blinkStatus(LedManager.RobotStatus.DISABLED);
@@ -471,25 +429,10 @@ public class Robot extends TimedRobot {
     }
 
     /**
-     * Sets manual inputs for subsystems like the turret and drivetrain when criteria met
+     * Sets manual inputs for subsystems like the drivetrain when criteria met
      */
     public void manualControl() {
         actionManager.update();
-
-        if (
-            Math.abs(controlBoard.getAsDouble("manualTurretXVal")) > 0.90 ||
-            Math.abs(controlBoard.getAsDouble("manualTurretYVal")) > 0.90
-        ) {
-            turret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
-            turret.setFollowingAngle(
-                (
-                    new Rotation2d(
-                        (-1) * controlBoard.getAsDouble("manualTurretYVal"),
-                        (-1) * controlBoard.getAsDouble("manualTurretXVal")
-                    )
-                ).getDegrees()
-            );
-        }
 
         drive.setTeleopInputs(
             -controlBoard.getAsDouble("throttle"),
