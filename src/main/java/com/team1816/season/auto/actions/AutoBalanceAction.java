@@ -13,6 +13,10 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
+/**
+ * Action for infrastructure based / gyroscopic balancing
+ * @see AutoAction
+ */
 public class AutoBalanceAction implements AutoAction {
     private static Drive drive;
     private static Infrastructure infrastructure;

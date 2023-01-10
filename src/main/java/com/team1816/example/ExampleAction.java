@@ -1,6 +1,5 @@
-package com.team1816.examples;
+package com.team1816.example;
 
-import com.google.inject.Inject;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.AutoAction;
 

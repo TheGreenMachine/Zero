@@ -38,7 +38,6 @@ public class RobotState {
 
     /** Orchestrator states */
     public List<VisionPoint> visibleTargets = new ArrayList<>();
-    public Cooler.STATE coolState = Cooler.STATE.WAIT;
     public double drivetrainTemp = 0;
 
     /**
@@ -87,7 +86,6 @@ public class RobotState {
         triAxialAcceleration = new Double[] { 0d, 0d, 0d };
         isPoseUpdated = true;
         visibleTargets.clear();
-        coolState = Cooler.STATE.WAIT;
         drivetrainTemp = 0;
     }
 
