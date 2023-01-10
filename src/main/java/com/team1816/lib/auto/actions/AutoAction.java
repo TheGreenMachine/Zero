@@ -5,7 +5,7 @@ package com.team1816.lib.auto.actions;
  * method runAction in AutoModeBase (or more commonly in autonomous modes that extend AutoModeBase)
  *
  */
-public interface Action {
+public interface AutoAction {
     /**
      * Run code once when the action is started, for setup
      */
@@ -18,7 +18,7 @@ public interface Action {
     void update();
 
     /**
-     * Returns whether or not the code has finished execution. When implementing this interface, this method is used by
+     * Returns whether the code has finished execution. When implementing this interface, this method is used by
      * the runAction method every cycle to know when to stop running the action
      *
      * @return boolean

@@ -2,13 +2,13 @@ package com.team1816.lib.auto.actions;
 
 /**
  * Template action for something that only needs to be done once and has no need for updates.
- * @see Action
+ * @see AutoAction
  */
-public abstract class RunOnceAction implements Action {
+public abstract class RunOnceAction implements AutoAction {
 
     /**
      * Single start call, conducts the action
-     * @see Action#start()
+     * @see AutoAction#start()
      */
     @Override
     public void start() {
@@ -24,7 +24,7 @@ public abstract class RunOnceAction implements Action {
     /**
      * Determines weather or not the action is finished
      * @return true if action start has been called
-     * @see Action#isFinished()
+     * @see AutoAction#isFinished()
      */
     @Override
     public boolean isFinished() {
@@ -33,7 +33,7 @@ public abstract class RunOnceAction implements Action {
 
     /**
      * Standard verification cleanup the action
-     * @see Action#done()
+     * @see AutoAction#done()
      */
     @Override
     public void done() {}

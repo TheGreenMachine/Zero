@@ -314,7 +314,7 @@ public class RobotFactory {
     }
 
     public ICompressor getCompressor() {
-        if (isPcmEnabled()) {
+        if (isPcmEnabled() && config.infrastructure.compressorEnabled) {
             PneumaticsModuleType pcmType = config.infrastructure.pcmIsRev
                 ? PneumaticsModuleType.REVPH
                 : PneumaticsModuleType.CTREPCM;

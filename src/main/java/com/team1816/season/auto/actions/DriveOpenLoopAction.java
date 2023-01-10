@@ -1,11 +1,11 @@
 package com.team1816.season.auto.actions;
 
 import com.team1816.lib.Injector;
-import com.team1816.lib.auto.actions.Action;
+import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.drive.Drive;
 
-public class DriveOpenLoopAction implements Action {
+public class DriveOpenLoopAction implements AutoAction {
 
     private static Drive drive;
 

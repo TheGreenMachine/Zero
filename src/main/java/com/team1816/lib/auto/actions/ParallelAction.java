@@ -9,18 +9,18 @@ import java.util.List;
  * It runs all sub-actions at the same time.
  * All actions are started and updated until all actions are rendered as completed.
  * Can be used as a member of {@link SeriesAction}
- * @see Action
+ * @see AutoAction
  */
-public class ParallelAction implements Action {
+public class ParallelAction implements AutoAction {
 
     /** State: List of Actions to be completed in parallel */
-    private final ArrayList<Action> mActions;
+    private final ArrayList<AutoAction> mActions;
 
     /**
      * Instantiates a parallel action based on the list of actions to be completed simultaneously
      * @param actions
      */
-    public ParallelAction(List<Action> actions) {
+    public ParallelAction(List<AutoAction> actions) {
         mActions = new ArrayList<>(actions);
     }
 
@@ -28,36 +28,36 @@ public class ParallelAction implements Action {
      * Alternative constructor that takes actions in a different format
      * @param actions
      */
-    public ParallelAction(Action... actions) {
+    public ParallelAction(AutoAction... actions) {
         this(Arrays.asList(actions));
     }
 
     /**
      * Starts all actions in mActions in an iterative manner
-     * @see Action#start()
+     * @see AutoAction#start()
      */
     @Override
     public void start() {
-        mActions.forEach(Action::start);
+        mActions.forEach(AutoAction::start);
     }
 
     /**
      * Updates all actions in mActions in an iterative manner, which allows for parallel execution
-     * @see Action#update()
+     * @see AutoAction#update()
      */
     @Override
     public void update() {
-        mActions.forEach(Action::update);
+        mActions.forEach(AutoAction::update);
     }
 
     /**
      * Returns true if all actions in mActions are finished, otherwise continues
      * @return boolean isFinished
-     * @see Action#isFinished()
+     * @see AutoAction#isFinished()
      */
     @Override
     public boolean isFinished() {
-        for (Action action : mActions) {
+        for (AutoAction action : mActions) {
             if (!action.isFinished()) {
                 return false;
             }
@@ -67,10 +67,10 @@ public class ParallelAction implements Action {
 
     /**
      * Standard verification cleanup for all actions in mActions
-     * @see Action#done()
+     * @see AutoAction#done()
      */
     @Override
     public void done() {
-        mActions.forEach(Action::done);
+        mActions.forEach(AutoAction::done);
     }
 }

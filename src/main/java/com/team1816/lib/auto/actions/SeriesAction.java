@@ -8,21 +8,21 @@ import java.util.List;
  * The SeriesAction class executes a set of actions in a series.
  * Each action is started updated after the previous action is complete.
  * Can be used as a member of {@link ParallelAction}
- * @see Action
+ * @see AutoAction
  */
 
-public class SeriesAction implements Action {
+public class SeriesAction implements AutoAction {
 
     /** State: Temporary state variable for the current action */
-    private Action mCurrentAction;
+    private AutoAction mCurrentAction;
     /** State: Queue of remaining actions yet to be completed */
-    private final ArrayList<Action> mRemainingActions;
+    private final ArrayList<AutoAction> mRemainingActions;
 
     /**
      * Instantiates a series action based on the list of actions to be completed sequentially
      * @param actions
      */
-    public SeriesAction(List<Action> actions) {
+    public SeriesAction(List<AutoAction> actions) {
         mRemainingActions = new ArrayList<>(actions);
         mCurrentAction = null;
     }
@@ -31,13 +31,13 @@ public class SeriesAction implements Action {
      * Alternative constructor that takes actions in a different format
      * @param actions
      */
-    public SeriesAction(Action... actions) {
+    public SeriesAction(AutoAction... actions) {
         this(Arrays.asList(actions));
     }
 
     /**
      * Starts the sequence of actions that consist of the series action
-     * @see Action#start()
+     * @see AutoAction#start()
      */
     @Override
     public void start() {}
@@ -47,7 +47,7 @@ public class SeriesAction implements Action {
      * If the current action is null / empty, a new action is assigned from the queue of remaining actions.
      * If the queue of remaining actions is empty, nothing happens, the action is complete.
      * Otherwise, iterates through the current action
-     * @see Action#update()
+     * @see AutoAction#update()
      */
     @Override
     public void update() {
@@ -71,7 +71,7 @@ public class SeriesAction implements Action {
     /**
      * Returns whether or not the series action is complete based on if the remaining actions are empty and so is the current action
      * @return boolean isFinished
-     * @see Action#isFinished()
+     * @see AutoAction#isFinished()
      */
     @Override
     public boolean isFinished() {
@@ -80,7 +80,7 @@ public class SeriesAction implements Action {
 
     /**
      * Standard verification cleanup for the series action
-     * @see Action#done()
+     * @see AutoAction#done()
      */
     @Override
     public void done() {}

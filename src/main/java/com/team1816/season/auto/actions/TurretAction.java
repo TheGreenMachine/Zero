@@ -1,10 +1,10 @@
 package com.team1816.season.auto.actions;
 
 import com.team1816.lib.Injector;
-import com.team1816.lib.auto.actions.Action;
+import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.lib.subsystems.turret.Turret;
 
-public class TurretAction implements Action {
+public class TurretAction implements AutoAction {
 
     private static Turret turret;
 

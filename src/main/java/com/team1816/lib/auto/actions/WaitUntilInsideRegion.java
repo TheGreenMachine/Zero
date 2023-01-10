@@ -10,9 +10,9 @@ import edu.wpi.first.math.util.Units;
  * Action that stops processes / waits inside a region.
  * Dependents: RobotState
  * @see RobotState
- * @see Action
+ * @see AutoAction
  */
-public class WaitUntilInsideRegion implements Action {
+public class WaitUntilInsideRegion implements AutoAction {
 
     /**
      * State: RobotState
@@ -52,14 +52,14 @@ public class WaitUntilInsideRegion implements Action {
 
     /**
      * Starts the action (empty)
-     * @see Action#start()
+     * @see AutoAction#start()
      */
     @Override
     public void start() {}
 
     /**
      * Updates the action (empty)
-     * @see Action#update()
+     * @see AutoAction#update()
      */
     @Override
     public void update() {}
@@ -67,7 +67,7 @@ public class WaitUntilInsideRegion implements Action {
     /**
      * Checks if position criteria is met based on robotState
      * @return boolean isFinished
-     * @see Action#isFinished()
+     * @see AutoAction#isFinished()
      */
     @Override
     public boolean isFinished() {
@@ -84,7 +84,7 @@ public class WaitUntilInsideRegion implements Action {
 
     /**
      * Standard cleanup procedure: prints out action
-     * @see Action#done()
+     * @see AutoAction#done()
      */
     @Override
     public void done() {

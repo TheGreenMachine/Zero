@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
  * Action to wait for a given amount of time To use this Action, call runAction(new WaitAction(your_time))
  * @see WaitAction
  */
-public class WaitAction implements Action {
+public class WaitAction implements AutoAction {
 
     /**
      * State: duration of action
@@ -27,7 +27,7 @@ public class WaitAction implements Action {
 
     /**
      * Records start time and begins the action
-     * @see Action#start()
+     * @see AutoAction#start()
      */
     @Override
     public void start() {
@@ -36,7 +36,7 @@ public class WaitAction implements Action {
 
     /**
      * Nonexistant
-     * @see Action#update()
+     * @see AutoAction#update()
      */
     @Override
     public void update() {}
@@ -44,7 +44,7 @@ public class WaitAction implements Action {
     /**
      * Checks if the duration to wait has passed
      * @return isFinished
-     * @see Action#isFinished()
+     * @see AutoAction#isFinished()
      */
     @Override
     public boolean isFinished() {
@@ -53,7 +53,7 @@ public class WaitAction implements Action {
 
     /**
      * Standard verification cleanup for the series action
-     * @see Action#done()
+     * @see AutoAction#done()
      */
     @Override
     public void done() {}
