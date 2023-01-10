@@ -2,7 +2,7 @@ package com.team1816.season.auto.actions;
 
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
-import com.team1816.lib.auto.actions.Action;
+import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.drive.TankDrive;
@@ -13,7 +13,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
-public class AutoBalanceAction implements Action {
+public class AutoBalanceAction implements AutoAction {
     private static Drive drive;
     private static Infrastructure infrastructure;
     private static SwerveDriveKinematics swerveKinematics;
