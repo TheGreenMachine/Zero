@@ -30,7 +30,6 @@ public class Orchestrator {
 
     /** Subsystems */
     private static Drive drive;
-    private static Turret turret;
     private static LedManager ledManager;
 
     private static Camera camera;

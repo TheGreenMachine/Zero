@@ -48,7 +48,6 @@ public class Robot extends TimedRobot {
 
     /** Subsystems */
     private final Drive drive;
-    private final Turret turret;
     private final Cooler cooler;
     private final Camera camera;
     private final LedManager ledManager;
@@ -63,8 +62,6 @@ public class Robot extends TimedRobot {
     private double loopStart;
 
     /** Properties */
-    private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.ABSOLUTE_FOLLOWING;
     private boolean faulted;
 
     /**
