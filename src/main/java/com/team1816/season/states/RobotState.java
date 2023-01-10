@@ -154,18 +154,7 @@ public class RobotState {
     }
 
     /**
-     * Returns the extrapolated distance form the goal considering a look-ahead time and using the estimated pose of the robot
-     * @return extrapolatedDistance (meters)
-     */
-    public double getExtrapolatedDistanceToGoal() {
-        double extrapolatedDistanceToGoalMeters = extrapolatedFieldToVehicle
-            .getTranslation()
-            .getDistance(Constants.targetPos.getTranslation());
-        return extrapolatedDistanceToGoalMeters;
-    }
-
-    /**
-     * Outputs real-time telemetry data to Shuffleboard / SmartDahsboard
+     * Outputs real-time telemetry data to Shuffleboard / SmartDashboard
      */
     public synchronized void outputToSmartDashboard() {
         field.setRobotPose(fieldToVehicle);

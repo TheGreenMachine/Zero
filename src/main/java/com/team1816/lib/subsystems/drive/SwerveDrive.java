@@ -246,18 +246,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public void updateRobotState() {
         robotState.fieldToVehicle = swerveOdometry.getPoseMeters();
-        robotState.extrapolatedFieldToVehicle =
-            robotState.fieldToVehicle.plus(
-                new Transform2d(
-                    new Translation2d(
-                        chassisSpeed.vxMetersPerSecond,
-                        chassisSpeed.vyMetersPerSecond
-                    )
-                    .times(Constants.kBallEjectionDuration),
-                    new Rotation2d(chassisSpeed.omegaRadiansPerSecond)
-                    .times(Constants.kBallEjectionDuration)
-                )
-            );
+
         var cs = new ChassisSpeeds(
             chassisSpeed.vxMetersPerSecond,
             chassisSpeed.vyMetersPerSecond,
