@@ -15,6 +15,7 @@ import edu.wpi.first.math.util.Units;
 
 /**
  * Action for infrastructure based / gyroscopic balancing
+ * @see AutoAction
  */
 public class AutoBalanceAction implements AutoAction {
     private static Drive drive;
