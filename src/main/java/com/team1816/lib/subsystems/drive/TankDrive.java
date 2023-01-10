@@ -515,4 +515,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             ? factory.getSubsystem(NAME).pidConfig.getOrDefault("slot0", defaultPIDConfig)
             : defaultPIDConfig;
     }
+
+    /**
+     * Returns the associated kinematics with the drivetrain
+     * @return tankKinematics
+     */
+    public DifferentialDriveKinematics getKinematics() {
+        return tankKinematics;
+    }
 }

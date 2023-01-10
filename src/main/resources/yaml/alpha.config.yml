@@ -30,7 +30,7 @@ subsystems:
             kTrackScrubFactor: 1.0
             isDemoMode: 0
     turret:
-        implemented: true
+        implemented: false
         talons:
             turretMotor: 3
         invertMotor:
@@ -62,7 +62,7 @@ infrastructure:
     # pneumatics control
     compressorEnabled: false
     pcmIsRev: false
-    pcmId: 8
+    pcmId: -1
     # pigeon
     pigeonId: 9
     isPigeon2: false

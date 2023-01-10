@@ -87,24 +87,6 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255
-    turret:
-        implemented: true
-        pidConfig:
-            slot0:
-                kP: 2.0
-                kI: 0.0003
-                kD: 30.5
-                kF: 0 # Should be 0 for position control
-                allowableError: 40
-        talons:
-            turretMotor: 33
-        constants:
-            deltaXScalar: 150 #value worked best at 150 in sim
-            revLimit: -5580 # adjusted for zero-offset
-            fwdLimit: 29600 # adjusted for zero-offset
-            absPosTicksSouth: 200 # absolute
-            absPPR: 4096
-            turretPPR: 53248 # 4096 * 13
     cooler:
         implemented: true
         solenoids:
