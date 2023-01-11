@@ -174,22 +174,6 @@ public class Robot extends TimedRobot {
                 );
 
                 BadLog.createTopic(
-                    "Pigeon/AccelerationX",
-                    "G",
-                    infrastructure::getXAcceleration
-                );
-                BadLog.createTopic(
-                    "Pigeon/AccelerationY",
-                    "G",
-                    infrastructure::getYAcceleration
-                );
-                BadLog.createTopic(
-                    "Pigeon/AccelerationZ",
-                    "G",
-                    infrastructure::getZAcceleration
-                );
-
-                BadLog.createTopic(
                     "Pigeon/Yaw",
                     "degrees",
                     infrastructure::getYaw

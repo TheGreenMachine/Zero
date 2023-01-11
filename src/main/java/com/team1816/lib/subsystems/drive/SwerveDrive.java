@@ -137,6 +137,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             for (int i = 0; i < 4; i++) {
                 swerveModules[i].setDesiredState(desiredModuleStates[i], true);
             }
+        } else {
+
         }
     }
 
@@ -262,7 +264,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 -9.80
             );
         robotState.deltaVehicle = cs;
-        robotState.triAxialAcceleration = infrastructure.getAcceleration();
         // check if motors are overheating - update robotState
         SmartDashboard.putNumber("Drive/Temperature", motorTemperatures[0]);
         robotState.drivetrainTemp = motorTemperatures[0];
