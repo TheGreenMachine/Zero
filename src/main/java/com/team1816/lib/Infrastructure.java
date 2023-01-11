@@ -23,8 +23,6 @@ public class Infrastructure {
     private static IPigeonIMU pigeon;
     private static PowerDistribution pd;
 
-    private double xAccel, yAccel, zAccel;
-    private double loopCount;
 
     private static boolean compressorEnabled;
     private static boolean compressorIsOn = false;
@@ -41,7 +39,6 @@ public class Infrastructure {
         pd = factory.getPd();
         compressorEnabled = factory.isCompressorEnabled();
 
-        xAccel = yAccel = zAccel = loopCount = 0;
     }
 
     /**
@@ -115,47 +112,6 @@ public class Infrastructure {
      * @see IPigeonIMU#getAcceleration()
      */
     public void update() {
-        if (loopCount > 5) {
-            loopCount = 0;
-            double[] accel = pigeon.getAcceleration();
-            xAccel = accel[0] * Constants.gravitationalAccelerationConstant / 16384;
-            yAccel = accel[1] * Constants.gravitationalAccelerationConstant / 16384;
-            zAccel = -accel[2] * Constants.gravitationalAccelerationConstant / 16384;
-        } else {
-            loopCount++;
-        }
-    }
-
-    /**
-     * Returns the cached acceleration
-     * @return accel
-     */
-    public Double[] getAcceleration() {
-        return new Double[] { xAccel, yAccel, zAccel };
-    }
-
-    /**
-     * Returns acceleration x-axis
-     * @return xAccel
-     */
-    public double getXAcceleration() {
-        return getAcceleration()[0];
-    }
-
-    /**
-     * Returns acceleration y-axis
-     * @return yAccel
-     */
-    public double getYAcceleration() {
-        return getAcceleration()[1];
-    }
-
-    /**
-     * Returns acceleration z-axis
-     * @return zAccel
-     */
-    public double getZAcceleration() {
-        return getAcceleration()[2];
     }
 
     /**
