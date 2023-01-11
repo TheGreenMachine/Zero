@@ -32,6 +32,26 @@ public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
     }
 
     /**
+     * Returns gyroscopic pitch / transverse lateral angle
+     * @return pitch (degrees)
+     * @see IPigeonIMU#getPitch()
+     */
+    @Override
+    public double getPitch() {
+        return super.getPitch();
+    }
+
+    /**
+     * Returns gyroscopic roll / transverse frontal angle
+     * @return roll (degrees)
+     * @see IPigeonIMU#getRoll()
+     */
+    @Override
+    public double getRoll() {
+        return super.getRoll();
+    }
+
+    /**
      * Returns x, y, and z acceleration in a casted fixed point double array
      * @return acceleration
      * @see IPigeonIMU#getAcceleration()

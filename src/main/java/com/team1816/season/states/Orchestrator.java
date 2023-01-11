@@ -11,12 +11,12 @@ import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.subsystems.*;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import org.photonvision.PhotonUtils;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +34,7 @@ public class Orchestrator {
 
     private static Camera camera;
 
+    private static Turret turret;
     /** State */
     private STATE superstructureState;
     private final double maxAllowablePoseError = factory.getConstant(
@@ -80,16 +81,16 @@ public class Orchestrator {
             (
                 Math.abs(
                     robotState.getCalculatedAccel().vxMetersPerSecond -
-                    robotState.triAxialAcceleration[0]
+                        robotState.triAxialAcceleration[0]
                 ) >
-                Constants.kMaxAccelDiffThreshold ||
-                Math.abs(
-                    robotState.getCalculatedAccel().vyMetersPerSecond -
-                    robotState.triAxialAcceleration[1]
-                ) >
-                Constants.kMaxAccelDiffThreshold ||
-                Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
-                Constants.kMaxAccelDiffThreshold
+                    Constants.kMaxAccelDiffThreshold ||
+                    Math.abs(
+                        robotState.getCalculatedAccel().vyMetersPerSecond -
+                            robotState.triAxialAcceleration[1]
+                    ) >
+                        Constants.kMaxAccelDiffThreshold ||
+                    Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
+                        Constants.kMaxAccelDiffThreshold
             );
         if (needsVisionUpdate) {
             robotState.isPoseUpdated = false;
@@ -110,27 +111,6 @@ public class Orchestrator {
             new Rotation2d()
         );
         double X = target.getX(), Y = target.getY();
-        if (target.id == -1) { // adding hub radius target offset - this is for retro-reflective tape only
-            double x, y;
-            x =
-                Units.inchesToMeters(Constants.kTargetRadius) *
-                target.getX() /
-                (
-                    Math.sqrt(
-                        target.getX() * target.getX() + target.getY() * target.getY()
-                    )
-                );
-            y =
-                Units.inchesToMeters(Constants.kTargetRadius) *
-                target.getY() /
-                (
-                    Math.sqrt(
-                        target.getX() * target.getX() + target.getY() * target.getY()
-                    )
-                );
-            X += x;
-            Y += y;
-        }
         Pose2d p = targetPos.plus(
             new Transform2d(
                 new Translation2d(X, Y),
@@ -139,6 +119,24 @@ public class Orchestrator {
         ); // inverse axis angle
         return p;
     }
+
+    /**
+     * Calculates the absolute pose of the drivetrain based on a single target using PhotonVision's library
+     * @param target VisionPoint
+     * @return Pose2d
+     * @see org.photonvision.targeting.PhotonTrackedTarget
+     */
+    public Pose2d photonCalculateSingleTargetTranslation(PhotonTrackedTarget target) {
+        Pose2d targetPos = new Pose2d(
+            FieldConfig.fieldTargets.get(target.getFiducialId()).getX(),
+            FieldConfig.fieldTargets.get(target.getFiducialId()).getY(),
+            new Rotation2d()
+        );
+        Translation2d targetTranslation = target.getBestCameraToTarget().getTranslation().toTranslation2d();
+        Transform2d targetTransform = new Transform2d(targetTranslation, robotState.getLatestFieldToCamera());
+        return PhotonUtils.estimateFieldToCamera(targetTransform, targetPos);
+    }
+
 
     /**
      * Calculates the absolute pose of the drivetrain as a function of all visible targets
@@ -178,14 +176,14 @@ public class Orchestrator {
                     robotState.fieldToVehicle.getY() - newRobotPose.getY()
                 )
             ) <
-            maxAllowablePoseError &&
-            Math.abs(
-                Math.hypot(
-                    robotState.fieldToVehicle.getX() - newRobotPose.getX(),
-                    robotState.fieldToVehicle.getY() - newRobotPose.getY()
-                )
-            ) >
-            minAllowablePoseError
+                maxAllowablePoseError &&
+                Math.abs(
+                    Math.hypot(
+                        robotState.fieldToVehicle.getX() - newRobotPose.getX(),
+                        robotState.fieldToVehicle.getY() - newRobotPose.getY()
+                    )
+                ) >
+                    minAllowablePoseError
         ) {
             System.out.println(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);

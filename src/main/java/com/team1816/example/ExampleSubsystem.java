@@ -1,4 +1,4 @@
-package com.team1816.examples.subsystems;
+package com.team1816.example;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

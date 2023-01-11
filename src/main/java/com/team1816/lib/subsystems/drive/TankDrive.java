@@ -100,7 +100,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
         setOpenLoop(DriveSignal.NEUTRAL);
 
-        tankOdometry = new DifferentialDriveOdometry(getActualHeading());
+        tankOdometry =
+            new DifferentialDriveOdometry(
+                getActualHeading(),
+                leftActualDistance,
+                rightActualDistance
+            );
     }
 
     /**
@@ -217,7 +222,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      */
     @Override
     public void resetOdometry(Pose2d pose) {
-        tankOdometry.resetPosition(pose, getActualHeading());
+        tankOdometry.resetPosition(
+            getActualHeading(),
+            leftActualDistance,
+            rightActualDistance,
+            pose
+        );
         tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
     }
@@ -229,18 +239,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public void updateRobotState() {
         robotState.fieldToVehicle = tankOdometry.getPoseMeters();
-        robotState.extrapolatedFieldToVehicle =
-            robotState.fieldToVehicle.plus(
-                new Transform2d(
-                    new Translation2d(
-                        chassisSpeed.vxMetersPerSecond,
-                        chassisSpeed.vyMetersPerSecond
-                    )
-                    .times(Constants.kBallEjectionDuration),
-                    new Rotation2d(chassisSpeed.omegaRadiansPerSecond)
-                    .times(Constants.kBallEjectionDuration)
-                )
-            );
+
         var cs = new ChassisSpeeds(
             chassisSpeed.vxMetersPerSecond,
             chassisSpeed.vyMetersPerSecond,
@@ -504,5 +503,13 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         return (factory.getSubsystem(NAME).implemented)
             ? factory.getSubsystem(NAME).pidConfig.getOrDefault("slot0", defaultPIDConfig)
             : defaultPIDConfig;
+    }
+
+    /**
+     * Returns the associated kinematics with the drivetrain
+     * @return tankKinematics
+     */
+    public DifferentialDriveKinematics getKinematics() {
+        return tankKinematics;
     }
 }

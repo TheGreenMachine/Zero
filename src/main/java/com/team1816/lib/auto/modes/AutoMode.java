@@ -1,7 +1,7 @@
 package com.team1816.lib.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
-import com.team1816.lib.auto.actions.Action;
+import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -96,9 +96,9 @@ public abstract class AutoMode {
      * Runs a given action, typically placed in routine()
      * @param action
      * @throws AutoModeEndedException
-     * @see Action
+     * @see AutoAction
      */
-    protected void runAction(Action action) throws AutoModeEndedException {
+    protected void runAction(AutoAction action) throws AutoModeEndedException {
         action.start();
 
         // Run action, stop action on interrupt or done

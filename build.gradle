@@ -3,13 +3,12 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2022.4.1"
+    id "edu.wpi.first.GradleRIO" version "2023.1.1"
     id 'org.jsonschema2dataclass' version '4.0.1'
-    id "com.diffplug.spotless" version "5.8.2"
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 def ROBOT_MAIN_CLASS = "com.team1816.season.Main"
 
@@ -98,7 +97,6 @@ wpi.sim.addDriverstation()
 jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
-    spotless
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
 }
@@ -115,22 +113,6 @@ jsonSchema2Pojo {
     source.setFrom files(
         "${project.rootDir}/src/main/resources/schemas"
     )
-}
-
-spotless {
-    java {
-        target 'src/*/java/com/team1816/**/*.java'
-        importOrder()
-        removeUnusedImports()
-        prettier(['prettier': '2.2.1', 'prettier-plugin-java': '1.0.1'])
-            .config([
-                'parser': 'java',
-                'tabWidth': 4,
-                'printWidth': 90
-            ])
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
 }
 
 task runAlpha(type: JavaExec) {
@@ -218,5 +200,5 @@ wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
 
 compileJava {
-    dependsOn tasks.named("spotlessApply")
+    //dependsOn tasks.named("spotlessApply")
 }

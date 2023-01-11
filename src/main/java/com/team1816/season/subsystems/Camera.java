@@ -81,7 +81,7 @@ public class Camera extends Subsystem {
                     Constants.kCameraMountingAngleY,
                     new Transform2d(
                         new Translation2d(-.12065, .13335),
-                        Constants.EmptyRotation
+                        Constants.EmptyRotation2d
                     ),
                     CAMERA_HEIGHT_METERS,
                     9000,
@@ -199,7 +199,7 @@ public class Camera extends Subsystem {
         }
         var bestTarget = result.getBestTarget();
         p.id = bestTarget.getFiducialId();
-        p.cameraToTarget = bestTarget.getCameraToTarget();
+        p.cameraToTarget = bestTarget.getBestCameraToTarget();
         targets.add(p);
         return targets;
     }
@@ -220,8 +220,8 @@ public class Camera extends Subsystem {
 
         for (PhotonTrackedTarget target : result.targets) {
             var p = new VisionPoint();
-            if (target.getCameraToTarget() != null) {
-                p.cameraToTarget = target.getCameraToTarget();
+            if (target.getBestCameraToTarget() != null) {
+                p.cameraToTarget = target.getBestCameraToTarget();
                 p.id = target.getFiducialId();
                 targets.add(p);
 
@@ -238,30 +238,6 @@ public class Camera extends Subsystem {
     }
 
     /**
-     * Returns the distance to the goal (direct reference to RobotState)
-     * @return distance (meters)
-     */
-    @Deprecated
-    public double getDistance() {
-        return robotState.getDistanceToGoal();
-    }
-
-    /**
-     * Returns the pixel / angular difference of the target to the center of the camera
-     * @return deltaX
-     */
-    @Deprecated
-    public double getDeltaX() {
-        if (RobotBase.isSimulation()) { //simulate feedback loop
-            return simulateDeltaX();
-        }
-        if (bestTrackedTarget == null) {
-            getPoints();
-        }
-        return bestTrackedTarget.getYaw();
-    }
-
-    /**
      * Tests the camera
      * @return true if tests passed
      */
@@ -269,42 +245,8 @@ public class Camera extends Subsystem {
         if (this.isImplemented()) {
             setCameraEnabled(true);
             Timer.delay(2);
-            if (getDistance() < 0 || getDistance() > MAX_DIST) {
-                System.out.println("getDistance failed test!");
-                return false;
-            } else if (
-                getDeltaX() < -CAMERA_HFOV / 2d || getDeltaX() > CAMERA_HFOV / 2d
-            ) {
-                System.out.println("getDeltaX failed test!");
-                return false;
-            }
             setCameraEnabled(false);
         }
         return true;
-    }
-
-    /**
-     * Simulates a deltaX calculation (would just be yaw)
-     * @return double
-     */
-    @Deprecated
-    public double simulateDeltaX() {
-        double opposite =
-            Constants.fieldCenterY - robotState.getFieldToTurretPos().getY();
-        double adjacent =
-            Constants.fieldCenterX - robotState.getFieldToTurretPos().getX();
-        double targetTurretAngle = Math.atan(opposite / adjacent);
-        if (adjacent < 0) {
-            targetTurretAngle += Math.PI;
-        }
-        targetTurretAngle *= 180 / Math.PI;
-        double currentTurretAngle = robotState
-            .getFieldToTurretPos()
-            .getRotation()
-            .getDegrees();
-        if (currentTurretAngle < 0 && adjacent < 0) {
-            currentTurretAngle += 360;
-        }
-        return ((currentTurretAngle - targetTurretAngle)); // scaling for the feedback loop
     }
 }

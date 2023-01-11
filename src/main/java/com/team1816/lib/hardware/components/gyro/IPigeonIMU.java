@@ -14,6 +14,18 @@ public interface IPigeonIMU {
     double getYaw();
 
     /**
+     * Returns gyroscopic pitch / transverse lateral angle
+     * @return pitch (degrees)
+     */
+    double getPitch();
+
+    /**
+     * Returns gyroscopic roll / transverse frontal angle
+     * @return roll (degrees)
+     */
+    double getRoll();
+
+    /**
      * Returns x, y, and z acceleration in a casted fixed point double array
      * @return acceleration
      */

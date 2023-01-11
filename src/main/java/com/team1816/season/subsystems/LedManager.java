@@ -265,7 +265,8 @@ public class LedManager extends Subsystem {
         SEEN_TARGET(MAX, 0, MAX), // magenta
         ON_TARGET(MAX, 0, 20), // deep magenta
         DRIVETRAIN_FLIPPED(MAX, MAX, 0), // yellow,
-
+        MANUAL_TURRET(MAX, MAX, MAX), // white
+        OFF(0, 0, 0); // off
 
         final int red;
         final int green;

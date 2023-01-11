@@ -22,16 +22,22 @@ public class RobotState {
 
     /** Odometry and field characterization */
     public final Field2d field = new Field2d();
-    public Pose2d fieldToVehicle = Constants.EmptyPose;
-    public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose;
+    public Pose2d fieldToVehicle = Constants.EmptyPose2d;
+    public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose2d;
+    public Rotation2d vehicleToTurret = Constants.EmptyRotation2d;
+    public Pose2d fieldToTurret = Constants.EmptyPose2d;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds(); // velocities of vehicle
     public ChassisSpeeds calculatedVehicleAccel = new ChassisSpeeds(); // accel values calculated by watching drivetrain encoders
     public Double[] triAxialAcceleration = new Double[] { 0d, 0d, 0d };
     public boolean isPoseUpdated = true;
 
+    /** Inertial characterization */
+    public Pose3d fieldToCG = Constants.EmptyPose3d;
+    public Rotation3d inertialOrientationState = Constants.EmptyRotation3d;
+    public Quaternion inertialReferenceOrientationState = Constants.EmptyQuaternion; // utilizes active multiplication
+
     /** Orchestrator states */
     public List<VisionPoint> visibleTargets = new ArrayList<>();
-    public Cooler.STATE coolState = Cooler.STATE.WAIT;
     public double drivetrainTemp = 0;
 
     /**
@@ -80,7 +86,6 @@ public class RobotState {
         triAxialAcceleration = new Double[] { 0d, 0d, 0d };
         isPoseUpdated = true;
         visibleTargets.clear();
-        coolState = Cooler.STATE.WAIT;
         drivetrainTemp = 0;
     }
 
@@ -88,6 +93,9 @@ public class RobotState {
      * Returns rotation of the turret with respect to the field
      * @return Rotation2d
      */
+    public Rotation2d getLatestFieldToTurret() {
+        return fieldToTurret.getRotation();
+    }
 
     /**
      * Returns rotation of the camera with respect to the field
@@ -102,13 +110,27 @@ public class RobotState {
      * Returns pose of the turret with respect ot the field
      * @return Pose2d
      */
-
+    public synchronized Pose2d getFieldToTurretPos() {
+        return fieldToTurret;
+    }
 
     /**
      * Returns the estimated pose of the turret with respect to the field based on a look-ahead time
      * @return Pose2d
      */
-
+    public synchronized Pose2d getEstimatedFieldToTurretPos() {
+        return new Pose2d(
+            extrapolatedFieldToVehicle
+                .transformBy(
+                    new Transform2d(
+                        Constants.kTurretMountingOffset,
+                        Constants.EmptyRotation2d
+                    )
+                )
+                .getTranslation(),
+            getLatestFieldToTurret()
+        );
+    }
 
     /**
      * Returns the estimated / calculated acceleration of the robot based on sensor readings
@@ -130,18 +152,7 @@ public class RobotState {
     }
 
     /**
-     * Returns the extrapolated distance form the goal considering a look-ahead time and using the estimated pose of the robot
-     * @return extrapolatedDistance (meters)
-     */
-    public double getExtrapolatedDistanceToGoal() {
-        double extrapolatedDistanceToGoalMeters = extrapolatedFieldToVehicle
-            .getTranslation()
-            .getDistance(Constants.targetPos.getTranslation());
-        return extrapolatedDistanceToGoalMeters;
-    }
-
-    /**
-     * Outputs real-time telemetry data to Shuffleboard / SmartDahsboard
+     * Outputs real-time telemetry data to Shuffleboard / SmartDashboard
      */
     public synchronized void outputToSmartDashboard() {
         field.setRobotPose(fieldToVehicle);

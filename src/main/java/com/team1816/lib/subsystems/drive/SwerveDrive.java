@@ -12,10 +12,7 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -86,6 +83,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     /** States */
     public SwerveModuleState[] desiredModuleStates = new SwerveModuleState[4];
     SwerveModuleState[] actualModuleStates = new SwerveModuleState[4];
+    SwerveModulePosition[] actualModulePositions = new SwerveModulePosition[4];
     public double[] motorTemperatures = new double[4];
 
     /**
@@ -108,7 +106,18 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
-        swerveOdometry = new SwerveDriveOdometry(swerveKinematics, getActualHeading());
+        actualModulePositions[kFrontLeft] = new SwerveModulePosition();
+        actualModulePositions[kFrontRight] = new SwerveModulePosition();
+        actualModulePositions[kBackLeft] = new SwerveModulePosition();
+        actualModulePositions[kBackRight] = new SwerveModulePosition();
+
+        swerveOdometry =
+            new SwerveDriveOdometry(
+                swerveKinematics,
+                Constants.EmptyRotation2d,
+                actualModulePositions
+            );
+        System.out.println("Swerve is initialized");
     }
 
     /** Read/Write Periodic */
@@ -135,14 +144,16 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      * Reads outputs from hardware on the drivetrain such as sensors and handles the actual state of the swerve modules and
      * drivetrain speeds. Used to update odometry and other related data.
      * @see Infrastructure
+     * @see SwerveModule
      * @see RobotState
      */
     @Override
     public synchronized void readFromHardware() {
         for (int i = 0; i < 4; i++) {
             // logging actual angle and velocity of swerve motors (azimuth & drive)
+            swerveModules[i].update();
             actualModuleStates[i] = swerveModules[i].getActualState();
-
+            actualModulePositions[i] = swerveModules[i].getActualPosition();
             // logging current temperatures of each module's drive motor
             motorTemperatures[i] = swerveModules[i].getMotorTemp();
         }
@@ -154,7 +165,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         infrastructure.update();
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
-        swerveOdometry.update(actualHeading, actualModuleStates);
+        swerveOdometry.update(actualHeading, actualModulePositions);
         updateRobotState();
     }
 
@@ -166,10 +177,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      */
     public Rotation2d getTrajectoryHeadings() {
         if (headingsList == null) {
-            return Constants.EmptyRotation;
+            return Constants.EmptyRotation2d;
         } else if (trajectoryIndex > headingsList.size() - 1) {
             //System.out.println("heck the headings aren't long enough");
-            return Constants.EmptyRotation;
+            return Constants.EmptyRotation2d;
         }
         if (
             getTrajectoryTimestamp() >
@@ -235,18 +246,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public void updateRobotState() {
         robotState.fieldToVehicle = swerveOdometry.getPoseMeters();
-        robotState.extrapolatedFieldToVehicle =
-            robotState.fieldToVehicle.plus(
-                new Transform2d(
-                    new Translation2d(
-                        chassisSpeed.vxMetersPerSecond,
-                        chassisSpeed.vyMetersPerSecond
-                    )
-                    .times(Constants.kBallEjectionDuration),
-                    new Rotation2d(chassisSpeed.omegaRadiansPerSecond)
-                    .times(Constants.kBallEjectionDuration)
-                )
-            );
+
         var cs = new ChassisSpeeds(
             chassisSpeed.vxMetersPerSecond,
             chassisSpeed.vyMetersPerSecond,
@@ -363,8 +363,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public void resetOdometry(Pose2d pose) {
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
-        swerveOdometry.resetPosition(pose, actualHeading);
-        swerveOdometry.update(actualHeading, actualModuleStates);
+        swerveOdometry.resetPosition(actualHeading, actualModulePositions, pose);
+        swerveOdometry.update(actualHeading, actualModulePositions);
         updateRobotState();
     }
 
@@ -447,5 +447,13 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 .getSubsystem(NAME)
                 .swerveModules.drivePID.getOrDefault("slot0", defaultPIDConfig)
             : defaultPIDConfig;
+    }
+
+    /**
+     * Returns the associated kinematics of the drivetrain
+     * @return swerveKinematics
+     */
+    public SwerveDriveKinematics getKinematics() {
+        return swerveKinematics;
     }
 }

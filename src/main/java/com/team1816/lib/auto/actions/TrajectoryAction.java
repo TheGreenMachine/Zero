@@ -22,9 +22,9 @@ import java.util.List;
 
 /**
  * This class represents a runnable action that will allow a drivetrain to follow a trajectory.
- * @see Action
+ * @see AutoAction
  */
-public class TrajectoryAction implements Action {
+public class TrajectoryAction implements AutoAction {
 
     /**
      * Command for drivetrain
@@ -123,7 +123,7 @@ public class TrajectoryAction implements Action {
      * Starts the command, executes trajectory on drivetrain
      * @see Drive#startTrajectory(Trajectory, List)
      * @see Command
-     * @see Action#start()
+     * @see AutoAction#start()
      */
     @Override
     public void start() {
@@ -138,7 +138,7 @@ public class TrajectoryAction implements Action {
      * Executes the command
      * @see Command
      * @see Command#execute()
-     * @see Action#update()
+     * @see AutoAction#update()
      */
     @Override
     public void update() {
@@ -149,7 +149,7 @@ public class TrajectoryAction implements Action {
      * Returns whether or not the command has been executed
      * @return boolean isFinished
      * @see Command
-     * @see Action#isFinished()
+     * @see AutoAction#isFinished()
      */
     @Override
     public boolean isFinished() {
@@ -160,7 +160,7 @@ public class TrajectoryAction implements Action {
      * Ends the command, stops drivetrain
      * @see Drive
      * @see Command
-     * @see Action#done()
+     * @see AutoAction#done()
      */
     @Override
     public void done() {

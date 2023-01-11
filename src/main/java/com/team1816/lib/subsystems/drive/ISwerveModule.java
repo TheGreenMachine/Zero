@@ -14,6 +14,7 @@ public interface ISwerveModule {
     // velocity ticks/100ms
     double getActualDrive();
     double getDesiredDrive();
+    double getDrivePosition();
     double getDriveError();
 
     // Temperature C

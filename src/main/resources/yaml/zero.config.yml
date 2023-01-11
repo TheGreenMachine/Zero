@@ -87,24 +87,6 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255
-    turret:
-        implemented: true
-        pidConfig:
-            slot0:
-                kP: 2.0
-                kI: 0.0003
-                kD: 30.5
-                kF: 0 # Should be 0 for position control
-                allowableError: 40
-        talons:
-            turretMotor: 33
-        constants:
-            deltaXScalar: 150 #value worked best at 150 in sim
-            revLimit: -5580 # adjusted for zero-offset
-            fwdLimit: 29600 # adjusted for zero-offset
-            absPosTicksSouth: 200 # absolute
-            absPPR: 4096
-            turretPPR: 53248 # 4096 * 13
     cooler:
         implemented: true
         solenoids:
@@ -112,6 +94,10 @@ subsystems:
             dump: 3
         constants:
             heatThreshold: 65 # degrees Celsius
+    camera:
+        implemented: true
+        constants:
+            usingCamToUpdatePose: 0
 infrastructure:
     canivoreBusName: highSpeed
     # power distribution
@@ -135,6 +121,7 @@ constants:
     maxVelOpenLoop: 3.2 # meters/s
     maxVelPathFollowing: 3.2 # meters/s (2.2)
     maxAccel: 2.54 # meters/s^ 2
+    minAllowablePoseError: 0.15
     maxAllowablePoseError: 5
     ## Logging ##
     logTeleOp: 1 # 0 or 1
@@ -144,5 +131,5 @@ constants:
     ## General ##
     EnableBucketTuning: 1
     teleopFieldCentric: 1 # 0 or 1
-    kLooperDt: .035 # seconds
+    kLooperDt: .025 # seconds
     resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret

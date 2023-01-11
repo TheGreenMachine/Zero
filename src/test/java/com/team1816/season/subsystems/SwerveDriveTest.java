@@ -116,7 +116,7 @@ public class SwerveDriveTest {
             vxMetersPerSecond,
             vyMetersPerSecond,
             omegaRadiansPerSecond,
-            Constants.EmptyRotation
+            Constants.EmptyRotation2d
         );
 
         // We verify the returned value from getState to match the original value.
