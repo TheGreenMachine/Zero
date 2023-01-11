@@ -33,7 +33,6 @@ public class Orchestrator {
     private static Turret turret;
     private static LedManager ledManager;
 
-    private static Camera camera;
 
     /** State */
     private STATE superstructureState;
@@ -48,15 +47,13 @@ public class Orchestrator {
 
     /**
      * Instantiates an Orchestrator with all its subsystems
-     * @param cam Camera
      * @param df Drive.Factory (derives drivetrain)
      * @param tur Turret
      * @param led LedManager
      */
     @Inject
-    public Orchestrator(Camera cam, Drive.Factory df, Turret tur, LedManager led) {
+    public Orchestrator(Drive.Factory df, Turret tur, LedManager led) {
         drive = df.getInstance();
-        camera = cam;
         turret = tur;
         ledManager = led;
         superstructureState = STATE.FAT_BOY;

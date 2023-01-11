@@ -48,7 +48,6 @@ public class Robot extends TimedRobot {
     /** Subsystems */
     private final Drive drive;
 
-    private final Camera camera;
     private final LedManager ledManager;
 
     /** Factory */
@@ -73,7 +72,6 @@ public class Robot extends TimedRobot {
         enabledLoop = new Looper(this);
         disabledLoop = new Looper(this);
         drive = (Injector.get(Drive.Factory.class)).getInstance();
-        camera = Injector.get(Camera.class);
         ledManager = Injector.get(LedManager.class);
         robotState = Injector.get(RobotState.class);
         orchestrator = Injector.get(Orchestrator.class);
@@ -119,7 +117,7 @@ public class Robot extends TimedRobot {
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            subsystemManager.setSubsystems(drive, camera, ledManager);
+            subsystemManager.setSubsystems(drive, ledManager);
 
             /** Register BadLogs */
             if (Constants.kIsBadlogEnabled) {

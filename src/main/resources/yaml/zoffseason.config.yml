@@ -2,14 +2,14 @@ subsystems:
     drivetrain:
         implemented: true
         talons:
-            FLDr: 3
-            FRDr: 13
-            RLDr: 1 #13
-            RRDr: 14
-            FLAz: 2
-            FRAz: 12
-            RLAz: 10
-            RRAz: 15
+            FLDr: -1 #3
+            FRDr: -1 #13
+            RLDr: -1 #1 #13
+            RRDr: -1 #14
+            FLAz: -1 #2
+            FRAz: -1 #12
+            RLAz: -1 #10
+            RRAz: -1 #15
         invertMotor:
             - FRDr
             - RRDr
@@ -53,7 +53,7 @@ subsystems:
             azimuthPID:
                 slot0:
                     kP: 6.0
-                    kI: 0.0000
+                    kI: 0.0001
                     kD: 15.0
                     kF: 0
                     allowableError: 5
