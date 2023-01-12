@@ -49,7 +49,7 @@ public class AutoBalanceAction implements AutoAction {
         double velocity = 0;
         if (Math.abs(infrastructure.getFieldCentricPitch())>2) { // degrees
             double pitch = infrastructure.getFieldCentricPitch();
-            velocity = (1 - Math.cos(Units.degreesToRadians(45d / 11 * pitch)))*maxVelocity*pitch/Math.abs(pitch);
+            velocity = -(1 - Math.cos(Units.degreesToRadians(45d / 11 * pitch)))*maxVelocity*pitch/Math.abs(pitch);
         }
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(velocity, 0, 0);
         if (isSwerve) {
