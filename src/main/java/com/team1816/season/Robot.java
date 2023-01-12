@@ -214,8 +214,9 @@ public class Robot extends TimedRobot {
                         () -> {
                             System.out.println("Drive trajectory action started!");
                             TrajectoryToTargetMode mode = new TrajectoryToTargetMode();
-                            Thread autoThread = new Thread(mode::run);
-                            autoThread.start();
+                            Thread autoTargetThread = new Thread(mode::run);
+                            autoTargetThread.start();
+                            autoTargetThread = null;
                             System.out.println("Trajectory ended");
                         }
                     ),
@@ -226,6 +227,7 @@ public class Robot extends TimedRobot {
                             AutoBalanceMode mode = new AutoBalanceMode();
                             Thread autoBalanceThread = new Thread(mode::run);
                             autoBalanceThread.start();
+                            autoBalanceThread = null;
                             System.out.println("Balanced");
                         }
                     ),
