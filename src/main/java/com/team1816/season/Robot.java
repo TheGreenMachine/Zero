@@ -14,6 +14,7 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.season.auto.AutoModeManager;
+import com.team1816.season.auto.modes.AutoBalanceMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
@@ -205,6 +206,16 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("zeroPose"),
                         () -> {
                             drive.zeroSensors(Constants.kDefaultZeroingPose);
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("autoBalance"),
+                        () -> {
+                            System.out.println("Starting auto balance");
+                            AutoBalanceMode mode = new AutoBalanceMode();
+                            Thread autoBalanceThread = new Thread(mode::run);
+                            autoBalanceThread.start();
+                            System.out.println("Balanced");
                         }
                     ),
                     createHoldAction(
