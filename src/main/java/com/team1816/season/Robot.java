@@ -13,17 +13,16 @@ import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
-import com.team1816.lib.subsystems.turret.Turret;
 import com.team1816.season.auto.AutoModeManager;
-import com.team1816.season.auto.actions.TrajectoryToPointAction;
-import com.team1816.season.auto.modes.TrajectoryToPointMode;
+import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -52,7 +51,6 @@ public class Robot extends TimedRobot {
     /** Subsystems */
     private final Drive drive;
 
-    private final Camera camera;
     private final LedManager ledManager;
 
     /** Factory */
@@ -77,7 +75,6 @@ public class Robot extends TimedRobot {
         enabledLoop = new Looper(this);
         disabledLoop = new Looper(this);
         drive = (Injector.get(Drive.Factory.class)).getInstance();
-        camera = Injector.get(Camera.class);
         ledManager = Injector.get(LedManager.class);
         robotState = Injector.get(RobotState.class);
         orchestrator = Injector.get(Orchestrator.class);
@@ -217,13 +214,10 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("driveTrajectory"),
                         () -> {
                             System.out.println("Drive trajectory action started!");
-//                            TrajectoryToPointAction trajectory = new TrajectoryToPointAction(1, 1, Constants.EmptyRotation2d);
-//                            drive.startTrajectory(trajectory.getAsTrajectory(), trajectory.getAsTrajectoryHeadings());
-
-//                            TrajectoryToPointMode trajectoryMode = new TrajectoryToPointMode();
-//                            trajectoryMode.run();
-
-                            drive.runTrajectoryToTarget(new Pose2d(1, 1, new Rotation2d()));
+                            TrajectoryToTargetMode mode = new TrajectoryToTargetMode();
+                            Thread autoThread = new Thread(mode::run);
+                            autoThread.start();
+                            System.out.println("Trajectory ended");
                         }
                     ),
                     createHoldAction(
@@ -253,7 +247,6 @@ public class Robot extends TimedRobot {
             // Stop any running autos
             autoModeManager.stopAuto();
             ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
-            camera.setCameraEnabled(false);
 
             if (autoModeManager.getSelectedAuto() == null) {
                 autoModeManager.reset();

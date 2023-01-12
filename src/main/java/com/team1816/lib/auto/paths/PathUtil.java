@@ -37,8 +37,8 @@ public class PathUtil {
         for (Pose2d pose2d : waypoints) {
             waypointsMeters.add(
                 new Pose2d(
-                    Units.inchesToMeters(pose2d.getX()),
-                    Units.inchesToMeters(pose2d.getY()),
+                    pose2d.getX(),
+                    pose2d.getY(),
                     pose2d.getRotation()
                 )
             );
@@ -92,8 +92,8 @@ public class PathUtil {
         for (Pose2d pose2d : waypoints) {
             waypointsMeters.add(
                 new Pose2d(
-                    Units.inchesToMeters(pose2d.getX()) + startX,
-                    Units.inchesToMeters(pose2d.getY()) + startY,
+                    pose2d.getX() + startX,
+                    pose2d.getY() + startY,
                     pose2d.getRotation()
                 )
             );

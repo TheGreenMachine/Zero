@@ -81,13 +81,20 @@ public class AutoModeManager {
             if (colorChanged) {
                 System.out.println("Robot color: " + selectedColor);
             }
-            autoMode = generateAutoMode(selectedAuto);
-            autoModeThread = new Thread(autoMode::run);
+            run(selectedAuto);
         }
         desiredAuto = selectedAuto;
         desiredColor = selectedColor;
 
         return autoChanged;
+    }
+
+    /**
+     *
+     */
+    public void run(DesiredAuto auto) {
+        autoMode = generateAutoMode(auto);
+        autoModeThread = new Thread(autoMode::run);
     }
 
     /**
@@ -140,7 +147,7 @@ public class AutoModeManager {
     /**
      * Enum for AutoModes
      */
-    enum DesiredAuto {
+    public enum DesiredAuto {
         // Test : 2020
         DO_NOTHING,
         TUNE_DRIVETRAIN,
@@ -148,6 +155,7 @@ public class AutoModeManager {
         DRIVE_STRAIGHT,
         // 2023
 
+        TARGET
     }
 
     /**
@@ -171,7 +179,9 @@ public class AutoModeManager {
             case TUNE_DRIVETRAIN:
                 return new TuneDrivetrainMode();
             case LIVING_ROOM:
-                return (new LivingRoomMode());
+                return new LivingRoomMode();
+            case TARGET:
+                return new TrajectoryToTargetMode();
             default:
                 System.out.println("Defaulting to drive straight mode");
                 return new DriveStraightMode();
