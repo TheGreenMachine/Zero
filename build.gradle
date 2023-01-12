@@ -185,7 +185,8 @@ task runZodiac(type: JavaExec) {
 
 processResources {
     include '**/*.config.yml'
-    eachFile { fileCopyDetails ->
+    eachFile {
+        fileCopyDetails ->
     }
 }
 
