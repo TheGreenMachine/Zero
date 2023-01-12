@@ -4,10 +4,10 @@ import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.AutoBalanceAction;
-import com.team1816.season.auto.actions.DriveOpenLoopAction;
 
 public class AutoBalanceMode extends AutoMode {
-    public AutoBalanceMode() {}
+    public AutoBalanceMode() {
+    }
 
     @Override
     protected void routine() throws AutoModeEndedException {

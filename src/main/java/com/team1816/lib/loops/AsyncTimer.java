@@ -1,6 +1,7 @@
 package com.team1816.lib.loops;
 
 import edu.wpi.first.wpilibj.Timer;
+
 import javax.annotation.Nullable;
 
 /**
@@ -20,9 +21,10 @@ public class AsyncTimer {
 
     /**
      * Instantiates an AsyncTimer
-     * @param duration duration to time / wait
+     *
+     * @param duration    duration to time / wait
      * @param startAction starting trigger
-     * @param endAction end response
+     * @param endAction   end response
      */
     public AsyncTimer(
         double duration,
@@ -38,7 +40,8 @@ public class AsyncTimer {
 
     /**
      * Alternatively instantiates an AsyncTimer with only an ending action
-     * @param duration duration to time / wait
+     *
+     * @param duration  duration to time / wait
      * @param endAction end response
      */
     public AsyncTimer(double duration, Runnable endAction) {
@@ -67,6 +70,7 @@ public class AsyncTimer {
 
     /**
      * Returns the status of the timer
+     *
      * @return {@link AsyncTimer#completed}
      */
     public boolean isCompleted() {

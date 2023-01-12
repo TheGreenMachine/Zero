@@ -12,6 +12,7 @@ public class GhostSolenoid implements ISolenoid {
 
     /**
      * Returns the state of the solenoid
+     *
      * @return on
      * @see ISolenoid#get()
      */
@@ -22,6 +23,7 @@ public class GhostSolenoid implements ISolenoid {
 
     /**
      * Sets the state of the solenoid
+     *
      * @param on (state)
      * @see ISolenoid#set(boolean)
      */
@@ -32,6 +34,7 @@ public class GhostSolenoid implements ISolenoid {
 
     /**
      * Alternately toggles between states
+     *
      * @see ISolenoid#toggle()
      */
     @Override
@@ -52,5 +55,6 @@ public class GhostSolenoid implements ISolenoid {
     }
 
     @Override
-    public void close() throws Exception {}
+    public void close() throws Exception {
+    }
 }

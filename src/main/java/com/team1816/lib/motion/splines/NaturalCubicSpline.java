@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 /**
  * This class represents a fully functional natural third degree spline computed via a matrix equation
+ *
  * @see Spline for documentation
  */
 
@@ -42,9 +43,9 @@ public class NaturalCubicSpline extends Spline {
         ArrayList<ArrayList<Double>> nCoefficients = new ArrayList<>();
         // creating a tri-diagonal matrix equation to solve for spline coefficients
         double[] constant = new double[n - 1], linear = new double[n -
-        1], quadratic = new double[n - 1], cubic = new double[n - 1]; // absolute coefficients
+            1], quadratic = new double[n - 1], cubic = new double[n - 1]; // absolute coefficients
         double[] d = new double[n - 1], c = new double[n - 1], b = new double[n -
-        1], a = new double[n - 1]; // relative coefficients d + c * (x - xi) + b * (x - xi)^2 + a * (x - xi)^3
+            1], a = new double[n - 1]; // relative coefficients d + c * (x - xi) + b * (x - xi)^2 + a * (x - xi)^3
         double[] si = new double[n], siTemp = new double[n - 2];
         si[0] = 0;
         si[n - 1] = 0;
@@ -67,20 +68,20 @@ public class NaturalCubicSpline extends Spline {
             // converting to ax^3+bx^2+cx+d form
             constant[i - 1] =
                 d[i - 1] -
-                c[i - 1] *
-                coordinates.get(i - 1)[0] +
-                b[i - 1] *
-                Math.pow(coordinates.get(i - 1)[0], 2) -
-                a[i - 1] *
-                Math.pow(coordinates.get(i - 1)[0], 3);
+                    c[i - 1] *
+                        coordinates.get(i - 1)[0] +
+                    b[i - 1] *
+                        Math.pow(coordinates.get(i - 1)[0], 2) -
+                    a[i - 1] *
+                        Math.pow(coordinates.get(i - 1)[0], 3);
             linear[i - 1] =
                 c[i - 1] -
-                2 *
-                b[i - 1] *
-                coordinates.get(i - 1)[0] +
-                3 *
-                a[i - 1] *
-                Math.pow(coordinates.get(i - 1)[0], 2);
+                    2 *
+                        b[i - 1] *
+                        coordinates.get(i - 1)[0] +
+                    3 *
+                        a[i - 1] *
+                        Math.pow(coordinates.get(i - 1)[0], 2);
             quadratic[i - 1] = b[i - 1] - 3 * a[i - 1] * coordinates.get(i - 1)[0];
             cubic[i - 1] = a[i - 1];
 
@@ -146,11 +147,11 @@ public class NaturalCubicSpline extends Spline {
         for (i = 1; i < n; i++) {
             a[i - 1][n - 1] =
                 (y[i + 1] - y[i]) *
-                6 /
-                (double) h[i] -
-                (y[i] - y[i - 1]) *
-                6 /
-                (double) h[i - 1];
+                    6 /
+                    (double) h[i] -
+                    (y[i] - y[i - 1]) *
+                        6 /
+                        (double) h[i - 1];
         }
     }
 
@@ -161,21 +162,21 @@ public class NaturalCubicSpline extends Spline {
         if (i < coefficients.size() - 1) {
             ans =
                 coefficients.get(i).get(1) +
-                2 *
-                coefficients.get(i).get(2) *
-                input +
-                3 *
-                coefficients.get(i).get(3) *
-                Math.pow(input, 2);
+                    2 *
+                        coefficients.get(i).get(2) *
+                        input +
+                    3 *
+                        coefficients.get(i).get(3) *
+                        Math.pow(input, 2);
         } else {
             ans =
                 coefficients.get(i - 1).get(1) +
-                2 *
-                coefficients.get(i - 1).get(2) *
-                input +
-                3 *
-                coefficients.get(i - 1).get(3) *
-                Math.pow(input, 2);
+                    2 *
+                        coefficients.get(i - 1).get(2) *
+                        input +
+                    3 *
+                        coefficients.get(i - 1).get(3) *
+                        Math.pow(input, 2);
         }
         return ans;
     }
@@ -188,10 +189,10 @@ public class NaturalCubicSpline extends Spline {
         } else {
             ans =
                 2 *
-                coefficients.get(i - 1).get(2) +
-                6 *
-                coefficients.get(i - 1).get(3) *
-                input;
+                    coefficients.get(i - 1).get(2) +
+                    6 *
+                        coefficients.get(i - 1).get(3) *
+                        input;
         }
         return ans;
     }

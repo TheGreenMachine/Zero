@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 /**
  * The base event that all events extend from
+ *
  * @see PubSubRunnable
  * @see PubSubConsumer
  */
@@ -16,6 +17,7 @@ public abstract class EventBase {
 
     /**
      * Adds subscription
+     *
      * @param subscription to be invoked when {@link #InternalPublish(Object)} is called
      */
     protected void InternalSubscribe(IEventSubscription subscription) {
@@ -24,6 +26,7 @@ public abstract class EventBase {
 
     /**
      * Publishes date to subscribers
+     *
      * @param parameter the value to pass to the {@link #Subscriptions}
      */
     protected void InternalPublish(Object parameter) {

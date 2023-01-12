@@ -2,6 +2,7 @@ package com.team1816.lib.controlboard;
 
 /**
  * A mapping of outputs for a XboxController
+ *
  * @see Controller
  */
 public class XboxController extends Controller {

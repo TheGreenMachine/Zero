@@ -7,11 +7,13 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
-import java.awt.*;
+
 import javax.inject.Singleton;
+import java.awt.*;
 
 /**
  * Subsystem container for an LEDManager
+ *
  * @see ILEDManager
  */
 @Singleton
@@ -51,7 +53,9 @@ public class LedManager extends Subsystem {
     private float raveHue;
     private Color lastRaveColor;
 
-    /** Base enum for LED states  */
+    /**
+     * Base enum for LED states
+     */
     public enum LedControlState {
         RAVE,
         BLINK,
@@ -60,8 +64,9 @@ public class LedManager extends Subsystem {
 
     /**
      * Instantiates an LedManager with base subsystem properties
+     *
      * @param inf Infrastructure
-     * @param rs RobotState
+     * @param rs  RobotState
      */
     @Inject
     public LedManager(Infrastructure inf, RobotState rs) {
@@ -79,6 +84,7 @@ public class LedManager extends Subsystem {
 
     /**
      * Sets the Camera led(s) to be on or off
+     *
      * @param cameraOn boolean
      */
     public void setCameraLed(boolean cameraOn) {
@@ -90,6 +96,7 @@ public class LedManager extends Subsystem {
 
     /**
      * Sets led color
+     *
      * @param r Red
      * @param g Green
      * @param b Bluee
@@ -105,6 +112,7 @@ public class LedManager extends Subsystem {
 
     /**
      * Sets LEDs to blink with a certain color
+     *
      * @param r LED color red value (0-255)
      * @param g LED color green value (0-255)
      * @param b LED color blue value (0-255)
@@ -118,6 +126,7 @@ public class LedManager extends Subsystem {
 
     /**
      * Indicates status
+     *
      * @param status RobotStatues
      * @see RobotStatus
      */
@@ -160,9 +169,12 @@ public class LedManager extends Subsystem {
         ledManager.setLEDs(r, g, b, 0, 8, 74 - 8); // 8 == number of camera leds
     }
 
-    /** periodic */
+    /**
+     * periodic
+     */
     @Override
-    public void readFromHardware() {}
+    public void readFromHardware() {
+    }
 
     @Override
     public void writeToHardware() {
@@ -208,16 +220,19 @@ public class LedManager extends Subsystem {
      * Functionality: nonexistent
      */
     @Override
-    public void zeroSensors() {}
+    public void zeroSensors() {
+    }
 
     /**
      * Functionality: nonexistent
      */
     @Override
-    public void stop() {}
+    public void stop() {
+    }
 
     /**
      * Tests the subsystem
+     *
      * @return returns true if tests passed
      */
     @Override
@@ -248,10 +263,12 @@ public class LedManager extends Subsystem {
 
     /**
      * Initializes SendableBuilder for SmartDashboard
+     *
      * @param builder SendableBuilder
      */
     @Override
-    public void initSendable(SendableBuilder builder) {}
+    public void initSendable(SendableBuilder builder) {
+    }
 
     /**
      * Base enum for RobotStatus

@@ -8,7 +8,7 @@ public class ExampleAction implements AutoAction {
     public ExampleSubsystem exSub;
     public ExampleSubsystem.STATE desiredState;
 
-    public ExampleAction(ExampleSubsystem.STATE desState){
+    public ExampleAction(ExampleSubsystem.STATE desState) {
         this.exSub = Injector.get(ExampleSubsystem.class);
         desiredState = desState;
     }

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 /**
  * This class is an implementation of a DoubleSolenoid (Solenoid that has two positions instead of the standard 1) and is a wrapper for
  * DoubleSolenoid and implements IDoubleSolenoid
+ *
  * @see DoubleSolenoid
  * @see IDoubleSolenoid
  */
@@ -13,7 +14,8 @@ public class DoubleSolenoidImpl extends DoubleSolenoid implements IDoubleSolenoi
 
     /**
      * Instantiates a DoubleSolenoidImpl
-     * @param moduleType (CTREPCM, REVPH)
+     *
+     * @param moduleType     (CTREPCM, REVPH)
      * @param forwardChannel forward channel for module to use
      * @param reverseChannel reverse channel for module to use
      */
@@ -27,8 +29,9 @@ public class DoubleSolenoidImpl extends DoubleSolenoid implements IDoubleSolenoi
 
     /**
      * Instantiates a DoubleSolenoidImpl
-     * @param module (solenoid module)
-     * @param moduleType (CTREPCM, REVPH)
+     *
+     * @param module         (solenoid module)
+     * @param moduleType     (CTREPCM, REVPH)
      * @param forwardChannel forward channel for module to use
      * @param reverseChannel reverse channel for module to use
      */

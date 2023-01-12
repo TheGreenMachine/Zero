@@ -1,11 +1,12 @@
 package com.team1816.lib.hardware.factory;
 
 import com.team1816.lib.hardware.RobotConfiguration;
-import java.io.InputStream;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.representer.Representer;
+
+import java.io.InputStream;
 
 /**
  * This class is the yaml integration bridge for main robot configurations and uses SnakeYaml's Yaml parser alongside

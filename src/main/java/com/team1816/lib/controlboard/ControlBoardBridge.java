@@ -5,20 +5,26 @@ import com.team1816.lib.Injector;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.season.Robot;
 import edu.wpi.first.wpilibj.DriverStation;
+
 import java.util.HashMap;
 
 /**
  * A finite bridging class that allows for yaml based control mappings and distribution in a driver-operator system.
+ *
  * @see Robot#robotInit()
  * @see ControlBoard
  */
 public class ControlBoardBridge {
 
-    /** Configuration */
+    /**
+     * Configuration
+     */
     public static RobotFactory factory;
     private ControlBoardConfig config;
 
-    /** State */
+    /**
+     * State
+     */
     private HashMap<String, Controller.Button> driverButtonMap = new HashMap<>();
     private HashMap<String, Controller.Axis> driverAxisMap = new HashMap<>();
     private HashMap<String, Integer> driverDpadMap = new HashMap<>();
@@ -50,8 +56,8 @@ public class ControlBoardBridge {
                         .getClassLoader()
                         .getResourceAsStream(
                             "yaml/controlboard/" +
-                            controlBoardConfigName +
-                            ".controlboard.config.yml"
+                                controlBoardConfigName +
+                                ".controlboard.config.yml"
                         )
                 );
             System.out.println(
@@ -271,6 +277,7 @@ public class ControlBoardBridge {
 
     /**
      * Returns driver-side buttons
+     *
      * @return
      */
     public HashMap<String, Controller.Button> getDriverButtonMap() {
@@ -279,6 +286,7 @@ public class ControlBoardBridge {
 
     /**
      * Returns driver-side axes
+     *
      * @return
      */
     public HashMap<String, Controller.Axis> getDriverAxisMap() {
@@ -287,6 +295,7 @@ public class ControlBoardBridge {
 
     /**
      * Returns driver-side dpad
+     *
      * @return
      */
     public HashMap<String, Integer> getDriverDpadMap() {
@@ -295,19 +304,21 @@ public class ControlBoardBridge {
 
     /**
      * A simple hashMap checking utility for all controls
+     *
      * @param key
      * @return
      */
     public boolean driverMapContainsKey(String key) {
         return (
             driverAxisMap.containsKey(key) ||
-            driverButtonMap.containsKey(key) ||
-            driverDpadMap.containsKey(key)
+                driverButtonMap.containsKey(key) ||
+                driverDpadMap.containsKey(key)
         );
     }
 
     /**
      * Return operator-side buttons
+     *
      * @return
      */
     public HashMap<String, Controller.Button> getOperatorButtonMap() {
@@ -316,6 +327,7 @@ public class ControlBoardBridge {
 
     /**
      * Return operator-side axes
+     *
      * @return
      */
     public HashMap<String, Controller.Axis> getOperatorAxisMap() {
@@ -324,6 +336,7 @@ public class ControlBoardBridge {
 
     /**
      * Returns operator-side dpad
+     *
      * @return
      */
     public HashMap<String, Integer> getOperatorDpadMap() {
@@ -332,14 +345,15 @@ public class ControlBoardBridge {
 
     /**
      * A simple hashMap checking utility for all controls
+     *
      * @param key
      * @return
      */
     public boolean operatorMapContainsKey(String key) {
         return (
             operatorAxisMap.containsKey(key) ||
-            operatorButtonMap.containsKey(key) ||
-            operatorDpadMap.containsKey(key)
+                operatorButtonMap.containsKey(key) ||
+                operatorDpadMap.containsKey(key)
         );
     }
 }

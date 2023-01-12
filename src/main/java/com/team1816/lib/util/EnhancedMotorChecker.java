@@ -6,6 +6,7 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
@@ -51,7 +52,8 @@ public class EnhancedMotorChecker {
 
     /**
      * Checks a certain motor
-     * @param subsystem Subsystem that the motor belongs to
+     *
+     * @param subsystem    Subsystem that the motor belongs to
      * @param motorToCheck IGreenMotor to check
      * @return true if tests passed
      */
@@ -65,10 +67,10 @@ public class EnhancedMotorChecker {
         System.out.println("////////////////////////////////////////////////");
         System.out.println(
             "Checking subsystem " +
-            subsystem.getClass() +
-            " for " +
-            motorToCheck.length +
-            " motors."
+                subsystem.getClass() +
+                " for " +
+                motorToCheck.length +
+                " motors."
         );
 
         List<Double> currents = new ArrayList<>();
@@ -115,9 +117,9 @@ public class EnhancedMotorChecker {
             if (current < checkerConfig.mCurrentFloor) {
                 DriverStation.reportError(
                     motor.getName() +
-                    " has failed current floor check vs " +
-                    checkerConfig.mCurrentFloor +
-                    "!!!!!!!!!!!!",
+                        " has failed current floor check vs " +
+                        checkerConfig.mCurrentFloor +
+                        "!!!!!!!!!!!!",
                     false
                 );
                 failure = true;
@@ -126,9 +128,9 @@ public class EnhancedMotorChecker {
                 if (rpm < checkerConfig.mRPMFloor) {
                     DriverStation.reportError(
                         motor.getName() +
-                        " has failed rpm floor check vs " +
-                        checkerConfig.mRPMFloor +
-                        "!!!!!!!!!!!!!",
+                            " has failed rpm floor check vs " +
+                            checkerConfig.mRPMFloor +
+                            "!!!!!!!!!!!!!",
                         false
                     );
                     failure = true;

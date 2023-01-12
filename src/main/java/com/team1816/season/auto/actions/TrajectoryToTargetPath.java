@@ -15,7 +15,7 @@ public class TrajectoryToTargetPath extends AutoPath {
     private static RobotState robotState;
     private static Pose2d target;
 
-    public TrajectoryToTargetPath(Pose2d pose){
+    public TrajectoryToTargetPath(Pose2d pose) {
         robotState = Injector.get(RobotState.class);
         target = pose;
     }

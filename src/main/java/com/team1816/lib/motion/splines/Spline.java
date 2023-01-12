@@ -11,12 +11,15 @@ import java.util.List;
  */
 public abstract class Spline {
 
-    /** Properties */
+    /**
+     * Properties
+     */
     public static ArrayList<Double[]> coordinates;
     public static ArrayList<ArrayList<Double>> coefficients;
 
     /**
      * Initializes a spline based on its knotPoints
+     *
      * @param knotPoints
      */
     protected Spline(ArrayList<Double[]> knotPoints) {
@@ -25,6 +28,7 @@ public abstract class Spline {
 
     /**
      * Returns the value of the spline at a certain value
+     *
      * @param input value to compute at
      * @return value
      */
@@ -43,12 +47,14 @@ public abstract class Spline {
 
     /**
      * Generates coefficients for practically constant-time computation
+     *
      * @return nested list of coefficients for each degree
      */
     public abstract ArrayList<ArrayList<Double>> generateCoefficients();
 
     /**
      * Optimally formats the knotPoints to avoid exceptions
+     *
      * @param points knotPoints
      * @return sortedKnotPoints
      */

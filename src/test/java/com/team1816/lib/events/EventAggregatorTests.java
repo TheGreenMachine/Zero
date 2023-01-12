@@ -8,11 +8,14 @@ public class EventAggregatorTests {
 
     private String _eventText = "";
 
-    protected static class StringEvent extends PubSubConsumer<String> {}
+    protected static class StringEvent extends PubSubConsumer<String> {
+    }
 
-    protected static class StringEvent2 extends PubSubConsumer<String> {}
+    protected static class StringEvent2 extends PubSubConsumer<String> {
+    }
 
-    protected static class RunnableEvent extends PubSubRunnable {}
+    protected static class RunnableEvent extends PubSubRunnable {
+    }
 
     private EventAggregator _target;
 

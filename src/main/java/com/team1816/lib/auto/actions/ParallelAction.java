@@ -9,15 +9,19 @@ import java.util.List;
  * It runs all sub-actions at the same time.
  * All actions are started and updated until all actions are rendered as completed.
  * Can be used as a member of {@link SeriesAction}
+ *
  * @see AutoAction
  */
 public class ParallelAction implements AutoAction {
 
-    /** State: List of Actions to be completed in parallel */
+    /**
+     * State: List of Actions to be completed in parallel
+     */
     private final ArrayList<AutoAction> mActions;
 
     /**
      * Instantiates a parallel action based on the list of actions to be completed simultaneously
+     *
      * @param actions
      */
     public ParallelAction(List<AutoAction> actions) {
@@ -26,6 +30,7 @@ public class ParallelAction implements AutoAction {
 
     /**
      * Alternative constructor that takes actions in a different format
+     *
      * @param actions
      */
     public ParallelAction(AutoAction... actions) {
@@ -34,6 +39,7 @@ public class ParallelAction implements AutoAction {
 
     /**
      * Starts all actions in mActions in an iterative manner
+     *
      * @see AutoAction#start()
      */
     @Override
@@ -43,6 +49,7 @@ public class ParallelAction implements AutoAction {
 
     /**
      * Updates all actions in mActions in an iterative manner, which allows for parallel execution
+     *
      * @see AutoAction#update()
      */
     @Override
@@ -52,6 +59,7 @@ public class ParallelAction implements AutoAction {
 
     /**
      * Returns true if all actions in mActions are finished, otherwise continues
+     *
      * @return boolean isFinished
      * @see AutoAction#isFinished()
      */
@@ -67,6 +75,7 @@ public class ParallelAction implements AutoAction {
 
     /**
      * Standard verification cleanup for all actions in mActions
+     *
      * @see AutoAction#done()
      */
     @Override

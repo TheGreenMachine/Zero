@@ -15,6 +15,7 @@ import edu.wpi.first.math.util.Units;
 
 /**
  * Action for infrastructure based / gyroscopic balancing
+ *
  * @see AutoAction
  */
 public class AutoBalanceAction implements AutoAction {
@@ -29,6 +30,7 @@ public class AutoBalanceAction implements AutoAction {
     public AutoBalanceAction(double maxVelocity) {
         this.maxVelocity = maxVelocity;
     }
+
     @Override
     public void start() {
         drive = Injector.get(Drive.Factory.class).getInstance();
@@ -47,23 +49,23 @@ public class AutoBalanceAction implements AutoAction {
     @Override
     public void update() {
         double velocity = 0;
-        if (Math.abs(infrastructure.getFieldCentricPitch())>2) { // degrees
+        if (Math.abs(infrastructure.getFieldCentricPitch()) > 2) { // degrees
             double pitch = infrastructure.getFieldCentricPitch();
-            velocity = -(1 - Math.cos(Units.degreesToRadians(45d / 11 * pitch)))*maxVelocity*pitch/Math.abs(pitch);
+            velocity = -(1 - Math.cos(Units.degreesToRadians(45d / 11 * pitch))) * maxVelocity * pitch / Math.abs(pitch);
         }
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(velocity, 0, 0);
         if (isSwerve) {
             ((SwerveDrive) drive).setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
         } else {
             DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
-            DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond/TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond/TankDrive.kPathFollowingMaxVelMeters);
+            DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters);
             ((TankDrive) drive).setVelocity(driveSignal);
         }
     }
 
     @Override
     public boolean isFinished() {
-        if (Math.abs(infrastructure.getPitch())<2 && Math.abs(infrastructure.getRoll())<2) {
+        if (Math.abs(infrastructure.getPitch()) < 2 && Math.abs(infrastructure.getRoll()) < 2) {
             return true;
         }
         return false;

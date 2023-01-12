@@ -1,12 +1,12 @@
 package com.team1816.lib.subsystems.drive;
 
-import static com.team1816.lib.util.driveUtil.DriveConversions.*;
-
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.IMotorController;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
-import com.team1816.lib.auto.paths.PathUtil;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.util.EnhancedMotorChecker;
@@ -18,23 +18,26 @@ import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.*;
-import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.RobotBase;
 
-import java.util.ArrayList;
-import java.util.List;
+import static com.team1816.lib.util.driveUtil.DriveConversions.*;
 
 @Singleton
 public class TankDrive extends Drive implements DifferentialDrivetrain {
 
-    /** Components */
+    /**
+     * Components
+     */
     private final IGreenMotor leftMain, rightMain;
     private final IGreenMotor leftFollowerA, rightFollowerA, leftFollowerB, rightFollowerB;
 
-    /** Odometry */
+    /**
+     * Odometry
+     */
     private DifferentialDriveOdometry tankOdometry;
     private static final DifferentialDriveKinematics tankKinematics = new DifferentialDriveKinematics(
         kDriveWheelTrackWidthMeters
@@ -42,7 +45,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     private final CheesyDriveHelper driveHelper = new CheesyDriveHelper();
     private final double tickRatioPerLoop = Constants.kLooperDt / .1d; // Convert Ticks/100MS into Ticks/Robot Loop
 
-    /** States */
+    /**
+     * States
+     */
     public double leftPowerDemand, rightPowerDemand; // % Output (-1 to 1) - used in OPEN_LOOP
     public double leftVelDemand, rightVelDemand; // Velocity (Ticks/100MS) - used in TRAJECTORY_FOLLOWING
 
@@ -55,9 +60,10 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Instantiates a swerve drivetrain from base subsystem parameters
-     * @param lm LEDManager
+     *
+     * @param lm  LEDManager
      * @param inf Infrastructure
-     * @param rs RobotState
+     * @param rs  RobotState
      * @see Drive#Drive(LedManager, Infrastructure, RobotState)
      */
     @Inject
@@ -120,6 +126,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     /**
      * Writes outputs / demands to hardware on the drivetrain such as motors and handles the desired state of the left
      * and right sides. Directly writes to the motors.
+     *
      * @see IGreenMotor
      */
     @Override
@@ -142,6 +149,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     /**
      * Reads outputs from hardware on the drivetrain such as sensors and handles the actual state the wheels and
      * drivetrain speeds. Used to update odometry and other related data.
+     *
      * @see Infrastructure
      * @see RobotState
      */
@@ -179,6 +187,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Zeroes the encoders and odometry based on a certain pose
+     *
      * @param pose Pose2d
      * @see Drive#zeroSensors()
      */
@@ -197,6 +206,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Stops the drivetrain
+     *
      * @see Drive#stop()
      */
     @Override
@@ -211,6 +221,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Resets the encoders to hold the zero value
+     *
      * @see this#zeroSensors(Pose2d)
      */
     public synchronized void resetEncoders() {
@@ -222,6 +233,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Resets the odometry to a certain pose
+     *
      * @param pose Pose2d
      */
     @Override
@@ -238,6 +250,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Updates robotState based on values from odometry and sensor readings in readFromHardware
+     *
      * @see RobotState
      */
     @Override
@@ -252,9 +265,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         robotState.calculatedVehicleAccel =
             new ChassisSpeeds(
                 (cs.vxMetersPerSecond - robotState.deltaVehicle.vxMetersPerSecond) /
-                Constants.kLooperDt,
+                    Constants.kLooperDt,
                 (cs.vyMetersPerSecond - robotState.deltaVehicle.vyMetersPerSecond) /
-                Constants.kLooperDt,
+                    Constants.kLooperDt,
                 cs.omegaRadiansPerSecond - robotState.deltaVehicle.omegaRadiansPerSecond
             );
         robotState.deltaVehicle = cs;
@@ -264,6 +277,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Sets open loop percent output commands based on the DriveSignal from setTeleOpInputs()
+     *
      * @param signal DriveSignal
      * @see Drive#setOpenLoop(DriveSignal)
      */
@@ -284,8 +298,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Translates teleoperated inputs into a DriveSignal to be used in setTeleOpInputs()
-     * @param forward forward demand
-     * @param strafe strafe demand
+     *
+     * @param forward  forward demand
+     * @param strafe   strafe demand
      * @param rotation rotation demand
      * @see this#setOpenLoop(DriveSignal)
      * @see Drive#setTeleopInputs(double, double, double)
@@ -311,6 +326,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Adapts a DriveSignal for closed loop PID controlled motion
+     *
      * @param signal DriveSignal
      */
     public synchronized void setVelocity(DriveSignal signal) {
@@ -330,7 +346,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Utilizes a DriveSignal to adapt Trajectory demands for TRAJECTORY_FOLLOWING and closed loop control
-     * @param leftVel left velocity
+     *
+     * @param leftVel  left velocity
      * @param rightVel right velocity
      */
     public void updateTrajectoryVelocities(Double leftVel, Double rightVel) {
@@ -348,6 +365,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Sets whether the drivetrain is braking
+     *
      * @param braking boolean
      * @see Drive#setBraking(boolean)
      */
@@ -376,6 +394,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Returns the actual velocity of the left side in meters per second
+     *
      * @return left velocity (m/s)
      * @see com.team1816.lib.util.driveUtil.DriveConversions#ticksPer100MSToMPS(double)
      */
@@ -385,6 +404,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Returns the actual velocity of the right side in meters per second
+     *
      * @return right velocity (m/s)
      * @see com.team1816.lib.util.driveUtil.DriveConversions#ticksPer100MSToMPS(double)
      */
@@ -394,6 +414,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Returns the left velocity demand in ticks per 100ms
+     *
      * @return leftVelDemand
      */
     @Override
@@ -403,6 +424,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Returns the right velocity demand in ticks per 100ms
+     *
      * @return rightVelDemand
      */
     @Override
@@ -412,6 +434,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Returns the actual left velocity in ticks per 100ms
+     *
      * @return leftVelActual
      * @see IMotorController
      * @see IGreenMotor
@@ -423,6 +446,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Returns the actual right velocity in ticks per 100ms
+     *
      * @return rightVelActual
      * @see IMotorController
      * @see IGreenMotor
@@ -434,6 +458,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Returns the total distance (not displacement) traveled by the left side of the drivetrain
+     *
      * @return leftActualDistance
      */
     @Override
@@ -443,6 +468,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Returns the total distance (not displacement) traveled by the right side of the drivetrain
+     *
      * @return rightActualDistance
      */
     @Override
@@ -452,6 +478,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Returns the left side closed loop error (in-built)
+     *
      * @return leftErrorClosedLoop
      */
     @Override
@@ -461,6 +488,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Returns the right side closed loop error (in-built)
+     *
      * @return rightErrorClosedLoop
      */
     @Override
@@ -472,6 +500,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Tests the drivetrain by seeing if each side can go back and forth
+     *
      * @return true if tests passed
      * @see Drive#testSubsystem()
      */
@@ -493,6 +522,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Returns the pid configuration of the motors
+     *
      * @return PIDSlotConfiguration
      * @see Drive#getPIDConfig()
      */
@@ -510,6 +540,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /**
      * Returns the associated kinematics with the drivetrain
+     *
      * @return tankKinematics
      */
     public DifferentialDriveKinematics getKinematics() {

@@ -1,9 +1,5 @@
 package com.team1816;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.team1816.lib.Injector;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.SubsystemConfig;
@@ -13,6 +9,10 @@ import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.subsystems.drive.SwerveModule;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TestUtil {
 
