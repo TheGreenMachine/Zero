@@ -25,6 +25,10 @@ public class TrajectoryToPointAction extends AutoPath {
         //target = new Pose2d (1.0, 1.0, 0.0);
     }
 
+    public TrajectoryToPointAction() {
+
+    }
+
     @Override
     protected List<Pose2d> getWaypoints() {
         List<Pose2d> waypoints = new ArrayList<>();
