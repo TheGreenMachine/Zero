@@ -14,28 +14,13 @@ import java.util.List;
 
 public class TrajectoryToPointAction extends AutoPath {
     //run a trajectory using drive startTrajectory and update to run a trajectory from current robot state pose to (1, 1, 0) target
-    private static Drive drivetrain;
 
     private static RobotState robotState;
 
-    private static TrajectoryAction trajectoryAction;
-
-    private static List<TrajectoryAction> trajectoryList;
-
-    private static Trajectory trajectory;
-
-    private static AutoMode automode;
-
-    private static AutoPath path;
-
-    private static List<Rotation2d> headings;
-
+    private static Rotation2d targetRotation;
     private static Pose2d target;
 
     public TrajectoryToPointAction(double x, double y, Rotation2d r){
-        trajectoryAction = new TrajectoryAction(trajectory, headings);
-        trajectoryList.add(trajectoryAction);
-        headings = getAsTrajectoryHeadings();
         target = new Pose2d(x, y, r);
         //target = new Pose2d (1.0, 1.0, 0.0);
     }
@@ -43,18 +28,20 @@ public class TrajectoryToPointAction extends AutoPath {
     @Override
     protected List<Pose2d> getWaypoints() {
         List<Pose2d> waypoints = new ArrayList<>();
-        waypoints.add(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)));
+        waypoints.add(new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0)));
         waypoints.add(target);
         return waypoints;
     }
 
     @Override
     protected List<Rotation2d> getWaypointHeadings() {
+        List<Rotation2d> headings = new ArrayList<>();
+        headings.add(Rotation2d.fromDegrees(0));
         return headings;
     }
 
     @Override
     protected boolean usingApp() {
-        return false;
+        return true;
     }
 }
