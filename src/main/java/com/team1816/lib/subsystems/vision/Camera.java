@@ -102,11 +102,11 @@ public class Camera extends Subsystem {
             }
         }
 
-        GreenPhotonCamera.setVersionCheckEnabled(false);
+        PhotonCamera.setVersionCheckEnabled(false);
         // only actually make a cam if cam implemented
         // prevents "no coprocessor found" error when sim is booted up w/ out a camera
         if(camImplemented){
-            cam = new PhotonCamera("microsoft");
+            cam = new PhotonCamera("snakeyes");
         }
     }
 
