@@ -230,8 +230,10 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("driveTrajectory"),
                         () -> {
-                            TrajectoryToPointAction trajectory = new TrajectoryToPointAction(1, 1, Constants.EmptyRotation2d);
-                            drive.startTrajectory(trajectory.getAsTrajectory(), trajectory.getAsTrajectoryHeadings());
+                            /*TrajectoryToPointAction trajectory = new TrajectoryToPointAction(1, 1, Constants.EmptyRotation2d);
+                            drive.startTrajectory(trajectory.getAsTrajectory(), trajectory.getAsTrajectoryHeadings());*/
+                            TrajectoryToPointMode trajectoryMode = new TrajectoryToPointMode();
+                            trajectoryMode.run();
                         }
                     ),
                     createHoldAction(
