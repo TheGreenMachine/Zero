@@ -14,6 +14,8 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.season.auto.AutoModeManager;
+import com.team1816.season.auto.actions.TrajectoryToPointAction;
+import com.team1816.season.auto.modes.TrajectoryToPointMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
@@ -223,6 +225,13 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("zeroPose"),
                         () -> {
                             drive.zeroSensors(Constants.kDefaultZeroingPose);
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("driveTrajectory"),
+                        () -> {
+                            TrajectoryToPointAction trajectory = new TrajectoryToPointAction(1, 1, Constants.EmptyRotation2d);
+                            drive.startTrajectory(trajectory.getAsTrajectory(), trajectory.getAsTrajectoryHeadings());
                         }
                     ),
                     createHoldAction(
