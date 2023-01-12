@@ -259,7 +259,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                 cs.omegaRadiansPerSecond - robotState.deltaVehicle.omegaRadiansPerSecond
             );
         robotState.deltaVehicle = cs;
-        robotState.triAxialAcceleration = infrastructure.getAcceleration();
     }
 
     /** Open loop control */

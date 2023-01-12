@@ -13,6 +13,7 @@ import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
+import com.team1816.lib.subsystems.turret.Turret;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.actions.TrajectoryToPointAction;
 import com.team1816.season.auto.modes.TrajectoryToPointMode;
@@ -122,7 +123,7 @@ public class Robot extends TimedRobot {
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            subsystemManager.setSubsystems(drive, camera, ledManager);
+            subsystemManager.setSubsystems(drive, ledManager);
 
             /** Register BadLogs */
             if (Constants.kIsBadlogEnabled) {
@@ -176,22 +177,6 @@ public class Robot extends TimedRobot {
                     "PDP/Current",
                     "Amps",
                     infrastructure.getPd()::getTotalCurrent
-                );
-
-                BadLog.createTopic(
-                    "Pigeon/AccelerationX",
-                    "G",
-                    infrastructure::getXAcceleration
-                );
-                BadLog.createTopic(
-                    "Pigeon/AccelerationY",
-                    "G",
-                    infrastructure::getYAcceleration
-                );
-                BadLog.createTopic(
-                    "Pigeon/AccelerationZ",
-                    "G",
-                    infrastructure::getZAcceleration
                 );
 
                 BadLog.createTopic(
@@ -268,6 +253,7 @@ public class Robot extends TimedRobot {
             // Stop any running autos
             autoModeManager.stopAuto();
             ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
+            camera.setCameraEnabled(false);
 
             if (autoModeManager.getSelectedAuto() == null) {
                 autoModeManager.reset();
