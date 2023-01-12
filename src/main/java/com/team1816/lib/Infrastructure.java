@@ -7,6 +7,8 @@ import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
 /**
@@ -38,7 +40,6 @@ public class Infrastructure {
         pigeon = factory.getPigeon();
         pd = factory.getPd();
         compressorEnabled = factory.isCompressorEnabled();
-
     }
 
     /**
@@ -108,10 +109,25 @@ public class Infrastructure {
     }
 
     /**
-     * Updates accelerometer readings from the pigeon on a timed loop basis
-     * @see IPigeonIMU#getAcceleration()
+     * Returns the field-centric pitch of the pigeon
+     * @return pitch
+     * @see IPigeonIMU#getPitch()
      */
-    public void update() {
+    public double getFieldCentricPitch() {
+        Rotation3d angularState = new Rotation3d(Units.degreesToRadians(getYaw()), Units.degreesToRadians(getPitch()), Units.degreesToRadians(getRoll()));
+        Rotation3d yawState = new Rotation3d(-Units.degreesToRadians(getYaw()), 0, 0);
+        return Units.radiansToDegrees(angularState.rotateBy(yawState).getY());
+    }
+
+    /**
+     * Returns the field-centric roll of the pigeon
+     * @return roll
+     * @see IPigeonIMU#getRoll()
+     */
+    public double getFieldCentricRoll() {
+        Rotation3d angularState = new Rotation3d(Units.degreesToRadians(getYaw()), Units.degreesToRadians(getPitch()), Units.degreesToRadians(getRoll()));
+        Rotation3d yawState = new Rotation3d(-Units.degreesToRadians(getYaw()), 0, 0);
+        return Units.radiansToDegrees(angularState.rotateBy(yawState).getZ());
     }
 
     /**
