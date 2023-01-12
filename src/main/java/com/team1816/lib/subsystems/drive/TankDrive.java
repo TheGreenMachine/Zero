@@ -283,30 +283,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     /**
-     * Runs a trajectory to a target pose
-     * @param target - target pose
-     * @see Trajectory
-     */
-    @Override
-    public void runTrajectoryToTarget(Pose2d target) {
-        System.out.println("Running trajectory to Target: " + target);
-
-        List<Pose2d> waypoints = new ArrayList<>();
-        List<Rotation2d> headings = new ArrayList<>();
-
-        waypoints.add(robotState.fieldToVehicle);
-        waypoints.add(target);
-
-        headings.add(robotState.fieldToVehicle.getRotation());
-        headings.add(target.getRotation());
-
-        Trajectory trajectory = PathUtil.generateTrajectory(true, waypoints);
-        List<Rotation2d> trajectoryHeadings = PathUtil.generateHeadings(true, waypoints, headings);
-
-        startTrajectory(trajectory, trajectoryHeadings);
-    }
-
-    /**
      * Translates teleoperated inputs into a DriveSignal to be used in setTeleOpInputs()
      * @param forward forward demand
      * @param strafe strafe demand

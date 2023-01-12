@@ -7,6 +7,7 @@ driver:
         right:
             horizontal: rotation
     buttonpad:
+        x: autoBalance
         a: autoTarget
     axes:
         leftTrigger: brakeMode
