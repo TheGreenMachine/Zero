@@ -3,6 +3,7 @@ package com.team1816.lib.subsystems.drive;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
+import com.team1816.lib.auto.paths.PathUtil;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.util.team254.DriveSignal;
@@ -16,6 +17,9 @@ import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -290,6 +294,28 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
 
         desiredModuleStates = desiredStatesSignal;
+    }
+
+    /**
+     * Runs a trajectory to a target pose
+     * @param target - target pose
+     * @see Trajectory
+     */
+    @Override
+    public void runTrajectoryToTarget(Pose2d target) {
+        List<Pose2d> waypoints = new ArrayList<>();
+        List<Rotation2d> headings = new ArrayList<>();
+
+        waypoints.add(new Pose2d(robotState.fieldToVehicle.getX(), robotState.fieldToVehicle.getY(), new Rotation2d()));
+        waypoints.add(target);
+
+        headings.add(robotState.fieldToVehicle.getRotation());
+        headings.add(target.getRotation());
+
+        Trajectory trajectory = PathUtil.generateTrajectory(true, waypoints);
+        List<Rotation2d> trajectoryHeadings = PathUtil.generateHeadings(true, waypoints, headings);
+
+        startTrajectory(trajectory, trajectoryHeadings);
     }
 
     /**

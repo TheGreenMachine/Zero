@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
+import com.team1816.lib.auto.paths.PathUtil;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.util.EnhancedMotorChecker;
@@ -20,7 +21,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Singleton
 public class TankDrive extends Drive implements DifferentialDrivetrain {
@@ -277,6 +282,28 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
         leftVelDemand = leftPowerDemand * maxVelTicks100ms;
         rightVelDemand = rightPowerDemand * maxVelTicks100ms;
+    }
+
+    /**
+     * Runs a trajectory to a target pose
+     * @param target - target pose
+     * @see Trajectory
+     */
+    @Override
+    public void runTrajectoryToTarget(Pose2d target) {
+        List<Pose2d> waypoints = new ArrayList<>();
+        List<Rotation2d> headings = new ArrayList<>();
+
+        waypoints.add(robotState.fieldToVehicle);
+        waypoints.add(target);
+
+        headings.add(robotState.fieldToVehicle.getRotation());
+        headings.add(target.getRotation());
+
+        Trajectory trajectory = PathUtil.generateTrajectory(true, waypoints);
+        List<Rotation2d> trajectoryHeadings = PathUtil.generateHeadings(true, waypoints, headings);
+
+        startTrajectory(trajectory, trajectoryHeadings);
     }
 
     /**

@@ -274,6 +274,13 @@ public abstract class Drive
     public abstract void setOpenLoop(DriveSignal signal);
 
     /**
+     * Runs a trajectory to a target pose
+     * @param target - target pose
+     * @see Trajectory
+     */
+    public abstract void runTrajectoryToTarget(Pose2d target);
+
+    /**
      * Sets the tele-operated inputs for the drivetrain that will be translated into a DriveSignal
      * @param forward forward demand
      * @param strafe strafe demand
