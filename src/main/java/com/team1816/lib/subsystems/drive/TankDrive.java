@@ -128,6 +128,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                 ControlMode.PercentOutput,
                 isSlowMode ? (rightPowerDemand * 0.5) : rightPowerDemand
             );
+
+        } else if(controlState == ControlState.AUTO_BALANCE) {
+            var roll = infrastructure.getRoll();
+            var pitch = infrastructure.getPitch();
+            if(Math.abs(pitch) > 1)
+                setTeleopInputs((-pitch)/308,0,0);
         } else {
             leftMain.set(ControlMode.Velocity, leftVelDemand);
             rightMain.set(ControlMode.Velocity, rightVelDemand);

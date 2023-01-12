@@ -13,7 +13,7 @@ driver:
         leftTrigger: brakeMode
         rightTrigger: slowMode
     buttons:
-        leftBumper: toggleCollector
+        leftBumper: autoBalance
         rightBumper: toggleCollectorReverse
         start: zeroPose
 operator:

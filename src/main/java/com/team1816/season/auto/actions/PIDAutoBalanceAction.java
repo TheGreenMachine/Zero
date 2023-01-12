@@ -9,11 +9,19 @@ public class PIDAutoBalanceAction implements AutoAction {
 
     private Infrastructure infrastructure;
     private static Drive drive;
+    private boolean toggled;
 
     public PIDAutoBalanceAction(){
         infrastructure = Injector.get(Infrastructure.class);
         drive = Injector.get(Drive.Factory.class).getInstance();
+        toggled = true;
     }
+    public PIDAutoBalanceAction(boolean isBalancing){
+        infrastructure = Injector.get(Infrastructure.class);
+        drive = Injector.get(Drive.Factory.class).getInstance();
+        toggled = isBalancing;
+    }
+
 
     @Override
     public void start() {
@@ -31,7 +39,7 @@ public class PIDAutoBalanceAction implements AutoAction {
     @Override
     public boolean isFinished() {
         double theta = infrastructure.getPitch();
-        if(theta <= 1 && theta >= -1)
+        if((theta <= 1 && theta >= -1) || !toggled)
             return true;
         return false;
     }

@@ -6,6 +6,7 @@ import static com.team1816.lib.controlboard.ControlUtils.createHoldAction;
 import badlog.lib.BadLog;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
+import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.controlboard.ActionManager;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
@@ -14,6 +15,7 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.season.auto.AutoModeManager;
+import com.team1816.season.auto.actions.PIDAutoBalanceAction;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
@@ -61,6 +63,7 @@ public class Robot extends TimedRobot {
 
     /** Properties */
     private boolean faulted;
+    private Drive.ControlState prevState;
 
     /**
      * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
@@ -214,6 +217,15 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("autoBalance"),
+                        (balancing) -> {
+                            if(balancing)
+                                drive.setControlState(Drive.ControlState.AUTO_BALANCE);
+                            else
+                                drive.setControlState(Drive.ControlState.OPEN_LOOP);
+                        }
                     )
                     // Operator Gamepad
                 );

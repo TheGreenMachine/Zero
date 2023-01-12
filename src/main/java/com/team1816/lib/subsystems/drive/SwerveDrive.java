@@ -140,6 +140,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         } else if(controlState == ControlState.AUTO_BALANCE) {
             var roll = infrastructure.getRoll();
             var pitch = infrastructure.getPitch();
+            if(Math.abs(pitch) > 1)
+                setTeleopInputs((-pitch)/308,0,0);
         }
     }
 
