@@ -137,8 +137,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             for (int i = 0; i < 4; i++) {
                 swerveModules[i].setDesiredState(desiredModuleStates[i], true);
             }
-        } else {
-
         }
     }
 
@@ -164,8 +162,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (RobotBase.isSimulation()) {
             simulateGyroOffset();
         }
-        infrastructure.update();
-        System.out.println("roll: " + infrastructure.getRoll() + " pitch: " + infrastructure.getPitch() + "\n");
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
         swerveOdometry.update(actualHeading, actualModulePositions);
@@ -224,7 +220,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     /**
-     * Sets the module states to a desired set of states
+     * Sets the module states to a desired set of states in closed loop - this is used during autos
      * @param desiredStates desiredModuleStates
      * @see com.team1816.lib.auto.actions.TrajectoryAction
      */
@@ -295,7 +291,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     /**
-     * Translates tele-operated inputs into a SwerveDriveSignal to be used in setTeleOpInputs()
+     * Translates tele-op inputs into a SwerveDriveSignal to be used in setOpenLoop()
      * @param forward forward demand
      * @param strafe strafe demand
      * @param rotation rotation demand
