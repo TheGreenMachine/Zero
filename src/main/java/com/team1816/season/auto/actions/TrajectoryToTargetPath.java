@@ -15,13 +15,14 @@ public class TrajectoryToTargetPath extends AutoPath {
     private static RobotState robotState;
     private static Pose2d target;
 
-    public TrajectoryToTargetPath(double x, double y, Rotation2d r){
+    public TrajectoryToTargetPath(Pose2d pose){
         robotState = Injector.get(RobotState.class);
-        target = new Pose2d(x, y, r);
+        target = pose;
     }
 
     public TrajectoryToTargetPath() {
-        new TrajectoryToTargetPath(1.0, 1.0, Rotation2d.fromDegrees(180));
+        robotState = Injector.get(RobotState.class);
+        new TrajectoryToTargetPath(robotState.target);
     }
 
     @Override
