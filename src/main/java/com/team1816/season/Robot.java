@@ -211,7 +211,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("driveTrajectory"),
+                        () -> controlBoard.getAsBool("autoTarget"),
                         () -> {
                             System.out.println("Drive trajectory action started!");
                             TrajectoryToTargetMode mode = new TrajectoryToTargetMode();

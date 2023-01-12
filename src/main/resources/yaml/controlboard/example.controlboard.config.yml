@@ -7,7 +7,7 @@ driver:
         right:
             horizontal: rotation
     buttonpad:
-        a: driveTrajectory
+        a: autoTarget
     axes:
         leftTrigger: brakeMode
         rightTrigger: slowMode
@@ -15,12 +15,6 @@ driver:
         start: zeroPose
 operator:
     rumble: false
-    joysticks:
-        left:
-            horizontal: manualTurretXVal
-            vertical: manualTurretYVal
-        right:
-            vertical: manualClimberArm
     dpad:
         up: raiseBucket
         down: lowerBucket
