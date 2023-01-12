@@ -291,6 +291,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      */
     @Override
     public void runTrajectoryToTarget(Pose2d target) {
+        System.out.println("Running trajectory to Target: " + target);
+
         List<Pose2d> waypoints = new ArrayList<>();
         List<Rotation2d> headings = new ArrayList<>();
 

@@ -20,6 +20,7 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.*;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
@@ -230,10 +231,14 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("driveTrajectory"),
                         () -> {
-                            /*TrajectoryToPointAction trajectory = new TrajectoryToPointAction(1, 1, Constants.EmptyRotation2d);
-                            drive.startTrajectory(trajectory.getAsTrajectory(), trajectory.getAsTrajectoryHeadings());*/
-                            TrajectoryToPointMode trajectoryMode = new TrajectoryToPointMode();
-                            trajectoryMode.run();
+                            System.out.println("Drive trajectory action started!");
+//                            TrajectoryToPointAction trajectory = new TrajectoryToPointAction(1, 1, Constants.EmptyRotation2d);
+//                            drive.startTrajectory(trajectory.getAsTrajectory(), trajectory.getAsTrajectoryHeadings());
+
+//                            TrajectoryToPointMode trajectoryMode = new TrajectoryToPointMode();
+//                            trajectoryMode.run();
+
+                            drive.runTrajectoryToTarget(new Pose2d(1, 1, new Rotation2d()));
                         }
                     ),
                     createHoldAction(

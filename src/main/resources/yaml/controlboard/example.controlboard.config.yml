@@ -7,15 +7,11 @@ driver:
         right:
             horizontal: rotation
     buttonpad:
-        x: toggleManualShoot
-        y: unlockClimber
         a: driveTrajectory
     axes:
         leftTrigger: brakeMode
         rightTrigger: slowMode
     buttons:
-        leftBumper: toggleCollector
-        rightBumper: toggleCollectorReverse
         start: zeroPose
 operator:
     rumble: false

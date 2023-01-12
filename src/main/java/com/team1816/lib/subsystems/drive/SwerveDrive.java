@@ -303,6 +303,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      */
     @Override
     public void runTrajectoryToTarget(Pose2d target) {
+        System.out.println("Running trajectory to Target: " + target);
+
         List<Pose2d> waypoints = new ArrayList<>();
         List<Rotation2d> headings = new ArrayList<>();
 
