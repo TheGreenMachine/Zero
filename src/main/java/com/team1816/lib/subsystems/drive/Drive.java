@@ -478,6 +478,7 @@ public abstract class Drive
     public enum ControlState {
         OPEN_LOOP, // open loop voltage control
         TRAJECTORY_FOLLOWING,
+        AUTO_BALANCE
     }
 
     /**

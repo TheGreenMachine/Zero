@@ -137,8 +137,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             for (int i = 0; i < 4; i++) {
                 swerveModules[i].setDesiredState(desiredModuleStates[i], true);
             }
-        } else {
-
+        } else if(controlState == ControlState.AUTO_BALANCE) {
+            var roll = infrastructure.getRoll();
+            var pitch = infrastructure.getPitch();
         }
     }
 
