@@ -30,7 +30,7 @@ public class TrajectoryToTargetPath extends AutoPath {
     @Override
     protected List<Pose2d> getWaypoints() {
         List<Pose2d> waypoints = new ArrayList<>();
-        waypoints.add(robotState.fieldToVehicle);
+        waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
         waypoints.add(target);
         return waypoints;
     }
@@ -39,7 +39,7 @@ public class TrajectoryToTargetPath extends AutoPath {
     protected List<Rotation2d> getWaypointHeadings() {
         List<Rotation2d> headings = new ArrayList<>();
         headings.add(robotState.fieldToVehicle.getRotation());
-        headings.add(Rotation2d.fromDegrees(0));
+        headings.add(target.getRotation());
         return headings;
     }
 
