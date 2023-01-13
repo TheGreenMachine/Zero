@@ -2,9 +2,11 @@ package com.team1816.season.auto.actions;
 
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.paths.AutoPath;
+import com.team1816.lib.auto.paths.PathUtil;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,21 @@ public class TrajectoryToTargetPath extends AutoPath {
         headings.add(Rotation2d.fromDegrees(0));
         return headings;
     }
+
+//    @Override
+//    public Trajectory getAsTrajectory() {
+//        return PathUtil.generateTrajectory(usingApp(), robotState.deltaVehicle, getWaypoints());
+//    }
+//
+//    @Override
+//    public List<Rotation2d> getAsTrajectoryHeadings() {
+//        return PathUtil.generateHeadings(
+//            usingApp(),
+//            getWaypoints(),
+//            getWaypointHeadings(),
+//            getAsTrajectory()
+//        );
+//    }
 
     @Override
     protected boolean usingApp() {
