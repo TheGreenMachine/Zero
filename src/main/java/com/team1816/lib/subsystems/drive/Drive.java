@@ -151,9 +151,9 @@ public abstract class Drive
         "maxVelOpenLoop"
     );
 
-    public static final double kPXController = 1;
-    public static final double kPYController = 1;
-    public static final double kPThetaController = 4;
+    public static final double kPXController = 12;
+    public static final double kPYController = 12;
+    public static final double kPThetaController = 48;
     public static final double kMaxAngularSpeed = factory.getConstant(NAME, "maxRotVel"); // rad/sec
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared =
         2 * Math.PI;
