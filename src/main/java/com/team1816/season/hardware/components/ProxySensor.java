@@ -26,4 +26,8 @@ public class ProxySensor extends AnalogInput{
         }    //somehow reading wrong, zero it out
         return sensorVoltage;
     }
+
+    public double getDistance() {
+        return (Math.pow(sharp.getAverageVoltage(), -1.2045)) * 27.726;
+    }
 }
