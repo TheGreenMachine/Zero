@@ -29,6 +29,10 @@ subsystems:
             wheelDiameter: 6.32 #inches
             kTrackScrubFactor: 1.0
             isDemoMode: 0
+    proxysensor:
+        implemented: true
+        constants:
+            sensorPort: 0
     turret:
         implemented: false
         talons:
