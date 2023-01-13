@@ -16,7 +16,7 @@ public class ProxySensor extends Subsystem {
 
     public ProxySensor(String name, Infrastructure inf, RobotState rs) {
         super(name, inf, rs);
-        sharp = new AnalogInput((int)(Math.round((factory.getConstant("proxySensor")))));
+        sharp = new gitAnalogInput((int)(Math.round((factory.getConstant("proxySensor")))));
     }
 
     @Override
