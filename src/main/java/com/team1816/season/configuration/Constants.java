@@ -73,6 +73,7 @@ public class Constants {
      */
     public static final double gravitationalAccelerationConstant = 9.8d;
     public static double kMaxAccelDiffThreshold = 2d; // m/s^2
+    public static double kMaxBalancingVelocity = 0.2; // m/s
 
     /**
      * Badlog
