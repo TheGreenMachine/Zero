@@ -2,11 +2,9 @@ package com.team1816.season.auto.actions;
 
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.paths.AutoPath;
-import com.team1816.lib.auto.paths.PathUtil;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
 
 import java.util.ArrayList;
 import java.util.List;
