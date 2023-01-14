@@ -3,6 +3,8 @@ package com.team1816.lib.auto.paths;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
+
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -20,6 +22,18 @@ public abstract class AutoPath {
      * State: headings corresponding to the path that can be transposed onto the trajectory for omni-directional drivetrains like swerve
      */
     List<Rotation2d> headings;
+    /**
+     * State: contains information about whether the trajectory should be reflected and how
+     */
+    boolean reflected;
+
+    /**
+     * Sets the reflected state to passed argument
+     * @param reflected - reflected
+     */
+    protected void setReflected(boolean reflected) {
+        this.reflected = reflected;
+    }
 
     /**
      * Returns a list of Pose2d's that define the trajectory /path to be followed
@@ -32,6 +46,18 @@ public abstract class AutoPath {
      * @return waypointHeadings
      */
     protected abstract List<Rotation2d> getWaypointHeadings();
+
+    /**
+     * Returns a list of Pose2d's that define the trajectory /path to be followed
+     * @return waypoints
+     */
+    protected abstract List<Pose2d> getReflectedWaypoints();
+
+    /**
+     * Returns a list of Rotation2d's corresponding to the rotation respect to the trajectory
+     * @return waypointHeadings
+     */
+    protected abstract List<Rotation2d> getReflectedWaypointHeadings();
 
     /**
      * Checks if the path was made using the CheesyPath web application.
@@ -47,7 +73,11 @@ public abstract class AutoPath {
      */
     public Trajectory getAsTrajectory() {
         if (trajectory == null) {
-            trajectory = PathUtil.generateTrajectory(usingApp(), getWaypoints());
+            if (!reflected) {
+                trajectory = PathUtil.generateTrajectory(usingApp(), getWaypoints());
+            } else {
+                trajectory = PathUtil.generateTrajectory(usingApp(), getReflectedWaypoints());
+            }
         }
         return trajectory;
     }
@@ -59,12 +89,21 @@ public abstract class AutoPath {
      */
     public List<Rotation2d> getAsTrajectoryHeadings() {
         if (headings == null) {
-            headings =
-                PathUtil.generateHeadings(
-                    usingApp(),
-                    getWaypoints(),
-                    getWaypointHeadings()
-                );
+            if (!reflected) {
+                headings =
+                    PathUtil.generateHeadings(
+                        usingApp(),
+                        getWaypoints(),
+                        getWaypointHeadings()
+                    );
+            } else {
+                headings =
+                    PathUtil.generateHeadings(
+                        usingApp(),
+                        getReflectedWaypoints(),
+                        getReflectedWaypointHeadings()
+                    );
+            }
         }
         return headings;
     }

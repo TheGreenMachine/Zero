@@ -43,12 +43,6 @@ public class Camera extends Subsystem {
     private static final double CAMERA_DFOV = 100; // degrees
     private static final double CAMERA_HFOV = 85;
     private final double CAMERA_HEIGHT_METERS = 0.7493; // meters
-    private final double TARGET_HEIGHT_METERS = Units.inchesToMeters(
-        Constants.kTargetHeight
-    );
-    private final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(
-        Constants.kCameraMountingAngleY
-    );
 
     private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 20);
 

@@ -1,6 +1,7 @@
 package com.team1816.season.configuration;
 
 import com.google.inject.Singleton;
+import com.team1816.lib.auto.Symmetry;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.season.Robot;
 import edu.wpi.first.math.geometry.*;
@@ -38,11 +39,7 @@ public class Constants {
     /**
      * Field characterization
      */
-    public static final double kTargetHeight = 104; // inches
-    public static final double kTargetRadius = 26.56; // inches
-    public static final double kCameraMountingHeight = 22; // inches
-    public static final double kHeightFromCamToHub =
-        kTargetHeight - kCameraMountingHeight; // inches
+    public static final Symmetry fieldSymmetry = Symmetry.AXIS;
     public static final double kCameraMountingAngleY = 20; // degrees
     public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters
     public static final double fieldCenterY = 8.23 / 2.0;
