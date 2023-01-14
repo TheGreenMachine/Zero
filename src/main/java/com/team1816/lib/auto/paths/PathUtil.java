@@ -74,31 +74,21 @@ public class PathUtil {
         List<Pose2d> waypoints
     ) {
         /* Inch to meter conversions for waypoints for trajectory calculations */
-        List<Translation2d> waypointTranslationMeters = new ArrayList<>();
+        List<Pose2d> waypointsMeters = new ArrayList<>();
         for (Pose2d pose2d : waypoints) {
-            waypointTranslationMeters.add(
-                new Translation2d(
+            waypointsMeters.add(
+                new Pose2d(
                     pose2d.getX(),
-                    pose2d.getY()
+                    pose2d.getY(),
+                    pose2d.getRotation()
                 )
             );
         }
-
-        double[] vx_i = new double[]{waypoints.get(0).getX(), initial.vxMetersPerSecond, 0};
-        double[] vy_i = new double[]{waypoints.get(0).getY(), initial.vyMetersPerSecond, 0};
-
-        double[] vx_f = new double[]{waypoints.get(waypoints.size() - 1).getX(), 0, 0};
-        double[] vy_f = new double[]{waypoints.get(waypoints.size() - 1).getY(), 0, 0};
-
-        Spline.ControlVector i = new Spline.ControlVector(vx_i, vy_i);
-        Spline.ControlVector f = new Spline.ControlVector(vx_f, vy_f);
-
         /* Configures trajectory constraints */
         TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAccel);
+        config.setStartVelocity(initial.vxMetersPerSecond);
         var baseTrajectory = edu.wpi.first.math.trajectory.TrajectoryGenerator.generateTrajectory(
-            i,
-            waypointTranslationMeters,
-            f,
+            waypointsMeters,
             config
         );
         /* If web application is not used, then the starting pose is transformed to the default starting pose, this has no impact on how the trajectory is run */

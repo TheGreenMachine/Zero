@@ -75,8 +75,8 @@ subsystems:
             wheelbaseLength: 21.5 #inches
             wheelDiameter: 4
             kTrackScrubFactor: 1.0
-            maxVelOpenLoop: 3 # meters/s
-            maxVelPathFollowing: 3 # meters/s (2.2)
+            maxVelOpenLoop: 3.9 # meters/s
+            maxVelPathFollowing: 3.9 # meters/s (2.2)
             maxAccel: 3.17 # meters/s^ 2
             isDemoMode: 0
     ledmanager:
