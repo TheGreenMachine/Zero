@@ -31,6 +31,8 @@ public class RobotState {
     public Double[] triAxialAcceleration = new Double[] { 0d, 0d, 0d };
     public boolean isPoseUpdated = true;
 
+    public double maxDistance;
+
     /** Inertial characterization */
     public Pose3d fieldToCG = Constants.EmptyPose3d;
     public Rotation3d inertialOrientationState = Constants.EmptyRotation3d;

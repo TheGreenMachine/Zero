@@ -9,6 +9,7 @@ import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveHelper;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
 import com.team1816.season.configuration.Constants;
+import com.team1816.season.hardware.components.ProxySensor;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.*;
@@ -117,7 +118,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 Constants.EmptyRotation2d,
                 actualModulePositions
             );
-        System.out.println("Swerve is initialized");
+
     }
 
     /** Read/Write Periodic */
@@ -165,6 +166,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
         swerveOdometry.update(actualHeading, actualModulePositions);
+
+
         updateRobotState();
     }
 

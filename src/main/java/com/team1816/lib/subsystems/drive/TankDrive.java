@@ -13,6 +13,7 @@ import com.team1816.lib.util.team254.CheesyDriveHelper;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
 import com.team1816.season.configuration.Constants;
+import com.team1816.season.hardware.components.ProxySensor;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -47,6 +48,10 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     double leftErrorClosedLoop;
     double rightErrorClosedLoop;
+
+    public static ProxySensor proxySensor1;
+
+    public static ProxySensor proxySensor2;
 
     /**
      * Instantiates a swerve drivetrain from base subsystem parameters
@@ -97,6 +102,10 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             currentLimitConfig,
             Constants.kLongCANTimeoutMs
         );
+
+        proxySensor1 = new ProxySensor("proxySensor1", 0);
+
+        proxySensor2 = new ProxySensor("proxySensor2", 1);
 
         setOpenLoop(DriveSignal.NEUTRAL);
 
@@ -165,6 +174,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             simulateGyroOffset();
         }
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+
+        System.out.print("proxy sensor1: " + proxySensor1.getDistance() + "        ");
+        System.out.println("proxy sensor2: " + proxySensor2.getDistance());
 
         tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
