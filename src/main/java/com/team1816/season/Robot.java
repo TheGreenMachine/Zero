@@ -218,13 +218,16 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
                     ),
-                    createHoldAction(
+                    createAction(
                         () -> controlBoard.getAsBool("autoBalance"),
-                        (balancing) -> {
-                            if(balancing)
-                                drive.setControlState(Drive.ControlState.AUTO_BALANCE);
-                            else
-                                drive.setControlState(Drive.ControlState.OPEN_LOOP);
+                        () -> {
+                            System.out.println("SOMEHTIHSOij");
+//                            if(balancing){
+//                                drive.setControlState(Drive.OpenState.AUTO_BALANCE);
+//                                System.out.println("YAAAAAY");
+//                            }
+//                            else
+//                                drive.setControlState(Drive.ControlState.OPEN_LOOP);
                         }
                     )
                     // Operator Gamepad

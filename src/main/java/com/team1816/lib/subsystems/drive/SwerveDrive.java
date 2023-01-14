@@ -168,7 +168,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             simulateGyroOffset();
         }
         infrastructure.update();
-        System.out.println("roll: " + infrastructure.getRoll() + " pitch: " + infrastructure.getPitch() + "\n");
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
         swerveOdometry.update(actualHeading, actualModulePositions);
