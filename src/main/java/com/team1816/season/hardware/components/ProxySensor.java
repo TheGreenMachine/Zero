@@ -9,8 +9,6 @@ import edu.wpi.first.wpilibj.AnalogInput;
 public class ProxySensor extends AnalogInput{
     private static AnalogInput sharp;
 
-    private static AnalogInput sharpFront;
-
     private static final String NAME = "proxySensor";
 
     public ProxySensor(String name, int id, int port) {
