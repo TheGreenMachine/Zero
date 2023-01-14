@@ -1,12 +1,13 @@
 package com.team1816.season.auto.paths;
 
-import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxVelMeters;
-
 import com.team1816.lib.auto.paths.AutoPath;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+
 import java.util.List;
+
+import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxVelMeters;
 
 public class DriveStraightPath extends AutoPath {
 
@@ -41,8 +42,8 @@ public class DriveStraightPath extends AutoPath {
     @Override
     protected List<Pose2d> getReflectedWaypoints() {
         var waypoints = List.of(
-            new Pose2d(Constants.fieldCenterX*2-0.0, 0.0, Rotation2d.fromDegrees(180-0)),
-            new Pose2d(Constants.fieldCenterX*2-(driveDistance), 0.0, Rotation2d.fromDegrees(180-0))
+            new Pose2d(Constants.fieldCenterX * 2 - 0.0, 0.0, Rotation2d.fromDegrees(180 - 0)),
+            new Pose2d(Constants.fieldCenterX * 2 - (driveDistance), 0.0, Rotation2d.fromDegrees(180 - 0))
         );
         return waypoints;
     }

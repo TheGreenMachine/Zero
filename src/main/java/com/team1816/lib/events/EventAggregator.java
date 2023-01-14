@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 /**
  * A class the aggregates events into a registry of events that can then be called upon to trigger an event
+ *
  * @see IEventAggregator
  */
 public class EventAggregator implements IEventAggregator {

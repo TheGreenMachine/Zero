@@ -6,27 +6,36 @@ import com.team1816.lib.hardware.components.motor.IGreenMotor;
 
 /**
  * This class emulates the behaviour of a Pigeon that is not physically implemented on a robot
+ *
  * @see IPigeonIMU
  */
 public class GhostPigeonIMU implements IPigeonIMU {
 
-    /** State */
+    /**
+     * State
+     */
     double simulatedYaw; // simulated yaw
     double simulatedPitch;
     double simulatedRoll;
 
-    /** Instantiates a free ghost pigeon */
+    /**
+     * Instantiates a free ghost pigeon
+     */
     public GhostPigeonIMU(int id) {
         simulatedYaw = 0;
         simulatedPitch = 0;
         simulatedRoll = 0;
     }
 
-    /** Alternately instantiates a ghost pigeon attached to a motor */
-    public GhostPigeonIMU(IGreenMotor motor) {}
+    /**
+     * Alternately instantiates a ghost pigeon attached to a motor
+     */
+    public GhostPigeonIMU(IGreenMotor motor) {
+    }
 
     /**
      * Returns the simulatedYaw
+     *
      * @return simulatedYaw
      * @see IPigeonIMU#getYaw()
      */
@@ -37,6 +46,7 @@ public class GhostPigeonIMU implements IPigeonIMU {
 
     /**
      * Returns the simulatedPitch
+     *
      * @return simulatedPitch
      * @see IPigeonIMU#getPitch()
      */
@@ -47,6 +57,7 @@ public class GhostPigeonIMU implements IPigeonIMU {
 
     /**
      * Returns the simulatedRoll
+     *
      * @return simulatedRoll
      * @see IPigeonIMU#getRoll()
      */
@@ -57,17 +68,19 @@ public class GhostPigeonIMU implements IPigeonIMU {
 
     /**
      * Returns constant simulated acceleration, can be modified for other purposes
+     *
      * @return simulatedAcceleration
      * @see IPigeonIMU#getAcceleration()
      */
     @Override
     public double[] getAcceleration() {
-        double[] accel = new double[] { 0d, 0d, 9.8d };
+        double[] accel = new double[]{0d, 0d, 9.8d};
         return accel;
     }
 
     /**
      * Sets the simulated yaw to a specified value
+     *
      * @param angle (degrees)
      * @return ErrorCode / void
      * @see IPigeonIMU#setYaw(double)
@@ -80,6 +93,7 @@ public class GhostPigeonIMU implements IPigeonIMU {
 
     /**
      * Functionality: non-existent
+     *
      * @param angle (degrees)
      * @return ErrorCode / void
      * @see IPigeonIMU#setFusedHeading(double)
@@ -91,6 +105,7 @@ public class GhostPigeonIMU implements IPigeonIMU {
 
     /**
      * Functionality: non-existent
+     *
      * @param angle (degrees)
      * @return ErrorCode / void
      * @see IPigeonIMU#setAccumZAngle(double)
@@ -102,6 +117,7 @@ public class GhostPigeonIMU implements IPigeonIMU {
 
     /**
      * Returns if a reset has occurred
+     *
      * @return boolean hasResetOccurred
      * @see IPigeonIMU#hasResetOccurred()
      */
@@ -112,6 +128,7 @@ public class GhostPigeonIMU implements IPigeonIMU {
 
     /**
      * Functionality: non-existent
+     *
      * @return ErrorCode / void
      * @see IPigeonIMU#configFactoryDefault()
      */
@@ -122,6 +139,7 @@ public class GhostPigeonIMU implements IPigeonIMU {
 
     /**
      * Functionality: non-existent
+     *
      * @return ErrorCode / void
      * @see IPigeonIMU#setStatusFramePeriod(PigeonIMU_StatusFrame, int)
      */

@@ -7,7 +7,7 @@ import com.team1816.lib.util.team254.DriveSignal;
  * of the robot's path rather than its rate of heading change. This helps make the robot more controllable at high
  * speeds. Also handles the robot's quick turn functionality - "quick turn" overrides constant-curvature turning for
  * turn-in-place maneuvers.
- *
+ * <p>
  * This is based off of the team 254 code with 2 changes.  Added auto quick turn when not commanding throttle
  * and fixed the quickTurn code to not exceed += 1.0
  *
@@ -116,10 +116,10 @@ public class GreenDriveHelper {
                 double alpha = kQuickStopWeight;
                 mQuickStopAccumlator =
                     (1 - alpha) *
-                    mQuickStopAccumlator +
-                    alpha *
-                    Util.limit(wheel, 1.0) *
-                    kQuickStopScalar;
+                        mQuickStopAccumlator +
+                        alpha *
+                            Util.limit(wheel, 1.0) *
+                            kQuickStopScalar;
             }
             overPower = 1.0;
             angularPower = wheel;

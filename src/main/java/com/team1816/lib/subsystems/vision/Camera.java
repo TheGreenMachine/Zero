@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
-import com.team1816.lib.util.visionUtil.GreenPhotonCamera;
 import com.team1816.lib.util.visionUtil.GreenSimVisionSystem;
 import com.team1816.lib.util.visionUtil.GreenSimVisionTarget;
 import com.team1816.lib.util.visionUtil.VisionPoint;
@@ -15,11 +14,9 @@ import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import java.util.ArrayList;
@@ -54,7 +51,7 @@ public class Camera extends Subsystem {
         super(NAME, inf, rs);
         led = ledManager;
         camImplemented = this.isImplemented();
-        usingCamToUpdatePose = factory.getConstant(NAME,"usingCamToUpdatePose") > 0;
+        usingCamToUpdatePose = factory.getConstant(NAME, "usingCamToUpdatePose") > 0;
 
         // if using sim, set up fake vision system
         if (RobotBase.isSimulation()) {
@@ -99,7 +96,7 @@ public class Camera extends Subsystem {
         PhotonCamera.setVersionCheckEnabled(false);
         // only actually make a cam if cam implemented
         // prevents "no coprocessor found" error when sim is booted up w/ out a camera
-        if(camImplemented){
+        if (camImplemented) {
             cam = new PhotonCamera("snakeyes");
         }
     }
@@ -153,11 +150,12 @@ public class Camera extends Subsystem {
 
     /**
      * Get distance to goal
+     *
      * @return distance ALONG THE GROUND to the target - NOT the hypotenuse
      */
     public double getDistance() {
-        if(warnIfCameraOff()){
-            if(usingCamToUpdatePose){
+        if (warnIfCameraOff()) {
+            if (usingCamToUpdatePose) {
                 return robotState.getDistanceToGoal();
             } else {
                 var result = cam.getLatestResult();
@@ -174,7 +172,7 @@ public class Camera extends Subsystem {
     }
 
     public double getDeltaX() {
-        if(warnIfCameraOff()) {
+        if (warnIfCameraOff()) {
             if (RobotBase.isSimulation()) { // simulated feedback loop
                 return simulateDeltaX();
             }
@@ -192,22 +190,26 @@ public class Camera extends Subsystem {
      * stuff normally done in write to hardware performed by coprocessor (PI4). No need to do anything on our end
      */
     @Override
-    public void writeToHardware() {}
+    public void writeToHardware() {
+    }
 
     @Override
-    public void stop() {}
+    public void stop() {
+    }
 
     @Override
-    public void zeroSensors() {}
+    public void zeroSensors() {
+    }
 
     /**
      * We can only this if vision becomes solid enough that we can just keep in on throughout the match.
      * Rn we are not using this
+     *
      * @return list of all targets (apriltags or reflective tape) seen by camera
      */
     public ArrayList<VisionPoint> getPoints() {
         ArrayList<VisionPoint> targets = new ArrayList<>();
-        if(this.isImplemented()){
+        if (this.isImplemented()) {
             VisionPoint p = new VisionPoint();
             var result = cam.getLatestResult();
             if (!result.hasTargets()) {
@@ -226,6 +228,7 @@ public class Camera extends Subsystem {
 
     /**
      * This may be @Deprecated. TODO double check if we actually need to use this or if the simCam deals with this for us
+     *
      * @return deltaX based on methemetiquess
      */
     public double simulateDeltaX() {
@@ -249,7 +252,7 @@ public class Camera extends Subsystem {
     }
 
     public boolean warnIfCameraOff() {
-        if(!camImplemented){
+        if (!camImplemented) {
             System.out.println("cam not implemented - not performing action");
         }
         return camImplemented;

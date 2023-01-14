@@ -17,6 +17,7 @@ import com.revrobotics.SparkMaxPIDController;
 /**
  * This class is a thin wrapper around the CANSparkMax that reduces CAN bus / CPU overhead.
  * Connects with REV SparkMax motor controllers and adapts it for the universal IGreenMotor.
+ *
  * @see IGreenMotor
  * @see CANSparkMax
  */
@@ -66,10 +67,12 @@ public class LazySparkMax implements IGreenMotor {
     }
 
     @Override
-    public void neutralOutput() {}
+    public void neutralOutput() {
+    }
 
     @Override
-    public void setNeutralMode(NeutralMode neutralMode) {}
+    public void setNeutralMode(NeutralMode neutralMode) {
+    }
 
     @Override
     public void setInverted(boolean isInverted) {
@@ -77,7 +80,8 @@ public class LazySparkMax implements IGreenMotor {
     }
 
     @Override
-    public void setInverted(InvertType invertType) {}
+    public void setInverted(InvertType invertType) {
+    }
 
     @Override
     public boolean getInverted() {
@@ -138,7 +142,8 @@ public class LazySparkMax implements IGreenMotor {
     }
 
     @Override
-    public void enableVoltageCompensation(boolean enable) {}
+    public void enableVoltageCompensation(boolean enable) {
+    }
 
     @Override
     public double getBusVoltage() {
@@ -275,7 +280,8 @@ public class LazySparkMax implements IGreenMotor {
     }
 
     @Override
-    public void overrideLimitSwitchesEnable(boolean enable) {}
+    public void overrideLimitSwitchesEnable(boolean enable) {
+    }
 
     @Override
     public ErrorCode configForwardSoftLimitThreshold(
@@ -304,7 +310,8 @@ public class LazySparkMax implements IGreenMotor {
     }
 
     @Override
-    public void overrideSoftLimitsEnable(boolean enable) {}
+    public void overrideSoftLimitsEnable(boolean enable) {
+    }
 
     @Override
     public ErrorCode config_kP(int slotIdx, double value, int timeoutMs) {
@@ -393,7 +400,8 @@ public class LazySparkMax implements IGreenMotor {
     }
 
     @Override
-    public void selectProfileSlot(int slotIdx, int pidIdx) {}
+    public void selectProfileSlot(int slotIdx, int pidIdx) {
+    }
 
     @Override
     public double getClosedLoopTarget(int pidIdx) {
@@ -460,7 +468,8 @@ public class LazySparkMax implements IGreenMotor {
     }
 
     @Override
-    public void processMotionProfileBuffer() {}
+    public void processMotionProfileBuffer() {
+    }
 
     @Override
     public ErrorCode getMotionProfileStatus(MotionProfileStatus statusToFill) {
@@ -669,7 +678,8 @@ public class LazySparkMax implements IGreenMotor {
     }
 
     @Override
-    public void valueUpdated() {}
+    public void valueUpdated() {
+    }
 
     @Override
     public String getName() {

@@ -9,6 +9,7 @@ import edu.wpi.first.math.util.Units;
 /**
  * Action that stops processes / waits inside a region.
  * Dependents: RobotState
+ *
  * @see RobotState
  * @see AutoAction
  */
@@ -16,6 +17,7 @@ public class WaitUntilInsideRegion implements AutoAction {
 
     /**
      * State: RobotState
+     *
      * @see RobotState
      */
     private static RobotState mRobotState;
@@ -35,6 +37,7 @@ public class WaitUntilInsideRegion implements AutoAction {
 
     /**
      * Instantiates a WaitUntilInsideRegion action based on state parameters
+     *
      * @param bottomLeft
      * @param topRight
      * @param name
@@ -52,20 +55,25 @@ public class WaitUntilInsideRegion implements AutoAction {
 
     /**
      * Starts the action (empty)
+     *
      * @see AutoAction#start()
      */
     @Override
-    public void start() {}
+    public void start() {
+    }
 
     /**
      * Updates the action (empty)
+     *
      * @see AutoAction#update()
      */
     @Override
-    public void update() {}
+    public void update() {
+    }
 
     /**
      * Checks if position criteria is met based on robotState
+     *
      * @return boolean isFinished
      * @see AutoAction#isFinished()
      */
@@ -76,14 +84,15 @@ public class WaitUntilInsideRegion implements AutoAction {
         var y = Units.metersToInches(position.getY());
         return (
             x > mBottomLeft.getX() &&
-            x < mTopRight.getX() &&
-            y > mBottomLeft.getY() &&
-            y < mTopRight.getY()
+                x < mTopRight.getX() &&
+                y > mBottomLeft.getY() &&
+                y < mTopRight.getY()
         );
     }
 
     /**
      * Standard cleanup procedure: prints out action
+     *
      * @see AutoAction#done()
      */
     @Override

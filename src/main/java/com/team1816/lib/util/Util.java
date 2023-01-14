@@ -12,7 +12,8 @@ public class Util {
     /**
      * Prevent this class from being instantiated.
      */
-    private Util() {}
+    private Util() {
+    }
 
     /**
      * Limits the given input to the given magnitude.

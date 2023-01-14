@@ -3,6 +3,7 @@ package com.team1816.lib.subsystems;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
 import com.team1816.lib.loops.Looper;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * This class establishes an efficient management pattern to run all subsystems on their own loops. As a consequence, it
  * loops through subsystem readFromHardware / writeToHardware methods and provides a framework to enable, update, and
  * disable / stop all subsystems
+ *
  * @see Looper
  * @see Loop
  */
@@ -25,10 +27,12 @@ public class SubsystemLooper implements ILooper {
     /**
      * Instantiates a SubsystemLooper
      */
-    public SubsystemLooper() {}
+    public SubsystemLooper() {
+    }
 
     /**
      * Tests all Subsystems
+     *
      * @return true if all tests passed
      */
     public boolean testSubsystems() {
@@ -45,10 +49,12 @@ public class SubsystemLooper implements ILooper {
     /**
      * Outputs values to the SmartDashboard / Shuffleboard
      */
-    public void outputToSmartDashboard() {}
+    public void outputToSmartDashboard() {
+    }
 
     /**
      * Stops all subsystems
+     *
      * @see Subsystem#stop()
      */
     public void stop() {
@@ -57,6 +63,7 @@ public class SubsystemLooper implements ILooper {
 
     /**
      * Zeroes all subsystems
+     *
      * @see Subsystem#zeroSensors()
      */
     public void zeroSensors() {
@@ -65,6 +72,7 @@ public class SubsystemLooper implements ILooper {
 
     /**
      * Returns the list of all registered subsystems
+     *
      * @return mAllSubsystems
      */
     public List<Subsystem> getSubsystems() {
@@ -73,6 +81,7 @@ public class SubsystemLooper implements ILooper {
 
     /**
      * Sets the subsystem register based on a variable argument parameter of multiple subsystems
+     *
      * @param allSubsystems Subsystem...
      */
     public void setSubsystems(Subsystem... allSubsystems) {
@@ -94,6 +103,7 @@ public class SubsystemLooper implements ILooper {
 
         /**
          * Behaviour when loop starts
+         *
          * @param timestamp time
          * @see Loop#onStart(double)
          */
@@ -104,6 +114,7 @@ public class SubsystemLooper implements ILooper {
 
         /**
          * Behaviour when loop is iterated / running
+         *
          * @param timestamp time
          * @see Loop#onLoop(double)
          */
@@ -119,6 +130,7 @@ public class SubsystemLooper implements ILooper {
 
         /**
          * Behaviour when loop stops
+         *
          * @param timestamp time
          * @see Loop#onStop(double)
          */
@@ -135,14 +147,17 @@ public class SubsystemLooper implements ILooper {
 
         /**
          * Behaviour when loop starts
+         *
          * @param timestamp time
          * @see Loop#onStart(double)
          */
         @Override
-        public void onStart(double timestamp) {}
+        public void onStart(double timestamp) {
+        }
 
         /**
          * Behaviour when loop is iterated / running
+         *
          * @param timestamp time
          * @see Loop#onLoop(double)
          */
@@ -154,15 +169,18 @@ public class SubsystemLooper implements ILooper {
 
         /**
          * Behaviour when loop stops
+         *
          * @param timestamp time
          * @see Loop#onStop(double)
          */
         @Override
-        public void onStop(double timestamp) {}
+        public void onStop(double timestamp) {
+        }
     }
 
     /**
      * Registers all enabled loops in the looper
+     *
      * @param enabledLooper Looper
      * @see Looper
      */
@@ -173,6 +191,7 @@ public class SubsystemLooper implements ILooper {
 
     /**
      * Registers all disabled loops in the looper
+     *
      * @param disabledLooper Looper
      * @see Looper
      */
@@ -182,6 +201,7 @@ public class SubsystemLooper implements ILooper {
 
     /**
      * Registers a loop
+     *
      * @param loop Loop
      * @see Loop
      */

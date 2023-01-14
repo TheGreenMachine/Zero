@@ -5,7 +5,6 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.gyro.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.hardware.factory.RobotFactory;
-import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
@@ -31,6 +30,7 @@ public class Infrastructure {
 
     /**
      * Instantiates the infrastructure with RobotFactory
+     *
      * @param factory RobotFactory
      * @see RobotFactory
      */
@@ -54,6 +54,7 @@ public class Infrastructure {
 
     /**
      * Stops the compressor
+     *
      * @see Infrastructure#startCompressor()
      */
     public void stopCompressor() {
@@ -65,6 +66,7 @@ public class Infrastructure {
 
     /**
      * Resets the pigeon gyroscope based on a Rotation2d
+     *
      * @param angle Rotation2d
      */
     public void resetPigeon(Rotation2d angle) {
@@ -74,6 +76,7 @@ public class Infrastructure {
 
     /**
      * Returns the pigeon associated with the infrastructure
+     *
      * @return IPigeonIMU
      * @see IPigeonIMU
      */
@@ -83,6 +86,7 @@ public class Infrastructure {
 
     /**
      * Returns the gyroscopic yaw of the pigeon
+     *
      * @return yaw
      * @see IPigeonIMU#getYaw()
      */
@@ -92,6 +96,7 @@ public class Infrastructure {
 
     /**
      * Returns the gyroscopic pitch of the pigeon
+     *
      * @return pitch
      * @see IPigeonIMU#getPitch()
      */
@@ -101,6 +106,7 @@ public class Infrastructure {
 
     /**
      * Returns the gyroscopic roll of the pigeon
+     *
      * @return roll
      * @see IPigeonIMU#getRoll()
      */
@@ -110,6 +116,7 @@ public class Infrastructure {
 
     /**
      * Returns the field-centric pitch of the pigeon
+     *
      * @return pitch
      * @see IPigeonIMU#getPitch()
      */
@@ -121,6 +128,7 @@ public class Infrastructure {
 
     /**
      * Returns the field-centric roll of the pigeon
+     *
      * @return roll
      * @see IPigeonIMU#getRoll()
      */
@@ -132,6 +140,7 @@ public class Infrastructure {
 
     /**
      * Returns the power distribution associated with the Infrastructure
+     *
      * @return PowerDistribution
      * @see PowerDistribution
      */
@@ -141,8 +150,9 @@ public class Infrastructure {
 
     /**
      * Emulates gyroscope behaviour of the pigeon in simulation environments
+     *
      * @param radianOffsetPerLoop loop ratio
-     * @param gyroDrift drift
+     * @param gyroDrift           drift
      */
     public void simulateGyro(double radianOffsetPerLoop, double gyroDrift) {
         pigeon.setYaw(getYaw() + radianOffsetPerLoop + gyroDrift);

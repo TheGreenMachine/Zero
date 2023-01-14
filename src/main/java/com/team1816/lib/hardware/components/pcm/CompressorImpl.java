@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 /**
  * This is an implementation class for the Compressor
+ *
  * @see Compressor
  * @see ICompressor
  */
@@ -12,7 +13,8 @@ public class CompressorImpl extends Compressor implements ICompressor {
 
     /**
      * Instantiates a CompressorImpl
-     * @param module (ID)
+     *
+     * @param module     (ID)
      * @param moduleType (CTREPCM, REVPH)
      */
     public CompressorImpl(int module, PneumaticsModuleType moduleType) {
@@ -21,6 +23,7 @@ public class CompressorImpl extends Compressor implements ICompressor {
 
     /**
      * Alternatively instantiates a CompressorImpl by inferring a default ID of 0 if CTREPCM and 1 if REV
+     *
      * @param moduleType (CTREPCM, REVPH)
      */
     public CompressorImpl(PneumaticsModuleType moduleType) {

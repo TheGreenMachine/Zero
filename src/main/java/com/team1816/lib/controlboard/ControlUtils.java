@@ -4,6 +4,7 @@ import com.team1816.lib.util.team254.LatchedBoolean;
 import com.team1816.season.Robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
@@ -12,6 +13,7 @@ import java.util.function.DoubleSupplier;
 /**
  * This class is a utilities class for creating controls such as the HoldAction and toggle Action and
  * is responsible for taking lambda expressions as BooleanSuppliers and appending a Runnable action with them
+ *
  * @see Robot#robotInit()
  */
 public class ControlUtils implements Controller.Factory {

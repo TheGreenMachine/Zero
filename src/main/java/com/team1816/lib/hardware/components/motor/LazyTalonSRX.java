@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 /**
  * This class is a thin wrapper around the TalonSRX that reduces CAN bus / CPU overhead.
  * Connects with CTRE TalonSRX motor controllers and adapts it for the universal IGreenMotor.
+ *
  * @see IGreenMotor
  * @see TalonSRX
  */

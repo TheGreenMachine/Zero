@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Responsible for executing specific actions associated with buttons, triggers, and joystick values represented in each controller
+ *
  * @see ControlBoard
  * @see com.team1816.lib.controlboard.ControlBoardBridge
  * @see com.team1816.lib.controlboard.Controller

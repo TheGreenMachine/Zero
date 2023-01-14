@@ -14,6 +14,7 @@ public class MotorUtil {
 
     /**
      * Checks the specified error code for issues
+     *
      * @param errorCode error code
      * @param message   message to print if error happens
      */
@@ -25,6 +26,7 @@ public class MotorUtil {
 
     /**
      * Returns the supplied current to the motor
+     *
      * @param motor IGreenMotor
      * @return supplied current
      */

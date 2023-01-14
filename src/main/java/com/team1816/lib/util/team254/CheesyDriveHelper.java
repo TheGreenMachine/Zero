@@ -43,8 +43,9 @@ public class CheesyDriveHelper implements DriveHelper {
 
     /**
      * Returns a modified DriveSignal for an arcade style control path
+     *
      * @param throttle throttle
-     * @param wheel rotation
+     * @param wheel    rotation
      * @return DriveSignal
      * @see DriveSignal
      */
@@ -54,10 +55,11 @@ public class CheesyDriveHelper implements DriveHelper {
 
     /**
      * Generates a modified DriveSignal for a tank drive with inertial scaling and point power management based on inputs
-     * @param throttle throttle
-     * @param wheel rotation
+     *
+     * @param throttle    throttle
+     * @param wheel       rotation
      * @param isQuickTurn boolean
-     * @param isHighGear boolean for an optional transmission
+     * @param isHighGear  boolean for an optional transmission
      * @return DriveSignal
      * @see DriveSignal
      */
@@ -130,10 +132,10 @@ public class CheesyDriveHelper implements DriveHelper {
                 double alpha = kQuickStopWeight;
                 mQuickStopAccumlator =
                     (1 - alpha) *
-                    mQuickStopAccumlator +
-                    alpha *
-                    Util.limit(wheel, 1.0) *
-                    kQuickStopScalar;
+                        mQuickStopAccumlator +
+                        alpha *
+                            Util.limit(wheel, 1.0) *
+                            kQuickStopScalar;
             }
             overPower = 1.0;
             angularPower = wheel * kWheelQuckTurnScalar;
@@ -172,8 +174,9 @@ public class CheesyDriveHelper implements DriveHelper {
 
     /**
      * Alternatively generates a DriveSignal based on inputs
-     * @param throttle throttle
-     * @param wheel rotation
+     *
+     * @param throttle    throttle
+     * @param wheel       rotation
      * @param isQuickTurn boolean
      * @return DriveSignal
      * @see DriveSignal
@@ -184,7 +187,8 @@ public class CheesyDriveHelper implements DriveHelper {
 
     /**
      * Modulates demand at a deadband value
-     * @param val input
+     *
+     * @param val      input
      * @param deadband deadband
      * @return output
      */
@@ -194,11 +198,12 @@ public class CheesyDriveHelper implements DriveHelper {
 
     /**
      * Interface inherited method for mapping to a swerve drive signal
-     * @param forwardInput throttle
-     * @param strafeInput strafe
-     * @param rotationInput rotation
-     * @param low_power boolean
-     * @param field_relative boolean (field-centric)
+     *
+     * @param forwardInput           throttle
+     * @param strafeInput            strafe
+     * @param rotationInput          rotation
+     * @param low_power              boolean
+     * @param field_relative         boolean (field-centric)
      * @param use_heading_controller boolean
      * @return SwerveDriveSignal
      * @see SwerveDriveSignal

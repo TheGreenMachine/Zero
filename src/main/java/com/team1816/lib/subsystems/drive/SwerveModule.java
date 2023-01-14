@@ -1,8 +1,5 @@
 package com.team1816.lib.subsystems.drive;
 
-import static com.team1816.lib.subsystems.drive.Drive.NAME;
-import static com.team1816.lib.subsystems.drive.Drive.factory;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
@@ -18,14 +15,21 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 
+import static com.team1816.lib.subsystems.drive.Drive.NAME;
+import static com.team1816.lib.subsystems.drive.Drive.factory;
+
 public class SwerveModule implements ISwerveModule {
 
-    /** Components */
+    /**
+     * Components
+     */
     private final IGreenMotor driveMotor;
     private final IGreenMotor azimuthMotor;
     public final CANCoder canCoder;
 
-    /** State */
+    /**
+     * State
+     */
     public SwerveModuleState moduleState;
     public SwerveModulePosition modulePosition;
     public double driveDemand;
@@ -35,16 +39,19 @@ public class SwerveModule implements ISwerveModule {
     public double azimuthActual;
     public double motorTemp; // Drive Motor Temperature
 
-    /** Constants */
+    /**
+     * Constants
+     */
     private final ModuleConfig mModuleConfig;
     private final int AZIMUTH_TICK_MASK;
     private final double allowableError;
 
     /**
      * Instantiates and configures a swerve module with a CANCoder
+     *
      * @param subsystemName name of the subsystem for yaml purposes
-     * @param moduleConfig configuration of the module
-     * @param canCoder attached CANCoder of the module
+     * @param moduleConfig  configuration of the module
+     * @param canCoder      attached CANCoder of the module
      * @see CANCoder
      */
     public SwerveModule(
@@ -56,9 +63,9 @@ public class SwerveModule implements ISwerveModule {
 
         System.out.println(
             "Configuring Swerve Module " +
-            mModuleConfig.moduleName +
-            " on subsystem " +
-            subsystemName
+                mModuleConfig.moduleName +
+                " on subsystem " +
+                subsystemName
         );
 
         AZIMUTH_TICK_MASK = (int) factory.getConstant(NAME, "azimuthEncPPR", 4096) - 1; // was 0xFFF
@@ -110,8 +117,9 @@ public class SwerveModule implements ISwerveModule {
 
     /**
      * Sets the desired state of the swerve module
+     *
      * @param desiredState desiredState
-     * @param isOpenLoop are the (drive) motors in openLoop (%output) or do they use closed loop control
+     * @param isOpenLoop   are the (drive) motors in openLoop (%output) or do they use closed loop control
      * @see SwerveModuleState
      */
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
@@ -130,12 +138,13 @@ public class SwerveModule implements ISwerveModule {
         }
         azimuthDemand =
             DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) +
-            mModuleConfig.azimuthEncoderHomeOffset;
+                mModuleConfig.azimuthEncoderHomeOffset;
         azimuthMotor.set(ControlMode.Position, azimuthDemand);
     }
 
     /**
      * Updates the actual state properties of the swerve module
+     *
      * @see this#getActualState()
      * @see this#getActualPosition()
      */
@@ -145,7 +154,7 @@ public class SwerveModule implements ISwerveModule {
         azimuthActual =
             DriveConversions.convertTicksToDegrees(
                 azimuthMotor.getSelectedSensorPosition(0) -
-                mModuleConfig.azimuthEncoderHomeOffset
+                    mModuleConfig.azimuthEncoderHomeOffset
             );
 
         moduleState.speedMetersPerSecond = driveActual;
@@ -160,6 +169,7 @@ public class SwerveModule implements ISwerveModule {
 
     /**
      * Returns the actual state of the swerve module
+     *
      * @return swerve module state
      * @see SwerveModuleState
      */
@@ -169,6 +179,7 @@ public class SwerveModule implements ISwerveModule {
 
     /**
      * Returns the actual position of the swerve module
+     *
      * @return swerve module position properties
      * @see SwerveModulePosition
      */
@@ -178,6 +189,7 @@ public class SwerveModule implements ISwerveModule {
 
     /**
      * Returns the drive motor temperature
+     *
      * @return motorTemp
      */
     @Override
@@ -187,6 +199,7 @@ public class SwerveModule implements ISwerveModule {
 
     /**
      * Returns the module name (part of config)
+     *
      * @return moduleName
      */
     @Override
@@ -196,6 +209,7 @@ public class SwerveModule implements ISwerveModule {
 
     /**
      * Returns the desired Azimuth position (what it is set to)
+     *
      * @return azimuthDemand
      */
     @Override
@@ -205,6 +219,7 @@ public class SwerveModule implements ISwerveModule {
 
     /**
      * Returns the actual Azimuth position (what it actually is at)
+     *
      * @return azimuthActual
      */
     @Override
@@ -214,6 +229,7 @@ public class SwerveModule implements ISwerveModule {
 
     /**
      * Returns the closed loop error of the Azimuth motor (in-built)
+     *
      * @return azimuthError
      */
     @Override
@@ -223,6 +239,7 @@ public class SwerveModule implements ISwerveModule {
 
     /**
      * Returns the desired Drive motor state (what it is set to)
+     *
      * @return driveDemand
      */
     @Override
@@ -232,6 +249,7 @@ public class SwerveModule implements ISwerveModule {
 
     /**
      * Returns the actual Drive motor state (what it actually is at)
+     *
      * @return driveActual
      */
     @Override
@@ -241,6 +259,7 @@ public class SwerveModule implements ISwerveModule {
 
     /**
      * Returns the "position" of the Drive motor
+     *
      * @return drivePosition
      */
     @Override
@@ -250,6 +269,7 @@ public class SwerveModule implements ISwerveModule {
 
     /**
      * Returns the closed loop error of the Drive motor (in-built)
+     *
      * @return driveError
      */
     @Override
@@ -260,6 +280,7 @@ public class SwerveModule implements ISwerveModule {
     /**
      * If there is no attached absolute CANCoder then this will "zero" / configure the Azimuth sensor on the motor to
      * its initial position
+     *
      * @see com.team1816.lib.hardware.components.motor.IMotorSensor
      */
     public void zeroAzimuthSensor() {
@@ -274,6 +295,7 @@ public class SwerveModule implements ISwerveModule {
 
     /**
      * Tests the Swerve Module based on its ability to move back and forth and rotate
+     *
      * @return true if tests passed
      */
     public boolean checkSystem() {
@@ -285,8 +307,8 @@ public class SwerveModule implements ISwerveModule {
             Math.abs(
                 driveMotor.getSelectedSensorVelocity(0) - 0.2 * actualmaxVelTicks100ms
             ) >
-            actualmaxVelTicks100ms /
-            50
+                actualmaxVelTicks100ms /
+                    50
         ) {
             checkDrive = false;
         }
@@ -296,8 +318,8 @@ public class SwerveModule implements ISwerveModule {
             Math.abs(
                 driveMotor.getSelectedSensorVelocity(0) + 0.2 * actualmaxVelTicks100ms
             ) >
-            actualmaxVelTicks100ms /
-            50
+                actualmaxVelTicks100ms /
+                    50
         ) {
             checkDrive = false;
         }
@@ -310,7 +332,7 @@ public class SwerveModule implements ISwerveModule {
             Timer.delay(1);
             if (
                 Math.abs(azimuthMotor.getSelectedSensorPosition(0) - setPoint) >
-                allowableError
+                    allowableError
             ) {
                 checkAzimuth = false;
                 break;
@@ -323,21 +345,22 @@ public class SwerveModule implements ISwerveModule {
 
     /**
      * toString()
+     *
      * @return information on the SwerveModule
      */
     @Override
     public String toString() {
         return (
             "SwerveModule{ " +
-            mModuleConfig.driveMotorName +
-            " id: " +
-            driveMotor.getDeviceID() +
-            "  " +
-            mModuleConfig.azimuthMotorName +
-            " id: " +
-            azimuthMotor.getDeviceID() +
-            " offset: " +
-            mModuleConfig.azimuthEncoderHomeOffset
+                mModuleConfig.driveMotorName +
+                " id: " +
+                driveMotor.getDeviceID() +
+                "  " +
+                mModuleConfig.azimuthMotorName +
+                " id: " +
+                azimuthMotor.getDeviceID() +
+                " offset: " +
+                mModuleConfig.azimuthEncoderHomeOffset
         );
     }
 
@@ -346,7 +369,8 @@ public class SwerveModule implements ISwerveModule {
      */
     public static class ModuleConfig {
 
-        public ModuleConfig() {}
+        public ModuleConfig() {
+        }
 
         public String moduleName = "Name";
         public String driveMotorName = "";

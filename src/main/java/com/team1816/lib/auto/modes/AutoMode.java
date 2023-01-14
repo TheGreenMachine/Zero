@@ -7,6 +7,7 @@ import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
+
 import java.util.List;
 
 /**
@@ -33,13 +34,16 @@ public abstract class AutoMode {
 
     /**
      * Empty constructor for driveStraight and doNothing modes which don't require trajectories
+     *
      * @see DoNothingMode
      * @see com.team1816.season.auto.modes.DriveStraightMode
      */
-    protected AutoMode() {}
+    protected AutoMode() {
+    }
 
     /**
      * Instantiates an AutoMode from a list of trajectory actions
+     *
      * @param trajectoryActions
      * @see TrajectoryAction
      */
@@ -50,6 +54,7 @@ public abstract class AutoMode {
 
     /**
      * Runs the autoMode routine actions
+     *
      * @see #routine()
      */
     public void run() {
@@ -74,6 +79,7 @@ public abstract class AutoMode {
 
     /**
      * Routine register of actions that will be run in the mode
+     *
      * @throws AutoModeEndedException
      */
     protected abstract void routine() throws AutoModeEndedException;
@@ -94,6 +100,7 @@ public abstract class AutoMode {
 
     /**
      * Runs a given action, typically placed in routine()
+     *
      * @param action
      * @throws AutoModeEndedException
      * @see AutoAction
@@ -121,6 +128,7 @@ public abstract class AutoMode {
 
     /**
      * Gets current running Trajectory
+     *
      * @return trajectory
      * @see Trajectory
      */
@@ -137,6 +145,7 @@ public abstract class AutoMode {
 
     /**
      * Returns the initial pose of the robot
+     *
      * @return initialPose
      */
     public Pose2d getInitialPose() {

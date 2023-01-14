@@ -6,6 +6,7 @@ import com.ctre.phoenix.led.CANdle;
 
 /**
  * A class that interfaces with the CANdle LedManager
+ *
  * @see CANdle
  * @see ILEDManager
  */
@@ -13,7 +14,8 @@ public class CANdleImpl extends CANdle implements ILEDManager {
 
     /**
      * Instantiates a CANdle based on CAN-bus id and CAN-bus name
-     * @param candle (CAN-bus ID)
+     *
+     * @param candle          (CAN-bus ID)
      * @param canivoreBusName (CAN-bus name)
      * @see CANdle
      */
@@ -23,9 +25,10 @@ public class CANdleImpl extends CANdle implements ILEDManager {
 
     /**
      * Functionality: non-existent
+     *
      * @param statusFrame {@link CANifierStatusFrame}
-     * @param periodMs period (milliseconds)
-     * @param timeoutMs timeout (milliseconds)
+     * @param periodMs    period (milliseconds)
+     * @param timeoutMs   timeout (milliseconds)
      * @return ErrorCode / void
      * @see ILEDManager#setStatusFramePeriod(CANifierStatusFrame, int, int)
      */
