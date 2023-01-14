@@ -40,29 +40,6 @@ public class LivingRoomPath extends AutoPath {
             Rotation2d.fromDegrees(0)
         );
     }
-
-    @Override
-    protected List<Pose2d> getReflectedWaypoints() {
-        List<Pose2d> waypoints = getWaypoints();
-        List<Pose2d> reflectedWaypoints = new ArrayList<>();
-        for (int i = 0; i < waypoints.size(); i++) {
-            Pose2d waypoint = new Pose2d(2 * Constants.fieldCenterX - waypoints.get(i).getX(), waypoints.get(i).getY(), Rotation2d.fromDegrees(180 - waypoints.get(i).getRotation().getDegrees()));
-            reflectedWaypoints.add(i, waypoint);
-        }
-        return reflectedWaypoints;
-    }
-
-    @Override
-    protected List<Rotation2d> getReflectedWaypointHeadings() {
-        List<Rotation2d> waypointHeadings = getWaypointHeadings();
-        List<Rotation2d> reflectedWaypointHeadings = new ArrayList<>();
-        for (int i = 0; i < waypointHeadings.size(); i++) {
-            var waypointRotation = Rotation2d.fromDegrees(180 - waypointHeadings.get(i).getDegrees());
-            reflectedWaypointHeadings.add(i, waypointRotation);
-        }
-        return reflectedWaypointHeadings;
-    }
-
     @Override
     public boolean usingApp() {
         return true;
