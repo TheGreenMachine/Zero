@@ -156,7 +156,5 @@ public class RobotState {
      */
     public synchronized void outputToSmartDashboard() {
         field.setRobotPose(fieldToVehicle);
-        field.getObject("EstimatedRobot").setPose(extrapolatedFieldToVehicle);
-        field.getObject(Turret.NAME).setPose(getFieldToTurretPos());
     }
 }

@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.util.Units;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +36,8 @@ public class PathUtil {
         for (Pose2d pose2d : waypoints) {
             waypointsMeters.add(
                 new Pose2d(
-                    Units.inchesToMeters(pose2d.getX()),
-                    Units.inchesToMeters(pose2d.getY()),
+                    pose2d.getX(),
+                    pose2d.getY(),
                     pose2d.getRotation()
                 )
             );
@@ -92,8 +91,8 @@ public class PathUtil {
         for (Pose2d pose2d : waypoints) {
             waypointsMeters.add(
                 new Pose2d(
-                    Units.inchesToMeters(pose2d.getX()) + startX,
-                    Units.inchesToMeters(pose2d.getY()) + startY,
+                    pose2d.getX(),
+                    pose2d.getY(),
                     pose2d.getRotation()
                 )
             );
