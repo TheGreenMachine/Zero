@@ -1,11 +1,13 @@
 package com.team1816.lib.motion.curves;
 
 import com.team1816.lib.motion.splines.NaturalCubicSpline;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
 /**
  * This class is a lighter fixed-case computational environment for a cubic Bézier curve. For documentation
+ *
  * @see BezierCurve
  */
 public class CubicBezierCurve {
@@ -40,7 +42,7 @@ public class CubicBezierCurve {
         }
 
         public Double[] convertToDoubleArray() {
-            return new Double[] { x, y };
+            return new Double[]{x, y};
         }
     }
 
@@ -83,7 +85,7 @@ public class CubicBezierCurve {
         for (int i = 0; i <= resolution; i++) {
             double t1 = (double) i / resolution;
             double dist = getPortionLength((i + 1) * resolution, 0, t1);
-            knotPoints.add(new Double[] { dist, t1 });
+            knotPoints.add(new Double[]{dist, t1});
         }
         LUT = new NaturalCubicSpline(knotPoints);
     }

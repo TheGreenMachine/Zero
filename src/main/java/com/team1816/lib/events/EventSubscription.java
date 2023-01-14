@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 /**
  * Implementation of an event that sends data sed to store the Consumer (action) to be called
+ *
  * @param <T> this is the type of data that publish will fire
  */
 public class EventSubscription<T> implements IEventSubscription {

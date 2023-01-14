@@ -9,30 +9,35 @@ import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 public interface IPigeonIMU {
     /**
      * Returns gyroscopic yaw / transverse planar angle
+     *
      * @return yaw (degrees)
      */
     double getYaw();
 
     /**
      * Returns gyroscopic pitch / transverse lateral angle
+     *
      * @return pitch (degrees)
      */
     double getPitch();
 
     /**
      * Returns gyroscopic roll / transverse frontal angle
+     *
      * @return roll (degrees)
      */
     double getRoll();
 
     /**
      * Returns x, y, and z acceleration in a casted fixed point double array
+     *
      * @return acceleration
      */
     double[] getAcceleration();
 
     /**
      * Sets the gyroscopic yaw to a specific angle
+     *
      * @param angle (degrees)
      * @return ErrorCode / void
      */
@@ -40,6 +45,7 @@ public interface IPigeonIMU {
 
     /**
      * Same as setYaw();
+     *
      * @param angle (degrees)
      * @return ErrorCode / void
      * @see IPigeonIMU#setYaw(double)
@@ -48,6 +54,7 @@ public interface IPigeonIMU {
 
     /**
      * Sets the accumulated z angle to angleDeg
+     *
      * @param angle (degrees)
      * @return ErrorCode / void
      */
@@ -55,18 +62,21 @@ public interface IPigeonIMU {
 
     /**
      * Returns true if a pigeon reset has occurred
+     *
      * @return hasResetOccurred
      */
     boolean hasResetOccurred();
 
     /**
      * Configures factory defaults
+     *
      * @return ErrorCode / void
      */
     ErrorCode configFactoryDefault();
 
     /**
      * Sets the synchronized status frame period of the pigeon and is directly related to CAN-bus utilization
+     *
      * @param statusFrame
      * @param periodMs
      * @return

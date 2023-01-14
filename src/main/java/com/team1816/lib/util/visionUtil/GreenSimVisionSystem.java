@@ -26,11 +26,12 @@ package com.team1816.lib.util.visionUtil;
 
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
-import java.util.ArrayList;
-import java.util.List;
 import org.photonvision.PhotonTargetSortMode;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GreenSimVisionSystem {
 
@@ -53,38 +54,38 @@ public class GreenSimVisionSystem {
      * running PhotonVision, detecting one or more targets scattered around the field. This assumes a
      * fairly simple and distortion-less pinhole camera model.
      *
-     * @param camName Name of the PhotonVision camera to create. Align it with the settings you use in
-     *     the PhotonVision GUI.
-     * @param camVertFOVDegrees Vertical Field of View of the camera used. Align it with the
-     *     manufacturer specifications, and/or whatever is configured in the PhotonVision Setting
-     *     page.
-     * @param camHorizFOVDegrees Horizontal Field of View of the camera used. Align it with the
-     * manufacturer specifications, and/or whatever is configured in the PhotonVision Setting
-     * page.
-     * @param camPitchDegrees pitch of the camera's view axis back from horizontal. Make this the same
-     *     as whatever is configured in the PhotonVision Setting page.
-     * @param cameraToRobot Pose Transform to move from the camera's mount position to the robot's
-     *     position
+     * @param camName                     Name of the PhotonVision camera to create. Align it with the settings you use in
+     *                                    the PhotonVision GUI.
+     * @param camVertFOVDegrees           Vertical Field of View of the camera used. Align it with the
+     *                                    manufacturer specifications, and/or whatever is configured in the PhotonVision Setting
+     *                                    page.
+     * @param camHorizFOVDegrees          Horizontal Field of View of the camera used. Align it with the
+     *                                    manufacturer specifications, and/or whatever is configured in the PhotonVision Setting
+     *                                    page.
+     * @param camPitchDegrees             pitch of the camera's view axis back from horizontal. Make this the same
+     *                                    as whatever is configured in the PhotonVision Setting page.
+     * @param cameraToRobot               Pose Transform to move from the camera's mount position to the robot's
+     *                                    position
      * @param cameraHeightOffGroundMeters Height of the camera off the ground in meters
-     * @param maxLEDRangeMeters Maximum distance at which your camera can illuminate the target and
-     *     make it visible. Set to 9000 or more if your vision system does not rely on LED's.
-     * @param cameraResWidth Width of your camera's image sensor in pixels
-     * @param cameraResHeight Height of your camera's image sensor in pixels
-     * @param minTargetArea Minimum area that the target should be before it's recognized as a
-     *     target by the camera. Match this with your contour filtering settings in the PhotonVision
-     *     GUI.
+     * @param maxLEDRangeMeters           Maximum distance at which your camera can illuminate the target and
+     *                                    make it visible. Set to 9000 or more if your vision system does not rely on LED's.
+     * @param cameraResWidth              Width of your camera's image sensor in pixels
+     * @param cameraResHeight             Height of your camera's image sensor in pixels
+     * @param minTargetArea               Minimum area that the target should be before it's recognized as a
+     *                                    target by the camera. Match this with your contour filtering settings in the PhotonVision
+     *                                    GUI.
      */
     public GreenSimVisionSystem( // not using diag FOV to calculate horiz/vert FOV b/c calculated numbers don't match official camera properties
-        String camName,
-        double camHorizFOVDegrees,
-        double camVertFOVDegrees,
-        double camPitchDegrees,
-        Transform2d cameraToRobot,
-        double cameraHeightOffGroundMeters,
-        double maxLEDRangeMeters,
-        int cameraResWidth,
-        int cameraResHeight,
-        double minTargetArea
+                                 String camName,
+                                 double camHorizFOVDegrees,
+                                 double camVertFOVDegrees,
+                                 double camPitchDegrees,
+                                 Transform2d cameraToRobot,
+                                 double cameraHeightOffGroundMeters,
+                                 double maxLEDRangeMeters,
+                                 int cameraResWidth,
+                                 int cameraResHeight,
+                                 double minTargetArea
     ) {
         this.camPitchDegrees = camPitchDegrees;
         this.cameraToRobot = cameraToRobot;
@@ -118,7 +119,7 @@ public class GreenSimVisionSystem {
      * Adjust the camera position relative to the robot. Use this if your camera is on a gimbal or
      * turret or some other mobile platform.
      *
-     * @param newCameraToRobot New Transform from the robot to the camera
+     * @param newCameraToRobot   New Transform from the robot to the camera
      * @param newCamHeightMeters New height of the camera off the floor
      * @param newCamPitchDegrees New pitch of the camera axis back from horizontal
      */
@@ -137,8 +138,8 @@ public class GreenSimVisionSystem {
      * NetworkTables
      *
      * @param robotPoseMeters current pose of the robot on the field. Will be used to calculate which
-     *     targets are actually in view, where they are at relative to the robot, and relevant
-     *     PhotonVision parameters.
+     *                        targets are actually in view, where they are at relative to the robot, and relevant
+     *                        PhotonVision parameters.
      */
     public void processFrame(Pose2d robotPoseMeters) {
         Pose2d cameraPos = robotPoseMeters.transformBy(cameraToRobot.inverse());
@@ -180,17 +181,17 @@ public class GreenSimVisionSystem {
                 // IE: targets to the left of the image should report negative yaw.
                 double yawDegrees =
                     -1.0 *
-                    Units.radiansToDegrees(
-                        Math.atan2(
-                            camToTargetTransform.getTranslation().getY(),
-                            camToTargetTransform.getTranslation().getX()
-                        )
-                    );
+                        Units.radiansToDegrees(
+                            Math.atan2(
+                                camToTargetTransform.getTranslation().getY(),
+                                camToTargetTransform.getTranslation().getX()
+                            )
+                        );
                 double pitchDegrees =
                     Units.radiansToDegrees(
                         Math.atan2(distVerticalMeters, distAlongGroundMeters)
                     ) -
-                    this.camPitchDegrees;
+                        this.camPitchDegrees;
 
                 if (camCanSeeTarget(distMeters, yawDegrees, pitchDegrees, area)) {
                     visibleTgtList.add(
@@ -241,14 +242,14 @@ public class GreenSimVisionSystem {
     double getM2PerPx(double dist) {
         double widthMPerPx =
             2 *
-            dist *
-            Math.tan(Units.degreesToRadians(this.camHorizFOVDegrees) / 2) /
-            cameraResWidth;
+                dist *
+                Math.tan(Units.degreesToRadians(this.camHorizFOVDegrees) / 2) /
+                cameraResWidth;
         double heightMPerPx =
             2 *
-            dist *
-            Math.tan(Units.degreesToRadians(this.camVertFOVDegrees) / 2) /
-            cameraResHeight;
+                dist *
+                Math.tan(Units.degreesToRadians(this.camVertFOVDegrees) / 2) /
+                cameraResHeight;
         return widthMPerPx * heightMPerPx;
     }
 

@@ -33,7 +33,9 @@ import org.photonvision.common.dataflow.structures.Packet;
 import org.photonvision.common.hardware.VisionLEDMode;
 import org.photonvision.targeting.PhotonPipelineResult;
 
-/** Represents a camera that is connected to PhotonVision. */
+/**
+ * Represents a camera that is connected to PhotonVision.
+ */
 public class GreenPhotonCamera {
 
     protected final NetworkTable rootTable;
@@ -58,9 +60,9 @@ public class GreenPhotonCamera {
     /**
      * Constructs a PhotonCamera from a root table.
      *
-     * @param instance The NetworkTableInstance to pull data from. This can be a custom instance in
-     *     simulation, but should *usually* be the default NTInstance from
-     *     NetworkTableInstance::getDefault
+     * @param instance   The NetworkTableInstance to pull data from. This can be a custom instance in
+     *                   simulation, but should *usually* be the default NTInstance from
+     *                   NetworkTableInstance::getDefault
      * @param cameraName The name of the camera, as seen in the UI.
      */
     public GreenPhotonCamera(NetworkTableInstance instance, String cameraName) {
@@ -100,7 +102,7 @@ public class GreenPhotonCamera {
         var ret = new PhotonPipelineResult();
 
         // Populate packet and create result.
-        packet.setData(rawBytesEntry.getRaw(new byte[] {}));
+        packet.setData(rawBytesEntry.getRaw(new byte[]{}));
         if (packet.getSize() < 1) return ret;
         ret.createFromPacket(packet);
 
@@ -198,8 +200,8 @@ public class GreenPhotonCamera {
      *
      * <p>This method is deprecated; {@link PhotonPipelineResult#hasTargets()} should be used instead.
      *
-     * @deprecated This method should be replaced with {@link PhotonPipelineResult#hasTargets()}
      * @return Whether the latest target result has targets.
+     * @deprecated This method should be replaced with {@link PhotonPipelineResult#hasTargets()}
      */
     @Deprecated
     public boolean hasTargets() {
@@ -213,17 +215,17 @@ public class GreenPhotonCamera {
         if (versionString.equals("")) {
             DriverStation.reportError(
                 "PhotonVision coprocessor at path " +
-                path +
-                " not found on NetworkTables!",
+                    path +
+                    " not found on NetworkTables!",
                 true
             );
         } else if (!PhotonVersion.versionMatches(versionString)) {
             DriverStation.reportError(
                 "Photon version " +
-                PhotonVersion.versionString +
-                " does not match coprocessor version " +
-                versionString +
-                "!",
+                    PhotonVersion.versionString +
+                    " does not match coprocessor version " +
+                    versionString +
+                    "!",
                 true
             );
         }

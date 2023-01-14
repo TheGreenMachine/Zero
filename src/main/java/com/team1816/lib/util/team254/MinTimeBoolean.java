@@ -23,8 +23,8 @@ public class MinTimeBoolean {
 
         if (
             !value &&
-            !Double.isNaN(mRisingEdgeTime) &&
-            (timestamp - mRisingEdgeTime < mMinTime)
+                !Double.isNaN(mRisingEdgeTime) &&
+                (timestamp - mRisingEdgeTime < mMinTime)
         ) {
             return true;
         }

@@ -2,7 +2,9 @@ package com.team1816.lib.util.visionUtil;
 
 import edu.wpi.first.math.geometry.Transform3d;
 
-/** A lightweight fiducial marker identification utility */
+/**
+ * A lightweight fiducial marker identification utility
+ */
 
 public class VisionPoint {
 

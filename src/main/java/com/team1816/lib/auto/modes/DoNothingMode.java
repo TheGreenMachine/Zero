@@ -9,6 +9,7 @@ public class DoNothingMode extends AutoMode {
 
     /**
      * Routine. Does nothing.
+     *
      * @throws AutoModeEndedException
      * @see AutoMode#routine()
      */

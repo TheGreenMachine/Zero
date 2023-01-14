@@ -1,12 +1,14 @@
 package com.team1816.lib.motion.curves;
 
 import com.team1816.lib.motion.splines.NaturalCubicSpline;
+
 import java.util.ArrayList;
 
 /**
  * This class is an n-expandable framework for the implementation of a Bézier curve for motion characterization
  * and utilizes the Bernstein polynomial parametrization to define the curve and the points that consist of it.
  * This is different from a spline.
+ *
  * @see com.team1816.lib.motion.splines.Spline
  */
 public class BezierCurve {
@@ -16,7 +18,9 @@ public class BezierCurve {
      */
     public static class ControlPoint {
 
-        /** Properties */
+        /**
+         * Properties
+         */
         public double x;
         public double y;
 
@@ -29,7 +33,6 @@ public class BezierCurve {
         }
 
         /**
-         *
          * @param a x-coordinate
          * @param b y-coordinate of the control point
          */
@@ -40,6 +43,7 @@ public class BezierCurve {
 
         /**
          * Adds two control points together
+         *
          * @param c (ControlPoint)
          */
         public void add(ControlPoint c) {
@@ -49,6 +53,7 @@ public class BezierCurve {
 
         /**
          * Performs scalar multiplication by a value z
+         *
          * @param z (double)
          */
         public void multiply(double z) {
@@ -58,6 +63,7 @@ public class BezierCurve {
 
         /**
          * Gets the distance to another control point
+         *
          * @param c (ControlPoint)
          * @return distance
          */
@@ -67,14 +73,16 @@ public class BezierCurve {
 
         /**
          * Returns a Double[] array format of the control point
+         *
          * @return {x, y}
          */
         public Double[] convertToDoubleArray() {
-            return new Double[] { x, y };
+            return new Double[]{x, y};
         }
 
         /**
          * Standard toString() method
+         *
          * @return {X: x, Y: y}
          */
         public String toString() {
@@ -82,7 +90,9 @@ public class BezierCurve {
         }
     }
 
-    /** State */
+    /**
+     * State
+     */
     private ArrayList<ControlPoint> controlPoints; // sequentially defined list of control points that characterize the curve
     private ArrayList<Double> xCoefficients; // bernstein polynomial x co-efficients defined such that index refers to exponent
     private ArrayList<Double> yCoefficients; // bernstein polynomial y co-efficients defined such that index refers to exponent
@@ -99,6 +109,7 @@ public class BezierCurve {
 
     /**
      * Instantiates a Bézier curve based on a list of control points and calculates its look-up table
+     *
      * @param arr
      */
     public BezierCurve(ArrayList<ControlPoint> arr) {
@@ -108,6 +119,7 @@ public class BezierCurve {
 
     /**
      * Generates a look-up table based on a point resolution depending on the desired accuracy
+     *
      * @param resolution computational resolution: number of points to consider for calculation
      */
     public void generateLookUpTable(int resolution) {
@@ -115,16 +127,17 @@ public class BezierCurve {
         for (int i = 0; i <= resolution; i++) {
             double t1 = (double) i / resolution;
             double dist = getPortionLength((i + 1) * resolution, 0, t1);
-            knotPoints.add(new Double[] { dist, t1 });
+            knotPoints.add(new Double[]{dist, t1});
         }
         LUT = new NaturalCubicSpline(knotPoints);
     }
 
     /**
      * Standard linear interpolation of points
+     *
      * @param p1 starting boundary Control Point
      * @param p2 ending boundary Control Point
-     * @param t parameter value to interpolate at
+     * @param t  parameter value to interpolate at
      * @return ControlPoint at t
      */
     private ControlPoint lerp(ControlPoint p1, ControlPoint p2, double t) {
@@ -136,6 +149,7 @@ public class BezierCurve {
 
     /**
      * Returns the point at the curve at parameter t
+     *
      * @param t parameter
      * @return (ControlPoint)
      */
@@ -145,8 +159,8 @@ public class BezierCurve {
             ControlPoint c = controlPoints.get(i);
             c.multiply(
                 Math.pow(t, i) *
-                Math.pow((1 - t), controlPoints.size() - i - 1) *
-                combination(controlPoints.size() - 1, i)
+                    Math.pow((1 - t), controlPoints.size() - i - 1) *
+                    combination(controlPoints.size() - 1, i)
             );
             val.add(c);
         }
@@ -155,6 +169,7 @@ public class BezierCurve {
 
     /**
      * Gets a point on the curve a distance d away from the start
+     *
      * @param d distance
      * @return (ControlPoint)
      */
@@ -165,6 +180,7 @@ public class BezierCurve {
 
     /**
      * Multiplication utility for polynomial expansion
+     *
      * @param n start
      * @param x exponentiated value
      * @return value
@@ -182,6 +198,7 @@ public class BezierCurve {
 
     /**
      * Estimates length of the Bézier curve for a certain resolution
+     *
      * @param resolution computational resolution
      * @return length
      */
@@ -199,9 +216,10 @@ public class BezierCurve {
 
     /**
      * Estimates the length of the Bézier curve over a certain portion
+     *
      * @param resolution computational resolution
-     * @param i initial bounding parameter
-     * @param f final bounding parameter
+     * @param i          initial bounding parameter
+     * @param f          final bounding parameter
      * @return length
      */
     public double getPortionLength(int resolution, double i, double f) {

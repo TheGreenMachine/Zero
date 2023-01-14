@@ -1,16 +1,18 @@
 package com.team1816.lib.util.team254;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
+import java.text.DecimalFormat;
+import java.util.Arrays;
+
 import static com.team1816.lib.subsystems.drive.Drive.kOpenLoopMaxVelMeters;
 import static com.team1816.lib.subsystems.drive.SwerveDrive.kFrontLeft;
 import static com.team1816.lib.subsystems.drive.SwerveDrive.kFrontRight;
 import static com.team1816.lib.util.driveUtil.DriveConversions.inchesPerSecondToTicksPer100ms;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import java.text.DecimalFormat;
-import java.util.Arrays;
-
 /**
  * A drivetrain signal containing the speed and azimuth for each wheel
+ *
  * @see DriveSignal
  */
 public class SwerveDriveSignal extends DriveSignal {
@@ -18,20 +20,20 @@ public class SwerveDriveSignal extends DriveSignal {
     /**
      * Properties
      */
-    public static final double[] ZERO_SPEED = new double[] { 0, 0, 0, 0 };
-    public static final Rotation2d[] ZERO_AZIMUTH = new Rotation2d[] {
+    public static final double[] ZERO_SPEED = new double[]{0, 0, 0, 0};
+    public static final Rotation2d[] ZERO_AZIMUTH = new Rotation2d[]{
         new Rotation2d(),
         new Rotation2d(),
         new Rotation2d(),
         new Rotation2d(),
     };
-    public static final Rotation2d[] X_AZIMUTH = new Rotation2d[] {
+    public static final Rotation2d[] X_AZIMUTH = new Rotation2d[]{
         Rotation2d.fromDegrees(45),
         Rotation2d.fromDegrees(-45),
         Rotation2d.fromDegrees(-45),
         Rotation2d.fromDegrees(45),
     };
-    public static final Rotation2d[] AZIMUTH_90_DEGREES = new Rotation2d[] {
+    public static final Rotation2d[] AZIMUTH_90_DEGREES = new Rotation2d[]{
         Rotation2d.fromDegrees(90),
         Rotation2d.fromDegrees(90),
         Rotation2d.fromDegrees(90),
@@ -55,6 +57,7 @@ public class SwerveDriveSignal extends DriveSignal {
 
     /**
      * Instantiates a SwerveDriveSignal
+     *
      * @see this#SwerveDriveSignal(double[], Rotation2d[], boolean)
      * @see DriveSignal
      */
@@ -64,6 +67,7 @@ public class SwerveDriveSignal extends DriveSignal {
 
     /**
      * Instantiates a SwerveDriveSignal
+     *
      * @see this#SwerveDriveSignal(double[], Rotation2d[], boolean)
      * @see DriveSignal
      */
@@ -76,6 +80,7 @@ public class SwerveDriveSignal extends DriveSignal {
 
     /**
      * Instantiates a SwerveDriveSignal
+     *
      * @see DriveSignal
      */
     public SwerveDriveSignal(
@@ -106,6 +111,7 @@ public class SwerveDriveSignal extends DriveSignal {
 
     /**
      * Returns the wheel azimuth rotations
+     *
      * @return Rotation2d[]
      */
     public Rotation2d[] getWheelAzimuths() {
@@ -114,6 +120,7 @@ public class SwerveDriveSignal extends DriveSignal {
 
     /**
      * Returns if brake mode is implemented
+     *
      * @return mBrakeMode
      */
     public boolean getBrakeMode() {
@@ -122,6 +129,7 @@ public class SwerveDriveSignal extends DriveSignal {
 
     /**
      * toString() print-out utility
+     *
      * @return String
      */
     @Override
@@ -131,12 +139,12 @@ public class SwerveDriveSignal extends DriveSignal {
         for (int i = 0; i < mWheelSpeeds.length; i++) {
             ret_val +=
                 "\tWheel " +
-                i +
-                ": Speed - " +
-                mWheelSpeeds[i] +
-                ", Azimuth - " +
-                fmt.format(mWheelAzimuths[i].getDegrees()) +
-                " deg\n";
+                    i +
+                    ": Speed - " +
+                    mWheelSpeeds[i] +
+                    ", Azimuth - " +
+                    fmt.format(mWheelAzimuths[i].getDegrees()) +
+                    " deg\n";
         }
 
         return ret_val;

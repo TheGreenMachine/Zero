@@ -11,6 +11,7 @@ public class ExampleAutoMode extends AutoMode {
     public ExampleAutoMode() {
         super(List.of(new TrajectoryAction(new ExampleAutoPath())));
     }
+
     @Override
     protected void routine() throws AutoModeEndedException {
 

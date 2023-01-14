@@ -1,8 +1,5 @@
 package com.team1816.lib.auto.actions;
 
-import static com.team1816.lib.subsystems.drive.Drive.*;
-import static com.team1816.lib.subsystems.drive.SwerveDrive.swerveKinematics;
-
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.paths.AutoPath;
 import com.team1816.lib.subsystems.drive.Drive;
@@ -18,21 +15,28 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+
 import java.util.List;
+
+import static com.team1816.lib.subsystems.drive.Drive.*;
+import static com.team1816.lib.subsystems.drive.SwerveDrive.swerveKinematics;
 
 /**
  * This class represents a runnable action that will allow a drivetrain to follow a trajectory.
+ *
  * @see AutoAction
  */
 public class TrajectoryAction implements AutoAction {
 
     /**
      * Command for drivetrain
+     *
      * @see Command
      */
     private final Command command;
     /**
      * Trajectory (list of states) for drivetrain to follow
+     *
      * @see Trajectory
      */
     private final Trajectory trajectory;
@@ -42,6 +46,7 @@ public class TrajectoryAction implements AutoAction {
     private final List<Rotation2d> headings;
     /**
      * Drivetrain (tank or swerve)
+     *
      * @see Drive
      * @see TankDrive
      * @see SwerveDrive
@@ -50,6 +55,7 @@ public class TrajectoryAction implements AutoAction {
 
     /**
      * Constructs a TrajectoryAction based on an AutoPath which contains a trajectory and heading
+     *
      * @param autoPath
      * @see AutoPath
      */
@@ -59,6 +65,7 @@ public class TrajectoryAction implements AutoAction {
 
     /**
      * Main constructor of a TrajectoryAction, instantiates and assigns the command based on the drivetrain
+     *
      * @param trajectory
      * @param headings
      * @see Trajectory
@@ -112,6 +119,7 @@ public class TrajectoryAction implements AutoAction {
 
     /**
      * Returns the trajectory that is associated with the action
+     *
      * @return trajectory
      * @see Trajectory
      */
@@ -121,6 +129,7 @@ public class TrajectoryAction implements AutoAction {
 
     /**
      * Starts the command, executes trajectory on drivetrain
+     *
      * @see Drive#startTrajectory(Trajectory, List)
      * @see Command
      * @see AutoAction#start()
@@ -136,6 +145,7 @@ public class TrajectoryAction implements AutoAction {
 
     /**
      * Executes the command
+     *
      * @see Command
      * @see Command#execute()
      * @see AutoAction#update()
@@ -147,6 +157,7 @@ public class TrajectoryAction implements AutoAction {
 
     /**
      * Returns whether or not the command has been executed
+     *
      * @return boolean isFinished
      * @see Command
      * @see AutoAction#isFinished()
@@ -158,6 +169,7 @@ public class TrajectoryAction implements AutoAction {
 
     /**
      * Ends the command, stops drivetrain
+     *
      * @see Drive
      * @see Command
      * @see AutoAction#done()

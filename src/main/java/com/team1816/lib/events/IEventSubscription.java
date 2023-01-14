@@ -7,6 +7,8 @@ import java.util.function.Consumer;
  */
 public interface IEventSubscription {
     <T> Consumer<T> GetConsumer();
+
     Runnable GetRunnable();
+
     boolean IsRunnable();
 }

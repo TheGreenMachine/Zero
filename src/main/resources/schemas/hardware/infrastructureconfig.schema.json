@@ -1,4 +1,3 @@
-
 {
     "type": "object",
     "title": "Infrastructure Config",
@@ -34,7 +33,10 @@
     },
     "anyOf": [
         {
-            "required": ["pcmId", "canivoreBusName"]
+            "required": [
+                "pcmId",
+                "canivoreBusName"
+            ]
         }
     ]
 }
