@@ -1,9 +1,11 @@
 package com.team1816.lib.auto.paths;
 
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,18 +53,34 @@ public abstract class AutoPath {
     protected abstract List<Rotation2d> getWaypointHeadings();
 
     /**
-     * Returns a list of Pose2d's that define the trajectory /path to be followed
+     * Returns a list of Pose2d's that define the reflected trajectory/path to be followed
      *
      * @return waypoints
      */
-    protected abstract List<Pose2d> getReflectedWaypoints();
+    protected List<Pose2d> getReflectedWaypoints() {
+        List<Pose2d> waypoints = getWaypoints();
+        List<Pose2d> reflectedWaypoints = new ArrayList<>();
+        for (int i = 0; i < waypoints.size(); i++) {
+            Pose2d waypoint = new Pose2d(2 * Constants.fieldCenterX - waypoints.get(i).getX(), waypoints.get(i).getY(), Rotation2d.fromDegrees(180 - waypoints.get(i).getRotation().getDegrees()));
+            reflectedWaypoints.add(i, waypoint);
+        }
+        return reflectedWaypoints;
+    }
 
     /**
-     * Returns a list of Rotation2d's corresponding to the rotation respect to the trajectory
+     * Returns a list of Rotation2d's corresponding to the rotation respect to the reflected trajectory
      *
      * @return waypointHeadings
      */
-    protected abstract List<Rotation2d> getReflectedWaypointHeadings();
+    protected List<Rotation2d> getReflectedWaypointHeadings() {
+        List<Rotation2d> waypointHeadings = getWaypointHeadings();
+        List<Rotation2d> reflectedWaypointHeadings = new ArrayList<>();
+        for (int i = 0; i < waypointHeadings.size(); i++) {
+            var waypointRotation = Rotation2d.fromDegrees(180 - waypointHeadings.get(i).getDegrees());
+            reflectedWaypointHeadings.add(i, waypointRotation);
+        }
+        return reflectedWaypointHeadings;
+    }
 
     /**
      * Checks if the path was made using the CheesyPath web application.
