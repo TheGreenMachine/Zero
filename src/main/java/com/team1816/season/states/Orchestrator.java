@@ -42,7 +42,7 @@ public class Orchestrator {
     );
     private final double minAllowablePoseError = factory.getConstant(
         "minAllowablePoseError",
-        0.15
+        0.1
     );
 
     /**
@@ -169,18 +169,10 @@ public class Orchestrator {
         if (
             Math.abs(
                 Math.hypot(
-                    robotState.fieldToVehicle.getX() - newRobotPose.getX(),
-                    robotState.fieldToVehicle.getY() - newRobotPose.getY()
-                )
-            ) <
-                maxAllowablePoseError &&
-                Math.abs(
-                    Math.hypot(
                         robotState.fieldToVehicle.getX() - newRobotPose.getX(),
                         robotState.fieldToVehicle.getY() - newRobotPose.getY()
                     )
-                ) >
-                    minAllowablePoseError
+                ) > minAllowablePoseError
         ) {
             System.out.println(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);
