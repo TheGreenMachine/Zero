@@ -12,15 +12,10 @@ import java.util.List;
 
 public class LivingRoomPath extends AutoPath {
 
-    public LivingRoomPath() {
-    }
+    public LivingRoomPath() {}
 
     public LivingRoomPath(Color color) {
-        if (Constants.fieldSymmetry == Symmetry.AXIS && color == Color.RED) {
-            setReflected(true);
-        } else {
-            setReflected(false);
-        }
+        super(color);
     }
 
     @Override
