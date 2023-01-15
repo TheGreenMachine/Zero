@@ -119,7 +119,7 @@ public class PathUtil {
             }
         }
 
-        /* list of headings generated with equivalent length to the trajectory poses */
+        /* List of headings generated with equivalent length to the trajectory poses */
         List<Rotation2d> generatedHeadings = new ArrayList<>();
         for (
             int nextCheckpoint = 1;
