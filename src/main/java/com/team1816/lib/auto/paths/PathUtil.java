@@ -68,6 +68,17 @@ public class PathUtil {
         return baseTrajectory;
     }
 
+    /**
+     * Generates a trajectory based on a list of waypoints based on WPIlib's TrajectoryGenerator
+     *
+     * @param usingApp
+     * @param initial
+     * @param waypoints
+     * @return trajectory
+     * @see com.team1816.lib.auto.modes.AutoMode
+     * @see AutoPath
+     * @see edu.wpi.first.math.trajectory.TrajectoryGenerator
+     */
     public static Trajectory generateTrajectory(
         boolean usingApp,
         ChassisSpeeds initial,
@@ -87,6 +98,7 @@ public class PathUtil {
         /* Configures trajectory constraints */
         TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAccel);
         config.setStartVelocity(initial.vxMetersPerSecond);
+        config.setEndVelocity(0);
         var baseTrajectory = edu.wpi.first.math.trajectory.TrajectoryGenerator.generateTrajectory(
             waypointsMeters,
             config
@@ -199,15 +211,17 @@ public class PathUtil {
     /**
      * Generates headings that can be transposed onto a trajectory with time calibration via a differential model
      *
-     * @param trajectory
+     * @param usingApp
+     * @param waypoints
      * @param swerveHeadings
+     * @param initial
      * @return headings
      */
     public static List<Rotation2d> generateHeadings(
         boolean usingApp,
         List<Pose2d> waypoints,
         List<Rotation2d> swerveHeadings,
-        Trajectory trajectory
+        ChassisSpeeds initial
     ) {
         if (waypoints == null || swerveHeadings == null) {
             return null;
@@ -217,6 +231,7 @@ public class PathUtil {
         double startY = Constants.fieldCenterY;
 
         /* Trajectory is generated */
+        Trajectory trajectory = generateTrajectory(usingApp, initial, waypoints);
         List<Pose2d> waypointsMeters = new ArrayList<>();
         if (usingApp) {
             startX = 0;
