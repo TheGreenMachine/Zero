@@ -1,10 +1,7 @@
 package com.team1816.season.configuration;
 
 import com.google.inject.Singleton;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,6 +19,18 @@ public class FieldConfig {
             /**
              * April Tag Targets
              */
+
+            /* Red Alliance Side */
+            put(1, new Pose3d(new Translation3d(15.43, 1.132, 0.470), new Rotation3d())); // Red Edge Grid
+            put(2, new Pose3d(new Translation3d(15.43, 4.482, 0.470), new Rotation3d())); // Red Co-Op Grid
+            put(3, new Pose3d(new Translation3d(15.43, 2.808, 0.470), new Rotation3d())); // Red Feeder Edge Grid
+            put(4, new Pose3d(new Translation3d(16.09, 6.782, 0.700), new Rotation3d())); // Blue Feeder Station
+
+            /* Blue Alliance Side */
+            put(5, new Pose3d(new Translation3d(0.310, 6.782, 0.700), new Rotation3d())); // Red Feeder Station
+            put(6, new Pose3d(new Translation3d(0.970, 4.482, 0.470), new Rotation3d())); // Blue Feeder Edge Grid
+            put(7, new Pose3d(new Translation3d(0.970, 2.808, 0.470), new Rotation3d())); // Blue Co-Op Grid
+            put(8, new Pose3d(new Translation3d(0.970, 1.132, 0.470), new Rotation3d())); // Blue Edge Grid
         }
     };
 
@@ -37,7 +46,7 @@ public class FieldConfig {
         if (RobotBase.isSimulation()) {
             // set up april tags
             List<Pose2d> aprilTagPoses = new ArrayList<>();
-            for (int i = 0; i <= 53; i++) {
+            for (int i = 0; i <= 8; i++) {
                 if (fieldTargets.get(i) == null) {
                     aprilTagPoses.add(
                         i,
