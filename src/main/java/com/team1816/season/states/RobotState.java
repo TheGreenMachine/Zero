@@ -30,7 +30,6 @@ public class RobotState {
     public Pose2d fieldToTurret = Constants.EmptyPose2d;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds(); // velocities of vehicle
     public ChassisSpeeds calculatedVehicleAccel = new ChassisSpeeds(); // accel values calculated by watching drivetrain encoders
-    public Double[] triAxialAcceleration = new Double[]{0d, 0d, 0d};
     public boolean isPoseUpdated = true;
 
     /**
@@ -92,7 +91,6 @@ public class RobotState {
     public synchronized void resetAllStates() {
         deltaVehicle = new ChassisSpeeds();
         calculatedVehicleAccel = new ChassisSpeeds();
-        triAxialAcceleration = new Double[]{0d, 0d, 0d};
         isPoseUpdated = true;
         visibleTargets.clear();
         drivetrainTemp = 0;

@@ -67,42 +67,9 @@ public class Orchestrator {
         superstructureState = STATE.FAT_BOY;
     }
 
-    /** Actions */
+    /** TODO: Actions */
 
-    /** Update Subsystem States */
-
-    /** Superseded Odometry Handling */
-
-    /**
-     * Returns true if the pose of the drivetrain needs to be updated in a cached boolean system
-     *
-     * @return boolean
-     */
-    public boolean needsVisionUpdate() {
-        if (!robotState.isPoseUpdated) {
-            return true;
-        }
-        if (RobotBase.isSimulation() || RobotBase.isReal()) return false;
-        boolean needsVisionUpdate =
-            (
-                Math.abs(
-                    robotState.getCalculatedAccel().vxMetersPerSecond -
-                        robotState.triAxialAcceleration[0]
-                ) >
-                    Constants.kMaxAccelDiffThreshold ||
-                    Math.abs(
-                        robotState.getCalculatedAccel().vyMetersPerSecond -
-                            robotState.triAxialAcceleration[1]
-                    ) >
-                        Constants.kMaxAccelDiffThreshold ||
-                    Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
-                        Constants.kMaxAccelDiffThreshold
-            );
-        if (needsVisionUpdate) {
-            robotState.isPoseUpdated = false;
-        }
-        return needsVisionUpdate; // placeHolder
-    }
+    /** TODO: Update Subsystem States */
 
     /**
      * Calculates the absolute pose of the drivetrain based on a single target
