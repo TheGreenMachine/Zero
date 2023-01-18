@@ -217,12 +217,18 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("autoTarget"),
                         () -> {
-                            System.out.println("Drive trajectory action started!");
-                            TrajectoryToTargetMode mode = new TrajectoryToTargetMode();
-                            Thread autoTargetThread = new Thread(mode::run);
-                            autoTargetThread.start();
-                            autoTargetThread = null;
-                            System.out.println("Trajectory ended");
+                            double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
+                            if (distance < Constants.kMinTrajectoryDistance) {
+                                System.out.println("Distance to target is " + distance + " m");
+                                System.out.println("Too close to target! can not start trajectory!");
+                            } else {
+                                System.out.println("Drive trajectory action started!");
+                                TrajectoryToTargetMode mode = new TrajectoryToTargetMode();
+                                Thread autoTargetThread = new Thread(mode::run);
+                                autoTargetThread.start();
+                                autoTargetThread = null;
+                                System.out.println("Trajectory ended");
+                            }
                         }
                     ),
                     createAction(
