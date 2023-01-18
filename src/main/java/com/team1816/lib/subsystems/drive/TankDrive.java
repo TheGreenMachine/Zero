@@ -23,6 +23,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.RobotBase;
 
+import java.util.ArrayList;
+
 @Singleton
 public class TankDrive extends Drive implements DifferentialDrivetrain {
 
@@ -470,6 +472,25 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public double getRightError() {
         return rightErrorClosedLoop;
+    }
+
+    public double getMaxDistance(){
+        ArrayList <Double> distances = new ArrayList <Double>();
+        distances.add(frontLeft.getDistance());
+        distances.add(frontRight.getDistance());
+        distances.add(backLeft.getDistance());
+        distances.add(backRight.getDistance());
+        double maxValue = distances.get(0);
+        for (int i = 1; i<3; i++){
+            if(distances.get(i)>distances.get(i-1)){
+                maxValue = distances.get(i);
+            }
+        }
+        return maxValue;
+    }
+
+    public boolean crossDistanceThreshold(){
+        return (getMaxDistance() > factory.getConstant("proxysensor", "distanceThreshold"));
     }
 
     /** config and tests */
