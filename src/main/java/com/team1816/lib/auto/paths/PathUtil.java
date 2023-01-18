@@ -128,8 +128,7 @@ public class PathUtil {
         ) {
             int iStart = waypointIndexes.get(nextCheckpoint - 1);
             int iEnd = waypointIndexes.get(nextCheckpoint);
-            double totalDHeading =
-                (
+            double totalDHeading = (
                     swerveHeadings.get(nextCheckpoint).getDegrees() -
                         swerveHeadings.get(nextCheckpoint - 1).getDegrees()
                 );
@@ -140,12 +139,9 @@ public class PathUtil {
             for (int i = iStart; i < iEnd; i++) {
                 generatedHeadings.add(
                     Rotation2d.fromDegrees(
-                        swerveHeadings.get(nextCheckpoint - 1).getDegrees() +
-                            dHeading *
-                                (
-                                    trajectory.getStates().get(i).timeSeconds -
-                                        waypointTimes.get(nextCheckpoint - 1)
-                                )
+                        swerveHeadings.get(nextCheckpoint - 1).getDegrees() + dHeading * (
+                            trajectory.getStates().get(i).timeSeconds - waypointTimes.get(nextCheckpoint - 1)
+                        )
                     )
                 );
             }
