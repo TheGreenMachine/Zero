@@ -23,4 +23,5 @@ public class ProxySensor {
     public double getDistance() {
         return (Math.pow(sharp.getAverageVoltage(), -1.2045)) * 27.726;
     }
+    
 }

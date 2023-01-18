@@ -33,6 +33,7 @@ subsystems:
         implemented: true
         constants:
             sensorPort: 0
+            distanceThreshold: 26
     turret:
         implemented: false
         talons:

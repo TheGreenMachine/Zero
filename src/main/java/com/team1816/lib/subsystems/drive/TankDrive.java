@@ -49,9 +49,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     double leftErrorClosedLoop;
     double rightErrorClosedLoop;
 
-    public static ProxySensor proxySensor1;
-
-    public static ProxySensor proxySensor2;
+    public static ProxySensor frontLeft, frontRight, backLeft, backRight;
 
     /**
      * Instantiates a swerve drivetrain from base subsystem parameters
@@ -103,9 +101,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             Constants.kLongCANTimeoutMs
         );
 
-        proxySensor1 = new ProxySensor("proxySensor1", 0);
-
-        proxySensor2 = new ProxySensor("proxySensor2", 1);
+        //Sensor implementation
+        frontLeft = new ProxySensor("proxySensor1", 0);
+        frontRight = new ProxySensor("proxySensor2", 1);
+        backLeft = new ProxySensor("proxySensor3", 2);
+        backRight = new ProxySensor("proxySensor4", 3);
 
         setOpenLoop(DriveSignal.NEUTRAL);
 
@@ -174,9 +174,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             simulateGyroOffset();
         }
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
-
-        System.out.print("proxy sensor1: " + proxySensor1.getDistance() + "        ");
-        System.out.println("proxy sensor2: " + proxySensor2.getDistance());
 
         tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
