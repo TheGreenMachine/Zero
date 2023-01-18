@@ -177,7 +177,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         }
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
-        System.out.println("maxDistance is: " + getMaxDistance());
+        System.out.println("sensor 1 is: " + frontLeft.getDistance() + "\tsensor 2 is: " + frontRight.getDistance() + "maxDistance is: " + getMaxDistance());
 
         tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
