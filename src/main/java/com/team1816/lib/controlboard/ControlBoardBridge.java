@@ -161,7 +161,7 @@ public class ControlBoardBridge {
                         180
                     );
                     if (config.driver.dpad.left != null) driverDpadMap.put(
-                        config.driver.dpad.up,
+                        config.driver.dpad.left,
                         270
                     );
                 }
