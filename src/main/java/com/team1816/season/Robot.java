@@ -14,11 +14,11 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.season.auto.AutoModeManager;
+import com.team1816.season.auto.modes.AutoBalanceMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.*;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -58,6 +58,8 @@ public class Robot extends TimedRobot {
 
     /** Timing */
     private double loopStart;
+    public static double autoStart;
+    public static double teleopStart;
 
     /** Properties */
     private boolean faulted;
@@ -207,6 +209,16 @@ public class Robot extends TimedRobot {
                             drive.zeroSensors(Constants.kDefaultZeroingPose);
                         }
                     ),
+                    createAction(
+                        () -> controlBoard.getAsBool("autoBalance"),
+                        () -> {
+                            System.out.println("Starting auto balance");
+                            AutoBalanceMode mode = new AutoBalanceMode();
+                            Thread autoBalanceThread = new Thread(mode::run);
+                            autoBalanceThread.start();
+                            System.out.println("Balanced");
+                        }
+                    ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("brakeMode"),
                         drive::setBraking
@@ -264,6 +276,7 @@ public class Robot extends TimedRobot {
         drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
         autoModeManager.startAuto();
 
+        autoStart = Timer.getFPGATimestamp();
         enabledLoop.start();
     }
 
@@ -278,6 +291,7 @@ public class Robot extends TimedRobot {
 
             infrastructure.startCompressor();
 
+            teleopStart = Timer.getFPGATimestamp();
             enabledLoop.start();
         } catch (Throwable t) {
             faulted = true;

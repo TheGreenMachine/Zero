@@ -7,11 +7,13 @@ import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.drive.TankDrive;
 import com.team1816.lib.util.team254.DriveSignal;
+import com.team1816.season.Robot;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Action for infrastructure based / gyroscopic balancing
@@ -63,7 +65,7 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public boolean isFinished() {
-        if (Math.abs(infrastructure.getPitch())<2 && Math.abs(infrastructure.getRoll())<2) {
+        if (((Timer.getFPGATimestamp() - Robot.teleopStart) > 134) || (Math.abs(infrastructure.getPitch())<2 && Math.abs(infrastructure.getRoll())<2)) {
             return true;
         }
         return false;
