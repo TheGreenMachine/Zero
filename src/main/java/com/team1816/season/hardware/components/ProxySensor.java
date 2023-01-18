@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 public class ProxySensor {
     private AnalogInput sharp;
 
-    private String NAME = "proxySensor";
+    private String NAME;
 
     public ProxySensor(String name, int port) {
         NAME = name;
@@ -23,5 +23,9 @@ public class ProxySensor {
     public double getDistance() {
         return (Math.pow(sharp.getAverageVoltage(), -1.2045)) * 27.726;
     }
-    
+
+    public String getName(){
+        return NAME;
+    }
+
 }

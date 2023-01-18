@@ -53,6 +53,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     public static ProxySensor frontLeft, frontRight, backLeft, backRight;
 
+    public static String maxProxyName;
+
     /**
      * Instantiates a swerve drivetrain from base subsystem parameters
      * @param lm LEDManager
@@ -177,7 +179,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         }
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
-        System.out.println("sensor 1 is: " + frontLeft.getDistance() + "             sensor 2 is: " + frontRight.getDistance());
+        System.out.println("sensor 1: " + frontLeft.getDistance() + "     sensor 2: " + frontRight.getDistance() + "     maxDistance: " + getMaxDistance() + "   from " + maxProxyName);
 
         tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
@@ -476,17 +478,18 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         return rightErrorClosedLoop;
     }
 
-    /*
+
     public double getMaxDistance(){
-        ArrayList <Double> distances = new ArrayList <Double>();
-        distances.add(frontLeft.getDistance());
-        distances.add(frontRight.getDistance());
-        distances.add(backLeft.getDistance());
-        distances.add(backRight.getDistance());
-        double maxValue = distances.get(0);
-        for (int i = 1; i<3; i++){
-            if(distances.get(i)>distances.get(i-1)){
-                maxValue = distances.get(i);
+        ArrayList <ProxySensor> distances = new ArrayList <ProxySensor>();
+        distances.add(frontLeft);
+        distances.add(frontRight);
+        distances.add(backLeft);
+        distances.add(backRight);
+        double maxValue = distances.get(0).getDistance();
+        for(int i = 1; i<3; i++){
+            if(distances.get(i).getDistance()>distances.get(i-1).getDistance()){
+                maxValue = distances.get(i).getDistance();
+                maxProxyVal = distances.get(i).getName();
             }
         }
         return maxValue;
@@ -496,9 +499,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public boolean crossDistanceThreshold(){
         return (getMaxDistance() > factory.getConstant("proxysensor", "distanceThreshold"));
     }
-
-
-     */
 
     /** config and tests */
 
