@@ -1,5 +1,8 @@
 package com.team1816.season;
 
+import static com.team1816.lib.controlboard.ControlUtils.createAction;
+import static com.team1816.lib.controlboard.ControlUtils.createHoldAction;
+
 import badlog.lib.BadLog;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
@@ -29,57 +32,41 @@ import static com.team1816.lib.controlboard.ControlUtils.createHoldAction;
 
 public class Robot extends TimedRobot {
 
-    /**
-     * Looper
-     */
+    /** Looper */
     private final Looper enabledLoop;
     private final Looper disabledLoop;
 
-    /**
-     * Logger
-     */
+    /** Logger */
     private static BadLog logger;
 
-    /**
-     * Controls
-     */
+    /** Controls */
     private IControlBoard controlBoard;
     private ActionManager actionManager;
 
     private final Infrastructure infrastructure;
     private final SubsystemLooper subsystemManager;
 
-    /**
-     * State Managers
-     */
+    /** State Managers */
     private final Orchestrator orchestrator;
     private final RobotState robotState;
 
-    /**
-     * Subsystems
-     */
+    /** Subsystems */
     private final Drive drive;
 
     private final LedManager ledManager;
 
-    /**
-     * Factory
-     */
+    /** Factory */
     private static RobotFactory factory;
 
-    /**
-     * Autonomous
-     */
+    /** Autonomous */
     private final AutoModeManager autoModeManager;
 
-    /**
-     * Timing
-     */
+    /** Timing */
     private double loopStart;
+    public static double autoStart;
+    public static double teleopStart;
 
-    /**
-     * Properties
-     */
+    /** Properties */
     private boolean faulted;
 
     /**
@@ -102,7 +89,6 @@ public class Robot extends TimedRobot {
 
     /**
      * Returns the static factory instance of the Robot
-     *
      * @return RobotFactory
      */
     public static RobotFactory getFactory() {
@@ -112,7 +98,6 @@ public class Robot extends TimedRobot {
 
     /**
      * Returns the length of the last loop that the Robot was on
-     *
      * @return duration (ms)
      */
     public Double getLastRobotLoop() {
@@ -121,7 +106,6 @@ public class Robot extends TimedRobot {
 
     /**
      * Returns the duration of the last enabled loop
-     *
      * @return duration (ms)
      * @see Looper#getLastLoop()
      */
@@ -309,6 +293,7 @@ public class Robot extends TimedRobot {
         drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
         autoModeManager.startAuto();
 
+        autoStart = Timer.getFPGATimestamp();
         enabledLoop.start();
     }
 
@@ -323,6 +308,7 @@ public class Robot extends TimedRobot {
 
             infrastructure.startCompressor();
 
+            teleopStart = Timer.getFPGATimestamp();
             enabledLoop.start();
         } catch (Throwable t) {
             faulted = true;
@@ -472,6 +458,5 @@ public class Robot extends TimedRobot {
      * Actions to perform periodically when the robot is in the test period
      */
     @Override
-    public void testPeriodic() {
-    }
+    public void testPeriodic() {}
 }
