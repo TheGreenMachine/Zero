@@ -15,13 +15,13 @@ subsystems:
         invertMotor:
             - leftMain
         constants:
-            maxVelTicks100ms: 6138.4
-            openLoopRampRate: 0.8
+            maxVelTicks100ms: 12255.7
+            openLoopRampRate: 0.4
             isSwerve: 0
             encPPR: 22220.8
             currentLimit: 40
             maxVelPathFollowing: 1 # meters/s
-            maxVelOpenLoop: 2.54 # meters/s
+            maxVelOpenLoop: 1 # meters/s
             maxRotVel: 7.2
             maxAccel: 0.5 # meters/s^2
             trackWidth: 25 #inches
