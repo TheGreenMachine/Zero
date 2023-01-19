@@ -5,14 +5,12 @@ import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.turret.Turret;
 import com.team1816.lib.util.visionUtil.VisionPoint;
-import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.RobotBase;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -80,8 +78,8 @@ public class Orchestrator {
      */
     public Pose2d calculateSingleTargetTranslation(VisionPoint target) {
         Pose2d targetPos = new Pose2d(
-            FieldConfig.fieldTargets.get(target.id).getX(),
-            FieldConfig.fieldTargets.get(target.id).getY(),
+            FieldConfig.fieldTargets2023.get(target.id).getX(),
+            FieldConfig.fieldTargets2023.get(target.id).getY(),
             new Rotation2d()
         );
         double X = target.getX(), Y = target.getY();
@@ -103,8 +101,8 @@ public class Orchestrator {
      */
     public Pose2d photonCalculateSingleTargetTranslation(PhotonTrackedTarget target) {
         Pose2d targetPos = new Pose2d(
-            FieldConfig.fieldTargets.get(target.getFiducialId()).getX(),
-            FieldConfig.fieldTargets.get(target.getFiducialId()).getY(),
+            FieldConfig.fieldTargets2023.get(target.getFiducialId()).getX(),
+            FieldConfig.fieldTargets2023.get(target.getFiducialId()).getY(),
             new Rotation2d()
         );
         Translation2d targetTranslation = target.getBestCameraToTarget().getTranslation().toTranslation2d();
@@ -145,19 +143,19 @@ public class Orchestrator {
      */
     public void updatePoseWithCamera() {
         Pose2d newRobotPose = calculatePoseFromCamera();
-        if (
-            Math.abs(
-                Math.hypot(
-                        robotState.fieldToVehicle.getX() - newRobotPose.getX(),
-                        robotState.fieldToVehicle.getY() - newRobotPose.getY()
-                    )
-                ) > minAllowablePoseError
-        ) {
+//        if (
+//            Math.abs(
+//                Math.hypot(
+//                        robotState.fieldToVehicle.getX() - newRobotPose.getX(),
+//                        robotState.fieldToVehicle.getY() - newRobotPose.getY()
+//                    )
+//                ) > minAllowablePoseError
+//        ) {
             System.out.println(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);
             robotState.fieldToVehicle = newRobotPose;
             robotState.isPoseUpdated = true;
-        }
+//        }
     }
 
     /**

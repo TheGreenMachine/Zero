@@ -14,7 +14,7 @@ import java.util.List;
 public class FieldConfig {
 
     public static Field2d field;
-    public static final HashMap<Integer, Pose3d> fieldTargets = new HashMap<>() {
+    public static final HashMap<Integer, Pose3d> fieldTargets2023 = new HashMap<>() {
         {
             /**
              * April Tag Targets
@@ -31,6 +31,9 @@ public class FieldConfig {
             put(6, new Pose3d(new Translation3d(0.970, 4.482, 0.470), new Rotation3d())); // Blue Feeder Edge Grid
             put(7, new Pose3d(new Translation3d(0.970, 2.808, 0.470), new Rotation3d())); // Blue Co-Op Grid
             put(8, new Pose3d(new Translation3d(0.970, 1.132, 0.470), new Rotation3d())); // Blue Edge Grid
+
+            /* Test */
+            put(51, new Pose3d(new Translation3d(), new Rotation3d()));
         }
     };
 
@@ -47,7 +50,7 @@ public class FieldConfig {
             // set up april tags
             List<Pose2d> aprilTagPoses = new ArrayList<>();
             for (int i = 0; i <= 8; i++) {
-                if (fieldTargets.get(i) == null) {
+                if (fieldTargets2023.get(i) == null) {
                     aprilTagPoses.add(
                         i,
                         new Pose2d(new Translation2d(-1, -1), new Rotation2d())
@@ -57,9 +60,9 @@ public class FieldConfig {
                 aprilTagPoses.add(
                     i, // if we want ids to be marked on each pose, we'll prob need to adjust the Field2DObject class (make our own?)
                     new Pose2d(
-                        fieldTargets.get(i).getX(),
-                        fieldTargets.get(i).getY(),
-                        fieldTargets.get(i).getRotation().toRotation2d()
+                        fieldTargets2023.get(i).getX(),
+                        fieldTargets2023.get(i).getY(),
+                        fieldTargets2023.get(i).getRotation().toRotation2d()
                     )
                 );
             }
