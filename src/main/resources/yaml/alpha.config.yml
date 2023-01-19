@@ -14,15 +14,15 @@ subsystems:
                 kD: 15 # 3.6
                 kF: 0.538
         invertMotor:
-            - rightMain
+            - leftMain
         constants:
-            maxVelTicks100ms: 12275.7
+            maxVelTicks100ms: 6138.4
             openLoopRampRate: 0.8
             isSwerve: 0
             encPPR: 22220.8
             currentLimit: 40
-            maxVelPathFollowing: 3 # meters/s
-            maxVelOpenLoop: 10 # meters/s
+            maxVelPathFollowing: 1 # meters/s
+            maxVelOpenLoop: 2.54 # meters/s
             maxRotVel: 7.2
             maxAccel: 0.5 # meters/s^2
             trackWidth: 25 #inches
@@ -88,6 +88,3 @@ constants:
     ## General ##
     kLooperDt: .020
     resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
-
-
-
