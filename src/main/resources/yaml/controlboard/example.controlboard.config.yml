@@ -28,7 +28,7 @@ operator:
         b: eject
     axes:
         leftTrigger: yeetShot
-        rightTrigger: shoot
+        rightTrigger: updatePoseWithCamera
     buttons:
         start: toggleTopClamp
         back: toggleBottomClamp
