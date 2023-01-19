@@ -38,12 +38,12 @@ public class GreenSimVisionTarget {
     /**
      * Describes a vision target located somewhere on the field that your SimVisionSystem can detect.
      *
-     * @param targetPos Pose2d of the target on the field. Define it such that, if you are standing in
-     *     the middle of the field facing the target, the Y axis points to your left, and the X axis
-     *     points away from you.
+     * @param targetPos                     Pose2d of the target on the field. Define it such that, if you are standing in
+     *                                      the middle of the field facing the target, the Y axis points to your left, and the X axis
+     *                                      points away from you.
      * @param targetHeightAboveGroundMeters Height of the target above the field plane, in meters.
-     * @param targetWidthMeters Width of the outer bounding box of the target in meters.
-     * @param targetHeightMeters Pair Height of the outer bounding box of the target in meters.
+     * @param targetWidthMeters             Width of the outer bounding box of the target in meters.
+     * @param targetHeightMeters            Pair Height of the outer bounding box of the target in meters.
      */
     public GreenSimVisionTarget(
         Pose2d targetPos,

@@ -10,7 +10,8 @@ public class Pigeon2Impl extends Pigeon2 implements IPigeonIMU {
 
     /**
      * Instantiates a Pigeon2Impl
-     * @param id CAN-bus ID
+     *
+     * @param id     CAN-bus ID
      * @param canBus CAN-bus name (if multiple)
      */
     public Pigeon2Impl(int id, String canBus) {
@@ -19,6 +20,7 @@ public class Pigeon2Impl extends Pigeon2 implements IPigeonIMU {
 
     /**
      * Returns gyroscopic yaw / transverse planar angle
+     *
      * @return yaw (degrees)
      * @see IPigeonIMU#getYaw()
      */
@@ -29,6 +31,7 @@ public class Pigeon2Impl extends Pigeon2 implements IPigeonIMU {
 
     /**
      * Returns x, y, and z acceleration in a casted fixed point double array
+     *
      * @return acceleration
      * @see IPigeonIMU#getAcceleration()
      */
@@ -36,11 +39,12 @@ public class Pigeon2Impl extends Pigeon2 implements IPigeonIMU {
     public double[] getAcceleration() {
         short[] accel = new short[3];
         getBiasedAccelerometer(accel);
-        return new double[] { accel[0], accel[1], accel[2] };
+        return new double[]{accel[0], accel[1], accel[2]};
     }
 
     /**
      * Sets the gyroscopic yaw to a specific angle
+     *
      * @param angle (degrees)
      * @return ErrorCode / void
      * @see IPigeonIMU#getAcceleration()
@@ -52,6 +56,7 @@ public class Pigeon2Impl extends Pigeon2 implements IPigeonIMU {
 
     /**
      * Sets the gyroscopic yaw to a specific angle
+     *
      * @param angle (degrees)
      * @return ErrorCode / void
      * @see IPigeonIMU#setFusedHeading(double)
@@ -63,6 +68,7 @@ public class Pigeon2Impl extends Pigeon2 implements IPigeonIMU {
 
     /**
      * Sets the accumulated z angle to angleDeg
+     *
      * @param angle (degrees)
      * @return ErrorCode / void
      * @see IPigeonIMU#setAccumZAngle(double)
@@ -74,6 +80,7 @@ public class Pigeon2Impl extends Pigeon2 implements IPigeonIMU {
 
     /**
      * Returns true if a pigeon reset has occurred
+     *
      * @return boolean hasResetOccurred
      * @see IPigeonIMU#hasResetOccurred()
      */
@@ -84,6 +91,7 @@ public class Pigeon2Impl extends Pigeon2 implements IPigeonIMU {
 
     /**
      * Configures factory defaults
+     *
      * @return ErrorCode / void
      * @see IPigeonIMU#configFactoryDefault()
      */

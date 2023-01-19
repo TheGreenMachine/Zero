@@ -1,9 +1,5 @@
 package com.team1816.season.subsystems;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.team1816.TestUtil;
 import com.team1816.lib.Injector;
 import com.team1816.lib.hardware.components.motor.GhostMotor;
@@ -17,6 +13,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Spy;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 // @RunWith(JUnit4.class)
 public class TurretTest {

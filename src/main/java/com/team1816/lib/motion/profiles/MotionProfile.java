@@ -67,7 +67,9 @@ public abstract class MotionProfile {
         }
     }
 
-    /** Properties */
+    /**
+     * Properties
+     */
     private Constraints constraints;
     private State initial;
     private State target;
@@ -83,6 +85,7 @@ public abstract class MotionProfile {
 
     /**
      * Instantiates a Motion Profile
+     *
      * @param c constraints
      * @param i initial state
      * @param t final state
@@ -95,6 +98,7 @@ public abstract class MotionProfile {
 
     /**
      * Returns the position of the motion profile at a specific time
+     *
      * @param t time
      * @return position
      */
@@ -104,6 +108,7 @@ public abstract class MotionProfile {
 
     /**
      * Returns the velocity of the motion profile at a specific time
+     *
      * @param t time
      * @return velocity
      */
@@ -113,6 +118,7 @@ public abstract class MotionProfile {
 
     /**
      * Returns the acceleration of the motion profile at a specific time
+     *
      * @param t time
      * @return acceleration
      */
@@ -122,6 +128,7 @@ public abstract class MotionProfile {
 
     /**
      * Returns the jerk of the motion profile at a specific time (only useful for sinusoidal and s-curve profiles)
+     *
      * @param t time
      * @return jerk
      */

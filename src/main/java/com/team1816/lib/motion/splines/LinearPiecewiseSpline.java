@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 /**
  * This class is also not in most senses a "spline" but represents a basic linearly continuous mapping of values
+ *
  * @see Spline for documentation
  */
 
@@ -39,12 +40,12 @@ public class LinearPiecewiseSpline extends Spline {
             ArrayList<Double> tempCoefficients = new ArrayList<>();
             double constant =
                 coordinates.get(i - 1)[1] -
-                coordinates.get(i - 1)[0] *
-                (coordinates.get(i)[1] - coordinates.get(i - 1)[1]) /
-                (coordinates.get(i)[0] - coordinates.get(i - 1)[0]);
+                    coordinates.get(i - 1)[0] *
+                        (coordinates.get(i)[1] - coordinates.get(i - 1)[1]) /
+                        (coordinates.get(i)[0] - coordinates.get(i - 1)[0]);
             double slope =
                 (coordinates.get(i)[1] - coordinates.get(i - 1)[1]) /
-                (coordinates.get(i)[0] - coordinates.get(i - 1)[0]);
+                    (coordinates.get(i)[0] - coordinates.get(i - 1)[0]);
             tempCoefficients.add(constant);
             tempCoefficients.add(slope);
             lCoefficients.add(tempCoefficients);

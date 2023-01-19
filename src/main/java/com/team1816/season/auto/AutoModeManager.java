@@ -1,10 +1,14 @@
 package com.team1816.season.auto;
 
+import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.auto.modes.DoNothingMode;
-import com.team1816.season.auto.modes.*;
+import com.team1816.season.auto.modes.DriveStraightMode;
+import com.team1816.season.auto.modes.LivingRoomMode;
+import com.team1816.season.auto.modes.TuneDrivetrainMode;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import javax.inject.Singleton;
 
 /**
@@ -64,6 +68,7 @@ public class AutoModeManager {
 
     /**
      * Updates the choosers in realtime
+     *
      * @return true if updated
      */
     public boolean update() {
@@ -79,7 +84,7 @@ public class AutoModeManager {
                 );
             }
             if (colorChanged) {
-                System.out.println("Robot color: " + selectedColor);
+                System.out.println("Robot color changed from: " + desiredColor + ", to: " + selectedColor);
             }
             autoMode = generateAutoMode(selectedAuto);
             autoModeThread = new Thread(autoMode::run);
@@ -104,6 +109,7 @@ public class AutoModeManager {
 
     /**
      * Returns the selected autonomous mode
+     *
      * @return AutoMode
      * @see AutoMode
      */
@@ -113,11 +119,12 @@ public class AutoModeManager {
 
     /**
      * Returns the selected color
+     *
      * @return Color
      * @see Color
      */
     public Color getSelectedColor() {
-        return desiredColor;
+        return sideChooser.getSelected();
     }
 
     /**
@@ -148,36 +155,30 @@ public class AutoModeManager {
         DRIVE_STRAIGHT,
         // 2023
 
-        AUTO_BALANCE
-    }
-
-    /**
-     * Enum for bumper colors
-     */
-    public enum Color {
-        RED,
-        BLUE,
     }
 
     /**
      * Generates each AutoMode by demand
+     *
      * @param mode desiredMode
      * @return AutoMode
      * @see AutoMode
      */
     private AutoMode generateAutoMode(DesiredAuto mode) {
         switch (mode) {
-            case DO_NOTHING:
+            case DO_NOTHING -> {
                 return new DoNothingMode();
-            case TUNE_DRIVETRAIN:
+            }
+            case TUNE_DRIVETRAIN -> {
                 return new TuneDrivetrainMode();
-            case LIVING_ROOM:
-                return new LivingRoomMode();
-            case AUTO_BALANCE:
-                return new AutoBalanceMode();
-            default:
+            }
+            case LIVING_ROOM -> {
+                return new LivingRoomMode(getSelectedColor());
+            }
+            default -> {
                 System.out.println("Defaulting to drive straight mode");
                 return new DriveStraightMode();
+            }
         }
     }
 }

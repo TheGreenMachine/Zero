@@ -16,17 +16,21 @@ import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     protected String name = "";
-    /** Characterization */
+    /**
+     * Characterization
+     */
     private final int maxVelTicks100ms;
     private final int absInitOffset;
     private int fwdLimit;
     private int revLimit;
     private boolean usingLimit = false;
     private final int absMotorPPR = 4096;
-    /** State */
+    /**
+     * State
+     */
     private ControlMode controlMode;
-    private final double[] desiredDemand = new double[] { 0, 0, 0 }; // 0: %out, 1: vel, 2: pos
-    private final double[] actualOutput = new double[] { 0, 0, 0 }; // 0: %out, 1: vel, 2: pos
+    private final double[] desiredDemand = new double[]{0, 0, 0}; // 0: %out, 1: vel, 2: pos
+    private final double[] actualOutput = new double[]{0, 0, 0}; // 0: %out, 1: vel, 2: pos
     protected double lastPos = 0;
 
     public GhostMotor(int maxTickVel, int absInitOffset, String motorName) {
@@ -93,19 +97,24 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     }
 
     @Override
-    public void neutralOutput() {}
+    public void neutralOutput() {
+    }
 
     @Override
-    public void setNeutralMode(NeutralMode neutralMode) {}
+    public void setNeutralMode(NeutralMode neutralMode) {
+    }
 
     @Override
-    public void setSensorPhase(boolean PhaseSensor) {}
+    public void setSensorPhase(boolean PhaseSensor) {
+    }
 
     @Override
-    public void setInverted(boolean invert) {}
+    public void setInverted(boolean invert) {
+    }
 
     @Override
-    public void setInverted(InvertType invertType) {}
+    public void setInverted(InvertType invertType) {
+    }
 
     @Override
     public boolean getInverted() {
@@ -164,7 +173,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     }
 
     @Override
-    public void enableVoltageCompensation(boolean enable) {}
+    public void enableVoltageCompensation(boolean enable) {
+    }
 
     @Override
     public double getBusVoltage() {
@@ -266,9 +276,9 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
             if (Math.abs(actualOutput[0]) > 1.0) {
                 System.out.println(
                     "Motor " +
-                    name +
-                    "'s % output should be between -1.0 to 1.0 value:" +
-                    actualOutput[0]
+                        name +
+                        "'s % output should be between -1.0 to 1.0 value:" +
+                        actualOutput[0]
                 );
             }
             return actualOutput[0] * maxVelTicks100ms;
@@ -326,7 +336,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     }
 
     @Override
-    public void overrideLimitSwitchesEnable(boolean enable) {}
+    public void overrideLimitSwitchesEnable(boolean enable) {
+    }
 
     @Override
     public ErrorCode configForwardSoftLimitThreshold(
@@ -360,7 +371,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     }
 
     @Override
-    public void overrideSoftLimitsEnable(boolean enable) {}
+    public void overrideSoftLimitsEnable(boolean enable) {
+    }
 
     @Override
     public ErrorCode config_kP(int slotIdx, double value, int timeoutMs) {
@@ -445,7 +457,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     }
 
     @Override
-    public void selectProfileSlot(int slotIdx, int pidIdx) {}
+    public void selectProfileSlot(int slotIdx, int pidIdx) {
+    }
 
     @Override
     public double getClosedLoopTarget(int pidIdx) {
@@ -512,7 +525,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     }
 
     @Override
-    public void processMotionProfileBuffer() {}
+    public void processMotionProfileBuffer() {
+    }
 
     @Override
     public ErrorCode getMotionProfileStatus(MotionProfileStatus statusToFill) {
@@ -617,10 +631,12 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     }
 
     @Override
-    public void follow(IMotorController masterToFollow) {}
+    public void follow(IMotorController masterToFollow) {
+    }
 
     @Override
-    public void valueUpdated() {}
+    public void valueUpdated() {
+    }
 
     @Override
     public ErrorCode configSelectedFeedbackSensor(

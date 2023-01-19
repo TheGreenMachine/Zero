@@ -1,11 +1,11 @@
 package com.team1816.lib.util.team254;
 
-import static com.team1816.lib.subsystems.drive.Drive.kMaxAngularSpeed;
-import static com.team1816.lib.subsystems.drive.Drive.kOpenLoopMaxVelMeters;
-
 import com.team1816.lib.util.driveUtil.SwerveKinematics;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+
+import static com.team1816.lib.subsystems.drive.Drive.kMaxAngularSpeed;
+import static com.team1816.lib.subsystems.drive.Drive.kOpenLoopMaxVelMeters;
 
 /**
  * Class based on Team 1323's sendInput method to make driving feel better
@@ -29,15 +29,17 @@ public class SwerveDriveHelper implements DriveHelper {
     /**
      * Instantiates a SwerveDriveHelper
      */
-    public SwerveDriveHelper() {}
+    public SwerveDriveHelper() {
+    }
 
     /**
      * Calculates a DriveSignal based on inputs with vector modulated polling
-     * @param forwardInput throttle
-     * @param strafeInput strafe
-     * @param rotationInput rotation
-     * @param low_power boolean
-     * @param field_relative boolean (field-centric)
+     *
+     * @param forwardInput           throttle
+     * @param strafeInput            strafe
+     * @param rotationInput          rotation
+     * @param low_power              boolean
+     * @param field_relative         boolean (field-centric)
      * @param use_heading_controller boolean
      * @return SwerveDriveSignal
      * @see SwerveDriveSignal
@@ -70,14 +72,14 @@ public class SwerveDriveHelper implements DriveHelper {
                         .rotateBy(nearestPole(translationalInputDirection))
                         .getRadians()
                 ) <
-                kPoleThreshold
+                    kPoleThreshold
             ) {
                 translationalInput =
                     new Translation2d(
                         nearestPole(translationalInputDirection).getCos(),
                         nearestPole(translationalInputDirection).getSin()
                     )
-                    .times(inputMagnitude);
+                        .times(inputMagnitude);
             }
         } else {
             if (
@@ -87,14 +89,14 @@ public class SwerveDriveHelper implements DriveHelper {
                         .rotateBy(nearestPole(translationalInputDirection))
                         .getRadians()
                 ) <
-                kRobotRelativePoleThreshold
+                    kRobotRelativePoleThreshold
             ) {
                 translationalInput =
                     new Translation2d(
                         nearestPole(translationalInputDirection).getCos(),
                         nearestPole(translationalInputDirection).getSin()
                     )
-                    .times(inputMagnitude);
+                        .times(inputMagnitude);
             }
         }
 
@@ -121,7 +123,7 @@ public class SwerveDriveHelper implements DriveHelper {
         } else {
             rotationInput =
                 Math.pow(Math.abs(rotationInput), kRotationExponent) *
-                Math.signum(rotationInput);
+                    Math.signum(rotationInput);
         }
 
         translationalInput = translationalInput.times(kMaxSpeed);
@@ -144,6 +146,7 @@ public class SwerveDriveHelper implements DriveHelper {
 
     /**
      * Calculates the nearest Rotation2d pole with a matrix sign function for rotation inputs
+     *
      * @param rotation Rotation2d
      * @return Rotation2d
      */

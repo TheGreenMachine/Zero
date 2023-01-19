@@ -6,7 +6,9 @@
         "implemented": {
             "type": "boolean"
         },
-        "required": ["implemented"],
+        "required": [
+            "implemented"
+        ],
         "canifier": {
             "type": "integer"
         },
@@ -72,7 +74,9 @@
     },
     "anyOf": [
         {
-            "required": ["implemented"]
+            "required": [
+                "implemented"
+            ]
         }
     ]
 }

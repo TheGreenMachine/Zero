@@ -24,15 +24,21 @@ public class OrchestratorTest extends TestCase {
         state.resetPosition();
     }
 
-    public void testSetStopped() {}
+    public void testSetStopped() {
+    }
 
-    public void testSetCollecting() {}
+    public void testSetCollecting() {
+    }
 
-    public void testSetRevving() {}
+    public void testSetRevving() {
+    }
 
-    public void testSetFiring() {}
+    public void testSetFiring() {
+    }
 
-    public void testGetDistance() {}
+    public void testGetDistance() {
+    }
 
-    public void testGetPredictedDistance() {}
+    public void testGetPredictedDistance() {
+    }
 }

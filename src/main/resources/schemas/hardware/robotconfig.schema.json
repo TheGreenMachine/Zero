@@ -21,7 +21,12 @@
     "additionalProperties": false,
     "anyOf": [
         {
-            "required": ["subsystems", "infrastructure", "constants", "controlboard"]
+            "required": [
+                "subsystems",
+                "infrastructure",
+                "constants",
+                "controlboard"
+            ]
         }
     ]
 }

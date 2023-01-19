@@ -19,11 +19,15 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/** This class models a multi-functional turret with target and field tracking abilities */
+/**
+ * This class models a multi-functional turret with target and field tracking abilities
+ */
 @Singleton
 public class Turret extends Subsystem implements PidProvider {
 
-    /** Properties */
+    /**
+     * Properties
+     */
     public static final String NAME = "turret";
     public static final double kJogSpeed = 0.5;
     public static final double kSouth = 0; // deg - relative to vehicle NOT FIELD
@@ -43,12 +47,16 @@ public class Turret extends Subsystem implements PidProvider {
     private static final int kPrimaryCloseLoop = 0;
     private final PIDSlotConfiguration pidConfig;
 
-    /** Components */
+    /**
+     * Components
+     */
     private final IGreenMotor turretMotor;
 
     private static LedManager led;
 
-    /** State */
+    /**
+     * State
+     */
     private int desiredPos = 0;
     private int followingPos = 0;
     private boolean lostEncPos = false;
@@ -64,9 +72,10 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Instantiates a turret with a camera (only used for feedback loop based automatic homing) and standard subsystem components
+     *
      * @param ledManager LEDManager
-     * @param inf Infrastructure
-     * @param rs RobotState
+     * @param inf        Infrastructure
+     * @param rs         RobotState
      */
     @Inject
     public Turret(
@@ -145,6 +154,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Zeroes the turret depending on if the encoder needs to be reset and handles for gear ratios
+     *
      * @param resetEncPos boolean
      */
     public synchronized void zeroSensors(boolean resetEncPos) {
@@ -170,6 +180,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Returns the ControlMode of the turret
+     *
      * @return controlMode
      */
     public ControlMode getControlMode() {
@@ -178,6 +189,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Sets the ControlMode of the turret
+     *
      * @param controlMode ControlMode
      */
     public void setControlMode(ControlMode controlMode) {
@@ -190,6 +202,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Sets the turret speed to a value (only used for continually constrained motion profiling)
+     *
      * @param velocity turretVelocity
      */
     public void setTurretVelocity(double velocity) {
@@ -202,6 +215,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Sets the desired position of the turret
+     *
      * @param position desiredPosition
      */
     private synchronized void setDesiredPos(double position) {
@@ -215,6 +229,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Sets the turret to a position based on an angle
+     *
      * @param angle (degrees)
      * @see this#setDesiredPos(double)
      */
@@ -227,6 +242,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Sets the turret to follow a certain angle with gyroscopic correction
+     *
      * @param angle (degrees)
      */
     public synchronized void setFollowingAngle(double angle) {
@@ -235,6 +251,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Sets the target for the turret to track based on a target pose on the field
+     *
      * @param target Pose2d
      */
     public void setTarget(Pose2d target) {
@@ -259,6 +276,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Returns the actual angle of the turret in degrees
+     *
      * @return angle (degrees)
      */
     public double getActualPosDegrees() {
@@ -267,19 +285,21 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Returns the actual position of the turret in encoder ticks based on the encoder reading
+     *
      * @return actualTurretPos
      */
     public double getActualPosTicks() {
         return (
             (
                 turretMotor.getSelectedSensorPosition(kPrimaryCloseLoop) -
-                kAbsTicksSouthOffset
+                    kAbsTicksSouthOffset
             )
         );
     }
 
     /**
      * Returns the desired position of the turret in encoder ticks
+     *
      * @return desiredTurretPos
      */
     public double getDesiredPosTicks() {
@@ -291,6 +311,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Returns the error in the actual and desired positions of the turret
+     *
      * @return error (encoder ticks)
      */
     public double getPosError() {
@@ -301,6 +322,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Reads position and velocity from the encoder and updates RobotState
+     *
      * @see RobotState
      */
     @Override
@@ -317,11 +339,11 @@ public class Turret extends Subsystem implements PidProvider {
         turretRotationalAcceleration =
             Units.degreesToRadians(
                 convertTurretTicksToDegrees(sensorVel - turretVelocity) /
-                Constants.kLooperDt
+                    Constants.kLooperDt
             );
         turretCentripetalAcceleration =
             Math.pow(Units.degreesToRadians(convertTurretTicksToDegrees(sensorVel)), 2) *
-            Constants.kTurretZedRadius;
+                Constants.kTurretZedRadius;
         turretVelocity = sensorVel;
 
         if (turretMotor.hasResetOccurred()) {
@@ -347,6 +369,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Writes output to the {@link Turret#turretMotor} based on the controlMode
+     *
      * @see Turret#controlMode
      */
     @Override
@@ -380,6 +403,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * A state based control switch for revolving between controlModes
+     *
      * @see Turret#controlMode
      */
     public void revolve() {
@@ -409,6 +433,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Gyroscopic offset that preserves the angle of the turret with respect to the field irrespective of the rotation of the drivetrain
+     *
      * @return int offset
      */
     private int fieldFollowingOffset() {
@@ -419,6 +444,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * An offset that accounts for tracking a target based on its pose
+     *
      * @return int offset
      */
     private int targetFollowingOffset() {
@@ -432,6 +458,7 @@ public class Turret extends Subsystem implements PidProvider {
     /**
      * An offset that accounts for tracking a target and motion differences of the turret to provide the most accurate
      * and continuous tracking
+     *
      * @return int offset
      */
     private int estimatedTargetFollowingOffset() {
@@ -448,6 +475,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Sets the desired position of the turret for constant gyroscopic tracking of a direction
+     *
      * @see Turret#fieldFollowingOffset()
      */
     private void trackGyro() {
@@ -461,6 +489,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Sets the desired position of the turret for the tracking of a target
+     *
      * @see Turret#targetFollowingOffset()
      */
     private void trackTarget() {
@@ -476,6 +505,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Sets the desired position of the turret for the tracking of a target whilst accounting for motion
+     *
      * @see Turret#estimatedTargetFollowingOffset()
      */
     private void trackAbsolute() {
@@ -491,6 +521,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Sets the desired position of the turret to always aim away from the target with minimal effort
+     *
      * @see Turret#estimatedTargetFollowingOffset()
      */
     private void eject() {
@@ -507,6 +538,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Sets the output of the turret based on the desired position
+     *
      * @param pos position
      * @see Turret#writeToHardware()
      */
@@ -548,10 +580,12 @@ public class Turret extends Subsystem implements PidProvider {
      * Stops the turret
      */
     @Override
-    public void stop() {}
+    public void stop() {
+    }
 
     /**
      * Returns the pid configuration of the turret motor(s)
+     *
      * @return pidConfig
      */
     @Override
@@ -561,6 +595,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /**
      * Tests the turret subsystem by moving the turret to its limits and checking the position
+     *
      * @return true if tests passed
      */
     @Override
@@ -590,7 +625,9 @@ public class Turret extends Subsystem implements PidProvider {
         SmartDashboard.putString("Turret/Deadzone", deadzone ? "Deadzone" : "Free");
     }
 
-    /** Control Modes */
+    /**
+     * Control Modes
+     */
     public enum ControlMode {
         FIELD_FOLLOWING,
         TARGET_FOLLOWING,

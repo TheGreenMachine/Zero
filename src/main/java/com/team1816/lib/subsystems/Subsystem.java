@@ -10,6 +10,7 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+
 import java.util.function.Supplier;
 
 /**
@@ -38,9 +39,10 @@ public abstract class Subsystem implements Sendable {
 
     /**
      * Base parameters needed to instantiate a subsystem
+     *
      * @param name String
-     * @param inf Infrastructure
-     * @param rs RobotState
+     * @param inf  Infrastructure
+     * @param rs   RobotState
      */
     @Inject
     public Subsystem(String name, Infrastructure inf, RobotState rs) {
@@ -65,10 +67,12 @@ public abstract class Subsystem implements Sendable {
 
     /**
      * Registers all subsystems on their own loops, through the ILooper
+     *
      * @param mEnabledLooper ILooper
      * @see ILooper
      */
-    public void registerEnabledLoops(ILooper mEnabledLooper) {}
+    public void registerEnabledLoops(ILooper mEnabledLooper) {
+    }
 
     /**
      * Zeroes the subsystem and its sensors to a known zero state for position control
@@ -82,16 +86,18 @@ public abstract class Subsystem implements Sendable {
 
     /**
      * Tests the subsystem based on various criteria
+     *
      * @return true if tests passed
      */
     public abstract boolean testSubsystem();
 
     /**
      * Creates a BadLog topic for the subsystem
+     *
      * @param topicName String
-     * @param unit String
-     * @param supplier Supplier
-     * @param attrs String Attributes
+     * @param unit      String
+     * @param supplier  Supplier
+     * @param attrs     String Attributes
      */
     public void createBadLogTopic(
         String topicName,
@@ -106,8 +112,9 @@ public abstract class Subsystem implements Sendable {
 
     /**
      * Creates a BadLog value for the subsystem
+     *
      * @param badLogName String
-     * @param value String
+     * @param value      String
      */
     public void createBadLogValue(String badLogName, String value) {
         if (factory.getSubsystem(name).implemented && Constants.kIsBadlogEnabled) {
@@ -117,14 +124,17 @@ public abstract class Subsystem implements Sendable {
 
     /**
      * Initializes a SmartDashboard / ShuffleBoard SendableBuilder to convey subsystem information
+     *
      * @param builder SendableBuilder
      * @see SendableBuilder
      */
     @Override
-    public void initSendable(SendableBuilder builder) {}
+    public void initSendable(SendableBuilder builder) {
+    }
 
     /**
      * Returns the subsystem name
+     *
      * @return name
      */
     public String getSubsystemName() {
@@ -133,6 +143,7 @@ public abstract class Subsystem implements Sendable {
 
     /**
      * Returns whether the subsystem is implemented or is in ghost mode
+     *
      * @return boolean implemented
      */
     public boolean isImplemented() {

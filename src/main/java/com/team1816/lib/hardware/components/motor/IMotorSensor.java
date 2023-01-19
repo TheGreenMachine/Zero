@@ -7,6 +7,8 @@ import com.ctre.phoenix.ErrorCode;
  */
 public interface IMotorSensor {
     int getQuadraturePosition();
+
     int getPulseWidthPosition();
+
     ErrorCode setQuadraturePosition(int newPosition);
 }

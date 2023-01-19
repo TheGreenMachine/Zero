@@ -4,6 +4,7 @@ package com.team1816.lib.motion.profiles;
  * This class will construct a sinusoidal motion profile.
  * Unlike a simple trapezoidal motion profile, this will allow for arbitrary n-levels of smooth continuity and only uses
  * three segmented phases which is lower than the SCurveMotionProfile
+ *
  * @see MotionProfile for documentation
  */
 
@@ -67,16 +68,16 @@ public class SinusoidalMotionProfile extends MotionProfile {
             // cx calculations
             cx +=
                 Math.pow(targetMaxVelocity + i.velocity, 2) /
-                c.maxAccel *
-                (targetMaxVelocity - i.velocity) *
-                Math.PI /
-                4;
+                    c.maxAccel *
+                    (targetMaxVelocity - i.velocity) *
+                    Math.PI /
+                    4;
             cx +=
                 Math.pow(targetMaxVelocity + t.velocity, 2) /
-                c.maxAccel *
-                (targetMaxVelocity - t.velocity) *
-                Math.PI /
-                4;
+                    c.maxAccel *
+                    (targetMaxVelocity - t.velocity) *
+                    Math.PI /
+                    4;
             cx += initial.velocity * t1;
             cx += target.velocity * t3;
 
@@ -115,25 +116,25 @@ public class SinusoidalMotionProfile extends MotionProfile {
         if (t <= tmp) {
             cv +=
                 (targetMaxVelocity + initial.velocity) /
-                (-2.0) *
-                Math.cos(
-                    2 *
-                    (t) *
-                    constraints.maxAccel /
-                    (targetMaxVelocity - initial.velocity)
-                ) +
-                (targetMaxVelocity + initial.velocity) /
-                2.0;
+                    (-2.0) *
+                    Math.cos(
+                        2 *
+                            (t) *
+                            constraints.maxAccel /
+                            (targetMaxVelocity - initial.velocity)
+                    ) +
+                    (targetMaxVelocity + initial.velocity) /
+                        2.0;
             return cv;
         }
         cv +=
             (targetMaxVelocity + initial.velocity) /
-            (-2.0) *
-            Math.cos(
-                2 * (tmp) * constraints.maxAccel / (targetMaxVelocity - initial.velocity)
-            ) +
-            (targetMaxVelocity + initial.velocity) /
-            2.0;
+                (-2.0) *
+                Math.cos(
+                    2 * (tmp) * constraints.maxAccel / (targetMaxVelocity - initial.velocity)
+                ) +
+                (targetMaxVelocity + initial.velocity) /
+                    2.0;
         tmp += p[1].duration;
         if (t <= tmp) {
             return cv; // flat
@@ -142,15 +143,15 @@ public class SinusoidalMotionProfile extends MotionProfile {
         if (t <= tmp) {
             cv +=
                 (targetMaxVelocity + target.velocity) /
-                (2.0) *
-                Math.cos(
-                    2 *
-                    (tmp - t - p[2].duration) *
-                    constraints.maxAccel /
-                    (targetMaxVelocity - target.velocity)
-                ) +
-                (targetMaxVelocity + target.velocity) /
-                2.0;
+                    (2.0) *
+                    Math.cos(
+                        2 *
+                            (tmp - t - p[2].duration) *
+                            constraints.maxAccel /
+                            (targetMaxVelocity - target.velocity)
+                    ) +
+                    (targetMaxVelocity + target.velocity) /
+                        2.0;
             return cv;
         }
         return 0;
@@ -162,12 +163,12 @@ public class SinusoidalMotionProfile extends MotionProfile {
         if (t <= tmp) {
             ca +=
                 -constraints.maxAccel *
-                Math.sin(
-                    2 *
-                    (t) *
-                    constraints.maxAccel /
-                    (targetMaxVelocity - initial.velocity)
-                );
+                    Math.sin(
+                        2 *
+                            (t) *
+                            constraints.maxAccel /
+                            (targetMaxVelocity - initial.velocity)
+                    );
             return ca;
         }
         tmp += p[1].duration;
@@ -178,12 +179,12 @@ public class SinusoidalMotionProfile extends MotionProfile {
         if (t <= tmp) {
             ca +=
                 constraints.maxAccel *
-                Math.sin(
-                    2 *
-                    (tmp - t - p[2].duration) *
-                    constraints.maxAccel /
-                    (targetMaxVelocity - target.velocity)
-                );
+                    Math.sin(
+                        2 *
+                            (tmp - t - p[2].duration) *
+                            constraints.maxAccel /
+                            (targetMaxVelocity - target.velocity)
+                    );
             return ca;
         }
         return 0;
@@ -195,10 +196,10 @@ public class SinusoidalMotionProfile extends MotionProfile {
         if (t <= tmp) {
             return (
                 -getVelocity(t) *
-                Math.pow(
-                    2 * constraints.maxAccel / (targetMaxVelocity - initial.velocity),
-                    2
-                )
+                    Math.pow(
+                        2 * constraints.maxAccel / (targetMaxVelocity - initial.velocity),
+                        2
+                    )
             );
         }
         tmp += p[1].duration;
@@ -209,10 +210,10 @@ public class SinusoidalMotionProfile extends MotionProfile {
         if (t <= tmp) {
             return (
                 -getVelocity(t) *
-                Math.pow(
-                    2 * constraints.maxAccel / (targetMaxVelocity - target.velocity),
-                    2
-                )
+                    Math.pow(
+                        2 * constraints.maxAccel / (targetMaxVelocity - target.velocity),
+                        2
+                    )
             );
         }
         return 0;

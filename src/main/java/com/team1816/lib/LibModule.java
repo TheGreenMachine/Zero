@@ -1,12 +1,13 @@
 package com.team1816.lib;
 
 import com.google.inject.AbstractModule;
-import com.team1816.lib.controlboard.*;
 import com.team1816.lib.controlboard.ControlUtils;
+import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.subsystems.drive.Drive;
 
 /**
  * Configures the lib bindings for the injector
+ *
  * @see Injector
  */
 public class LibModule extends AbstractModule {
