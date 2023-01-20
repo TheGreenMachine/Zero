@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.gyro.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
+import com.team1816.lib.hardware.components.sensor.IProximitySensor;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.hardware.components.sensor.ProximitySensor;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,7 +28,7 @@ public class Infrastructure {
     private static ICompressor compressor;
     private static IPigeonIMU pigeon;
     private static PowerDistribution pd;
-    public static List<ProximitySensor> proximitySensors;
+    public static List<IProximitySensor> proximitySensors;
 
     private static boolean compressorEnabled;
     private static boolean compressorIsOn = false;
@@ -44,10 +45,10 @@ public class Infrastructure {
         pd = factory.getPd();
         compressorEnabled = factory.isCompressorEnabled();
 
-        var frontLeft = new ProximitySensor("FLProximitySensor", 0);
-        var frontRight = new ProximitySensor("FRProximitySensor", 1);
-        var rearLeft = new ProximitySensor("RLProximitySensor3", 2);
-        var rearRight = new ProximitySensor("RRProximitySensor4", 3);
+        var frontLeft = factory.getProximitySensor("FLProximitySensor");
+        var frontRight = factory.getProximitySensor("FRProximitySensor");
+        var rearLeft = factory.getProximitySensor("RLProximitySensor");
+        var rearRight = factory.getProximitySensor("RRProximitySensor");
         proximitySensors = List.of(frontLeft, frontRight, rearLeft, rearRight);
     }
 
