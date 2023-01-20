@@ -12,6 +12,7 @@ import com.team1816.lib.hardware.components.ledManager.*;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
+import com.team1816.lib.hardware.components.sensor.ProximitySensor;
 import com.team1816.lib.subsystems.drive.SwerveModule;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -484,6 +485,9 @@ public class RobotFactory {
         }
         return pigeon;
     }
+
+
+
     public int getPcmId() {
         if (config.infrastructure == null && config.infrastructure.pcmId == null) return -1;
         return config.infrastructure.pcmId;
