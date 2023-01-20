@@ -167,6 +167,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         swerveOdometry.update(actualHeading, actualModulePositions);
 
+        robotState.relativeDriveTrainAltitude = infrastructure.getMaxDistance();
 
         updateRobotState();
     }
