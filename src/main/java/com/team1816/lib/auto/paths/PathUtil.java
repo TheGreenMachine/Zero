@@ -13,6 +13,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.team1816.lib.subsystems.Subsystem.robotState;
 import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxAccelMeters;
 import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxVelMeters;
 

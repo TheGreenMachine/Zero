@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 
 import java.util.ArrayList;
@@ -48,16 +49,34 @@ public class TrajectoryToTargetPath extends AutoPath {
 
     @Override
     public Trajectory getAsTrajectory() {
-        return PathUtil.generateTrajectory(usingApp(), robotState.deltaVehicle, getWaypoints());
+        var translatedVelocity = new Translation2d(
+            robotState.deltaVehicle.vxMetersPerSecond,
+            robotState.deltaVehicle.vyMetersPerSecond).rotateBy(robotState.fieldToVehicle.getRotation().unaryMinus()
+        );
+        var translatedChassisSpeeds = new ChassisSpeeds(
+            translatedVelocity.getX(),
+            translatedVelocity.getY(),
+            robotState.deltaVehicle.omegaRadiansPerSecond
+        );
+        return PathUtil.generateTrajectory(usingApp(), translatedChassisSpeeds, getWaypoints());
     }
 
     @Override
     public List<Rotation2d> getAsTrajectoryHeadings() {
+        var translatedVelocity = new Translation2d(
+            robotState.deltaVehicle.vxMetersPerSecond,
+            robotState.deltaVehicle.vyMetersPerSecond).rotateBy(robotState.fieldToVehicle.getRotation().unaryMinus()
+        );
+        var translatedChassisSpeeds = new ChassisSpeeds(
+            translatedVelocity.getX(),
+            translatedVelocity.getY(),
+            robotState.deltaVehicle.omegaRadiansPerSecond
+        );
         return PathUtil.generateHeadings(
             usingApp(),
             getWaypoints(),
             getWaypointHeadings(),
-            robotState.deltaVehicle
+            translatedChassisSpeeds
         );
     }
 
