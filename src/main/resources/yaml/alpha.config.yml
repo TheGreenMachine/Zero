@@ -29,11 +29,6 @@ subsystems:
             wheelDiameter: 6.32 #inches
             kTrackScrubFactor: 1.0
             isDemoMode: 0
-    proxysensor:
-        implemented: true
-        constants:
-            sensorPort: 0
-            distanceThreshold: 26
     turret:
         implemented: false
         talons:
@@ -75,6 +70,7 @@ controlboard: example
 constants:
     ## Drivetrain Dimensions and Parameters ##
     maxAllowablePoseError: 0.1
+    proxyDistanceThreshold: 26
     ## Logging Config ##
     logTeleOp: 1
     logAuto: 1
