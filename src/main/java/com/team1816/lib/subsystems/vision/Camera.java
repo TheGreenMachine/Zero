@@ -81,17 +81,17 @@ public class Camera extends Subsystem {
                 );
             // adding april tags to our field for our simCamera to "see"
             for (int i = 0; i <= 53; i++) {
-                if (FieldConfig.fieldTargets.get(i) == null) {
+                if (FieldConfig.fieldTargets2023.get(i) == null) {
                     continue;
                 }
                 simVisionSystem.addSimVisionTarget(
                     new GreenSimVisionTarget(
                         new Pose2d(
-                            FieldConfig.fieldTargets.get(i).getX(),
-                            FieldConfig.fieldTargets.get(i).getY(),
-                            FieldConfig.fieldTargets.get(i).getRotation().toRotation2d()
+                            FieldConfig.fieldTargets2023.get(i).getX(),
+                            FieldConfig.fieldTargets2023.get(i).getY(),
+                            FieldConfig.fieldTargets2023.get(i).getRotation().toRotation2d()
                         ),
-                        FieldConfig.fieldTargets.get(i).getZ(),
+                        FieldConfig.fieldTargets2023.get(i).getZ(),
                         .1651, // Estimated width & height of the AprilTag
                         .1651,
                         i

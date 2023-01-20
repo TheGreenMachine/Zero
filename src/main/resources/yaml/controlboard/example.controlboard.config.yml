@@ -22,7 +22,7 @@ operator:
         left: turretJogLeft
         right: turretJogRight
     buttonpad:
-        x: toggleCamera
+        x: updatePoseWithCamera
         y: autoClimb
         a: toggleTurretMode
         b: eject

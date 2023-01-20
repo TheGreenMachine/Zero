@@ -249,8 +249,15 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
-                    )
+                    ),
                     // Operator Gamepad
+                    createAction(
+                        () -> controlBoard.getAsBool("updatePoseWithCamera"),
+                        () -> {
+                            orchestrator.updatePoseWithCamera();
+                            System.out.println("should be updating pose!");
+                        }
+                    )
                 );
         } catch (Throwable t) {
             faulted = true;

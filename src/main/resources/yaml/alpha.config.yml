@@ -54,6 +54,10 @@ subsystems:
             rpmEpsilonCheck: 60
             deltaXScalar: 150
             maxVelTicks100ms: 1
+    camera:
+        implemented: true
+        constants:
+            usingCamToUpdatePose: 1
 infrastructure:
     canivoreBusName: rio
     # power distribution
