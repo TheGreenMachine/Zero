@@ -253,7 +253,10 @@ public class Robot extends TimedRobot {
                     // Operator Gamepad
                     createAction(
                         () -> controlBoard.getAsBool("updatePoseWithCamera"),
-                        orchestrator::updatePoseWithCamera
+                        () -> {
+                            orchestrator.updatePoseWithCamera();
+                            System.out.println("should be updating pose!");
+                        }
                     )
                 );
         } catch (Throwable t) {
