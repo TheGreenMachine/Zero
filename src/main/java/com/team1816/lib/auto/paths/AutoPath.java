@@ -38,7 +38,8 @@ public abstract class AutoPath {
      */
     boolean rotated;
 
-    public AutoPath() {}
+    public AutoPath() {
+    }
 
     public AutoPath(Color color) {
         if (Constants.fieldSymmetry == Symmetry.AXIS && color == Color.RED) {
@@ -102,7 +103,7 @@ public abstract class AutoPath {
         List<Pose2d> waypoints = getWaypoints();
         List<Pose2d> rotatedWaypoints = new ArrayList<>();
         for (int i = 0; i < waypoints.size(); i++) {
-            Pose2d waypoint = new Pose2d(2 * Constants.fieldCenterX - waypoints.get(i).getX(), 2*Constants.fieldCenterY-waypoints.get(i).getY(), Rotation2d.fromDegrees(180 + waypoints.get(i).getRotation().getDegrees()));
+            Pose2d waypoint = new Pose2d(2 * Constants.fieldCenterX - waypoints.get(i).getX(), 2 * Constants.fieldCenterY - waypoints.get(i).getY(), Rotation2d.fromDegrees(180 + waypoints.get(i).getRotation().getDegrees()));
             rotatedWaypoints.add(i, waypoint);
         }
         return rotatedWaypoints;

@@ -6,7 +6,7 @@ indent_style = space
 insert_final_newline = false
 max_line_length = 120
 tab_width = 4
-ij_continuation_indent_size = 8
+ij_continuation_indent_size = 4
 ij_formatter_off_tag = @formatter:off
 ij_formatter_on_tag = @formatter:on
 ij_formatter_tags_enabled = false
@@ -35,7 +35,7 @@ ij_css_use_double_quotes = true
 ij_css_value_alignment = do_not_align
 
 [*.feature]
-indent_size = 2
+indent_size = 4
 ij_gherkin_keep_indents_on_empty_lines = false
 
 [*.java]
@@ -287,7 +287,7 @@ ij_java_wrap_first_method_in_call_chain = false
 ij_java_wrap_long_lines = false
 
 [*.less]
-indent_size = 2
+indent_size = 4
 ij_less_align_closing_brace_with_properties = false
 ij_less_blank_lines_around_nested_selector = 1
 ij_less_blank_lines_between_blocks = 1
@@ -310,8 +310,8 @@ ij_less_use_double_quotes = true
 ij_less_value_alignment = 0
 
 [*.proto]
-indent_size = 2
-tab_width = 2
+indent_size = 4
+tab_width = 4
 ij_continuation_indent_size = 4
 ij_protobuf_keep_blank_lines_in_code = 2
 ij_protobuf_keep_indents_on_empty_lines = false
@@ -323,7 +323,7 @@ ij_protobuf_spaces_within_braces = false
 ij_protobuf_spaces_within_brackets = false
 
 [*.sass]
-indent_size = 2
+indent_size = 4
 ij_sass_align_closing_brace_with_properties = false
 ij_sass_blank_lines_around_nested_selector = 1
 ij_sass_blank_lines_between_blocks = 1
@@ -345,7 +345,7 @@ ij_sass_use_double_quotes = true
 ij_sass_value_alignment = 0
 
 [*.scss]
-indent_size = 2
+indent_size = 4
 ij_scss_align_closing_brace_with_properties = false
 ij_scss_blank_lines_around_nested_selector = 1
 ij_scss_blank_lines_between_blocks = 1
@@ -368,8 +368,8 @@ ij_scss_use_double_quotes = true
 ij_scss_value_alignment = 0
 
 [*.vue]
-indent_size = 2
-tab_width = 2
+indent_size = 4
+tab_width = 4
 ij_continuation_indent_size = 4
 ij_vue_indent_children_of_top_level = template
 ij_vue_interpolation_new_line_after_start_delimiter = true
@@ -578,8 +578,8 @@ ij_typescript_while_on_new_line = false
 ij_typescript_wrap_comments = false
 
 [{*.bash,*.sh,*.zsh}]
-indent_size = 2
-tab_width = 2
+indent_size = 4
+tab_width = 4
 ij_shell_binary_ops_start_line = false
 ij_shell_keep_column_alignment_padding = false
 ij_shell_minify_program = false
@@ -1034,7 +1034,7 @@ ij_kotlin_wrap_expression_body_functions = 1
 ij_kotlin_wrap_first_method_in_call_chain = false
 
 [{*.har,*.jsb2,*.jsb3,*.json,.babelrc,.eslintrc,.prettierrc,.stylelintrc,bowerrc,jest.config}]
-indent_size = 2
+indent_size = 4
 ij_json_array_wrapping = split_into_lines
 ij_json_keep_blank_lines_in_code = 0
 ij_json_keep_indents_on_empty_lines = false
@@ -1079,7 +1079,7 @@ ij_html_space_inside_empty_tag = false
 ij_html_text_wrap = normal
 
 [{*.http,*.rest}]
-indent_size = 0
+indent_size = 4
 ij_continuation_indent_size = 4
 ij_http request_call_parameters_wrap = normal
 
@@ -1109,8 +1109,8 @@ ij_markdown_wrap_text_if_long = true
 ij_markdown_wrap_text_inside_blockquotes = true
 
 [{*.pb,*.textproto}]
-indent_size = 2
-tab_width = 2
+indent_size = 4
+tab_width = 4
 ij_continuation_indent_size = 4
 ij_prototext_keep_blank_lines_in_code = 2
 ij_prototext_keep_indents_on_empty_lines = false
@@ -1135,7 +1135,7 @@ ij_qute_keep_indents_on_empty_lines = false
 ij_toml_keep_indents_on_empty_lines = false
 
 [{*.yaml,*.yml}]
-indent_size = 2
+indent_size = 4
 ij_yaml_align_values_properties = do_not_align
 ij_yaml_autoinsert_sequence_marker = true
 ij_yaml_block_mapping_on_new_line = false

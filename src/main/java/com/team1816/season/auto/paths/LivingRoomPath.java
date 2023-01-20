@@ -1,9 +1,7 @@
 package com.team1816.season.auto.paths;
 
 import com.team1816.lib.auto.Color;
-import com.team1816.lib.auto.Symmetry;
 import com.team1816.lib.auto.paths.AutoPath;
-import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
@@ -12,7 +10,8 @@ import java.util.List;
 
 public class LivingRoomPath extends AutoPath {
 
-    public LivingRoomPath() {}
+    public LivingRoomPath() {
+    }
 
     public LivingRoomPath(Color color) {
         super(color);
@@ -35,6 +34,7 @@ public class LivingRoomPath extends AutoPath {
             Rotation2d.fromDegrees(0)
         );
     }
+
     @Override
     public boolean usingApp() {
         return true;

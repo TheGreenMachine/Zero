@@ -6,13 +6,11 @@ import com.team1816.lib.hardware.components.gyro.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.hardware.components.sensor.IProximitySensor;
 import com.team1816.lib.hardware.factory.RobotFactory;
-import com.team1816.lib.hardware.components.sensor.ProximitySensor;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,6 +33,7 @@ public class Infrastructure {
 
     /**
      * Instantiates the infrastructure with RobotFactory
+     *
      * @param factory RobotFactory
      * @see RobotFactory
      */
@@ -64,6 +63,7 @@ public class Infrastructure {
 
     /**
      * Stops the compressor
+     *
      * @see Infrastructure#startCompressor()
      */
     public void stopCompressor() {
@@ -75,6 +75,7 @@ public class Infrastructure {
 
     /**
      * Resets the pigeon gyroscope based on a Rotation2d
+     *
      * @param angle Rotation2d
      */
     public void resetPigeon(Rotation2d angle) {
@@ -84,6 +85,7 @@ public class Infrastructure {
 
     /**
      * Returns the pigeon associated with the infrastructure
+     *
      * @return IPigeonIMU
      * @see IPigeonIMU
      */
@@ -93,6 +95,7 @@ public class Infrastructure {
 
     /**
      * Returns the gyroscopic yaw of the pigeon
+     *
      * @return yaw
      * @see IPigeonIMU#getYaw()
      */
@@ -102,6 +105,7 @@ public class Infrastructure {
 
     /**
      * Returns the gyroscopic pitch of the pigeon
+     *
      * @return pitch
      * @see IPigeonIMU#getPitch()
      */
@@ -111,6 +115,7 @@ public class Infrastructure {
 
     /**
      * Returns the gyroscopic roll of the pigeon
+     *
      * @return roll
      * @see IPigeonIMU#getRoll()
      */
@@ -120,6 +125,7 @@ public class Infrastructure {
 
     /**
      * Returns the field-centric pitch of the pigeon
+     *
      * @return pitch
      * @see IPigeonIMU#getPitch()
      */
@@ -131,6 +137,7 @@ public class Infrastructure {
 
     /**
      * Returns the field-centric roll of the pigeon
+     *
      * @return roll
      * @see IPigeonIMU#getRoll()
      */
@@ -142,6 +149,7 @@ public class Infrastructure {
 
     /**
      * Returns the power distribution associated with the Infrastructure
+     *
      * @return PowerDistribution
      * @see PowerDistribution
      */
@@ -151,8 +159,9 @@ public class Infrastructure {
 
     /**
      * Emulates gyroscope behaviour of the pigeon in simulation environments
+     *
      * @param radianOffsetPerLoop loop ratio
-     * @param gyroDrift drift
+     * @param gyroDrift           drift
      */
     public void simulateGyro(double radianOffsetPerLoop, double gyroDrift) {
         pigeon.setYaw(getYaw() + radianOffsetPerLoop + gyroDrift);
@@ -160,11 +169,12 @@ public class Infrastructure {
 
     /**
      * Returns the maximal locus proximity of the drivetrain in relation to the floor
+     *
      * @return maximumProximity
      */
     public double getMaximumProximity() {
         double maximumProximity = -1;
-        for (int i = 0; i<3; i++) {
+        for (int i = 0; i < 3; i++) {
             double proximity = proximitySensors.get(i).getProximity();
             if (proximity > maximumProximity && proximity < 80) {
                 maximumProximity = proximity;

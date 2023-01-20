@@ -5,6 +5,8 @@ package com.team1816.lib.hardware.components.sensor;
  */
 public interface IProximitySensor {
     String getName();
+
     double getVoltage();
+
     int getProximity();
 }
