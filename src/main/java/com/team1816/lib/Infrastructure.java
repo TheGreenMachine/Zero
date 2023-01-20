@@ -5,14 +5,14 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.gyro.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.hardware.factory.RobotFactory;
-import com.team1816.season.configuration.Constants;
-import com.team1816.season.hardware.components.ProxySensor;
+import com.team1816.lib.hardware.components.sensor.ProximitySensor;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Super-system housing compressor, pigeon, and power distribution
@@ -27,16 +27,10 @@ public class Infrastructure {
     private static ICompressor compressor;
     private static IPigeonIMU pigeon;
     private static PowerDistribution pd;
-
+    public static List<ProximitySensor> proximitySensors;
 
     private static boolean compressorEnabled;
     private static boolean compressorIsOn = false;
-
-    public static ProxySensor frontLeft, frontRight, backLeft, backRight;
-
-    public static String maxProxyName;
-
-    public static double threshold;
 
     /**
      * Instantiates the infrastructure with RobotFactory
@@ -49,12 +43,12 @@ public class Infrastructure {
         pigeon = factory.getPigeon();
         pd = factory.getPd();
         compressorEnabled = factory.isCompressorEnabled();
-        //Sensor implementation
-        frontLeft = new ProxySensor("proxySensor1", 0);
-        frontRight = new ProxySensor("proxySensor2", 1);
-        backLeft = new ProxySensor("proxySensor3", 2);
-        backRight = new ProxySensor("proxySensor4", 3);
-        threshold = factory.getConstant("proxyDistanceThreshold");
+
+        var frontLeft = new ProximitySensor("FLProximitySensor", 0);
+        var frontRight = new ProximitySensor("FRProximitySensor", 1);
+        var rearLeft = new ProximitySensor("RLProximitySensor3", 2);
+        var rearRight = new ProximitySensor("RRProximitySensor4", 3);
+        proximitySensors = List.of(frontLeft, frontRight, rearLeft, rearRight);
     }
 
     /**
@@ -163,33 +157,18 @@ public class Infrastructure {
         pigeon.setYaw(getYaw() + radianOffsetPerLoop + gyroDrift);
     }
 
-    public double getMaxDistance(){
-        ArrayList<ProxySensor> distances = new ArrayList <ProxySensor>();
-        distances.add(frontLeft);
-        distances.add(frontRight);
-        distances.add(backLeft);
-        distances.add(backRight);
-        double maxValue = -1;
-        for(int i = 0; i<3; i++){
-            if(distances.get(i).getDistance()>80){
-                System.out.println(distances.get(i).getName() + " is getting life force SUCKED");
-                continue;
-            } else if(distances.get(i).getDistance()>maxValue){
-                maxValue = distances.get(i).getDistance();
-                maxProxyName = distances.get(i).getName();
+    /**
+     * Returns the maximal locus proximity of the drivetrain to the floor
+     * @return maximumProximity
+     */
+    public double getMaximumProximity() {
+        double maximumProximity = -1;
+        for (int i = 0; i<3; i++) {
+            double proximity = proximitySensors.get(i).getProximity();
+            if (proximity > maximumProximity && proximity < 80) {
+                maximumProximity = proximity;
             }
         }
-
-        //for testing/sout purposes
-        System.out.println("sensor 1: " + frontLeft.getDistance() + " sensor 2: " +
-            frontRight.getDistance() + " sensor 3: " + backLeft.getDistance() + " sensor 4: " +
-            backRight.getDistance() + "  maxDistance: " + maxValue + "   from " +
-            maxProxyName);
-        return maxValue;
-    }
-
-
-    public boolean crossDistanceThreshold(){
-        return getMaxDistance() > threshold;
+        return maximumProximity;
     }
 }

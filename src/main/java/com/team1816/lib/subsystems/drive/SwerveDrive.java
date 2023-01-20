@@ -9,7 +9,6 @@ import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveHelper;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
 import com.team1816.season.configuration.Constants;
-import com.team1816.season.hardware.components.ProxySensor;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.*;
@@ -167,8 +166,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         swerveOdometry.update(actualHeading, actualModulePositions);
 
-        robotState.relativeDriveTrainAltitude = infrastructure.getMaxDistance();
-
         updateRobotState();
     }
 
@@ -264,9 +261,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 -9.80
             );
         robotState.deltaVehicle = cs;
-        // check if motors are overheating - update robotState
+
         SmartDashboard.putNumber("Drive/Temperature", motorTemperatures[0]);
         robotState.drivetrainTemp = motorTemperatures[0];
+
+        robotState.vehicleToFloorProximity = infrastructure.getMaximumProximity();
     }
 
     /** Open Loop control */

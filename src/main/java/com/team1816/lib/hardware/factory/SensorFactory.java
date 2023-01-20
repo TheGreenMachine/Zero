@@ -2,6 +2,7 @@ package com.team1816.lib.hardware.factory;
 
 import com.revrobotics.ColorSensorV3;
 import com.team1816.lib.hardware.components.sensor.GhostColorSensor;
+import com.team1816.lib.hardware.components.sensor.ProximitySensor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
 
@@ -50,5 +51,9 @@ public class SensorFactory {
 
     private DigitalInput createLimitSwitch(int id) {
         return new DigitalInput(id);
+    }
+
+    private ProximitySensor createProximitySensor(String NAME, int id) {
+        return new ProximitySensor(NAME, id);
     }
 }
