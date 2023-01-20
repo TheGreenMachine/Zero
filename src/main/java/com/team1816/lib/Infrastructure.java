@@ -159,7 +159,7 @@ public class Infrastructure {
     }
 
     /**
-     * Returns the maximal locus proximity of the drivetrain to the floor
+     * Returns the maximal locus proximity of the drivetrain in relation to the floor
      * @return maximumProximity
      */
     public double getMaximumProximity() {
