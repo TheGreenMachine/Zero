@@ -1,35 +1,32 @@
 package com.team1816.lib.hardware.factory;
 
 import com.ctre.phoenix.led.CANdle;
-import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
+import com.ctre.phoenix.sensors.*;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.*;
 import com.team1816.lib.hardware.components.gyro.GhostPigeonIMU;
 import com.team1816.lib.hardware.components.gyro.IPigeonIMU;
 import com.team1816.lib.hardware.components.gyro.Pigeon2Impl;
 import com.team1816.lib.hardware.components.gyro.PigeonIMUImpl;
-import com.team1816.lib.hardware.components.ledManager.CANdleImpl;
-import com.team1816.lib.hardware.components.ledManager.CanifierImpl;
-import com.team1816.lib.hardware.components.ledManager.GhostLEDManager;
-import com.team1816.lib.hardware.components.ledManager.ILEDManager;
+import com.team1816.lib.hardware.components.ledManager.*;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
+import com.team1816.lib.hardware.components.sensor.GhostProximitySensor;
+import com.team1816.lib.hardware.components.sensor.IProximitySensor;
+import com.team1816.lib.hardware.components.sensor.ProximitySensor;
 import com.team1816.lib.subsystems.drive.SwerveModule;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
-
-import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 
 /**
  * This class employs the MotorFactory and SensorFactory with yaml integrations and is the initial entry point to
  * create and initialize any and all components on a robot.
- *
  * @see MotorFactory
  * @see SensorFactory
  * @see YamlConfig
@@ -119,9 +116,9 @@ public class RobotFactory {
         } else {
             System.out.println(
                 "Created " +
-                    motor.getClass().getSimpleName() +
-                    " id:" +
-                    motor.getDeviceID()
+                motor.getClass().getSimpleName() +
+                " id:" +
+                motor.getDeviceID()
             );
         }
 
@@ -171,9 +168,9 @@ public class RobotFactory {
                         subsystem
                     );
                 ((LazySparkMax) followerMotor).follow(
-                    main,
-                    subsystem.invertMotor.contains(name)
-                );
+                        main,
+                        subsystem.invertMotor.contains(name)
+                    );
                 followerMotor.setInverted(main.getInverted());
             } else if (isHardwareValid(subsystem.victors, name)) {
                 // Victors can follow Talons or another Victor.
@@ -232,14 +229,14 @@ public class RobotFactory {
         CANCoder canCoder = null;
         if (
             module != null &&
-                module.canCoder != null &&
-                subsystem.canCoders.get(module.canCoder) >= 0
+            module.canCoder != null &&
+            subsystem.canCoders.get(module.canCoder) >= 0
         ) {
             canCoder =
                 MotorFactory.createCanCoder(
                     subsystem.canCoders.get(module.canCoder),
                     subsystem.canCoders.get(subsystem.invertCanCoder) != null &&
-                        subsystem.invertCanCoder.contains(module.canCoder)
+                    subsystem.invertCanCoder.contains(module.canCoder)
                 );
         }
 
@@ -273,10 +270,10 @@ public class RobotFactory {
                 .doubleSolenoids.get(name);
             if (
                 subsystem.implemented &&
-                    solenoidConfig != null &&
-                    isHardwareValid(solenoidConfig.forward) &&
-                    isHardwareValid(solenoidConfig.reverse) &&
-                    isPcmEnabled()
+                solenoidConfig != null &&
+                isHardwareValid(solenoidConfig.forward) &&
+                isHardwareValid(solenoidConfig.reverse) &&
+                isPcmEnabled()
             ) {
                 return new DoubleSolenoidImpl(
                     config.infrastructure.pcmId,
@@ -396,15 +393,15 @@ public class RobotFactory {
         }
         if (
             getSubsystem(subsystemName).constants == null ||
-                !getSubsystem(subsystemName).constants.containsKey(name)
+            !getSubsystem(subsystemName).constants.containsKey(name)
         ) {
             if (showWarning) {
                 DriverStation.reportWarning(
                     "Yaml: subsystem \"" +
-                        subsystemName +
-                        "\" constant \"" +
-                        name +
-                        "\" missing",
+                    subsystemName +
+                    "\" constant \"" +
+                    name +
+                    "\" missing",
                     defaultVal == 0
                 );
             }
@@ -441,8 +438,7 @@ public class RobotFactory {
                     break;
             }
         }
-        if (config != null && config.get(slot) != null) return config.get(slot);
-        else {
+        if (config != null && config.get(slot) != null) return config.get(slot); else {
             if (subsystem.implemented) {
                 DriverStation.reportError(
                     "pidConfig missing for " + subsystemName + " " + slot,
@@ -492,6 +488,19 @@ public class RobotFactory {
         return pigeon;
     }
 
+    public IProximitySensor getProximitySensor(String name) {
+        if (config.infrastructure.proximitySensors == null) {
+            return new GhostProximitySensor();
+        }
+        int id = config.infrastructure.proximitySensors.getOrDefault(name, -1);
+        if (id < 0) {
+            System.out.println("Incorrect Name: Proximity sensor not found, using ghost!");
+            return new GhostProximitySensor();
+        }
+        System.out.println("Creating Proximity Sensor: " + name + " at port: " + id);
+        return new ProximitySensor(name, config.infrastructure.proximitySensors.get(name));
+    }
+
     public int getPcmId() {
         if (config.infrastructure == null && config.infrastructure.pcmId == null) return -1;
         return config.infrastructure.pcmId;
@@ -512,12 +521,12 @@ public class RobotFactory {
     ) {
         System.out.println(
             "  " +
-                type +
-                " \"" +
-                componentName +
-                "\" invalid in Yaml for subsystem \"" +
-                subsystemName +
-                "\", using ghost!"
+            type +
+            " \"" +
+            componentName +
+            "\" invalid in Yaml for subsystem \"" +
+            subsystemName +
+            "\", using ghost!"
         );
     }
 

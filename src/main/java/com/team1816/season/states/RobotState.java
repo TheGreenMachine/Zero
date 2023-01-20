@@ -31,6 +31,7 @@ public class RobotState {
     public ChassisSpeeds calculatedVehicleAccel = new ChassisSpeeds(); // accel values calculated by watching drivetrain encoders
     public Double[] triAxialAcceleration = new Double[]{0d, 0d, 0d};
     public boolean isPoseUpdated = true;
+    public double vehicleToFloorProximity = 0;
 
     /**
      * Inertial characterization
@@ -95,6 +96,7 @@ public class RobotState {
         isPoseUpdated = true;
         visibleTargets.clear();
         drivetrainTemp = 0;
+        vehicleToFloorProximity = 0;
     }
 
     /**
