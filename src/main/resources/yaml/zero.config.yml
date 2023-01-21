@@ -94,7 +94,13 @@ subsystems:
             angleMotor2: -1
             elevatorMotor: -1
         constants:
-
+    collector:
+        implemented: true
+        solenoids:
+            collectorPiston: -1
+        motors:
+            intakeMotor: -1
+        constants:
     camera:
         implemented: true
         constants:
