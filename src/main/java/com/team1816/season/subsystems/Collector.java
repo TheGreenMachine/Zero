@@ -13,7 +13,9 @@ public class Collector extends Subsystem {
 
     private static boolean isHolding;
 
-    private final ISolenoid collectorSolenoid;
+    private final ISolenoid collectorPiston;
+
+    private boolean armUp;
 
     private final IGreenMotor intakeMotor;
 
@@ -27,7 +29,7 @@ public class Collector extends Subsystem {
 
     public Collector (Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
-        collectorSolenoid = factory.getSolenoid(NAME, "collectorSolenoid");
+        collectorPiston = factory.getSolenoid(NAME, "collectorSolenoid");
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
 
     }
@@ -40,22 +42,25 @@ public class Collector extends Subsystem {
     }
     @Override
     public void readFromHardware() {
-
+        intakeMotor.getSelectedSensorVelocity(0);
     }
 
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
+            armUp = false;
                 switch (desiredState) {
                     case STOP:
-                        intakeMotor.set(ControlMode.Velocity, 0.0);
+                        //QUESTION: need to deenergize intakeMotor
                         break;
                     case COLLECT_CONE:
                         intakeMotor.set(ControlMode.Velocity, .5);
                         break;
                     case COLLECT_CUBE:
                         intakeMotor.set(ControlMode.Velocity, -.5);
+                        armUp = true;
+                        collectorPiston.set(armUp);
                         break;
                     case FLUSH:
                         intakeMotor.set(ControlMode.Velocity, -.25);
@@ -78,6 +83,9 @@ public class Collector extends Subsystem {
         return false;
     }
 
+    //for cube collecting, the "motor locked" state so we don't pop the cube will have
+    //to be the same as stopping? a hold action and then when its not going it stops? we can't
+    //rotate after getting a cube anyways
     public enum STATE {
         STOP,
         COLLECT_CONE,
