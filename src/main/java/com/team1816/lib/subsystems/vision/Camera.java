@@ -72,7 +72,7 @@ public class Camera extends Subsystem {
                     1080,
                     0
                 );
-            for (int i = 0; i <= 53; i++) { //TODO change to 8
+            for (int i = 0; i <= 8; i++) {
                 if (FieldConfig.fieldTargets2023.get(i) == null) {
                     continue;
                 }

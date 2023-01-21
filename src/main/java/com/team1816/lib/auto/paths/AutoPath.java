@@ -1,9 +1,13 @@
 package com.team1816.lib.auto.paths;
 
+import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.Symmetry;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**

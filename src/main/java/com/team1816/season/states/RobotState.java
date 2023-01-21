@@ -25,6 +25,7 @@ public class RobotState {
     public final Field2d field = new Field2d();
     public Pose2d fieldToVehicle = Constants.EmptyPose2d;
     public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose2d;
+    public Pose2d target = Constants.EmptyPose2d;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation2d;
     public Pose2d fieldToTurret = Constants.EmptyPose2d;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds(); // velocities of vehicle
@@ -97,6 +98,7 @@ public class RobotState {
         visibleTargets.clear();
         drivetrainTemp = 0;
         vehicleToFloorProximity = 0;
+        target = Constants.fieldCenterPose;
     }
 
     /**

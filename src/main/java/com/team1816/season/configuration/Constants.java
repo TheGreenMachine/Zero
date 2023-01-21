@@ -1,6 +1,7 @@
 package com.team1816.season.configuration;
 
 import com.google.inject.Singleton;
+import com.team1816.lib.auto.Symmetry;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.season.Robot;
 import edu.wpi.first.math.geometry.*;
@@ -38,8 +39,7 @@ public class Constants {
     /**
      * Field characterization
      */
-    public static final double kCameraMountingAngleY = 20; // degrees
-    public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters
+    public static final Symmetry fieldSymmetry = Symmetry.AXIS;
     public static final double fieldCenterY = 8.23 / 2.0;
     public static final double fieldCenterX = 16.46 / 2.0;
     public static final Pose2d fieldCenterPose = new Pose2d(
@@ -72,7 +72,13 @@ public class Constants {
     public static double kMinTrajectoryDistance = 0.05; // m
 
     /**
-     * Badlog
+     * Camera characterization
+     */
+    public static final double kCameraMountingAngleY = 20; // degrees
+    public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters
+
+    /**
+     * Badlog characterization
      */
     public static boolean kIsBadlogEnabled = factory.getConstant("badLogEnabled") > 0;
     public static boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0;
