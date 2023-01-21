@@ -38,11 +38,6 @@ public class Constants {
     /**
      * Field characterization
      */
-    public static final double kTargetHeight = 104; // inches
-    public static final double kTargetRadius = 26.56; // inches
-    public static final double kCameraMountingHeight = 22; // inches
-    public static final double kHeightFromCamToHub =
-        kTargetHeight - kCameraMountingHeight; // inches
     public static final double kCameraMountingAngleY = 20; // degrees
     public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters
     public static final double fieldCenterY = 8.23 / 2.0;
@@ -74,7 +69,6 @@ public class Constants {
     public static final double gravitationalAccelerationConstant = 9.8d;
     public static double kMaxAccelDiffThreshold = 2d; // m/s^2
     public static double kMaxBalancingVelocity = 0.2; // m/s
-    public static double kMaxPathingThreshold = 0.2; // m/s
     public static double kMinTrajectoryDistance = 0.05; // m
 
     /**
