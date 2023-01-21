@@ -52,8 +52,8 @@ public class AutoBalanceAction implements AutoAction {
     public void update() {
         double velocity = 0;
         // calculate how much we need to give to field relative x - magnitude
-        if (Math.abs(infrastructure.getPitch())>2) {
-            velocity = (1 - Math.cos(Units.degreesToRadians(45d / 11 * infrastructure.getPitch()))); //*maxVelocity; TODO currently % out!
+        if (Math.abs(infrastructure.getFieldCentricPitch())>2) {
+            velocity = -1 * (1 - Math.cos(Units.degreesToRadians(45d / 11 * infrastructure.getPitch()))); //*maxVelocity; TODO currently % out!
         }
 
         // splitting into x and y relative to robot components
@@ -72,9 +72,9 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public boolean isFinished() {
-        if (Math.abs(infrastructure.getPitch())<2 && Math.abs(infrastructure.getRoll())<2) {
-            return true;
-        }
+//        if (Math.abs(infrastructure.getPitch())<2 && Math.abs(infrastructure.getRoll())<2) {
+//            return true;
+//        }
         return false;
     }
 
