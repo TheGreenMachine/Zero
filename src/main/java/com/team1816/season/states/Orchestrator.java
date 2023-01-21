@@ -82,6 +82,7 @@ public class Orchestrator {
             FieldConfig.fieldTargets2023.get(target.id).getY(),
             new Rotation2d()
         );
+        System.out.println("Target " + target.id + " pose: " + targetPos);
         double X = target.getX(), Y = target.getY();
         Pose2d p = targetPos.plus(
             new Transform2d(
@@ -89,6 +90,7 @@ public class Orchestrator {
                 robotState.getLatestFieldToCamera().rotateBy(Rotation2d.fromDegrees(180))
             )
         ); // inverse axis angle
+        System.out.println("Updated Pose: " + p);
         return p;
     }
 
@@ -118,6 +120,7 @@ public class Orchestrator {
      */
     public Pose2d calculatePoseFromCamera() {
         var cameraPoints = robotState.visibleTargets;
+        System.out.println("Targets size: " + robotState.visibleTargets.size());
         List<Pose2d> poses = new ArrayList<>();
         double sX = 0, sY = 0;
         for (VisionPoint point : cameraPoints) {
@@ -143,19 +146,10 @@ public class Orchestrator {
      */
     public void updatePoseWithCamera() {
         Pose2d newRobotPose = calculatePoseFromCamera();
-//        if (
-//            Math.abs(
-//                Math.hypot(
-//                        robotState.fieldToVehicle.getX() - newRobotPose.getX(),
-//                        robotState.fieldToVehicle.getY() - newRobotPose.getY()
-//                    )
-//                ) > minAllowablePoseError
-//        ) {
-            System.out.println(newRobotPose + " = new robot pose");
-            drive.resetOdometry(newRobotPose);
-            robotState.fieldToVehicle = newRobotPose;
-            robotState.isPoseUpdated = true;
-//        }
+        System.out.println(newRobotPose + " = new robot pose");
+        drive.resetOdometry(newRobotPose);
+        robotState.fieldToVehicle = newRobotPose;
+        robotState.isPoseUpdated = true;
     }
 
     /**

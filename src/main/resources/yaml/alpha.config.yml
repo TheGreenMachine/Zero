@@ -56,8 +56,6 @@ subsystems:
             maxVelTicks100ms: 1
     camera:
         implemented: true
-        constants:
-            usingCamToUpdatePose: 1
 infrastructure:
     canivoreBusName: rio
     # power distribution
