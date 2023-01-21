@@ -13,6 +13,7 @@ public class GhostDoubleSolenoid implements IDoubleSolenoid {
 
     /**
      * Returns the value of the double solenoid
+     *
      * @return value
      */
     @Override
@@ -22,6 +23,7 @@ public class GhostDoubleSolenoid implements IDoubleSolenoid {
 
     /**
      * Sets the value of the double solenoid
+     *
      * @param value (Value)
      */
     @Override
@@ -66,5 +68,6 @@ public class GhostDoubleSolenoid implements IDoubleSolenoid {
     }
 
     @Override
-    public void close() throws Exception {}
+    public void close() throws Exception {
+    }
 }

@@ -1,11 +1,5 @@
 package com.team1816.season.subsystems;
 
-import static com.team1816.lib.subsystems.drive.Drive.*;
-import static com.team1816.lib.subsystems.drive.SwerveDrive.swerveKinematics;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.team1816.TestUtil;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
@@ -22,6 +16,12 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.stubbing.OngoingStubbing;
+
+import static com.team1816.lib.subsystems.drive.Drive.*;
+import static com.team1816.lib.subsystems.drive.SwerveDrive.swerveKinematics;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 // @RunWith(JUnit4.class)
 public class SwerveDriveTest {
@@ -116,7 +116,7 @@ public class SwerveDriveTest {
             vxMetersPerSecond,
             vyMetersPerSecond,
             omegaRadiansPerSecond,
-            Constants.EmptyRotation
+            Constants.EmptyRotation2d
         );
 
         // We verify the returned value from getState to match the original value.

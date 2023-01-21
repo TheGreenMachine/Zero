@@ -4,11 +4,13 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.season.Robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * This class is a synchronized registry of various loops that can be running.
+ *
  * @see SubsystemLooper
  * @see Robot (disabledLoop and enabledLoop)
  */
@@ -26,6 +28,7 @@ public class Looper implements ILooper {
 
     /**
      * Instantiates a looper and ties it to the iterative periodic robot base
+     *
      * @param robot
      * @see TimedRobot
      */
@@ -55,6 +58,7 @@ public class Looper implements ILooper {
 
     /**
      * Synchronously adds a loop to {@link Looper#mLoops} in the registry
+     *
      * @param loop
      */
     @Override
@@ -99,6 +103,7 @@ public class Looper implements ILooper {
 
     /**
      * Returns the millisecond timestamp of the last loop that was run
+     *
      * @return lastLoop
      */
     public double getLastLoop() {

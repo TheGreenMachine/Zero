@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 
 /**
  * This class is a lightweight wrapper implementation of a Solenoid and implements ISolenoid
+ *
  * @see Solenoid
  * @see ISolenoid
  */
@@ -12,8 +13,9 @@ public class SolenoidImpl extends Solenoid implements ISolenoid {
 
     /**
      * Instantiates a SolenoidImpl
+     *
      * @param moduleType (CTREPCM, REVPH)
-     * @param channel pneumatic channel
+     * @param channel    pneumatic channel
      */
     public SolenoidImpl(final PneumaticsModuleType moduleType, final int channel) {
         super(moduleType, channel);
@@ -21,9 +23,10 @@ public class SolenoidImpl extends Solenoid implements ISolenoid {
 
     /**
      * Instantiates a SolenoidImpl
-     * @param module module
+     *
+     * @param module     module
      * @param moduleType (CTREPCM, REVPH)
-     * @param channel pneumatic channel
+     * @param channel    pneumatic channel
      */
     public SolenoidImpl(
         final int module,

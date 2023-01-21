@@ -26,14 +26,15 @@ package com.team1816.lib.util.visionUtil;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.photonvision.PhotonTargetSortMode;
 import org.photonvision.PhotonVersion;
 import org.photonvision.common.dataflow.structures.Packet;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class GreenSimPhotonCamera extends GreenPhotonCamera {
@@ -57,9 +58,9 @@ public class GreenSimPhotonCamera extends GreenPhotonCamera {
     /**
      * Constructs a Simulated PhotonCamera from a root table.
      *
-     * @param instance The NetworkTableInstance to pull data from. This can be a custom instance in
-     *     simulation, but should *usually* be the default NTInstance from
-     *     NetworkTableInstance::getDefault
+     * @param instance   The NetworkTableInstance to pull data from. This can be a custom instance in
+     *                   simulation, but should *usually* be the default NTInstance from
+     *                   NetworkTableInstance::getDefault
      * @param cameraName The name of the camera, as seen in the UI.
      */
     public GreenSimPhotonCamera(NetworkTableInstance instance, String cameraName) {
@@ -105,7 +106,7 @@ public class GreenSimPhotonCamera extends GreenPhotonCamera {
      * Simulate one processed frame of vision data, putting one result to NT.
      *
      * @param latencyMillis Latency of the provided frame
-     * @param targets Each target detected
+     * @param targets       Each target detected
      */
     public void submitProcessedFrame(
         double latencyMillis,
@@ -118,8 +119,8 @@ public class GreenSimPhotonCamera extends GreenPhotonCamera {
      * Simulate one processed frame of vision data, putting one result to NT.
      *
      * @param latencyMillis Latency of the provided frame
-     * @param sortMode Order in which to sort targets
-     * @param targets Each target detected
+     * @param sortMode      Order in which to sort targets
+     * @param targets       Each target detected
      */
     public void submitProcessedFrame(
         double latencyMillis,
@@ -133,7 +134,7 @@ public class GreenSimPhotonCamera extends GreenPhotonCamera {
      * Simulate one processed frame of vision data, putting one result to NT.
      *
      * @param latencyMillis Latency of the provided frame
-     * @param targetList List of targets detected
+     * @param targetList    List of targets detected
      */
     public void submitProcessedFrame(
         double latencyMillis,
@@ -145,8 +146,8 @@ public class GreenSimPhotonCamera extends GreenPhotonCamera {
     /**
      * Simulate one processed frame of vision data, putting one result to NT.
      *
-     * @param latencyMillis Latency of the provided frame
-     * @param sortMode Order in which to sort targets
+     * @param latencyMillis       Latency of the provided frame
+     * @param sortMode            Order in which to sort targets
      * @param submittedTargetList List of targets detected
      */
     public void submitProcessedFrame(
@@ -192,15 +193,15 @@ public class GreenSimPhotonCamera extends GreenPhotonCamera {
     private static String PhotonTrackTargetToString(PhotonTrackedTarget t) {
         return (
             "Id: " +
-            t.getFiducialId() +
-            //            "; yaw= " +
-            //            (int) t.getYaw() + // If yaw seems weird that's because it's an int
-            "; X: " +
-            roundAvoid(t.getCameraToTarget().getX(), 3) +
-            "; Y: " +
-            roundAvoid(t.getCameraToTarget().getY(), 3) +
-            "; Z: " +
-            roundAvoid(t.getCameraToTarget().getZ(), 3)
+                t.getFiducialId() +
+                //            "; yaw= " +
+                //            (int) t.getYaw() + // If yaw seems weird that's because it's an int
+                "; X: " +
+                roundAvoid(t.getBestCameraToTarget().getX(), 3) +
+                "; Y: " +
+                roundAvoid(t.getBestCameraToTarget().getY(), 3) +
+                "; Z: " +
+                roundAvoid(t.getBestCameraToTarget().getZ(), 3)
         );
     }
 

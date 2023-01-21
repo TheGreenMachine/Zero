@@ -35,7 +35,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 
-/** This class is an adapted REV Robotics Color Sensor V3 implementation */
+/**
+ * This class is an adapted REV Robotics Color Sensor V3 implementation
+ */
 public class ColorSensorV3 implements IColorSensor {
 
     private static final byte kAddress = 0x52;
@@ -78,11 +80,12 @@ public class ColorSensorV3 implements IColorSensor {
 
         m_simDevice = SimDevice.create("REV Color Sensor V3", port.value, kAddress);
         if (m_simDevice != null) {
-            m_simR = m_simDevice.createDouble("Red", false, 0.0);
-            m_simG = m_simDevice.createDouble("Green", false, 0.0);
-            m_simB = m_simDevice.createDouble("Blue", false, 0.0);
-            m_simIR = m_simDevice.createDouble("IR", false, 0.0);
-            m_simProx = m_simDevice.createDouble("Proximity", false, 0.0);
+            m_simR = m_simDevice.createDouble("Red", SimDevice.Direction.kInput, 0.0);
+            m_simG = m_simDevice.createDouble("Green", SimDevice.Direction.kInput, 0.0);
+            m_simB = m_simDevice.createDouble("Blue", SimDevice.Direction.kInput, 0.0);
+            m_simIR = m_simDevice.createDouble("IR", SimDevice.Direction.kInput, 0.0);
+            m_simProx =
+                m_simDevice.createDouble("Proximity", SimDevice.Direction.kInput, 0.0);
             return;
         }
 
@@ -102,11 +105,12 @@ public class ColorSensorV3 implements IColorSensor {
 
         m_simDevice = SimDevice.create("REV Color Sensor V3", m_i2c.getPort(), kAddress);
         if (m_simDevice != null) {
-            m_simR = m_simDevice.createDouble("Red", false, 0.0);
-            m_simG = m_simDevice.createDouble("Green", false, 0.0);
-            m_simB = m_simDevice.createDouble("Blue", false, 0.0);
-            m_simIR = m_simDevice.createDouble("IR", false, 0.0);
-            m_simProx = m_simDevice.createDouble("Proximity", false, 0.0);
+            m_simR = m_simDevice.createDouble("Red", SimDevice.Direction.kInput, 0.0);
+            m_simG = m_simDevice.createDouble("Green", SimDevice.Direction.kInput, 0.0);
+            m_simB = m_simDevice.createDouble("Blue", SimDevice.Direction.kInput, 0.0);
+            m_simIR = m_simDevice.createDouble("IR", SimDevice.Direction.kInput, 0.0);
+            m_simProx =
+                m_simDevice.createDouble("Proximity", SimDevice.Direction.kInput, 0.0);
             return;
         }
 
@@ -268,8 +272,8 @@ public class ColorSensorV3 implements IColorSensor {
      * teams. Consult the APDS-9151 for more information on these configuration settings and how they
      * will affect proximity sensor measurements.
      *
-     * @param freq The pulse modulation frequency for the proximity sensor LED
-     * @param curr The pulse current for the proximity sensor LED
+     * @param freq   The pulse modulation frequency for the proximity sensor LED
+     * @param curr   The pulse current for the proximity sensor LED
      * @param pulses The number of pulses per measurement of the proximity sensor LED (0-255)
      */
     public void configureProximitySensorLED(
@@ -288,7 +292,7 @@ public class ColorSensorV3 implements IColorSensor {
      * teams. Consult the APDS-9151 for more information on these configuration settings and how they
      * will affect proximity sensor measurements.
      *
-     * @param res Bit resolution output by the proximity sensor ADC.
+     * @param res  Bit resolution output by the proximity sensor ADC.
      * @param rate Measurement rate of the proximity sensor
      */
     public void configureProximitySensor(
@@ -305,7 +309,7 @@ public class ColorSensorV3 implements IColorSensor {
      * teams. Consult the APDS-9151 for more information on these configuration settings and how they
      * will affect color sensor measurements.
      *
-     * @param res Bit resolution output by the respective light sensor ADCs
+     * @param res  Bit resolution output by the respective light sensor ADCs
      * @param rate Measurement rate of the light sensor
      * @param gain Gain factor applied to light sensor (color) outputs
      */
@@ -328,7 +332,7 @@ public class ColorSensorV3 implements IColorSensor {
      * interest.
      *
      * @return Color enum of the most likely color, including unknown if the minimum threshold is not
-     *     met
+     * met
      */
     public Color getColor() {
         double r = (double) getRed();
@@ -340,7 +344,7 @@ public class ColorSensorV3 implements IColorSensor {
 
     @Override
     public int[] getRGB() {
-        return new int[] { getRed(), getGreen(), getBlue() };
+        return new int[]{getRed(), getGreen(), getBlue()};
     }
 
     /**
@@ -505,14 +509,14 @@ public class ColorSensorV3 implements IColorSensor {
         write8(
             Register.kMainCtrl,
             MainControl.kRGBMode.bVal |
-            MainControl.kLightSensorEnable.bVal |
-            MainControl.kProximitySensorEnable.bVal
+                MainControl.kLightSensorEnable.bVal |
+                MainControl.kProximitySensorEnable.bVal
         );
 
         write8(
             Register.kProximitySensorRate,
             ProximitySensorResolution.kProxRes11bit.bVal |
-            ProximitySensorMeasurementRate.kProxRate100ms.bVal
+                ProximitySensorMeasurementRate.kProxRate100ms.bVal
         );
 
         write8(Register.kProximitySensorPulses, (byte) 32);
@@ -534,10 +538,10 @@ public class ColorSensorV3 implements IColorSensor {
         return (
             (
                 ((int) raw[0] & 0xFF) |
-                (((int) raw[1] & 0xFF) << 8) |
-                (((int) raw[2] & 0xFF) << 16)
+                    (((int) raw[1] & 0xFF) << 8) |
+                    (((int) raw[2] & 0xFF) << 16)
             ) &
-            0x03FFFF
+                0x03FFFF
         );
     }
 

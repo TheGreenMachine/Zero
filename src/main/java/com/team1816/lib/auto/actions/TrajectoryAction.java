@@ -1,8 +1,5 @@
 package com.team1816.lib.auto.actions;
 
-import static com.team1816.lib.subsystems.drive.Drive.*;
-import static com.team1816.lib.subsystems.drive.SwerveDrive.swerveKinematics;
-
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.paths.AutoPath;
 import com.team1816.lib.subsystems.drive.Drive;
@@ -18,30 +15,41 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+
 import java.util.List;
+
+import static com.team1816.lib.subsystems.drive.Drive.*;
+import static com.team1816.lib.subsystems.drive.SwerveDrive.swerveKinematics;
 
 /**
  * This class represents a runnable action that will allow a drivetrain to follow a trajectory.
- * @see Action
+ *
+ * @see AutoAction
  */
-public class TrajectoryAction implements Action {
+public class TrajectoryAction implements AutoAction {
 
     /**
      * Command for drivetrain
+     *
      * @see Command
      */
     private final Command command;
+
     /**
      * Trajectory (list of states) for drivetrain to follow
+     *
      * @see Trajectory
      */
     private final Trajectory trajectory;
+
     /**
      * List of headings for swerve commands
      */
     private final List<Rotation2d> headings;
+
     /**
      * Drivetrain (tank or swerve)
+     *
      * @see Drive
      * @see TankDrive
      * @see SwerveDrive
@@ -50,6 +58,7 @@ public class TrajectoryAction implements Action {
 
     /**
      * Constructs a TrajectoryAction based on an AutoPath which contains a trajectory and heading
+     *
      * @param autoPath
      * @see AutoPath
      */
@@ -59,6 +68,7 @@ public class TrajectoryAction implements Action {
 
     /**
      * Main constructor of a TrajectoryAction, instantiates and assigns the command based on the drivetrain
+     *
      * @param trajectory
      * @param headings
      * @see Trajectory
@@ -112,6 +122,7 @@ public class TrajectoryAction implements Action {
 
     /**
      * Returns the trajectory that is associated with the action
+     *
      * @return trajectory
      * @see Trajectory
      */
@@ -121,9 +132,10 @@ public class TrajectoryAction implements Action {
 
     /**
      * Starts the command, executes trajectory on drivetrain
+     *
      * @see Drive#startTrajectory(Trajectory, List)
      * @see Command
-     * @see Action#start()
+     * @see AutoAction#start()
      */
     @Override
     public void start() {
@@ -136,9 +148,10 @@ public class TrajectoryAction implements Action {
 
     /**
      * Executes the command
+     *
      * @see Command
      * @see Command#execute()
-     * @see Action#update()
+     * @see AutoAction#update()
      */
     @Override
     public void update() {
@@ -147,9 +160,10 @@ public class TrajectoryAction implements Action {
 
     /**
      * Returns whether or not the command has been executed
+     *
      * @return boolean isFinished
      * @see Command
-     * @see Action#isFinished()
+     * @see AutoAction#isFinished()
      */
     @Override
     public boolean isFinished() {
@@ -158,9 +172,10 @@ public class TrajectoryAction implements Action {
 
     /**
      * Ends the command, stops drivetrain
+     *
      * @see Drive
      * @see Command
-     * @see Action#done()
+     * @see AutoAction#done()
      */
     @Override
     public void done() {

@@ -8,11 +8,14 @@ import com.ctre.phoenix.sensors.PigeonIMU;
  */
 public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
 
-    /** State */
+    /**
+     * State
+     */
     private long m_handle = 0l;
 
     /**
      * Instantiates a PigeonIMUImpl
+     *
      * @param id (CAN-Bus id)
      */
     public PigeonIMUImpl(int id) {
@@ -23,6 +26,7 @@ public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
 
     /**
      * Returns gyroscopic yaw / transverse planar angle
+     *
      * @return yaw (degrees)
      * @see IPigeonIMU#getYaw()
      */
@@ -32,7 +36,30 @@ public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
     }
 
     /**
+     * Returns gyroscopic pitch / transverse lateral angle
+     *
+     * @return pitch (degrees)
+     * @see IPigeonIMU#getPitch()
+     */
+    @Override
+    public double getPitch() {
+        return super.getPitch();
+    }
+
+    /**
+     * Returns gyroscopic roll / transverse frontal angle
+     *
+     * @return roll (degrees)
+     * @see IPigeonIMU#getRoll()
+     */
+    @Override
+    public double getRoll() {
+        return super.getRoll();
+    }
+
+    /**
      * Returns x, y, and z acceleration in a casted fixed point double array
+     *
      * @return acceleration
      * @see IPigeonIMU#getAcceleration()
      */
@@ -40,11 +67,12 @@ public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
     public double[] getAcceleration() {
         short[] accel = new short[3];
         getBiasedAccelerometer(accel);
-        return new double[] { accel[0], accel[1], accel[2] };
+        return new double[]{accel[0], accel[1], accel[2]};
     }
 
     /**
      * Sets the gyroscopic yaw to a specific angle
+     *
      * @param angle (degrees)
      * @return ErrorCode / void
      * @see IPigeonIMU#getAcceleration()
@@ -56,6 +84,7 @@ public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
 
     /**
      * Sets the gyroscopic yaw to a specific angle
+     *
      * @param angle (degrees)
      * @return ErrorCode / void
      * @see IPigeonIMU#setFusedHeading(double)
@@ -67,6 +96,7 @@ public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
 
     /**
      * Sets the accumulated z angle to angleDeg
+     *
      * @param angle (degrees)
      * @return ErrorCode / void
      * @see IPigeonIMU#setAccumZAngle(double)
@@ -78,6 +108,7 @@ public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
 
     /**
      * Returns true if a pigeon reset has occurred
+     *
      * @return boolean hasResetOccurred
      * @see IPigeonIMU#hasResetOccurred()
      */
@@ -88,6 +119,7 @@ public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
 
     /**
      * Configures factory defaults
+     *
      * @return ErrorCode / void
      * @see IPigeonIMU#configFactoryDefault()
      */

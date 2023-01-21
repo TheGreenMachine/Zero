@@ -7,7 +7,8 @@ import com.team1816.season.auto.actions.DriveOpenLoopAction;
 
 public class DriveStraightMode extends AutoMode {
 
-    public DriveStraightMode() {}
+    public DriveStraightMode() {
+    }
 
     @Override
     protected void routine() throws AutoModeEndedException {

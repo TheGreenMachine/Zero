@@ -7,6 +7,7 @@ import com.ctre.phoenix.led.CANdle;
 
 /**
  * A class that interfaces with a CANifier LedManager
+ *
  * @see CANifier
  * @see ILEDManager
  */
@@ -14,6 +15,7 @@ public class CanifierImpl extends CANifier implements ILEDManager {
 
     /**
      * Instantiates a Canifier based on its device ID
+     *
      * @param deviceId
      * @see CANifier
      */
@@ -23,12 +25,13 @@ public class CanifierImpl extends CANifier implements ILEDManager {
 
     /**
      * Sets LEDs on a strip
-     * @param r (red value 0-255)
-     * @param g (green value 0-255)
-     * @param b (blue value 0-255)
-     * @param w (white value)
+     *
+     * @param r        (red value 0-255)
+     * @param g        (green value 0-255)
+     * @param b        (blue value 0-255)
+     * @param w        (white value)
      * @param startIdx (start ID of led to be controlled)
-     * @param count (number of LEDs from startIdx
+     * @param count    (number of LEDs from startIdx
      * @return ErrorCode / void
      * @see ILEDManager#setLEDs(int, int, int, int, int, int)
      */
@@ -42,6 +45,7 @@ public class CanifierImpl extends CANifier implements ILEDManager {
 
     /**
      * Functionality: non-existent
+     *
      * @param b
      * @return ErrorCode / void
      * @see ILEDManager#configStatusLedState(boolean)
@@ -53,6 +57,7 @@ public class CanifierImpl extends CANifier implements ILEDManager {
 
     /**
      * Functionality: non-existent
+     *
      * @param b
      * @return ErrorCode / void
      * @see ILEDManager#configLOSBehavior(boolean)
@@ -64,6 +69,7 @@ public class CanifierImpl extends CANifier implements ILEDManager {
 
     /**
      * Functionality: non-existent
+     *
      * @param brg
      * @return ErrorCode / void
      * @see ILEDManager#configLEDType(CANdle.LEDStripType)
@@ -75,6 +81,7 @@ public class CanifierImpl extends CANifier implements ILEDManager {
 
     /**
      * Functionality: non-existent
+     *
      * @param brightness
      * @return ErrorCode / void
      * @see ILEDManager#configBrightnessScalar(double)
@@ -86,6 +93,7 @@ public class CanifierImpl extends CANifier implements ILEDManager {
 
     /**
      * Functionality: non-existent
+     *
      * @param animation
      * @return ErrorCode / void
      * @see ILEDManager#animate(Animation)

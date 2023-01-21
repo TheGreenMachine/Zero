@@ -9,13 +9,15 @@ import edu.wpi.first.math.util.Units;
 /**
  * Action that stops processes / waits inside a region.
  * Dependents: RobotState
+ *
  * @see RobotState
- * @see Action
+ * @see AutoAction
  */
-public class WaitUntilInsideRegion implements Action {
+public class WaitUntilInsideRegion implements AutoAction {
 
     /**
      * State: RobotState
+     *
      * @see RobotState
      */
     private static RobotState mRobotState;
@@ -35,6 +37,7 @@ public class WaitUntilInsideRegion implements Action {
 
     /**
      * Instantiates a WaitUntilInsideRegion action based on state parameters
+     *
      * @param bottomLeft
      * @param topRight
      * @param name
@@ -52,22 +55,27 @@ public class WaitUntilInsideRegion implements Action {
 
     /**
      * Starts the action (empty)
-     * @see Action#start()
+     *
+     * @see AutoAction#start()
      */
     @Override
-    public void start() {}
+    public void start() {
+    }
 
     /**
      * Updates the action (empty)
-     * @see Action#update()
+     *
+     * @see AutoAction#update()
      */
     @Override
-    public void update() {}
+    public void update() {
+    }
 
     /**
      * Checks if position criteria is met based on robotState
+     *
      * @return boolean isFinished
-     * @see Action#isFinished()
+     * @see AutoAction#isFinished()
      */
     @Override
     public boolean isFinished() {
@@ -76,15 +84,16 @@ public class WaitUntilInsideRegion implements Action {
         var y = Units.metersToInches(position.getY());
         return (
             x > mBottomLeft.getX() &&
-            x < mTopRight.getX() &&
-            y > mBottomLeft.getY() &&
-            y < mTopRight.getY()
+                x < mTopRight.getX() &&
+                y > mBottomLeft.getY() &&
+                y < mTopRight.getY()
         );
     }
 
     /**
      * Standard cleanup procedure: prints out action
-     * @see Action#done()
+     *
+     * @see AutoAction#done()
      */
     @Override
     public void done() {

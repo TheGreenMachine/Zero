@@ -3,6 +3,7 @@ package com.team1816.lib;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Module;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class Injector {
 
     /**
      * Registers an instance as a module
+     *
      * @param instance
      * @param <T>
      */
@@ -43,6 +45,7 @@ public class Injector {
 
     /**
      * Registers a class as a module
+     *
      * @param type
      * @param instance
      * @param <T>
@@ -60,6 +63,7 @@ public class Injector {
 
     /**
      * Returns a module based on its associated class
+     *
      * @param type
      * @param <T>
      * @return

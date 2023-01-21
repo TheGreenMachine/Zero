@@ -3,7 +3,7 @@ package com.team1816.lib.auto.actions;
 /**
  * The LambdaAction class is an instance of the Action interface and employs a base voidInterface that is empty. Performs nothing, old class carried over.
  */
-public class LambdaAction implements Action {
+public class LambdaAction implements AutoAction {
 
     public interface VoidInterface {
         void f();
@@ -21,7 +21,8 @@ public class LambdaAction implements Action {
     }
 
     @Override
-    public void update() {}
+    public void update() {
+    }
 
     @Override
     public boolean isFinished() {
@@ -29,5 +30,6 @@ public class LambdaAction implements Action {
     }
 
     @Override
-    public void done() {}
+    public void done() {
+    }
 }

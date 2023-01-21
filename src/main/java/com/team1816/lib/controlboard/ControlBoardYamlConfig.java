@@ -1,13 +1,15 @@
 package com.team1816.lib.controlboard;
 
-import java.io.InputStream;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.representer.Representer;
 
+import java.io.InputStream;
+
 /**
  * The yaml parsing integration for a control board.
+ *
  * @see ControlBoardBridge
  */
 public class ControlBoardYamlConfig {

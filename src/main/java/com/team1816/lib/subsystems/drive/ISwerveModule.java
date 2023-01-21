@@ -8,12 +8,18 @@ public interface ISwerveModule {
 
     // angle degrees
     double getActualAzimuth();
+
     double getAzimuthError();
+
     double getDesiredAzimuth();
 
     // velocity ticks/100ms
     double getActualDrive();
+
     double getDesiredDrive();
+
+    double getDrivePosition();
+
     double getDriveError();
 
     // Temperature C
