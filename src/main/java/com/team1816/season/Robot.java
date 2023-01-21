@@ -219,6 +219,7 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("autoTarget"),
                         () -> {
+                            orchestrator.updatePoseWithCamera();
                             double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
                             if (distance < Constants.kMinTrajectoryDistance) {
                                 System.out.println("Distance to target is " + distance + " m");
@@ -251,15 +252,8 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
-                    ),
-                    // Operator Gamepad
-                    createAction(
-                        () -> controlBoard.getAsBool("updatePoseWithCamera"),
-                        () -> {
-                            orchestrator.updatePoseWithCamera();
-                            System.out.println("should be updating pose!");
-                        }
                     )
+                    // Operator Gamepad
                 );
         } catch (Throwable t) {
             faulted = true;
