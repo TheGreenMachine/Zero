@@ -87,13 +87,14 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255
-    cooler:
+    elevator:
         implemented: true
-        solenoids:
-            lock: 1
-            dump: 3
+        falcons:
+            angleMotor1: -1
+            angleMotor2: -1
+            elevatorMotor: -1
         constants:
-            heatThreshold: 65 # degrees Celsius
+
     camera:
         implemented: true
         constants:
