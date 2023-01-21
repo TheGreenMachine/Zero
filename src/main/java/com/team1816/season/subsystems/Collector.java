@@ -44,7 +44,7 @@ public class Collector extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
-
+                switch (desiredState)
         }
     }
 
