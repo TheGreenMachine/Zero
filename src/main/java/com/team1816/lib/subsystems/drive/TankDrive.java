@@ -272,7 +272,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             );
         robotState.deltaVehicle = cs;
 
-        robotState.vehicleToFloorProximity = infrastructure.getMaximumProximity();
+        robotState.vehicleToFloorProximityCentimeters = infrastructure.getMaximumProximity();
     }
 
     /** Open loop control */

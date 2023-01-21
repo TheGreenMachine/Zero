@@ -238,6 +238,7 @@ public class Robot extends TimedRobot {
                             AutoBalanceMode mode = new AutoBalanceMode();
                             Thread autoBalanceThread = new Thread(mode::run);
                             autoBalanceThread.start();
+                            autoBalanceThread = null;
                             System.out.println("Balanced");
                         }
                     ),

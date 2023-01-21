@@ -8,12 +8,12 @@ import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.drive.TankDrive;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.season.Robot;
-import edu.wpi.first.math.geometry.Translation2d;
+import com.team1816.season.configuration.Constants;
+import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -22,10 +22,12 @@ import edu.wpi.first.wpilibj.Timer;
  * @see AutoAction
  */
 public class AutoBalanceAction implements AutoAction {
-    private static Drive drive;
-    private static Infrastructure infrastructure;
-    private static SwerveDriveKinematics swerveKinematics;
-    private static DifferentialDriveKinematics tankKinematics;
+
+    private RobotState robotState;
+    private Drive drive;
+    private Infrastructure infrastructure;
+    private SwerveDriveKinematics swerveKinematics;
+    private DifferentialDriveKinematics tankKinematics;
 
     private static boolean isSwerve = false;
     private double maxVelocity;
@@ -36,6 +38,7 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public void start() {
+        robotState = Injector.get(RobotState.class);
         drive = Injector.get(Drive.Factory.class).getInstance();
         infrastructure = Injector.get(Infrastructure.class);
 
@@ -56,9 +59,14 @@ public class AutoBalanceAction implements AutoAction {
         double velocityX = 0;
         double velocityY = 0;
 
-        if(Math.abs(pitch) > 1 || Math.abs(roll) > 1) {
-            velocityX = pitch / 40;
-            velocityY = roll / 40;
+        if (robotState.vehicleToFloorProximityCentimeters > Constants.kMaxProximityThresholdCentimeters) {
+            velocityX = 0;
+            velocityY = 0;
+        } else {
+            if (Math.abs(pitch) > 1 || Math.abs(roll) > 1) {
+                velocityX = pitch / 40;
+                velocityY = roll / 40;
+            }
         }
 
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(velocityX, velocityY, 0);
