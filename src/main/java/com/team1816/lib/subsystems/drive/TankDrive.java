@@ -17,8 +17,6 @@ import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -102,7 +100,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
         tankOdometry =
             new DifferentialDriveOdometry(
-                getActualHeading(),
+                getGyroHeading(),
                 leftActualDistance,
                 rightActualDistance
             );
@@ -171,9 +169,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             simulateGyroOffset();
         }
         infrastructure.update();
-        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
-        tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
+        tankOdometry.update(gyroHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
     }
 
@@ -188,7 +186,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
 
-        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
         resetEncoders();
         resetOdometry(pose);
         startingPose = pose;
@@ -229,12 +227,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public void resetOdometry(Pose2d pose) {
         tankOdometry.resetPosition(
-            getActualHeading(),
+            getGyroHeading(),
             leftActualDistance,
             rightActualDistance,
             pose
         );
-        tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
+        tankOdometry.update(gyroHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
     }
 

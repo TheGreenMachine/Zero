@@ -55,7 +55,7 @@ public abstract class Drive
 
     /** Localized state */
     protected ControlState controlState = ControlState.OPEN_LOOP;
-    protected Rotation2d actualHeading = Constants.EmptyRotation2d;
+    protected Rotation2d gyroHeading = Constants.EmptyRotation2d;
     protected Rotation2d desiredHeading = new Rotation2d(); // only updated in trajectory following
     protected Pose2d desiredPose = new Pose2d(); // only updated in trajectory following
     protected ChassisSpeeds chassisSpeed = new ChassisSpeeds();
@@ -302,8 +302,8 @@ public abstract class Drive
      * Returns the actual heading of the drivetrain based on Odometry and gyroscopic measurements
      * @return (Rotation2d) actualHeading
      */
-    public synchronized Rotation2d getActualHeading() {
-        return actualHeading;
+    public synchronized Rotation2d getGyroHeading() {
+        return gyroHeading;
     }
 
     /**
@@ -336,7 +336,7 @@ public abstract class Drive
      */
     @Override
     public double getActualHeadingDegrees() {
-        return actualHeading.getDegrees();
+        return gyroHeading.getDegrees();
     }
 
     /**

@@ -168,9 +168,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             simulateGyroOffset();
         }
         infrastructure.update();
-        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
-        swerveOdometry.update(actualHeading, actualModulePositions);
+        swerveOdometry.update(gyroHeading, actualModulePositions);
         updateRobotState();
     }
 
@@ -241,6 +241,20 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         desiredModuleStates = desiredStates;
         for (int i = 0; i < 4; i++) {
             swerveModules[i].setDesiredState(desiredStates[i], false);
+        }
+    }
+
+    public void setModuleStatesPercentOutput(SwerveModuleState[] desiredStates) { // TODO this is a massive hack that makes my eyes bleed
+        if (controlState != ControlState.TRAJECTORY_FOLLOWING) {
+            controlState = ControlState.TRAJECTORY_FOLLOWING;
+        }
+        SwerveDriveKinematics.desaturateWheelSpeeds(
+            desiredStates,
+            (kPathFollowingMaxVelMeters)
+        );
+        desiredModuleStates = desiredStates;
+        for (int i = 0; i < 4; i++) {
+            swerveModules[i].setDesiredState(desiredStates[i], true);
         }
     }
 
@@ -366,9 +380,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      */
     @Override
     public void resetOdometry(Pose2d pose) {
-        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
-        swerveOdometry.resetPosition(actualHeading, actualModulePositions, pose);
-        swerveOdometry.update(actualHeading, actualModulePositions);
+        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        swerveOdometry.resetPosition(gyroHeading, actualModulePositions, pose);
+        swerveOdometry.update(gyroHeading, actualModulePositions);
         updateRobotState();
     }
 

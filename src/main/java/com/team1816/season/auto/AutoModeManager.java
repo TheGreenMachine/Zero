@@ -147,7 +147,7 @@ public class AutoModeManager {
         LIVING_ROOM,
         DRIVE_STRAIGHT,
         // 2023
-
+        AUTO_BALANCE
     }
 
     /**
@@ -172,6 +172,8 @@ public class AutoModeManager {
                 return new TuneDrivetrainMode();
             case LIVING_ROOM:
                 return (new LivingRoomMode());
+            case AUTO_BALANCE:
+                return (new AutoBalanceMode());
             default:
                 System.out.println("Defaulting to drive straight mode");
                 return new DriveStraightMode();
