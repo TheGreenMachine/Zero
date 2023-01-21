@@ -21,7 +21,9 @@ public class Collector extends Subsystem {
 
     private double intakeVel;
 
-    private STATE desiredState = STATE.STOP;
+    private PIVOT_STATE desiredPivotState = PIVOT_STATE.DOWN;
+
+    private COLLECTOR_STATE desiredCollectorState = COLLECTOR_STATE.STOP;
 
     private boolean outputsChanged = false;
 
@@ -31,12 +33,15 @@ public class Collector extends Subsystem {
         super(NAME, inf, rs);
         collectorPiston = factory.getSolenoid(NAME, "collectorSolenoid");
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
-
     }
 
-    public void setDesiredState(STATE state){
-        if (desiredState != state){
-            desiredState = state;
+    public void setDesiredState(PIVOT_STATE pivotState, COLLECTOR_STATE collectorState){
+        if (desiredPivotState != pivotState) {
+            desiredPivotState = pivotState;
+            outputsChanged = true;
+        }
+        if (desiredCollectorState != collectorState) {
+            desiredCollectorState = collectorState;
             outputsChanged = true;
         }
     }
@@ -50,20 +55,19 @@ public class Collector extends Subsystem {
         if (outputsChanged) {
             outputsChanged = false;
             armUp = false;
-                switch (desiredState) {
+                switch (desiredPivotState) {
+                    case UP:
+                        break;
+                    case DOWN:
+                        break;
+                }
+                switch (desiredCollectorState) {
                     case STOP:
-                        //QUESTION: need to deenergize intakeMotor
                         break;
-                    case COLLECT_CONE:
-                        intakeMotor.set(ControlMode.Velocity, .5);
-                        break;
-                    case COLLECT_CUBE:
-                        intakeMotor.set(ControlMode.Velocity, -.5);
-                        armUp = true;
-                        collectorPiston.set(armUp);
+                    case COLLECT:
                         break;
                     case FLUSH:
-                        intakeMotor.set(ControlMode.Velocity, -.25);
+                        break;
                 }
         }
     }
@@ -86,10 +90,14 @@ public class Collector extends Subsystem {
     //for cube collecting, the "motor locked" state so we don't pop the cube will have
     //to be the same as stopping? a hold action and then when its not going it stops? we can't
     //rotate after getting a cube anyways
-    public enum STATE {
+    public enum PIVOT_STATE {
+        UP,
+        DOWN,
+    }
+
+    public enum COLLECTOR_STATE {
         STOP,
-        COLLECT_CONE,
-        COLLECT_CUBE,
+        COLLECT,
         FLUSH,
     }
 }
