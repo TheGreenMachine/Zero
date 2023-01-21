@@ -3,11 +3,14 @@ package com.team1816.season.auto.actions;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.AutoAction;
+import com.team1816.lib.hardware.components.gyro.IPigeonIMU;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.drive.TankDrive;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -50,15 +53,16 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public void update() {
-        double velocity = 0;
-        // calculate how much we need to give to field relative x - magnitude
-        if (Math.abs(infrastructure.getFieldCentricPitch())>2) {
-            velocity = -1 * (1 - Math.cos(Units.degreesToRadians(45d / 11 * infrastructure.getPitch()))); //*maxVelocity; TODO currently % out!
-        }
-
         // splitting into x and y relative to robot components
-        double velocityX = robotState.fieldToVehicle.getRotation().getCos() * velocity;
-        double velocityY = robotState.fieldToVehicle.getRotation().getSin() * velocity;
+        double pitch = -infrastructure.getPitch();
+        double roll = infrastructure.getRoll();
+        double velocityX = 0;
+        double velocityY = 0;
+
+        if(Math.abs(pitch) > 2 || Math.abs(roll) > 2){
+            velocityX = pitch / 40;
+            velocityY = roll / 40;
+        }
 
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(velocityX, velocityY, 0);
         if (isSwerve) {

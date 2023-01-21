@@ -117,30 +117,6 @@ public class Infrastructure {
     }
 
     /**
-     * Returns the field-centric pitch of the pigeon
-     *
-     * @return pitch
-     * @see IPigeonIMU#getPitch()
-     */
-    public double getFieldCentricPitch() {
-        Rotation3d angularState = new Rotation3d(Units.degreesToRadians(getYaw()), Units.degreesToRadians(getPitch()), Units.degreesToRadians(getRoll()));
-        Rotation3d yawState = new Rotation3d(-Units.degreesToRadians(getYaw()), 0, 0);
-        return Units.radiansToDegrees(angularState.rotateBy(yawState).getY());
-    }
-
-    /**
-     * Returns the field-centric roll of the pigeon
-     *
-     * @return roll
-     * @see IPigeonIMU#getRoll()
-     */
-    public double getFieldCentricRoll() {
-        Rotation3d angularState = new Rotation3d(Units.degreesToRadians(getYaw()), Units.degreesToRadians(getPitch()), Units.degreesToRadians(getRoll()));
-        Rotation3d yawState = new Rotation3d(-Units.degreesToRadians(getYaw()), 0, 0);
-        return Units.radiansToDegrees(angularState.rotateBy(yawState).getZ());
-    }
-
-    /**
      * Returns the power distribution associated with the Infrastructure
      * @return PowerDistribution
      * @see PowerDistribution
