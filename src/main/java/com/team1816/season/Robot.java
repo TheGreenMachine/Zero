@@ -13,6 +13,7 @@ import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
+import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.modes.AutoBalanceMode;
 import com.team1816.season.auto.modes.TrajectoryToTargetMode;
@@ -52,8 +53,8 @@ public class Robot extends TimedRobot {
 
     /** Subsystems */
     private final Drive drive;
-
     private final LedManager ledManager;
+    private final Camera camera;
 
     /** Factory */
     private static RobotFactory factory;
@@ -79,6 +80,7 @@ public class Robot extends TimedRobot {
         enabledLoop = new Looper(this);
         disabledLoop = new Looper(this);
         drive = (Injector.get(Drive.Factory.class)).getInstance();
+        camera = Injector.get(Camera.class);
         ledManager = Injector.get(LedManager.class);
         robotState = Injector.get(RobotState.class);
         orchestrator = Injector.get(Orchestrator.class);
@@ -124,7 +126,7 @@ public class Robot extends TimedRobot {
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            subsystemManager.setSubsystems(drive, ledManager);
+            subsystemManager.setSubsystems(drive, ledManager, camera);
 
             /** Register BadLogs */
             if (Constants.kIsBadlogEnabled) {
