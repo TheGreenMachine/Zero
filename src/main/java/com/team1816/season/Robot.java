@@ -15,7 +15,7 @@ import com.team1816.season.auto.modes.AutoBalanceMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.subsystems.LedManager;
+import com.team1816.lib.subsystems.LedManager;
 import edu.wpi.first.wpilibj.*;
 
 import java.nio.file.Files;
