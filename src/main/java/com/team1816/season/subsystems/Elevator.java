@@ -18,12 +18,12 @@ public class Elevator extends Subsystem {
 
     private static final String NAME = "elevator";
 
-    //components
+    /** components */
     private final IGreenMotor angleMotor1;
     private final IGreenMotor angleMotor2;
     private final IGreenMotor elevatorMotor;
 
-    //states
+    /** states */
     private double desiredOutput;
     private double actualOutput;
     private double desiredAnglePosition;
@@ -37,14 +37,13 @@ public class Elevator extends Subsystem {
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
 
 
-        //components
+        /** components */
         this.angleMotor1 = factory.getMotor(NAME,"angleMotor1");
-        this.angleMotor2 = factory.getFollowerMotor(NAME,"angleMotor2",angleMotor1);
+        this.angleMotor2 = factory.getFollowerMotor(NAME,"angleMotor2", angleMotor1);
         this.elevatorMotor = factory.getMotor(NAME,"elevatorMotor");
-
-        //Constants
-
+        /** constants */
         ALLOWABLE_ERROR = config.allowableError;
+
     }
 
     @Override
@@ -71,10 +70,9 @@ public class Elevator extends Subsystem {
         return false;
     }
 
-    //enums
+    /** enums */
     public enum STATE {
         STOP,
-
     }
 
     public enum ELEVATOR_ANGLE {
