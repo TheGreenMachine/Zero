@@ -1,5 +1,6 @@
 package com.team1816.season.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
@@ -15,6 +16,8 @@ public class Collector extends Subsystem {
     private final ISolenoid collectorSolenoid;
 
     private final IGreenMotor intakeMotor;
+
+    private double intakeVel;
 
     private STATE desiredState = STATE.STOP;
 
@@ -44,7 +47,19 @@ public class Collector extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
-                switch (desiredState)
+                switch (desiredState) {
+                    case STOP:
+                        intakeMotor.set(ControlMode.Velocity, 0.0);
+                        break;
+                    case COLLECT_CONE:
+                        intakeMotor.set(ControlMode.Velocity, .5);
+                        break;
+                    case COLLECT_CUBE:
+                        intakeMotor.set(ControlMode.Velocity, -.5);
+                        break;
+                    case FLUSH:
+                        intakeMotor.set(ControlMode.Velocity, -.25);
+                }
         }
     }
 
@@ -67,5 +82,6 @@ public class Collector extends Subsystem {
         STOP,
         COLLECT_CONE,
         COLLECT_CUBE,
+        FLUSH,
     }
 }
