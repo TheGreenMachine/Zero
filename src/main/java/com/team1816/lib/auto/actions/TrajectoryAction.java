@@ -34,16 +34,19 @@ public class TrajectoryAction implements AutoAction {
      * @see Command
      */
     private final Command command;
+
     /**
      * Trajectory (list of states) for drivetrain to follow
      *
      * @see Trajectory
      */
     private final Trajectory trajectory;
+
     /**
      * List of headings for swerve commands
      */
     private final List<Rotation2d> headings;
+
     /**
      * Drivetrain (tank or swerve)
      *

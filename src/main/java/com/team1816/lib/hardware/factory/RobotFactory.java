@@ -16,6 +16,9 @@ import com.team1816.lib.hardware.components.ledManager.ILEDManager;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
+import com.team1816.lib.hardware.components.sensor.GhostProximitySensor;
+import com.team1816.lib.hardware.components.sensor.IProximitySensor;
+import com.team1816.lib.hardware.components.sensor.ProximitySensor;
 import com.team1816.lib.subsystems.drive.SwerveModule;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -490,6 +493,19 @@ public class RobotFactory {
             pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 100);
         }
         return pigeon;
+    }
+
+    public IProximitySensor getProximitySensor(String name) {
+        if (config.infrastructure.proximitySensors == null) {
+            return new GhostProximitySensor();
+        }
+        int id = config.infrastructure.proximitySensors.getOrDefault(name, -1);
+        if (id < 0) {
+            System.out.println("Incorrect Name: Proximity sensor not found, using ghost!");
+            return new GhostProximitySensor();
+        }
+        System.out.println("Creating Proximity Sensor: " + name + " at port: " + id);
+        return new ProximitySensor(name, config.infrastructure.proximitySensors.get(name));
     }
 
     public int getPcmId() {

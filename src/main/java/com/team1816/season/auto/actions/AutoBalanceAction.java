@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Action for infrastructure based / gyroscopic balancing
+ *
  * @see AutoAction
  */
 public class AutoBalanceAction implements AutoAction {
@@ -31,6 +32,7 @@ public class AutoBalanceAction implements AutoAction {
     public AutoBalanceAction(double maxVelocity) {
         this.maxVelocity = maxVelocity;
     }
+
     @Override
     public void start() {
         drive = Injector.get(Drive.Factory.class).getInstance();
@@ -51,7 +53,7 @@ public class AutoBalanceAction implements AutoAction {
         double velocity = 0;
         if (Math.abs(infrastructure.getFieldCentricPitch()) > 2) { // degrees
             double pitch = infrastructure.getFieldCentricPitch();
-            velocity = -(1 - Math.cos(Units.degreesToRadians(45d / 11 * pitch))) * maxVelocity * pitch / Math.abs(pitch);
+            velocity = -1 * (1 - Math.cos(Units.degreesToRadians(45d / 11 * pitch))) * maxVelocity * pitch / Math.abs(pitch);
         }
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(velocity, 0, 0);
         if (isSwerve) {
@@ -65,10 +67,7 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public boolean isFinished() {
-        if (((Timer.getFPGATimestamp() - Robot.teleopStart) > 134) || (Math.abs(infrastructure.getPitch())<2 && Math.abs(infrastructure.getRoll())<2)) {
-            return true;
-        }
-        return false;
+        return (Timer.getFPGATimestamp() - Robot.teleopStart) > 134 || (Math.abs(infrastructure.getPitch()) < 2 && Math.abs(infrastructure.getRoll()) < 2);
     }
 
     @Override

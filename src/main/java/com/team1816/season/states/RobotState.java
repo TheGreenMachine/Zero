@@ -25,12 +25,13 @@ public class RobotState {
     public final Field2d field = new Field2d();
     public Pose2d fieldToVehicle = Constants.EmptyPose2d;
     public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose2d;
-    public Pose2d target = Constants.EmptyPose2d;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation2d;
     public Pose2d fieldToTurret = Constants.EmptyPose2d;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds(); // velocities of vehicle
     public ChassisSpeeds calculatedVehicleAccel = new ChassisSpeeds(); // accel values calculated by watching drivetrain encoders
+    public Double[] triAxialAcceleration = new Double[]{0d, 0d, 0d};
     public boolean isPoseUpdated = true;
+    public double vehicleToFloorProximity = 0;
 
     /**
      * Inertial characterization
@@ -91,11 +92,11 @@ public class RobotState {
     public synchronized void resetAllStates() {
         deltaVehicle = new ChassisSpeeds();
         calculatedVehicleAccel = new ChassisSpeeds();
+        triAxialAcceleration = new Double[]{0d, 0d, 0d};
         isPoseUpdated = true;
         visibleTargets.clear();
         drivetrainTemp = 0;
-        //target = Constants.EmptyPose2d;
-        target = new Pose2d(15, 1, new Rotation2d()); //
+        vehicleToFloorProximity = 0;
     }
 
     /**

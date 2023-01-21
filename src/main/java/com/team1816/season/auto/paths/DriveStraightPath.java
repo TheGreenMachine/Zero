@@ -1,6 +1,7 @@
 package com.team1816.season.auto.paths;
 
 import com.team1816.lib.auto.paths.AutoPath;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
@@ -35,6 +36,20 @@ public class DriveStraightPath extends AutoPath {
 
     @Override
     public List<Rotation2d> getWaypointHeadings() {
+        return null;
+    }
+
+    @Override
+    protected List<Pose2d> getReflectedWaypoints() {
+        var waypoints = List.of(
+            new Pose2d(Constants.fieldCenterX * 2 - 0.0, 0.0, Rotation2d.fromDegrees(180 - 0)),
+            new Pose2d(Constants.fieldCenterX * 2 - (driveDistance), 0.0, Rotation2d.fromDegrees(180 - 0))
+        );
+        return waypoints;
+    }
+
+    @Override
+    protected List<Rotation2d> getReflectedWaypointHeadings() {
         return null;
     }
 

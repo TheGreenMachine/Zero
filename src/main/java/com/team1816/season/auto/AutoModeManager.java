@@ -1,5 +1,6 @@
 package com.team1816.season.auto;
 
+import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.auto.modes.DoNothingMode;
 import com.team1816.season.auto.modes.DriveStraightMode;
@@ -83,7 +84,7 @@ public class AutoModeManager {
                 );
             }
             if (colorChanged) {
-                System.out.println("Robot color: " + selectedColor);
+                System.out.println("Robot color changed from: " + desiredColor + ", to: " + selectedColor);
             }
             autoMode = generateAutoMode(selectedAuto);
             autoModeThread = new Thread(autoMode::run);
@@ -123,7 +124,7 @@ public class AutoModeManager {
      * @see Color
      */
     public Color getSelectedColor() {
-        return desiredColor;
+        return sideChooser.getSelected();
     }
 
     /**
@@ -157,14 +158,6 @@ public class AutoModeManager {
     }
 
     /**
-     * Enum for bumper colors
-     */
-    public enum Color {
-        RED,
-        BLUE,
-    }
-
-    /**
      * Generates each AutoMode by demand
      *
      * @param mode desiredMode
@@ -173,15 +166,19 @@ public class AutoModeManager {
      */
     private AutoMode generateAutoMode(DesiredAuto mode) {
         switch (mode) {
-            case DO_NOTHING:
+            case DO_NOTHING -> {
                 return new DoNothingMode();
-            case TUNE_DRIVETRAIN:
+            }
+            case TUNE_DRIVETRAIN -> {
                 return new TuneDrivetrainMode();
-            case LIVING_ROOM:
-                return (new LivingRoomMode());
-            default:
+            }
+            case LIVING_ROOM -> {
+                return new LivingRoomMode(getSelectedColor());
+            }
+            default -> {
                 System.out.println("Defaulting to drive straight mode");
                 return new DriveStraightMode();
+            }
         }
     }
 }

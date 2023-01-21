@@ -26,6 +26,9 @@
         },
         "isPigeon2": {
             "type": "boolean"
+        },
+        "proximitySensors": {
+            "$ref": "int.map.schema.json"
         }
     },
     "anyOf": [

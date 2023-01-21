@@ -131,7 +131,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 Constants.EmptyRotation2d,
                 actualModulePositions
             );
-        System.out.println("Swerve is initialized");
+
     }
 
     /** Read/Write Periodic */
@@ -181,6 +181,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
         swerveOdometry.update(actualHeading, actualModulePositions);
+
         updateRobotState();
     }
 
@@ -280,9 +281,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 -9.80
             );
         robotState.deltaVehicle = cs;
-        // check if motors are overheating - update robotState
+
         SmartDashboard.putNumber("Drive/Temperature", motorTemperatures[0]);
         robotState.drivetrainTemp = motorTemperatures[0];
+
+        robotState.vehicleToFloorProximity = infrastructure.getMaximumProximity();
     }
 
     /** Open Loop control */
