@@ -16,20 +16,6 @@ driver:
         start: zeroPose
 operator:
     rumble: false
-    dpad:
-        up: raiseBucket
-        down: lowerBucket
-        left: turretJogLeft
-        right: turretJogRight
     buttonpad:
-        x: updatePoseWithCamera
-        y: autoClimb
-        a: toggleTurretMode
-        b: eject
-    axes:
-        leftTrigger: yeetShot
-        rightTrigger: shoot
-    buttons:
-        start: toggleTopClamp
-        back: toggleBottomClamp
+        x: updatePose
 demoMode: false
