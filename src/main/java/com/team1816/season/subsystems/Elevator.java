@@ -31,7 +31,6 @@ public class Elevator extends Subsystem {
 
     private boolean outputsChanged;
     private final double ALLOWABLE_ERROR;
-    private final double COLLECT;
 
     public Elevator(String name, Infrastructure inf, RobotState rs, ISolenoid elevatorSolenoid, IGreenMotor angleMotor, IGreenMotor elevatorMotor, IGreenMotor angleMotor2, double allowable_error) {
         super(name, inf, rs);
@@ -54,9 +53,8 @@ public class Elevator extends Subsystem {
     }
 
     @Override
-    public void writeToHardware() {
+    public void writeToHardware() {}
 
-    }
 
     @Override
     public void zeroSensors() {
@@ -74,6 +72,11 @@ public class Elevator extends Subsystem {
     }
 
     //enums
+    public enum STATE {
+        STOP,
+
+    }
+
     public enum ELEVATOR_ANGLE {
         COLLECT,
         STOW,
