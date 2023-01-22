@@ -92,7 +92,7 @@ subsystems:
         falcons:
             angleMotor1: -1
             angleMotor2: -1
-            elevatorMotor: -1
+            extensionMotor: -1
         constants:
     collector:
         implemented: true

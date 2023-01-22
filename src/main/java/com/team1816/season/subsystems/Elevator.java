@@ -21,15 +21,17 @@ public class Elevator extends Subsystem {
     /** components */
     private final IGreenMotor angleMotor1;
     private final IGreenMotor angleMotor2;
-    private final IGreenMotor elevatorMotor;
+    private final IGreenMotor extensionMotor;
 
-    /** states */
-    double angleState;
+    private boolean elevatorExtended;
+    private static double stowAngle, collectAngle, scoreAngle;
+    private static double minExtension, midExtension, maxExtension;
 
     private double actualExtensionPosition;
     private double actualAnglePosition;
-    private  ANGLE_STATE desiredAnglePosition = ANGLE_STATE.STOW;
-    private  EXTENSION_STATE desiredExtensionPosition = EXTENSION_STATE.MIN;
+
+    private ANGLE_STATE desiredAnglePosition = ANGLE_STATE.STOW;
+    private EXTENSION_STATE desiredExtensionPosition = EXTENSION_STATE.MIN;
 
 
     private boolean outputsChanged;
@@ -43,7 +45,7 @@ public class Elevator extends Subsystem {
         /** components */
         this.angleMotor1 = factory.getMotor(NAME,"angleMotor1");
         this.angleMotor2 = factory.getFollowerMotor(NAME,"angleMotor2", angleMotor1);
-        this.elevatorMotor = factory.getMotor(NAME,"elevatorMotor");
+        this.extensionMotor = factory.getMotor(NAME,"extensionMotor");
         /** constants */
         ALLOWABLE_ERROR = config.allowableError;
         double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
@@ -53,6 +55,15 @@ public class Elevator extends Subsystem {
 
 
     public void setDesiredState(ANGLE_STATE elevatorAngle, EXTENSION_STATE elevatorExtension) {
+        if(desiredAnglePosition != elevatorAngle) {
+            desiredAnglePosition = elevatorAngle;
+            outputsChanged = true;
+        }
+
+        if (desiredExtensionPosition != elevatorExtension) {
+            desiredExtensionPosition = elevatorExtension;
+            outputsChanged = true;
+        }
 
     }
 
@@ -65,6 +76,24 @@ public class Elevator extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
+            elevatorExtended = false;
+            switch (desiredExtensionPosition){
+                case MAX:
+                    break;
+                case MID:
+                    break;
+                case MIN:
+                    break;
+
+            }
+            switch (desiredAnglePosition) {
+                case STOW:
+                    break;
+                case COLLECT:
+                    break;
+                case SCORE:
+                    break;
+            }
 
         }
     }
@@ -89,9 +118,10 @@ public class Elevator extends Subsystem {
 
 
     public enum ANGLE_STATE {
-        COLLECT(collectAngle),
         STOW(stowAngle),
+        COLLECT(collectAngle),
         SCORE(scoreAngle),
+        ;
         private double angle;
         ANGLE_STATE(double angle) {this.angle = angle;}
         public double getAngle() {return angle;}
@@ -102,9 +132,10 @@ public class Elevator extends Subsystem {
         MIN(minExtension),
         MID(midExtension),
         MAX(maxExtension),
+        ;
         private double extension;
         EXTENSION_STATE(double extension) {this.extension = extension;}
-        public double getExtension() {return extension}
+        public double getExtension() {return extension;}
     }
 
 }
