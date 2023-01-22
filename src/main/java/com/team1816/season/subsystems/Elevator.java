@@ -24,10 +24,13 @@ public class Elevator extends Subsystem {
     private final IGreenMotor elevatorMotor;
 
     /** states */
-    private double desiredOutput;
-    private double actualOutput;
-    private double desiredAnglePosition;
+    double angleState;
+
+    private double actualExtensionPosition;
     private double actualAnglePosition;
+    private  ANGLE_STATE desiredAnglePosition = ANGLE_STATE.STOW;
+    private  EXTENSION_STATE desiredExtensionPosition = EXTENSION_STATE.MIN;
+
 
     private boolean outputsChanged;
     private final double ALLOWABLE_ERROR;
@@ -43,6 +46,13 @@ public class Elevator extends Subsystem {
         this.elevatorMotor = factory.getMotor(NAME,"elevatorMotor");
         /** constants */
         ALLOWABLE_ERROR = config.allowableError;
+        double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
+
+    }
+
+
+
+    public void setDesiredState(ANGLE_STATE elevatorAngle, EXTENSION_STATE elevatorExtension) {
 
     }
 
@@ -52,7 +62,12 @@ public class Elevator extends Subsystem {
     }
 
     @Override
-    public void writeToHardware() {}
+    public void writeToHardware() {
+        if (outputsChanged) {
+            outputsChanged = false;
+
+        }
+    }
 
 
     @Override
@@ -71,20 +86,25 @@ public class Elevator extends Subsystem {
     }
 
     /** enums */
-    public enum STATE {
-        STOP,
+
+
+    public enum ANGLE_STATE {
+        COLLECT(collectAngle),
+        STOW(stowAngle),
+        SCORE(scoreAngle),
+        private double angle;
+        ANGLE_STATE(double angle) {this.angle = angle;}
+        public double getAngle() {return angle;}
+
     }
 
-    public enum ELEVATOR_ANGLE {
-        COLLECT,
-        STOW,
-        SCORE,
-    }
-
-    public enum ELEVATOR_EXTENSION {
-        MIN,
-        MID,
-        MAX,
+    public enum EXTENSION_STATE {
+        MIN(minExtension),
+        MID(midExtension),
+        MAX(maxExtension),
+        private double extension;
+        EXTENSION_STATE(double extension) {this.extension = extension;}
+        public double getExtension() {return extension}
     }
 
 }
