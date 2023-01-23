@@ -92,14 +92,13 @@ subsystems:
         falcons:
             angleMotor1: -1
             angleMotor2: -1
-        neo550:
             extensionMotor: -1
         constants:
     collector:
         implemented: true
         solenoids:
             collectorPiston: -1
-        motors:
+        neo550s:
             intakeMotor: -1
         constants:
     camera:
