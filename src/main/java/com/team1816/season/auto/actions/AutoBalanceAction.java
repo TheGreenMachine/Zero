@@ -33,7 +33,7 @@ public class AutoBalanceAction implements AutoAction {
 
     private static boolean isSwerve = false;
     private double maxVelocity;
-    private double autoBalanceDivider = factory.getConstant("drivetrain", "autoBalanceDivider");
+    private double autoBalanceDivider = factory.getConstant(Drive.NAME, "autoBalanceDivider");
 
     public AutoBalanceAction(double maxVelocity) {
         this.maxVelocity = maxVelocity;
