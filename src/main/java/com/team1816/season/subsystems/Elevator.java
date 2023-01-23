@@ -24,8 +24,12 @@ public class Elevator extends Subsystem {
     private final IGreenMotor extensionMotor;
 
     private boolean elevatorExtended;
-    private static double stowAngle, collectAngle, scoreAngle;
-    private static double minExtension, midExtension, maxExtension;
+    private static double stowAngle;
+    private static double collectAngle;
+    private static double scoreAngle;
+    private static double minExtension;
+    private static double midExtension;
+    private static double maxExtension;
 
     private double actualExtensionPosition;
     private double actualAnglePosition;
@@ -42,11 +46,11 @@ public class Elevator extends Subsystem {
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
 
 
-        /** components */
+        //components
         this.angleMotor1 = factory.getMotor(NAME,"angleMotor1");
         this.angleMotor2 = factory.getFollowerMotor(NAME,"angleMotor2", angleMotor1);
         this.extensionMotor = factory.getMotor(NAME,"extensionMotor");
-        /** constants */
+        //constants
         ALLOWABLE_ERROR = config.allowableError;
         double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
 
@@ -55,7 +59,7 @@ public class Elevator extends Subsystem {
 
 
     public void setDesiredState(ANGLE_STATE elevatorAngle, EXTENSION_STATE elevatorExtension) {
-        if(desiredAnglePosition != elevatorAngle) {
+        if (desiredAnglePosition != elevatorAngle) {
             desiredAnglePosition = elevatorAngle;
             outputsChanged = true;
         }
