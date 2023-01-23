@@ -61,7 +61,9 @@ public class ControlBoard implements IControlBoard {
                     ? 1
                     : 0;
             }
-        } else if (controlBoardBridge.operatorMapContainsKey(name)) {
+        }
+
+        else if (controlBoardBridge.operatorMapContainsKey(name)) {
             if (controlBoardBridge.getOperatorAxisMap().containsKey(name)) {
                 return operatorController.getJoystick(
                     controlBoardBridge.getOperatorAxisMap().get(name)
@@ -74,6 +76,7 @@ public class ControlBoard implements IControlBoard {
                     : 0;
             }
         }
+
         else if (controlBoardBridge.mrButtonsMapContrainsKey(name)) {
             if (controlBoardBridge.getMrButtonAxisMap().containsKey(name)) {
                 return operatorController.getJoystick(
