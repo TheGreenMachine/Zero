@@ -92,6 +92,7 @@ subsystems:
         falcons:
             angleMotor1: -1
             angleMotor2: -1
+        neo550:
             extensionMotor: -1
         constants:
     collector:
