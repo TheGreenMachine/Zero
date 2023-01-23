@@ -23,21 +23,16 @@ public class Elevator extends Subsystem {
     private final IGreenMotor angleMotor2;
     private final IGreenMotor extensionMotor;
 
-    private boolean elevatorExtended;
     private static double stowAngle;
     private static double collectAngle;
     private static double scoreAngle;
     private static double minExtension;
     private static double midExtension;
     private static double maxExtension;
-
     private double actualExtensionPosition;
     private double actualAnglePosition;
-
     private ANGLE_STATE desiredAnglePosition = ANGLE_STATE.STOW;
     private EXTENSION_STATE desiredExtensionPosition = EXTENSION_STATE.MIN;
-
-
     private boolean outputsChanged;
     private final double ALLOWABLE_ERROR;
 
@@ -45,18 +40,16 @@ public class Elevator extends Subsystem {
         super(name, inf, rs);
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
 
-
         //components
         this.angleMotor1 = factory.getMotor(NAME,"angleMotor1");
         this.angleMotor2 = factory.getFollowerMotor(NAME,"angleMotor2", angleMotor1);
         this.extensionMotor = factory.getMotor(NAME,"extensionMotor");
+
         //constants
         ALLOWABLE_ERROR = config.allowableError;
         double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
 
     }
-
-
 
     public void setDesiredState(ANGLE_STATE elevatorAngle, EXTENSION_STATE elevatorExtension) {
         if (desiredAnglePosition != elevatorAngle) {
@@ -68,7 +61,6 @@ public class Elevator extends Subsystem {
             desiredExtensionPosition = elevatorExtension;
             outputsChanged = true;
         }
-
     }
 
     @Override
@@ -80,7 +72,6 @@ public class Elevator extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
-            elevatorExtended = false;
             switch (desiredExtensionPosition){
                 case MAX:
                     break;
