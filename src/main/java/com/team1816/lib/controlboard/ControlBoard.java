@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 /**
  * This class is the main ControlBoard and through a series of hashmaps in ControlBoardBridge associates buttons to actions
  */
+
 @Singleton
 public class ControlBoard implements IControlBoard {
 
