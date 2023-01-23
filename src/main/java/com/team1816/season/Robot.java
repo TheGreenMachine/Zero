@@ -73,6 +73,13 @@ public class Robot extends TimedRobot {
     private boolean faulted;
     private Drive.ControlState prevState;
     private boolean isAutoBalancing;
+    private static boolean isSwerve = false;
+
+
+    /** Autobalancing stuff */
+    private static SwerveDriveKinematics swerveKinematics;
+    private static DifferentialDriveKinematics tankKinematics;
+
 
     /**
      * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
@@ -442,21 +449,15 @@ public class Robot extends TimedRobot {
 
         //Autobalancing stuff!
         isAutoBalancing = controlBoard.getAsBool("autoBalance");
-        boolean isSwerve = false;
 
         if (drive instanceof SwerveDrive) {
             isSwerve = true;
         }
-
-        SwerveDriveKinematics swerveKinematics;
-        DifferentialDriveKinematics tankKinematics;
-
         if (isSwerve) {
             swerveKinematics = ((SwerveDrive) drive).getKinematics();
         } else {
             tankKinematics = ((TankDrive) drive).getKinematics();
         }
-
 
         if(isAutoBalancing) {
             double autoBalanceDivider = factory.getConstant(Drive.NAME, "autoBalanceDivider");
