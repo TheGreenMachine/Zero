@@ -17,6 +17,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
+import static com.team1816.lib.subsystems.Subsystem.factory;
+
 /**
  * Action for infrastructure based / gyroscopic balancing
  * @see AutoAction
@@ -31,6 +33,7 @@ public class AutoBalanceAction implements AutoAction {
 
     private static boolean isSwerve = false;
     private double maxVelocity;
+    private double autoBalanceDivider = factory.getConstant("drivetrain", "autoBalanceDivider");
 
     public AutoBalanceAction(double maxVelocity) {
         this.maxVelocity = maxVelocity;
@@ -60,8 +63,8 @@ public class AutoBalanceAction implements AutoAction {
         double velocityY = 0;
 
         if(Math.abs(pitch) > 2 || Math.abs(roll) > 2){
-            velocityX = pitch / 40;
-            velocityY = roll / 40;
+            velocityX = pitch / autoBalanceDivider;
+            velocityY = roll / autoBalanceDivider;
         }
 
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(velocityX, velocityY, 0);
