@@ -29,6 +29,12 @@ public class ControlBoardBridge {
     private HashMap<String, Integer> operatorDpadMap = new HashMap<>();
     private boolean operatorRumble = false;
 
+    private HashMap<String, Controller.Button> mrButtons_ButtonMap = new HashMap<>();
+    private HashMap<String, Controller.Axis> mrButtonAxisMap = new HashMap<>();
+    private HashMap<String, Integer> mrButtonsDpadMap = new HashMap<>();
+
+    private boolean mrButtonsRumble = false;
+
     /**
      * Instantiates the ControlBoardBridge which maps controllable axes and buttons
      */
@@ -266,6 +272,107 @@ public class ControlBoardBridge {
                     );
                 }
             }
+            if (config.mrButtons != null){
+                if(config.mrButtons.rumble != null){
+                    mrButtonsRumble = config.mrButtons.rumble;
+                }
+                if(config.mrButtons.joysticks != null){
+                    if (config.mrButtons.joysticks.get("left") != null) {
+                        if (config.mrButtons.joysticks.get("left").horizontal != null) {
+                            mrButtonAxisMap.put(
+                                config.mrButtons.joysticks.get("left").horizontal,
+                                Controller.Axis.LEFT_X
+                            );
+                        }
+                        if (config.mrButtons.joysticks.get("left").vertical != null) {
+                            mrButtonAxisMap.put(
+                                config.mrButtons.joysticks.get("left").vertical,
+                                Controller.Axis.LEFT_Y
+                            );
+                        }
+                    }
+                    if (config.mrButtons.joysticks.get("right") != null) {
+                        if (config.mrButtons.joysticks.get("right").horizontal != null) {
+                            mrButtonAxisMap.put(
+                                config.mrButtons.joysticks.get("right").horizontal,
+                                Controller.Axis.RIGHT_X
+                            );
+                        }
+                        if (config.mrButtons.joysticks.get("right").vertical != null) {
+                            mrButtonAxisMap.put(
+                                config.mrButtons.joysticks.get("right").vertical,
+                                Controller.Axis.RIGHT_Y
+                            );
+                        }
+                    }
+                }
+                if (config.mrButtons.axes != null) {
+                    mrButtonAxisMap.put(
+                        config.mrButtons.axes.getOrDefault("leftTrigger", "empty"),
+                        Controller.Axis.LEFT_TRIGGER
+                    );
+                    mrButtonAxisMap.put(
+                        config.operator.axes.getOrDefault("rightTrigger", "empty"),
+                        Controller.Axis.RIGHT_TRIGGER
+                    );
+                }
+                if (config.mrButtons.buttonpad != null) {
+                    if (config.mrButtons.buttonpad.x != null) mrButtons_ButtonMap.put(
+                        config.mrButtons.buttonpad.x,
+                        Controller.Button.X
+                    );
+                    if (config.mrButtons.buttonpad.y != null) mrButtons_ButtonMap.put(
+                        config.mrButtons.buttonpad.y,
+                        Controller.Button.Y
+                    );
+                    if (config.mrButtons.buttonpad.a != null) mrButtons_ButtonMap.put(
+                        config.mrButtons.buttonpad.a,
+                        Controller.Button.A
+                    );
+                    if (config.mrButtons.buttonpad.b != null) mrButtons_ButtonMap.put(
+                        config.mrButtons.buttonpad.b,
+                        Controller.Button.B
+                    );
+                }
+                if (config.mrButtons.buttons != null) {
+                    mrButtons_ButtonMap.put(
+                        config.mrButtons.buttons.getOrDefault("leftBumper", "empty"),
+                        Controller.Button.LEFT_BUMPER
+                    );
+                    mrButtons_ButtonMap.put(
+                        config.mrButtons.buttons.getOrDefault("rightBumper", "empty"),
+                        Controller.Button.RIGHT_BUMPER
+                    );
+
+                    mrButtons_ButtonMap.put(
+                        config.mrButtons.buttons.getOrDefault("start", "empty"),
+                        Controller.Button.START
+                    );
+                    mrButtons_ButtonMap.put(
+                        config.mrButtons.buttons.getOrDefault("back", "empty"),
+                        Controller.Button.BACK
+                    );
+                }
+                if (config.mrButtons.dpad != null) {
+                    if (config.mrButtons.dpad.up != null) mrButtonsDpadMap.put(
+                        config.mrButtons.dpad.up,
+                        0
+                    );
+                    if (config.mrButtons.dpad.right != null) mrButtonsDpadMap.put(
+                        config.mrButtons.dpad.right,
+                        90
+                    );
+                    if (config.mrButtons.dpad.down != null) mrButtonsDpadMap.put(
+                        config.mrButtons.dpad.down,
+                        180
+                    );
+                    if (config.mrButtons.dpad.left != null) mrButtonsDpadMap.put(
+                        config.mrButtons.dpad.left,
+                        270
+                    );
+                }
+            }
+
         }
     }
 
@@ -342,4 +449,24 @@ public class ControlBoardBridge {
             operatorDpadMap.containsKey(key)
         );
     }
+
+    public HashMap<String, Controller.Button> getMrButtons_ButtonMap() {
+        return mrButtons_ButtonMap;
+    }
+
+    public HashMap<String, Controller.Axis> getMrButtonAxisMap() {
+        return mrButtonAxisMap;
+    }
+
+    public HashMap<String, Integer> getMrButtonsDpadMap() {
+        return mrButtonsDpadMap;
+    }
+
+    public boolean mrButtonsMapContrainsKey(String key){
+        return (mrButtonAxisMap.containsKey(key) ||
+                mrButtons_ButtonMap.containsKey(key) ||
+                mrButtonsDpadMap.containsKey(key));
+    }
+
+
 }

@@ -14,15 +14,18 @@ public class ControlBoard implements IControlBoard {
     // Control Board
     public static final int kDriveGamepadPort = 0;
     public static final int kOperatorGamepadPort = 1;
+    public static final int kMrButtonsGamepadPort = 2;
 
     private final Controller driverController;
     private final Controller operatorController;
+
+    private final Controller mrButtonsController; //Blame Adele She named the operator Button Board
 
     @Inject
     private ControlBoard(ControlBoardBridge bridge, Controller.Factory controller) {
         driverController = controller.getControllerInstance(kDriveGamepadPort);
         operatorController = controller.getControllerInstance(kOperatorGamepadPort);
-
+        mrButtonsController = controller.getControllerInstance(kMrButtonsGamepadPort);
         controlBoardBridge = bridge;
     }
 
