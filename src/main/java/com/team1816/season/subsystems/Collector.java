@@ -54,6 +54,7 @@ public class Collector extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
+<<<<<<< Updated upstream
             armUp = false;
                 switch (desiredPivotState) {
                     case UP:
@@ -68,6 +69,9 @@ public class Collector extends Subsystem {
                         break;
                     case FLUSH:
                         break;
+=======
+                switch (desiredState) {
+>>>>>>> Stashed changes
                 }
         }
     }
