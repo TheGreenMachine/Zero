@@ -8,6 +8,8 @@ import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.lib.subsystems.LedManager;
+import com.team1816.season.subsystems.Collector;
+import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -37,6 +39,10 @@ public class Orchestrator {
     private static Drive drive;
     private static LedManager ledManager;
 
+    private static Collector collector;
+
+    private static Elevator elevator;
+
 
     /**
      * State
@@ -59,11 +65,38 @@ public class Orchestrator {
      * @param led LedManager
      */
     @Inject
-    public Orchestrator(Drive.Factory df, Turret tur, LedManager led) {
+    public Orchestrator(Drive.Factory df, Turret tur, LedManager led, Collector col, Elevator el) {
         drive = df.getInstance();
-        turret = tur;
         ledManager = led;
-        superstructureState = STATE.FAT_BOY;
+        collector = col;
+        elevator = el;
+    }
+
+    public void setOrchestratorState(STATE state){
+        superstructureState = state;
+    }
+
+    public void setCollectingCone(){
+        collector.setDesiredState(Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.COLLECT);
+        elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
+    }
+
+    public void setCollectingCube(){
+        collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.COLLECT);
+        elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
+    }
+
+    public void setScore(int desLevel){
+        if(desLevel == 1){
+            collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.FLUSH);
+            elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN);
+        } else if (desLevel == 2){
+            collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.FLUSH);
+            elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID;
+        } else if (desLevel == 3){
+            collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.FLUSH);
+            elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
+        }
     }
 
     /** Actions */
@@ -196,7 +229,8 @@ public class Orchestrator {
      * Base enum for Orchestrator states
      */
     public enum STATE {
-        FAT_BOY,
-        LITTLE_MAN,
+        COLLECT,
+        STORE,
+        STOW
     }
 }
