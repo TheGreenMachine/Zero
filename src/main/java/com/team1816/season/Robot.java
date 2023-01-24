@@ -73,6 +73,7 @@ public class Robot extends TimedRobot {
     private boolean faulted;
     private Drive.ControlState prevState;
     private boolean isAutoBalancing;
+    private double autoBalanceDivider = factory.getConstant(Drive.NAME, "autoBalanceDivider");
     private static boolean isSwerve = false;
 
 
@@ -460,24 +461,21 @@ public class Robot extends TimedRobot {
         }
 
         if(isAutoBalancing) {
-            double autoBalanceDivider = factory.getConstant(Drive.NAME, "autoBalanceDivider");
             double pitch = -infrastructure.getPitch();
             double roll = infrastructure.getRoll();
             double velocityX = 0;
             double velocityY = 0;
-
-
-
 
             if(Math.abs(pitch) > 2 || Math.abs(roll) > 2){
                 velocityX = pitch / autoBalanceDivider;
                 velocityY = roll / autoBalanceDivider;
             }
 
-            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(velocityX, velocityY, 0);
+            // I just realized that I'm a dingus and could use setTeleopInputs for this
             if (isSwerve) {
-                ((SwerveDrive) drive).setModuleStatesPercentOutput(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
+                drive.setTeleopInputs(velocityX, velocityY, 0);
             } else {
+                ChassisSpeeds chassisSpeeds = new ChassisSpeeds(velocityX, velocityY, 0);
                 DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
                 DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond/ TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond/TankDrive.kPathFollowingMaxVelMeters);
                 ((TankDrive) drive).setVelocity(driveSignal);
@@ -488,7 +486,6 @@ public class Robot extends TimedRobot {
             -controlBoard.getAsDouble("throttle"),
             -controlBoard.getAsDouble("strafe"),
             controlBoard.getAsDouble("rotation")
-
         );
 
 

@@ -245,8 +245,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     public void setModuleStatesPercentOutput(SwerveModuleState[] desiredStates) { // TODO this is a massive hack that makes my eyes bleed
-        if (controlState != ControlState.TRAJECTORY_FOLLOWING) {
-            controlState = ControlState.TRAJECTORY_FOLLOWING;
+        if (controlState != ControlState.OPEN_LOOP) {
+            controlState = ControlState.OPEN_LOOP;
         }
         SwerveDriveKinematics.desaturateWheelSpeeds(
             desiredStates,
