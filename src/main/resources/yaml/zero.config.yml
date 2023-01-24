@@ -90,10 +90,16 @@ subsystems:
     elevator:
         implemented: true
         falcons:
-            angleMotor1: -1
-            angleMotor2: -1
+            angleMotorMain: -1
+            angleMotorFollower: -1
             extensionMotor: -1
         constants:
+            stowPose: 0
+            collectPose: 512
+            scorePose: 1024
+            minPose: 0
+            midPose: 512
+            maxPose: 1024
     collector:
         implemented: true
         solenoids:
