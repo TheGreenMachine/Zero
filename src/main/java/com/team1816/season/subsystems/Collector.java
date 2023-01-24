@@ -58,13 +58,13 @@ public class Collector extends Subsystem {
                 }
                 switch (desiredCollectorState) {
                     case STOP:
-                        intakeMotor.set(ControlMode.PercentOutput, 0);
+                        intakeMotor.set(ControlMode.Velocity, 0);
                         break;
                     case COLLECT:
-                        intakeMotor.set(ControlMode.PercentOutput, .5);
+                        intakeMotor.set(ControlMode.Velocity, factory.getConstant(NAME, "collectTicks"));
                         break;
                     case FLUSH:
-                        intakeMotor.set(ControlMode.PercentOutput, -.5);
+                        intakeMotor.set(ControlMode.Velocity, factory.getConstant(NAME, "flushTicks"));
                         break;
                 }
         }

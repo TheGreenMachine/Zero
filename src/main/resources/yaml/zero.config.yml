@@ -107,6 +107,8 @@ subsystems:
         neo550s:
             intakeMotor: -1
         constants:
+            collectTicks: 10
+            flushTicks: -10
     camera:
         implemented: true
         constants:
