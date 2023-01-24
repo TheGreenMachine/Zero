@@ -603,7 +603,8 @@ public class LazySparkMax implements IGreenMotor {
         SupplyCurrentLimitConfiguration currLimitCfg,
         int timeoutMs
     ) {
-        return null;
+        motor.setSmartCurrentLimit((int) currLimitCfg.currentLimit); // amps
+        return ErrorCode.OK;
     }
 
     @Override

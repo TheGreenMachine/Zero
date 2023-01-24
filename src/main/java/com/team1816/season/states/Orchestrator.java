@@ -47,7 +47,7 @@ public class Orchestrator {
     /**
      * State
      */
-    private STATE superstructureState;
+    private STATE orchestratorState;
     private final double maxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
         4
@@ -73,7 +73,7 @@ public class Orchestrator {
     }
 
     public void setOrchestratorState(STATE state){
-        superstructureState = state;
+        orchestratorState = state;
     }
 
     public void setCollectingCone(){
