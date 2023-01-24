@@ -48,7 +48,6 @@ public class Elevator extends Subsystem {
         //constants
         ALLOWABLE_ERROR = config.allowableError;
         double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
-
     }
 
     public void setDesiredState(ANGLE_STATE elevatorAngle, EXTENSION_STATE elevatorExtension) {

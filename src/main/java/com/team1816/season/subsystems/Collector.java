@@ -9,13 +9,7 @@ import com.team1816.season.states.RobotState;
 
 public class Collector extends Subsystem {
 
-    private static boolean isCube;
-
-    private static boolean isHolding;
-
     private final ISolenoid collectorPiston;
-
-    private boolean armUp;
 
     private final IGreenMotor intakeMotor;
 
@@ -47,26 +41,30 @@ public class Collector extends Subsystem {
     }
     @Override
     public void readFromHardware() {
-        intakeMotor.getSelectedSensorVelocity(0);
+        intakeVel = intakeMotor.getSelectedSensorVelocity(0);
     }
 
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
-            armUp = false;
                 switch (desiredPivotState) {
                     case UP:
+                        collectorPiston.set(true);
                         break;
                     case DOWN:
+                        collectorPiston.set(false);
                         break;
                 }
                 switch (desiredCollectorState) {
                     case STOP:
+                        intakeMotor.set(ControlMode.PercentOutput, 0);
                         break;
                     case COLLECT:
+                        intakeMotor.set(ControlMode.PercentOutput, .5);
                         break;
                     case FLUSH:
+                        intakeMotor.set(ControlMode.PercentOutput, -.5);
                         break;
                 }
         }
