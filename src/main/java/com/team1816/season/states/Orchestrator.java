@@ -92,7 +92,7 @@ public class Orchestrator {
             elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN);
         } else if (desLevel == 2){
             collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.FLUSH);
-            elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID;
+            elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID);
         } else if (desLevel == 3){
             collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.FLUSH);
             elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
