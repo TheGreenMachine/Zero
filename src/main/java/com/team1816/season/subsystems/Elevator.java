@@ -74,10 +74,13 @@ public class Elevator extends Subsystem {
             outputsChanged = false;
             switch (desiredExtensionPosition){
                 case MAX:
+                    //4096
+
                     break;
                 case MID:
                     break;
                 case MIN:
+
                     break;
 
             }
