@@ -19,7 +19,7 @@ public class Elevator extends Subsystem {
 
     private static final String NAME = "elevator";
 
-    /** components */
+    //components
     private final IGreenMotor angleMotorMain;
     private final IGreenMotor angleMotorFollower;
     private final IGreenMotor extensionMotor;
