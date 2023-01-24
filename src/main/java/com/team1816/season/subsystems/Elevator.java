@@ -1,6 +1,8 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
@@ -8,6 +10,7 @@ import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 
+@Singleton
 public class Elevator extends Subsystem {
     /**
      * Base parameters needed to instantiate a subsystem
@@ -30,17 +33,18 @@ public class Elevator extends Subsystem {
     private static double minExtension;
     private static double midExtension;
     private static double maxExtension;
+
+    // these are already our "actual" angles and extensions - they should also be "pos", not "vel"
     private double angleVel;
     private double extensionVel;
-    private double actualExtensionPosition;
-    private double actualAnglePosition;
     private ANGLE_STATE desiredAnglePosition = ANGLE_STATE.STOW;
     private EXTENSION_STATE desiredExtensionPosition = EXTENSION_STATE.MIN;
     private boolean outputsChanged;
     private final double ALLOWABLE_ERROR;
 
-    public Elevator(String name, Infrastructure inf, RobotState rs, ISolenoid elevatorSolenoid, IGreenMotor angleMotor, IGreenMotor elevatorMotor, IGreenMotor angleMotorFollower, double allowable_error) {
-        super(name, inf, rs);
+    @Inject
+    public Elevator(Infrastructure inf, RobotState rs) {
+        super(NAME, inf, rs);
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
 
         //components
@@ -50,7 +54,11 @@ public class Elevator extends Subsystem {
 
         //constants
         ALLOWABLE_ERROR = config.allowableError;
+        // we're actually looking for encoder pulses per revolution (encPPR) here, not the maxTicks value -
+        // both components in this subsystem run in position mode, which means we want to know how many ticks (pulses)
+        // there are per revolution of the motor shaft
         double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
+        // this part is dead on - we want set positions (that are tick values) to set the motors to
         stowAngle = factory.getConstant("elevator","stowPose");
         collectAngle = factory.getConstant("elevator", "collectPose");
         scoreAngle = factory.getConstant("elevator", "scorePose");
@@ -73,38 +81,32 @@ public class Elevator extends Subsystem {
 
     @Override
     public void readFromHardware() {
-        extensionVel = extensionMotor.getSelectedSensorVelocity(0);
-        angleVel = angleMotorMain.getSelectedSensorVelocity(0);
+        // we're not looking for the motor's velocity but its position here -
+        // how far out the arm has extended is proportional to what position the motor is (how many rotations it's done)
+        extensionVel = extensionMotor.getSelectedSensorPosition(0);
+        // we want to know at what angle it's at not how fast it's getting there
+        angleVel = angleMotorMain.getSelectedSensorPosition(0);
     }
 
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
-            switch (desiredExtensionPosition){
+            switch (desiredExtensionPosition) {
                 //all are using ticks to determine their position, called from yaml constants
-                case MAX:
-                    extensionMotor.set(ControlMode.Velocity, (maxExtension));
-                    break;
-                case MID:
-                    extensionMotor.set(ControlMode.Velocity, (midExtension));
-                    break;
-                case MIN:
-                    extensionMotor.set(ControlMode.Velocity, (minExtension));
-                    break;
-
+                // you are setting the motors to velocity mode not position -
+                // rn this will make the extension arm extend to the point that it breaks!
+                case MAX -> extensionMotor.set(ControlMode.Velocity, (maxExtension));
+                case MID -> extensionMotor.set(ControlMode.Velocity, (midExtension));
+                case MIN -> extensionMotor.set(ControlMode.Velocity, (minExtension));
             }
             switch (desiredAnglePosition) {
                 //all are using ticks to determine their position, called from yaml constants
-                case STOW:
-                    angleMotorMain.set(ControlMode.Velocity, (stowAngle));
-                    break;
-                case COLLECT:
-                    angleMotorMain.set(ControlMode.Velocity, (collectAngle));
-                    break;
-                case SCORE:
-                    angleMotorMain.set(ControlMode.Velocity, (scoreAngle));
-                    break;
+                // same as above, except this will cause a different kind of bad event
+                // (arm spinning all the way around and smashing into the ground behind robot)
+                case STOW -> angleMotorMain.set(ControlMode.Velocity, (stowAngle));
+                case COLLECT -> angleMotorMain.set(ControlMode.Velocity, (collectAngle));
+                case SCORE -> angleMotorMain.set(ControlMode.Velocity, (scoreAngle));
             }
 
         }
@@ -128,6 +130,8 @@ public class Elevator extends Subsystem {
 
     /** enums */
     public enum ANGLE_STATE {
+        // it's doable to make the enum store the velocity that it corresponds to,
+        // but since it's usually a hassle to do and ur currently not using it I would kinda advise against it?
         STOW(stowAngle),
         COLLECT(collectAngle),
         SCORE(scoreAngle),
@@ -139,6 +143,7 @@ public class Elevator extends Subsystem {
     }
 
     public enum EXTENSION_STATE {
+        // same as above :)
         MIN(minExtension),
         MID(midExtension),
         MAX(maxExtension),
