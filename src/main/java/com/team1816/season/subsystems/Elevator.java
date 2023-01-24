@@ -30,6 +30,8 @@ public class Elevator extends Subsystem {
     private static double minExtension;
     private static double midExtension;
     private static double maxExtension;
+    private double angleVel;
+    private double extensionVel;
     private double actualExtensionPosition;
     private double actualAnglePosition;
     private ANGLE_STATE desiredAnglePosition = ANGLE_STATE.STOW;
@@ -71,7 +73,8 @@ public class Elevator extends Subsystem {
 
     @Override
     public void readFromHardware() {
-
+        extensionVel = extensionMotor.getSelectedSensorVelocity(0);
+        angleVel = angleMotorMain.getSelectedSensorVelocity(0);
     }
 
     @Override
@@ -79,6 +82,7 @@ public class Elevator extends Subsystem {
         if (outputsChanged) {
             outputsChanged = false;
             switch (desiredExtensionPosition){
+                //all are using ticks to determine their position, called from yaml constants
                 case MAX:
                     extensionMotor.set(ControlMode.Velocity, (maxExtension));
                     break;
@@ -91,6 +95,7 @@ public class Elevator extends Subsystem {
 
             }
             switch (desiredAnglePosition) {
+                //all are using ticks to determine their position, called from yaml constants
                 case STOW:
                     angleMotorMain.set(ControlMode.Velocity, (stowAngle));
                     break;
