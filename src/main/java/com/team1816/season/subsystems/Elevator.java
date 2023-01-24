@@ -6,7 +6,6 @@ import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
-import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 
@@ -34,9 +33,8 @@ public class Elevator extends Subsystem {
     private static double midExtension;
     private static double maxExtension;
 
-    // these are already our "actual" angles and extensions - they should also be "pos", not "vel"
-    private double angleVel;
-    private double extensionVel;
+    private double anglePos;
+    private double extensionPos;
     private ANGLE_STATE desiredAnglePosition = ANGLE_STATE.STOW;
     private EXTENSION_STATE desiredExtensionPosition = EXTENSION_STATE.MIN;
     private boolean outputsChanged;
@@ -54,10 +52,9 @@ public class Elevator extends Subsystem {
 
         //constants
         ALLOWABLE_ERROR = config.allowableError;
-        // we're actually looking for encoder pulses per revolution (encPPR) here, not the maxTicks value -
         // both components in this subsystem run in position mode, which means we want to know how many ticks (pulses)
         // there are per revolution of the motor shaft
-        double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
+        double MAX_TICKS = factory.getConstant(NAME,"encPPR", 0);
         // this part is dead on - we want set positions (that are tick values) to set the motors to
         stowAngle = factory.getConstant("elevator","stowPose");
         collectAngle = factory.getConstant("elevator", "collectPose");
@@ -83,9 +80,9 @@ public class Elevator extends Subsystem {
     public void readFromHardware() {
         // we're not looking for the motor's velocity but its position here -
         // how far out the arm has extended is proportional to what position the motor is (how many rotations it's done)
-        extensionVel = extensionMotor.getSelectedSensorPosition(0);
+        extensionPos = extensionMotor.getSelectedSensorPosition(0);
         // we want to know at what angle it's at not how fast it's getting there
-        angleVel = angleMotorMain.getSelectedSensorPosition(0);
+        anglePos = angleMotorMain.getSelectedSensorPosition(0);
     }
 
     @Override
