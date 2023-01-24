@@ -86,17 +86,22 @@ public class Orchestrator {
         elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
     }
 
-    public void setScore(int desLevel){
-        if(desLevel == 1){
+    public void setScore(SCORE_LEVEL_STATE STATE){
+        if(STATE == SCORE_LEVEL_STATE.MIN) {
             collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.FLUSH);
             elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN);
-        } else if (desLevel == 2){
+        } else if (STATE == SCORE_LEVEL_STATE.MID) {
             collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.FLUSH);
             elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID);
-        } else if (desLevel == 3){
+        } else if (STATE == SCORE_LEVEL_STATE.MAX) {
             collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.FLUSH);
             elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
         }
+    }
+
+    public void setStow(){
+        collector.setDesiredState(Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.STOP);
+        elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
     }
 
     /** Actions */
@@ -232,5 +237,11 @@ public class Orchestrator {
         COLLECT,
         STORE,
         STOW
+    }
+
+    public enum SCORE_LEVEL_STATE {
+        MIN,
+        MID,
+        MAX
     }
 }
