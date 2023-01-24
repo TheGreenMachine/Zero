@@ -8,6 +8,7 @@ import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.lib.subsystems.LedManager;
+import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -36,6 +37,7 @@ public class Orchestrator {
      */
     private static Drive drive;
     private static LedManager ledManager;
+    private static Elevator elevator;
 
 
     /**
@@ -59,9 +61,9 @@ public class Orchestrator {
      * @param led LedManager
      */
     @Inject
-    public Orchestrator(Drive.Factory df, Turret tur, LedManager led) {
+    public Orchestrator(Drive.Factory df, Turret tur, LedManager led, Elevator el) {
         drive = df.getInstance();
-        turret = tur;
+        elevator = el;
         ledManager = led;
         superstructureState = STATE.FAT_BOY;
     }
