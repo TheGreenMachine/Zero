@@ -87,13 +87,26 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255
-    cooler:
+    elevator:
+        implemented: true
+        falcons:
+            angleMotorMain: -1
+            angleMotorFollower: -1
+            extensionMotor: -1
+        constants:
+            stowPose: 0
+            collectPose: 512
+            scorePose: 1024
+            minPose: 0
+            midPose: 512
+            maxPose: 1024
+    collector:
         implemented: true
         solenoids:
-            lock: 1
-            dump: 3
+            collectorPiston: -1
+        neo550s:
+            intakeMotor: -1
         constants:
-            heatThreshold: 65 # degrees Celsius
     camera:
         implemented: true
         constants:

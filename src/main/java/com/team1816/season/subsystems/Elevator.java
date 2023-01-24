@@ -1,5 +1,6 @@
 package com.team1816.season.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
@@ -19,8 +20,8 @@ public class Elevator extends Subsystem {
     private static final String NAME = "elevator";
 
     /** components */
-    private final IGreenMotor angleMotor1;
-    private final IGreenMotor angleMotor2;
+    private final IGreenMotor angleMotorMain;
+    private final IGreenMotor angleMotorFollower;
     private final IGreenMotor extensionMotor;
 
     private static double stowAngle;
@@ -36,19 +37,24 @@ public class Elevator extends Subsystem {
     private boolean outputsChanged;
     private final double ALLOWABLE_ERROR;
 
-    public Elevator(String name, Infrastructure inf, RobotState rs, ISolenoid elevatorSolenoid, IGreenMotor angleMotor, IGreenMotor elevatorMotor, IGreenMotor angleMotor2, double allowable_error) {
+    public Elevator(String name, Infrastructure inf, RobotState rs, ISolenoid elevatorSolenoid, IGreenMotor angleMotor, IGreenMotor elevatorMotor, IGreenMotor angleMotorFollower, double allowable_error) {
         super(name, inf, rs);
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
 
         //components
-        this.angleMotor1 = factory.getMotor(NAME,"angleMotor1");
-        this.angleMotor2 = factory.getFollowerMotor(NAME,"angleMotor2", angleMotor1);
+        this.angleMotorMain = factory.getMotor(NAME,"angleMotorMain");
+        this.angleMotorFollower = factory.getFollowerMotor(NAME,"angleMotorFollower", angleMotorMain);
         this.extensionMotor = factory.getMotor(NAME,"extensionMotor");
 
         //constants
         ALLOWABLE_ERROR = config.allowableError;
         double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
-
+        stowAngle = factory.getConstant("elevator","stowPose");
+        collectAngle = factory.getConstant("elevator", "collectPose");
+        scoreAngle = factory.getConstant("elevator", "scorePose");
+        minExtension = factory.getConstant("elevator", "minPose");
+        midExtension = factory.getConstant("elevator", "midPose");
+        maxExtension = factory.getConstant("elevator", "maxPose");
     }
 
     public void setDesiredState(ANGLE_STATE elevatorAngle, EXTENSION_STATE elevatorExtension) {
@@ -74,22 +80,25 @@ public class Elevator extends Subsystem {
             outputsChanged = false;
             switch (desiredExtensionPosition){
                 case MAX:
-                    //4096
-
+                    extensionMotor.set(ControlMode.Velocity, (maxExtension));
                     break;
                 case MID:
+                    extensionMotor.set(ControlMode.Velocity, (midExtension));
                     break;
                 case MIN:
-
+                    extensionMotor.set(ControlMode.Velocity, (minExtension));
                     break;
 
             }
             switch (desiredAnglePosition) {
                 case STOW:
+                    angleMotorMain.set(ControlMode.Velocity, (stowAngle));
                     break;
                 case COLLECT:
+                    angleMotorMain.set(ControlMode.Velocity, (collectAngle));
                     break;
                 case SCORE:
+                    angleMotorMain.set(ControlMode.Velocity, (scoreAngle));
                     break;
             }
 
@@ -113,8 +122,6 @@ public class Elevator extends Subsystem {
     }
 
     /** enums */
-
-
     public enum ANGLE_STATE {
         STOW(stowAngle),
         COLLECT(collectAngle),
