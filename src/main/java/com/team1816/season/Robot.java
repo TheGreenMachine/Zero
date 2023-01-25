@@ -15,7 +15,7 @@ import com.team1816.season.auto.modes.AutoBalanceMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
-import com.team1816.lib.subsystems.LedManager;
+import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.wpilibj.*;
 
 import java.nio.file.Files;
@@ -58,12 +58,7 @@ public class Robot extends TimedRobot {
      * Subsystems
      */
     private final Drive drive;
-<<<<<<< HEAD
-    private final Cooler cooler;
-    private final Camera camera;
-=======
 
->>>>>>> f4e33bd5ff3179bf9691eaf230d1a8c85a5dd278
     private final LedManager ledManager;
 
     /**
@@ -83,13 +78,9 @@ public class Robot extends TimedRobot {
     public static double autoStart;
     public static double teleopStart;
 
-<<<<<<< HEAD
-    /** Properties */
-=======
     /**
      * Properties
      */
->>>>>>> f4e33bd5ff3179bf9691eaf230d1a8c85a5dd278
     private boolean faulted;
 
     /**
@@ -247,6 +238,7 @@ public class Robot extends TimedRobot {
                             AutoBalanceMode mode = new AutoBalanceMode();
                             Thread autoBalanceThread = new Thread(mode::run);
                             autoBalanceThread.start();
+                            autoBalanceThread = null;
                             System.out.println("Balanced");
                         }
                     ),

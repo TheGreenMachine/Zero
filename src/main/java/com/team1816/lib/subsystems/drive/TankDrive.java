@@ -15,7 +15,7 @@ import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
-import com.team1816.lib.subsystems.LedManager;
+import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -272,7 +272,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             );
         robotState.deltaVehicle = cs;
 
-        robotState.vehicleToFloorProximity = infrastructure.getMaximumProximity();
+        robotState.vehicleToFloorProximityCentimeters = infrastructure.getMaximumProximity();
     }
 
     /** Open loop control */

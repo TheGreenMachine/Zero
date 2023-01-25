@@ -10,7 +10,7 @@ import com.team1816.lib.util.team254.SwerveDriveHelper;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
-import com.team1816.lib.subsystems.LedManager;
+import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -285,7 +285,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         SmartDashboard.putNumber("Drive/Temperature", motorTemperatures[0]);
         robotState.drivetrainTemp = motorTemperatures[0];
 
-        robotState.vehicleToFloorProximity = infrastructure.getMaximumProximity();
+        robotState.vehicleToFloorProximityCentimeters = infrastructure.getMaximumProximity();
     }
 
     /** Open Loop control */
