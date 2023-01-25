@@ -15,18 +15,18 @@ public class ControlBoard implements IControlBoard {
     // Control Board
     public static final int kDriveGamepadPort = 0;
     public static final int kOperatorGamepadPort = 1;
-    public static final int kMrButtonsGamepadPort = 2;
+    public static final int kButtonBoardPort = 2;
 
     private final Controller driverController;
     private final Controller operatorController;
 
-    private final Controller mrButtonsController; //Blame Adele She named the operator Button Board
+    private final Controller buttonBoardController;
 
     @Inject
     private ControlBoard(ControlBoardBridge bridge, Controller.Factory controller) {
         driverController = controller.getControllerInstance(kDriveGamepadPort);
         operatorController = controller.getControllerInstance(kOperatorGamepadPort);
-        mrButtonsController = controller.getControllerInstance(kMrButtonsGamepadPort);
+        buttonBoardController = controller.getControllerInstance(kButtonBoardPort);
         controlBoardBridge = bridge;
     }
 
@@ -76,25 +76,11 @@ public class ControlBoard implements IControlBoard {
                     ? 1
                     : 0;
             }
+        } else if (controlBoardBridge.getButtonBoardMap().containsKey(name)) {
+            return operatorController.getButton(
+                controlBoardBridge.getButtonBoardMap().get(name)
+            ) ? 1 : 0;
         }
-
-        else if (controlBoardBridge.mrButtonsMapContrainsKey(name)) {
-            if (controlBoardBridge.getMrButtonAxisMap().containsKey(name)) {
-                return operatorController.getJoystick(
-                    controlBoardBridge.getMrButtonAxisMap().get(name)
-                );
-            } else if (controlBoardBridge.getMrButtons_ButtonMap().containsKey(name)) {
-                return operatorController.getButton(
-                    controlBoardBridge.getMrButtons_ButtonMap().get(name)
-                )
-                    ? 1
-                    : 0;
-            }
-        }
-
-
-
-
 
         return defaultVal;
     }
@@ -115,8 +101,7 @@ public class ControlBoard implements IControlBoard {
                     controlBoardBridge.getDriverDpadMap().get(name)
                 );
             }
-        }
-        else if (controlBoardBridge.operatorMapContainsKey(name)) {
+        } else if (controlBoardBridge.operatorMapContainsKey(name)) {
             if (controlBoardBridge.getOperatorAxisMap().containsKey(name)) {
                 return operatorController.getTrigger(
                     controlBoardBridge.getOperatorAxisMap().get(name)
@@ -131,24 +116,11 @@ public class ControlBoard implements IControlBoard {
                     controlBoardBridge.getOperatorDpadMap().get(name)
                 );
             }
+        } else if (controlBoardBridge.buttonBoardMapContainsKey(name)) {
+            return buttonBoardController.getButton(
+                controlBoardBridge.getButtonBoardMap().get(name)
+            );
         }
-        else if (controlBoardBridge.mrButtonsMapContrainsKey(name)) {
-            if (controlBoardBridge.getMrButtonAxisMap().containsKey(name)) {
-                return mrButtonsController.getTrigger(
-                    controlBoardBridge.getMrButtonAxisMap().get(name)
-                );
-            } else if (controlBoardBridge.getMrButtons_ButtonMap().containsKey(name)) {
-                return operatorController.getButton(
-                    controlBoardBridge.getMrButtons_ButtonMap().get(name)
-                );
-            } else if (controlBoardBridge.getMrButtonsDpadMap().containsKey(name)) {
-                return (
-                    mrButtonsController.getDPad() ==
-                        controlBoardBridge.getMrButtonsDpadMap().get(name)
-                );
-            }
-        }
-
         return defaultVal;
     }
 }

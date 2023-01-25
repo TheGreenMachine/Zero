@@ -44,6 +44,7 @@ public abstract class Controller {
      * Enum for buttons on a controller
      */
     public enum Button {
+        // Standard Controls
         A,
         B,
         X,
@@ -54,6 +55,18 @@ public abstract class Controller {
         START,
         L_JOYSTICK,
         R_JOYSTICK,
+
+        // Button Board
+        CENTER,
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT,
+        UP_LEFT,
+        UP_RIGHT,
+        DOWN_LEFT,
+        DOWN_RIGHT
+
     }
 
     /**

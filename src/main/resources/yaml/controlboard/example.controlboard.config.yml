@@ -40,23 +40,15 @@ operator:
     buttons:
         start: toggleTopClamp
         back: toggleBottomClamp
-mrbuttons:
-    rumble: false
-    dpad:
-        up: up_function
-        down: down_function
-        left: left_function
-        right: right_function
-    buttonpad:
-        a: a_function
-        b: b_function
-        x: x_function
-        y: y_function
-    buttons:
-        leftBumper: leftBump_function
-        rightBumper: rightBump_function
-        start: start_function
-        back: back_function
-
+buttonboard:
+    upLeft: empty
+    up: empty
+    upRight: empty
+    left: empty
+    center: empty
+    right: empty
+    downLeft: empty
+    down: empty
+    downRight: empty
 demoMode: false
 
