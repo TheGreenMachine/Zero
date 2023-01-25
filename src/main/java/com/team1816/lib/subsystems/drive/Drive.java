@@ -20,10 +20,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.List;
 
 /**
  * Base Drive class that TankDrive and SwerveDrive extend from
+ *
  * @see TankDrive
  * @see SwerveDrive
  */
@@ -34,26 +36,35 @@ public abstract class Drive
     /**
      * Base factory, extended by {@link com.team1816.lib.DriveFactory} to determine the type of drivetrain with the help of
      * the Injector
+     *
      * @see com.team1816.lib.Injector
      */
     public interface Factory {
         Drive getInstance();
     }
 
-    /** Properties */
+    /**
+     * Properties
+     */
     public static final String NAME = "drivetrain";
 
-    /** Demo Mode */
+    /**
+     * Demo Mode
+     */
     protected double demoModeMultiplier;
     protected SendableChooser<DemoMode> demoModeChooser;
     protected DemoMode desiredMode;
     protected static final boolean isDemoMode =
         factory.getConstant(NAME, "isDemoMode", 0) > 0;
 
-    /** Components */
+    /**
+     * Components
+     */
     protected static LedManager ledManager;
 
-    /** Localized state */
+    /**
+     * Localized state
+     */
     protected ControlState controlState = ControlState.OPEN_LOOP;
     protected Rotation2d actualHeading = Constants.EmptyRotation2d;
     protected Rotation2d desiredHeading = new Rotation2d(); // only updated in trajectory following
@@ -63,18 +74,24 @@ public abstract class Drive
     protected boolean isBraking;
     protected boolean isSlowMode;
 
-    /** Trajectory */
+    /**
+     * Trajectory
+     */
     protected double trajectoryStartTime = 0;
 
     protected Pose2d startingPose = Constants.kDefaultZeroingPose;
     protected Trajectory trajectory;
     protected static double timestamp;
 
-    /** Simulator */
+    /**
+     * Simulator
+     */
     protected double gyroDrift;
     protected final double tickRatioPerLoop = Constants.kLooperDt / .01d;
 
-    /** Constants */
+    /**
+     * Constants
+     */
     public static final double maxVelTicks100ms = factory.getConstant(
         NAME,
         "maxVelTicks100ms"
@@ -149,9 +166,10 @@ public abstract class Drive
 
     /**
      * Instantiates the Drive with base subsystem parameters and accounts for DemoMode
-     * @param lm LEDManager
+     *
+     * @param lm  LEDManager
      * @param inf Infrastructure
-     * @param rs RobotState
+     * @param rs  RobotState
      */
     @Inject
     public Drive(LedManager lm, Infrastructure inf, RobotState rs) {
@@ -178,6 +196,7 @@ public abstract class Drive
 
     /**
      * Registers enabled loops for the drivetrain and sorts between the control modes of OPEN_LOOP and TRAJECTORY_FOLLOWING
+     *
      * @param in looper
      * @see com.team1816.lib.loops.Looper
      * @see com.team1816.lib.subsystems.SubsystemLooper
@@ -187,7 +206,8 @@ public abstract class Drive
         in.register(
             new Loop() {
                 @Override
-                public void onStart(double timestamp) {}
+                public void onStart(double timestamp) {
+                }
 
                 @Override
                 public void onLoop(double timestamp) {
@@ -221,8 +241,9 @@ public abstract class Drive
 
     /**
      * Starts the drivetrain to follow a trajectory and sets drivetrain state
+     *
      * @param trajectory Trajectory
-     * @param headings Headings (for swerve)
+     * @param headings   Headings (for swerve)
      * @see Trajectory
      */
     public void startTrajectory(Trajectory trajectory, List<Rotation2d> headings) {
@@ -234,6 +255,7 @@ public abstract class Drive
 
     /**
      * Returns the pose of the drivetrain with respect to the field
+     *
      * @return Pose2d fieldToVehicle
      */
     public Pose2d getPose() {
@@ -243,6 +265,7 @@ public abstract class Drive
     /**
      * Periodically updates the Trajectory based on a timestamp and the desired pose at that point which feeds into a
      * closed loop controls system, part of TRAJECTORY_FOLLOWING
+     *
      * @param timestamp
      */
     public void updateTrajectoryPeriodic(double timestamp) {
@@ -258,7 +281,8 @@ public abstract class Drive
     /**
      * Periodically updates drivetrain actions in open loop control
      */
-    protected void updateOpenLoopPeriodic() {}
+    protected void updateOpenLoopPeriodic() {
+    }
 
     /**
      * Updates the RobotState based on odometry and other calculations
@@ -267,6 +291,7 @@ public abstract class Drive
 
     /**
      * Configure motors for open loop control and sends a DriveSignal command based on inputs
+     *
      * @param signal DriveSignal
      * @see com.team1816.lib.util.team254.SwerveDriveSignal
      * @see DriveSignal
@@ -275,8 +300,9 @@ public abstract class Drive
 
     /**
      * Sets the tele-operated inputs for the drivetrain that will be translated into a DriveSignal
-     * @param forward forward demand
-     * @param strafe strafe demand
+     *
+     * @param forward  forward demand
+     * @param strafe   strafe demand
      * @param rotation rotation demand
      * @see this#setOpenLoop(DriveSignal)
      */
@@ -284,6 +310,7 @@ public abstract class Drive
 
     /**
      * Sets the control state of the drivetrain (TRAJECTORY FOLLOWING, OPEN LOOP)
+     *
      * @param controlState ControlState
      */
     public void setControlState(ControlState controlState) {
@@ -292,6 +319,7 @@ public abstract class Drive
 
     /**
      * Sets the drivetrain to be in slow mode which will modify the drive signals and the motor demands
+     *
      * @param slowMode (boolean) isSlowMode
      */
     public void setSlowMode(boolean slowMode) {
@@ -300,6 +328,7 @@ public abstract class Drive
 
     /**
      * Returns the actual heading of the drivetrain based on Odometry and gyroscopic measurements
+     *
      * @return (Rotation2d) actualHeading
      */
     public synchronized Rotation2d getActualHeading() {
@@ -308,6 +337,7 @@ public abstract class Drive
 
     /**
      * Returns the ControlState of the drivetrain
+     *
      * @return controlState
      */
     public ControlState getControlState() {
@@ -316,6 +346,7 @@ public abstract class Drive
 
     /**
      * Returns the PIDSlotConfiguration of the drivetrain (base pid)
+     *
      * @return pidConfig
      */
     @Override
@@ -323,6 +354,7 @@ public abstract class Drive
 
     /**
      * Returns the desired heading of the drivetrain in degrees
+     *
      * @return desiredHeading (degrees)
      */
     @Override
@@ -332,6 +364,7 @@ public abstract class Drive
 
     /**
      * Returns the actual heading of the drivetrain (based on gyroscopic measurements) in degrees
+     *
      * @return actualHeading (degrees)
      */
     @Override
@@ -341,6 +374,7 @@ public abstract class Drive
 
     /**
      * Returns the actual displacement of the drivetrain in the X direction (long side of the field) from its initial position
+     *
      * @return xDisplacementActual
      */
     @Override
@@ -350,6 +384,7 @@ public abstract class Drive
 
     /**
      * Returns the actual displacement of the drivetrain in the Y direction (short side of the field) from its initial position
+     *
      * @return yDisplacementActual
      */
     @Override
@@ -359,6 +394,7 @@ public abstract class Drive
 
     /**
      * Returns the desired displacement of the drivetrain in the X direction from its initial position
+     *
      * @return xDisplacementDemanded
      */
     @Override
@@ -368,6 +404,7 @@ public abstract class Drive
 
     /**
      * Returns the desired displacement of the drivetrain in the Y direction from its initial position
+     *
      * @return yDisplacementDemanded
      */
     @Override
@@ -377,6 +414,7 @@ public abstract class Drive
 
     /**
      * Returns whether the drivetrain is braking (usually only used in initialization)
+     *
      * @return isBraking
      */
     public boolean isBraking() {
@@ -385,6 +423,7 @@ public abstract class Drive
 
     /**
      * Sets whether the drivetrain is braking
+     *
      * @param on (boolean) braking
      */
     public abstract void setBraking(boolean on);
@@ -392,12 +431,14 @@ public abstract class Drive
     /**
      * Resets the odometry calculations to a specific pose (typically used in parallel with a vision processing env)
      * to accurately re-localize position
+     *
      * @param pose
      */
     public abstract void resetOdometry(Pose2d pose);
 
     /**
      * Returns if the drivetrain is in demoMode (slower)
+     *
      * @return (boolean) isDemoMode
      */
     public boolean isDemoMode() {
@@ -414,6 +455,7 @@ public abstract class Drive
 
     /**
      * Zeroes the drivetrain to its "zero" state (configuration)
+     *
      * @param pose
      * @see TankDrive#zeroSensors()
      * @see SwerveDrive#zeroSensors()
@@ -428,6 +470,7 @@ public abstract class Drive
 
     /**
      * Tests the drivetrain to perform a set of tasks
+     *
      * @return true if tests passed
      */
     @Override
@@ -435,6 +478,7 @@ public abstract class Drive
 
     /**
      * Initializes a SmartDashboard / Shuffleboard sendable builder for the Drivetrain state
+     *
      * @param builder controlState
      * @see SendableBuilder
      */
@@ -449,6 +493,7 @@ public abstract class Drive
 
     /**
      * Returns the trajectory that the drivetrain is following if any
+     *
      * @return trajectory
      */
     public Trajectory getTrajectory() {
@@ -457,6 +502,7 @@ public abstract class Drive
 
     /**
      * Returns the time from starting a trajectory
+     *
      * @return timestampToTrajectoryStart
      */
     public synchronized double getTrajectoryTimestamp() {
@@ -492,6 +538,7 @@ public abstract class Drive
 
     /**
      * Updates the demoMode to the desiredMode
+     *
      * @return true if demoMode updated
      */
     public boolean update() {

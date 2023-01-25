@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 /**
  * This class is a thin wrapper around the VictorSPX that reduces CAN bus / CPU overhead.
  * Connects with CTRE VictorSPX motor controllers and adapts it for the universal IGreenMotor.
+ *
  * @see IGreenMotor
  * @see VictorSPX
  */

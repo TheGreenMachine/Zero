@@ -4,6 +4,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 
 /**
  * This class emulates the behaviour of a Compressor that is not physically implemented on a robot
+ *
  * @see ICompressor
  */
 public class GhostCompressor implements ICompressor {
@@ -52,5 +53,6 @@ public class GhostCompressor implements ICompressor {
     }
 
     @Override
-    public void close() throws Exception {}
+    public void close() throws Exception {
+    }
 }

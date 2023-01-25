@@ -5,7 +5,10 @@
         "i2c": {
             "existingJavaType": "java.util.Map<String,I2CPortConfiguration>"
         },
-        "dio": {
+        "digitalInputs": {
+            "$ref": "int.map.schema.json"
+        },
+        "analogInputs": {
             "$ref": "int.map.schema.json"
         }
     }

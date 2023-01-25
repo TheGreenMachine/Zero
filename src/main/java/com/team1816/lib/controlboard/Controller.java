@@ -2,10 +2,12 @@ package com.team1816.lib.controlboard;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+
 import java.util.EnumMap;
 
 /**
  * Base abstract class that interfaces with a controller
+ *
  * @see LogitechController
  * @see WasdController
  * @see XboxController
@@ -19,7 +21,9 @@ public abstract class Controller {
         Controller getControllerInstance(int port);
     }
 
-    /** State */
+    /**
+     * State
+     */
     protected final Joystick mController;
     public static final double kAxisThreshold = 0.04;
     public static final double kJoystickBooleanThreshold = 0.80;
@@ -71,6 +75,7 @@ public abstract class Controller {
 
     /**
      * Instantiates a controller based on it's assigned (USB) port seen in the DriverStation utility
+     *
      * @param port
      */
     public Controller(int port) {
@@ -79,6 +84,7 @@ public abstract class Controller {
 
     /**
      * Toggles rumble on a generic controller, can be fine tuned further
+     *
      * @param on
      */
     public void setRumble(boolean on) {
@@ -87,6 +93,7 @@ public abstract class Controller {
 
     /**
      * Returns dpad outputs in a standardized integer format
+     *
      * @return dpad
      */
     public int getDPad() {
@@ -95,6 +102,7 @@ public abstract class Controller {
 
     /**
      * Returns button outputs
+     *
      * @param button
      * @return boolean buttonOutput (is the button pressed)
      */
@@ -105,6 +113,7 @@ public abstract class Controller {
 
     /**
      * Returns axis outputs on a boolean basis based on the {@link Controller#kAxisThreshold}
+     *
      * @param axis
      * @return
      */
@@ -115,6 +124,7 @@ public abstract class Controller {
 
     /**
      * Returns joystick / axis output as a double
+     *
      * @param axis
      * @return
      */
@@ -125,6 +135,7 @@ public abstract class Controller {
 
     /**
      * Returns joystick / axis output with an additional inverted parameter
+     *
      * @param axis
      * @param inverted
      * @return

@@ -1,4 +1,3 @@
-
 {
     "type": "object",
     "title": "Infrastructure Config",
@@ -27,11 +26,17 @@
         },
         "isPigeon2": {
             "type": "boolean"
+        },
+        "proximitySensors": {
+            "$ref": "int.map.schema.json"
         }
     },
     "anyOf": [
         {
-            "required": ["pcmId", "canivoreBusName"]
+            "required": [
+                "pcmId",
+                "canivoreBusName"
+            ]
         }
     ]
 }

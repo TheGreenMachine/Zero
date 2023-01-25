@@ -15,6 +15,7 @@ public class ExampleAutoPath extends AutoPath {
      * Here's a more in-depth guide if you want/need it->
      * https://docs.google.com/document/d/1jCRidlvIZ5hZg-OFc1bZWmaZgIgztRfeLw-Fo9ySd6s/edit?usp=sharing
      * </p>
+     *
      * @return A list of points on the field that the robot must pass through - these points are linked together
      * into a trajectory for use in AutoModes
      */
@@ -49,8 +50,19 @@ public class ExampleAutoPath extends AutoPath {
         );
     }
 
+    @Override
+    protected List<Pose2d> getReflectedWaypoints() {
+        return null;
+    }
+
+    @Override
+    protected List<Rotation2d> getReflectedWaypointHeadings() {
+        return null;
+    }
+
     /**
      * Honestly we shouldn't even have this here anymore
+     *
      * @return just make this return true - we're always using the app
      */
     @Override

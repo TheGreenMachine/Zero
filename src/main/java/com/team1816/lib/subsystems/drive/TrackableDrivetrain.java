@@ -5,11 +5,14 @@ package com.team1816.lib.subsystems.drive;
  */
 public interface TrackableDrivetrain {
     double getFieldXDisplacement();
+
     double getFieldYDisplacement();
 
     double getFieldDesiredXDisplacement();
+
     double getFieldDesiredYDisplacement();
 
     double getActualHeadingDegrees();
+
     double getDesiredHeadingDegrees();
 }

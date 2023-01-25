@@ -21,7 +21,8 @@ public class LambdaAction implements AutoAction {
     }
 
     @Override
-    public void update() {}
+    public void update() {
+    }
 
     @Override
     public boolean isFinished() {
@@ -29,5 +30,6 @@ public class LambdaAction implements AutoAction {
     }
 
     @Override
-    public void done() {}
+    public void done() {
+    }
 }

@@ -1,8 +1,5 @@
 package com.team1816.season;
 
-import static com.team1816.lib.controlboard.ControlUtils.createAction;
-import static com.team1816.lib.controlboard.ControlUtils.createHoldAction;
-
 import badlog.lib.BadLog;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
@@ -14,53 +11,76 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.season.auto.AutoModeManager;
+import com.team1816.season.auto.modes.AutoBalanceMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.subsystems.*;
-import edu.wpi.first.math.geometry.Rotation2d;
+import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.wpilibj.*;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.team1816.lib.controlboard.ControlUtils.createAction;
+import static com.team1816.lib.controlboard.ControlUtils.createHoldAction;
+
 public class Robot extends TimedRobot {
 
-    /** Looper */
+    /**
+     * Looper
+     */
     private final Looper enabledLoop;
     private final Looper disabledLoop;
 
-    /** Logger */
+    /**
+     * Logger
+     */
     private static BadLog logger;
 
-    /** Controls */
+    /**
+     * Controls
+     */
     private IControlBoard controlBoard;
     private ActionManager actionManager;
 
     private final Infrastructure infrastructure;
     private final SubsystemLooper subsystemManager;
 
-    /** State Managers */
+    /**
+     * State Managers
+     */
     private final Orchestrator orchestrator;
     private final RobotState robotState;
 
-    /** Subsystems */
+    /**
+     * Subsystems
+     */
     private final Drive drive;
 
-    private final Camera camera;
     private final LedManager ledManager;
 
-    /** Factory */
+    /**
+     * Factory
+     */
     private static RobotFactory factory;
 
-    /** Autonomous */
+    /**
+     * Autonomous
+     */
     private final AutoModeManager autoModeManager;
 
-    /** Timing */
+    /**
+     * Timing
+     */
     private double loopStart;
+    public static double autoStart;
+    public static double teleopStart;
 
-    /** Properties */
+    /**
+     * Properties
+     */
     private boolean faulted;
 
     /**
@@ -73,7 +93,6 @@ public class Robot extends TimedRobot {
         enabledLoop = new Looper(this);
         disabledLoop = new Looper(this);
         drive = (Injector.get(Drive.Factory.class)).getInstance();
-        camera = Injector.get(Camera.class);
         ledManager = Injector.get(LedManager.class);
         robotState = Injector.get(RobotState.class);
         orchestrator = Injector.get(Orchestrator.class);
@@ -84,6 +103,7 @@ public class Robot extends TimedRobot {
 
     /**
      * Returns the static factory instance of the Robot
+     *
      * @return RobotFactory
      */
     public static RobotFactory getFactory() {
@@ -93,6 +113,7 @@ public class Robot extends TimedRobot {
 
     /**
      * Returns the length of the last loop that the Robot was on
+     *
      * @return duration (ms)
      */
     public Double getLastRobotLoop() {
@@ -101,6 +122,7 @@ public class Robot extends TimedRobot {
 
     /**
      * Returns the duration of the last enabled loop
+     *
      * @return duration (ms)
      * @see Looper#getLastLoop()
      */
@@ -119,7 +141,7 @@ public class Robot extends TimedRobot {
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            subsystemManager.setSubsystems(drive, camera, ledManager);
+            subsystemManager.setSubsystems(drive, ledManager);
 
             /** Register BadLogs */
             if (Constants.kIsBadlogEnabled) {
@@ -176,22 +198,6 @@ public class Robot extends TimedRobot {
                 );
 
                 BadLog.createTopic(
-                    "Pigeon/AccelerationX",
-                    "G",
-                    infrastructure::getXAcceleration
-                );
-                BadLog.createTopic(
-                    "Pigeon/AccelerationY",
-                    "G",
-                    infrastructure::getYAcceleration
-                );
-                BadLog.createTopic(
-                    "Pigeon/AccelerationZ",
-                    "G",
-                    infrastructure::getZAcceleration
-                );
-
-                BadLog.createTopic(
                     "Pigeon/Yaw",
                     "degrees",
                     infrastructure::getYaw
@@ -223,6 +229,17 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("zeroPose"),
                         () -> {
                             drive.zeroSensors(Constants.kDefaultZeroingPose);
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("autoBalance"),
+                        () -> {
+                            System.out.println("Starting auto balance");
+                            AutoBalanceMode mode = new AutoBalanceMode();
+                            Thread autoBalanceThread = new Thread(mode::run);
+                            autoBalanceThread.start();
+                            autoBalanceThread = null;
+                            System.out.println("Balanced");
                         }
                     ),
                     createHoldAction(
@@ -282,6 +299,7 @@ public class Robot extends TimedRobot {
         drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
         autoModeManager.startAuto();
 
+        autoStart = Timer.getFPGATimestamp();
         enabledLoop.start();
     }
 
@@ -296,6 +314,7 @@ public class Robot extends TimedRobot {
 
             infrastructure.startCompressor();
 
+            teleopStart = Timer.getFPGATimestamp();
             enabledLoop.start();
         } catch (Throwable t) {
             faulted = true;
@@ -445,5 +464,6 @@ public class Robot extends TimedRobot {
      * Actions to perform periodically when the robot is in the test period
      */
     @Override
-    public void testPeriodic() {}
+    public void testPeriodic() {
+    }
 }

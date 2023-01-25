@@ -1,7 +1,5 @@
 package com.team1816.lib.hardware.factory;
 
-import static com.team1816.lib.subsystems.Subsystem.factory;
-
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.*;
@@ -9,7 +7,10 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.SubsystemConfig;
 import com.team1816.lib.hardware.components.motor.*;
 import edu.wpi.first.wpilibj.RobotBase;
-import java.util.*;
+
+import java.util.Map;
+
+import static com.team1816.lib.subsystems.Subsystem.factory;
 
 /**
  * A class to create and configure Falcon (TalonFX), TalonSRX, VictorSPX, SparkMax and GhostMotor objects.

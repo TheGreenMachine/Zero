@@ -11,24 +11,27 @@ import com.ctre.phoenix.led.CANdle;
 public interface ILEDManager {
     /**
      * Sets LEDs on a strip
-     * @param r (red value 0-255)
-     * @param g (green value 0-255)
-     * @param b (blue value 0-255)
-     * @param w (white value)
+     *
+     * @param r        (red value 0-255)
+     * @param g        (green value 0-255)
+     * @param b        (blue value 0-255)
+     * @param w        (white value)
      * @param startIdx (start ID of led to be controlled)
-     * @param count (number of LEDs from startIdx
+     * @param count    (number of LEDs from startIdx
      * @return ErrorCode / void
      */
     ErrorCode setLEDs(int r, int g, int b, int w, int startIdx, int count);
 
     /**
      * Configures factory defaults
+     *
      * @return ErrorCode / void
      */
     ErrorCode configFactoryDefault();
 
     /**
      * Configures status LED behaviour when other LEDs are being controlled
+     *
      * @param b (disableWhenRunning)
      * @return ErrorCode / void
      */
@@ -36,6 +39,7 @@ public interface ILEDManager {
 
     /**
      * Configures LED behaviour if connection lost
+     *
      * @param b (disableWhenLOS)
      * @return ErrorCode / void
      */
@@ -43,6 +47,7 @@ public interface ILEDManager {
 
     /**
      * Configures the type of LED being controlled
+     *
      * @param brg {@link CANdle.LEDStripType}
      * @return ErrorCode / void
      */
@@ -50,6 +55,7 @@ public interface ILEDManager {
 
     /**
      * Configures the brightness scalar
+     *
      * @param brightness (double [0, 1])
      * @return ErrorCode / void
      */
@@ -57,6 +63,7 @@ public interface ILEDManager {
 
     /**
      * Animates the LEDs based on an Animation
+     *
      * @param animation (Animation)
      * @return ErrorCode / void
      * @see Animation
@@ -65,9 +72,10 @@ public interface ILEDManager {
 
     /**
      * Sets the status frame period of the LEDManager
+     *
      * @param statusFrame {@link CANifierStatusFrame}
-     * @param periodMs (period milliseconds)
-     * @param timeoutMs (timeout milliseconds)
+     * @param periodMs    (period milliseconds)
+     * @param timeoutMs   (timeout milliseconds)
      * @return ErrorCode / void
      * @see CANifierStatusFrame
      */

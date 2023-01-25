@@ -1,17 +1,17 @@
 package com.team1816.lib.util.driveUtil;
 
-import static com.team1816.lib.subsystems.drive.SwerveDrive.*;
-
 import com.team1816.lib.Injector;
 import com.team1816.lib.subsystems.drive.Drive;
-import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.team1816.lib.subsystems.drive.SwerveDrive.*;
 
 /**
  * Provides forward and inverse kinematics equations for the robot modeling the
@@ -21,9 +21,11 @@ import java.util.List;
  * https://www.chiefdelphi.com/t/paper-4-wheel-independent-drive-independent-steering-swerve/107383
  */
 
-public class SwerveKinematics implements DriveKinematics{
+public class SwerveKinematics implements DriveKinematics {
 
-    /** State */
+    /**
+     * State
+     */
     private static Translation2d[] moduleRelativePositions = kModulePositions;
     private static List<Translation2d> moduleRotationDirections = updateRotationDirections();
 
@@ -80,11 +82,11 @@ public class SwerveKinematics implements DriveKinematics{
         double rotation =
             (
                 ((strafe - A) * R / L) +
-                ((B - strafe) * R / L) +
-                ((forward - C) * R / W) +
-                ((D - forward) * R / W)
+                    ((B - strafe) * R / L) +
+                    ((forward - C) * R / W) +
+                    ((D - forward) * R / W)
             ) /
-            4;
+                4;
 
         return new Twist2d(forward, strafe, rotation);
     }
@@ -278,7 +280,7 @@ public class SwerveKinematics implements DriveKinematics{
 
     /**
      * @param scopeReference Current Angle
-     * @param newAngle Target Angle
+     * @param newAngle       Target Angle
      * @return Closest angle within scope
      */
     private static double placeInAppropriate0To360Scope(

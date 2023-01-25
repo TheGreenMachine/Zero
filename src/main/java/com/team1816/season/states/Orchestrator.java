@@ -1,8 +1,5 @@
 package com.team1816.season.states;
 
-import static com.team1816.lib.subsystems.Subsystem.factory;
-import static com.team1816.lib.subsystems.Subsystem.robotState;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.drive.Drive;
@@ -10,9 +7,11 @@ import com.team1816.lib.subsystems.turret.Turret;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
-import com.team1816.season.subsystems.*;
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.util.Units;
+import com.team1816.season.subsystems.LedManager;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -20,22 +19,29 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.team1816.lib.subsystems.Subsystem.factory;
+import static com.team1816.lib.subsystems.Subsystem.robotState;
+
 /**
  * Main superstructure-style class and logical operator for handling and delegating subsystem tasks. Consists of an integrated
  * drivetrain with other subsystems and utilizes closed loop state dependent control via RobotState.
+ *
  * @see RobotState
  */
 @Singleton
 public class Orchestrator {
 
-    /** Subsystems */
+    /**
+     * Subsystems
+     */
     private static Drive drive;
     private static Turret turret;
     private static LedManager ledManager;
 
-    private static Camera camera;
 
-    /** State */
+    /**
+     * State
+     */
     private STATE superstructureState;
     private final double maxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
@@ -43,20 +49,19 @@ public class Orchestrator {
     );
     private final double minAllowablePoseError = factory.getConstant(
         "minAllowablePoseError",
-        0.15
+        0.1
     );
 
     /**
      * Instantiates an Orchestrator with all its subsystems
-     * @param cam Camera
-     * @param df Drive.Factory (derives drivetrain)
+     *
+     * @param df  Drive.Factory (derives drivetrain)
      * @param tur Turret
      * @param led LedManager
      */
     @Inject
-    public Orchestrator(Camera cam, Drive.Factory df, Turret tur, LedManager led) {
+    public Orchestrator(Drive.Factory df, Turret tur, LedManager led) {
         drive = df.getInstance();
-        camera = cam;
         turret = tur;
         ledManager = led;
         superstructureState = STATE.FAT_BOY;
@@ -70,6 +75,7 @@ public class Orchestrator {
 
     /**
      * Returns true if the pose of the drivetrain needs to be updated in a cached boolean system
+     *
      * @return boolean
      */
     public boolean needsVisionUpdate() {
@@ -100,6 +106,7 @@ public class Orchestrator {
 
     /**
      * Calculates the absolute pose of the drivetrain based on a single target
+     *
      * @param target VisionPoint
      * @return Pose2d
      * @see VisionPoint
@@ -122,6 +129,7 @@ public class Orchestrator {
 
     /**
      * Calculates the absolute pose of the drivetrain based on a single target using PhotonVision's library
+     *
      * @param target VisionPoint
      * @return Pose2d
      * @see org.photonvision.targeting.PhotonTrackedTarget
@@ -140,6 +148,7 @@ public class Orchestrator {
 
     /**
      * Calculates the absolute pose of the drivetrain as a function of all visible targets
+     *
      * @return Pose2d
      */
     public Pose2d calculatePoseFromCamera() {
@@ -175,15 +184,7 @@ public class Orchestrator {
                     robotState.fieldToVehicle.getX() - newRobotPose.getX(),
                     robotState.fieldToVehicle.getY() - newRobotPose.getY()
                 )
-            ) <
-                maxAllowablePoseError &&
-                Math.abs(
-                    Math.hypot(
-                        robotState.fieldToVehicle.getX() - newRobotPose.getX(),
-                        robotState.fieldToVehicle.getY() - newRobotPose.getY()
-                    )
-                ) >
-                    minAllowablePoseError
+            ) > minAllowablePoseError
         ) {
             System.out.println(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);

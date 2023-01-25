@@ -57,8 +57,8 @@ public class ControlBoard implements IControlBoard {
             }
             if (controlBoardBridge.getDriverButtonMap().containsKey(name)) {
                 return driverController.getButton(
-                        controlBoardBridge.getDriverButtonMap().get(name)
-                    )
+                    controlBoardBridge.getDriverButtonMap().get(name)
+                )
                     ? 1
                     : 0;
             }
@@ -71,8 +71,8 @@ public class ControlBoard implements IControlBoard {
                 );
             } else if (controlBoardBridge.getOperatorButtonMap().containsKey(name)) {
                 return operatorController.getButton(
-                        controlBoardBridge.getOperatorButtonMap().get(name)
-                    )
+                    controlBoardBridge.getOperatorButtonMap().get(name)
+                )
                     ? 1
                     : 0;
             }
@@ -98,7 +98,7 @@ public class ControlBoard implements IControlBoard {
             } else if (controlBoardBridge.getDriverDpadMap().containsKey(name)) {
                 return (
                     driverController.getDPad() ==
-                    controlBoardBridge.getDriverDpadMap().get(name)
+                        controlBoardBridge.getDriverDpadMap().get(name)
                 );
             }
         } else if (controlBoardBridge.operatorMapContainsKey(name)) {
@@ -113,7 +113,7 @@ public class ControlBoard implements IControlBoard {
             } else if (controlBoardBridge.getOperatorDpadMap().containsKey(name)) {
                 return (
                     operatorController.getDPad() ==
-                    controlBoardBridge.getOperatorDpadMap().get(name)
+                        controlBoardBridge.getOperatorDpadMap().get(name)
                 );
             }
         } else if (controlBoardBridge.buttonBoardMapContainsKey(name)) {
