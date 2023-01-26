@@ -165,8 +165,8 @@ public class LedManager extends Subsystem {
         }
     }
 
-    private void writeToLed(int r, int g, int b) {
-        ledManager.setLEDs(r, g, b, 0, 8, 41 - 8); // 8 == number of camera leds
+    public void writeToLed(int r, int g, int b) {
+        ledManager.setLEDs(r, g, b, 0, 8, 10 - 8); // 8 == number of camera leds
     }
 
     /**
@@ -205,6 +205,7 @@ public class LedManager extends Subsystem {
                     break;
                 case STANDARD:
                     writeToLed(ledR, ledG, ledB);
+                    System.out.println("Standard????");
                     break;
             }
         }

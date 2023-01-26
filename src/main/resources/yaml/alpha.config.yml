@@ -58,7 +58,7 @@ subsystems:
             maxVelTicks100ms: 1
     ledmanager:
         implemented: true
-        canifier: -1
+        candle: 22
         constants:
             raveEnabled: 0
             raveSpeed: 0.05
