@@ -166,7 +166,7 @@ public class LedManager extends Subsystem {
     }
 
     private void writeToLed(int r, int g, int b) {
-        ledManager.setLEDs(r, g, b, 0, 8, 74 - 8); // 8 == number of camera leds
+        ledManager.setLEDs(r, g, b, 0, 8, 41 - 8); // 8 == number of camera leds
     }
 
     /**
