@@ -205,7 +205,6 @@ public class LedManager extends Subsystem {
                     break;
                 case STANDARD:
                     writeToLed(ledR, ledG, ledB);
-                    System.out.println("Standard????");
                     break;
             }
         }
