@@ -3,7 +3,6 @@ package com.team1816.season.states;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.drive.Drive;
-import com.team1816.lib.subsystems.turret.Turret;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
@@ -55,13 +54,11 @@ public class Orchestrator {
      * Instantiates an Orchestrator with all its subsystems
      *
      * @param df  Drive.Factory (derives drivetrain)
-     * @param tur Turret
      * @param led LedManager
      */
     @Inject
-    public Orchestrator(Drive.Factory df, Turret tur, LedManager led) {
+    public Orchestrator(Drive.Factory df, LedManager led) {
         drive = df.getInstance();
-        turret = tur;
         ledManager = led;
         superstructureState = STATE.FAT_BOY;
     }
