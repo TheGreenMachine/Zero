@@ -33,7 +33,7 @@ public class FieldConfig {
             put(8, new Pose3d(new Translation3d(0.970, 1.132, 0.470), new Rotation3d())); // Blue Edge Grid
 
             /* Test */
-            put(51, new Pose3d(new Translation3d(), new Rotation3d()));
+            put(51, new Pose3d(new Translation3d(Constants.fieldCenterX, Constants.fieldCenterY, 0.1), new Rotation3d()));
         }
     };
 
