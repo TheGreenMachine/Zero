@@ -537,7 +537,7 @@ public class RobotFactory {
         );
     }
 
-    private enum PIDConfig {
+    public enum PIDConfig {
         Azimuth,
         Drive,
         Generic,
