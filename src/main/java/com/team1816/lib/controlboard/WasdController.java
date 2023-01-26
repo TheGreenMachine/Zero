@@ -9,9 +9,9 @@ public class WasdController extends Controller {
 
     public WasdController(int port) {
         super(port);
-        mJoystickButtonMap.put(Controller.Button.A, 2);
-        mJoystickButtonMap.put(Controller.Button.B, 3);
-        mJoystickButtonMap.put(Controller.Button.X, 1);
+        mJoystickButtonMap.put(Controller.Button.A, 1);
+        mJoystickButtonMap.put(Controller.Button.B, 2);
+        mJoystickButtonMap.put(Controller.Button.X, 3);
         mJoystickButtonMap.put(Controller.Button.Y, 4);
         mJoystickButtonMap.put(Controller.Button.LEFT_BUMPER, 5);
         mJoystickButtonMap.put(Controller.Button.RIGHT_BUMPER, 6);
