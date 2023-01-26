@@ -19,6 +19,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.team1816.lib.hardware.factory.RobotFactory.PIDConfig.Drive;
 import static com.team1816.lib.subsystems.Subsystem.factory;
 import static com.team1816.lib.subsystems.Subsystem.robotState;
 
@@ -59,9 +60,8 @@ public class Orchestrator {
      * @param led LedManager
      */
     @Inject
-    public Orchestrator(Drive.Factory df, Turret tur, LedManager led) {
+    public Orchestrator(Drive.Factory df, LedManager led) {
         drive = df.getInstance();
-        turret = tur;
         ledManager = led;
         superstructureState = STATE.FAT_BOY;
     }
