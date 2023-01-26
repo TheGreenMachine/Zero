@@ -56,6 +56,14 @@ subsystems:
             rpmEpsilonCheck: 60
             deltaXScalar: 150
             maxVelTicks100ms: 1
+    ledmanager:
+        implemented: true
+        canifier: -1
+        constants:
+            raveEnabled: 0
+            raveSpeed: 0.05
+            cameraLed: 1
+            maxLevel: 255
 infrastructure:
     canivoreBusName: rio
     # power distribution
