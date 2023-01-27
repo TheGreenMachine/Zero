@@ -469,18 +469,14 @@ public class Robot extends TimedRobot {
             System.out.println("Autobalancing MC, " + pitch + ","  + roll) ;
 
 
-            if(Math.abs(pitch) > 1 || Math.abs(roll) > 1) {
-                // TODO NOTE: these are not correct pitch roll assignments - could be because pigeon mounted off?
-                throttle = roll / 5;
-                strafe = pitch / 5;
+            if(Math.abs(pitch) > 1 || Math.abs(roll) > 1){
+                throttle = pitch / 10;
+                strafe = roll / 10;
             }
 
-            // I just realized that I'm a dingus and could use setTeleopInputs for this
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe, 0);
-
             if (isSwerve) {
-                Swerve
-                ((SwerveDrive)drive).setModuleStatesPercentOutput();
+                ((SwerveDrive) drive).setModuleStatesPercentOutput(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
             } else {
                 DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
                 DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond/ TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond/TankDrive.kPathFollowingMaxVelMeters);

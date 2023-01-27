@@ -67,12 +67,10 @@ public class AutoBalanceAction implements AutoAction {
             velocityY = roll / autoBalanceDivider;
         }
 
-
-        // I just realized that I'm a dingus and could use setTeleopInputs for this
+        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(velocityX, velocityY, 0);
         if (isSwerve) {
-            drive.setTeleopInputs(velocityX, velocityY, 0);
+            ((SwerveDrive) drive).setModuleStatesPercentOutput(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
         } else {
-            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(velocityX, velocityY, 0);
             DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
             DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond/ TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond/TankDrive.kPathFollowingMaxVelMeters);
             ((TankDrive) drive).setVelocity(driveSignal);
