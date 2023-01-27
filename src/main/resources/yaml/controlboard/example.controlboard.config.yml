@@ -8,7 +8,6 @@ driver:
             horizontal: rotation
     buttonpad:
         x: toggleManualShoot
-        a: autoBalance
     axes:
         leftTrigger: brakeMode
         rightTrigger: slowMode

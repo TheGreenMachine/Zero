@@ -241,7 +241,7 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("autoBalance"),
                         (pressed) -> {
                             isAutoBalancing = pressed;
-                            System.out.println("Autobalance P");
+                            System.out.println("Autobalance value = " + isAutoBalancing);
 //                            if(balancing){
 //                                drive.setControlState(Drive.OpenState.AUTO_BALANCE);
 //                                System.out.println("YAAAAAY");
@@ -451,7 +451,7 @@ public class Robot extends TimedRobot {
     public void manualControl() {
         actionManager.update();
 
-        //Autobalancing stuff!
+        //Auto balancing stuff!
         if (drive instanceof SwerveDrive) {
             isSwerve = true;
         }
@@ -464,31 +464,30 @@ public class Robot extends TimedRobot {
         if(isAutoBalancing) {
             double pitch = -infrastructure.getPitch();
             double roll = infrastructure.getRoll();
-            double velocityX = 0;
-            double velocityY = 0;
+            double throttle = 0;
+            double strafe = 0;
             System.out.println("Autobalancing MC, " + pitch + ","  + roll) ;
 
 
-            if(Math.abs(pitch) > 2 || Math.abs(roll) > 2) {
-                velocityX = pitch / autoBalanceDivider;
-                velocityY = roll / autoBalanceDivider;
+            if(Math.abs(pitch) > 1 || Math.abs(roll) > 1) {
+                // TODO NOTE: these are not correct pitch roll assignments - could be because pigeon mounted off?
+                throttle = roll / 5;
+                strafe = pitch / 5;
             }
 
             // I just realized that I'm a dingus and could use setTeleopInputs for this
+            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe, 0);
+
             if (isSwerve) {
-                System.out.println("is swerve check");
-                velocityX /= 3;
-                velocityY /= 3;
-                drive.setTeleopInputs(velocityX, velocityY, 0);
+                Swerve
+                ((SwerveDrive)drive).setModuleStatesPercentOutput();
             } else {
-                ChassisSpeeds chassisSpeeds = new ChassisSpeeds(velocityX, velocityY, 0);
                 DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
                 DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond/ TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond/TankDrive.kPathFollowingMaxVelMeters);
                 ((TankDrive) drive).setVelocity(driveSignal);
             }
 
-        }
-        else {
+        } else {
             drive.setTeleopInputs(
                 -controlBoard.getAsDouble("throttle"),
                 -controlBoard.getAsDouble("strafe"),
