@@ -100,4 +100,5 @@ constants:
     EnableBucketTuning: 0
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .035 # seconds
-    resetFactoryDefaults: 1 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
+    resetFactoryDefaults: 0 # whether motors get reset to factory default - doesn't affect motor encoder offset
+        # - if motors reset, rebooting the robot mid-match would kill the turret

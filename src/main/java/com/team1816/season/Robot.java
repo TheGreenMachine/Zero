@@ -455,6 +455,7 @@ public class Robot extends TimedRobot {
         if (drive instanceof SwerveDrive) {
             isSwerve = true;
         }
+
         if (isSwerve) {
             swerveKinematics = ((SwerveDrive) drive).getKinematics();
         } else {
@@ -467,7 +468,6 @@ public class Robot extends TimedRobot {
             double throttle = 0;
             double strafe = 0;
             System.out.println("Autobalancing MC, " + pitch + ","  + roll) ;
-
 
             if(Math.abs(pitch) > 1 || Math.abs(roll) > 1){
                 throttle = pitch / 10;
