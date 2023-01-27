@@ -170,14 +170,16 @@ public class LedManager extends Subsystem {
     }
 
     /**
-     * periodic
+     * Periodic
      */
     @Override
     public void readFromHardware() {
+        System.out.println("LED manager rread from hardware");
     }
 
     @Override
     public void writeToHardware() {
+        System.out.println("LED manager wwrite from hardware");
         if (outputsChanged) {
             outputsChanged = false;
             switch (controlState) {
