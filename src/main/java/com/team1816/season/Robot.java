@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
     private boolean faulted;
     private Drive.ControlState prevState;
     private boolean isAutoBalancing;
-    private double autoBalanceDivider = factory.getConstant(Drive.NAME, "autoBalanceDivider");
+    private double autoBalanceDivider;
     private static boolean isSwerve = false;
 
 
@@ -98,6 +98,8 @@ public class Robot extends TimedRobot {
         infrastructure = Injector.get(Infrastructure.class);
         subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
+        autoBalanceDivider = factory.getConstant(Drive.NAME, "autoBalanceDivider");
+
     }
 
     /**
@@ -235,10 +237,11 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
                     ),
-                    createAction(
+                    createHoldAction(
                         () -> controlBoard.getAsBool("autoBalance"),
-                        () -> {
-                            System.out.println("SOMEHTIHSOij");
+                        (pressed) -> {
+                            isAutoBalancing = pressed;
+                            System.out.println("Autobalance P");
 //                            if(balancing){
 //                                drive.setControlState(Drive.OpenState.AUTO_BALANCE);
 //                                System.out.println("YAAAAAY");
@@ -449,8 +452,6 @@ public class Robot extends TimedRobot {
         actionManager.update();
 
         //Autobalancing stuff!
-        isAutoBalancing = controlBoard.getAsBool("autoBalance");
-
         if (drive instanceof SwerveDrive) {
             isSwerve = true;
         }
@@ -465,14 +466,19 @@ public class Robot extends TimedRobot {
             double roll = infrastructure.getRoll();
             double velocityX = 0;
             double velocityY = 0;
+            System.out.println("Autobalancing MC, " + pitch + ","  + roll) ;
 
-            if(Math.abs(pitch) > 2 || Math.abs(roll) > 2){
+
+            if(Math.abs(pitch) > 2 || Math.abs(roll) > 2) {
                 velocityX = pitch / autoBalanceDivider;
                 velocityY = roll / autoBalanceDivider;
             }
 
             // I just realized that I'm a dingus and could use setTeleopInputs for this
             if (isSwerve) {
+                System.out.println("is swerve check");
+                velocityX /= 3;
+                velocityY /= 3;
                 drive.setTeleopInputs(velocityX, velocityY, 0);
             } else {
                 ChassisSpeeds chassisSpeeds = new ChassisSpeeds(velocityX, velocityY, 0);
@@ -482,12 +488,13 @@ public class Robot extends TimedRobot {
             }
 
         }
-        drive.setTeleopInputs(
-            -controlBoard.getAsDouble("throttle"),
-            -controlBoard.getAsDouble("strafe"),
-            controlBoard.getAsDouble("rotation")
-        );
-
+        else {
+            drive.setTeleopInputs(
+                -controlBoard.getAsDouble("throttle"),
+                -controlBoard.getAsDouble("strafe"),
+                controlBoard.getAsDouble("rotation")
+            );
+        }
 
     }
 

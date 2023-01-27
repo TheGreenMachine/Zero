@@ -67,6 +67,7 @@ public class AutoBalanceAction implements AutoAction {
             velocityY = roll / autoBalanceDivider;
         }
 
+
         // I just realized that I'm a dingus and could use setTeleopInputs for this
         if (isSwerve) {
             drive.setTeleopInputs(velocityX, velocityY, 0);

@@ -2,14 +2,15 @@ subsystems:
     drivetrain:
         implemented: true
         talons:
-            FLDr: 3
-            FRDr: 13
-            RLDr: 1
-            RRDr: 14
             FLAz: 2
             FRAz: 12
             RLAz: 10
             RRAz: 15
+        falcons:
+            FLDr: 3
+            FRDr: 13
+            RLDr: 1
+            RRDr: 14
         invertMotor:
             - FRDr
             - RRDr
@@ -28,22 +29,22 @@ subsystems:
                     drive: FLDr
                     azimuth: FLAz
                     constants:
-                        encoderOffset: 2463
+                        encoderOffset: 2445
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
                     constants:
-                        encoderOffset: 1482
+                        encoderOffset: 1479
                 backLeft:
                     drive: RLDr
                     azimuth: RLAz
                     constants:
-                        encoderOffset: 506
+                        encoderOffset: 2396
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     constants:
-                        encoderOffset: 497
+                        encoderOffset: 511
             drivePID:
                 slot0:
                     kP: .3
@@ -72,6 +73,7 @@ subsystems:
             maxVelPathFollowing: 3 # meters/s (2.2)
             maxAccel: 2.54 # meters/s^ 2
             isDemoMode: 0
+            autoBalanceDivider: 40
 infrastructure:
     canivoreBusName: rio
     # power distribution
@@ -98,4 +100,4 @@ constants:
     EnableBucketTuning: 0
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .035 # seconds
-    resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
+    resetFactoryDefaults: 1 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
