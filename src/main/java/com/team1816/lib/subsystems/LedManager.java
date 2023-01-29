@@ -2,6 +2,8 @@ package com.team1816.lib.subsystems;
 
 import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
+import com.team1816.lib.hardware.components.ledManager.CANdleImpl;
+import com.team1816.lib.hardware.components.ledManager.CanifierImpl;
 import com.team1816.lib.hardware.components.ledManager.ILEDManager;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -9,6 +11,8 @@ import edu.wpi.first.wpilibj.Timer;
 
 import javax.inject.Singleton;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Subsystem container for an LEDManager
@@ -41,9 +45,9 @@ public class LedManager extends Subsystem {
     private boolean outputsChanged = false;
     private int period; // ms
     private long lastWriteTime = System.currentTimeMillis();
-    private LedControlState controlState = LedControlState.STANDARD;
     private RobotStatus defaultStatus = RobotStatus.DISABLED;
-
+    private RobotStatus controlStatus;
+    private List<LEDSegment> segments;
 
     /**
      * Instantiates an LedManager with base subsystem properties
@@ -56,10 +60,42 @@ public class LedManager extends Subsystem {
         super(NAME, inf, rs);
         ledManager = factory.getLEDManager(NAME);
 
-        ledR = 0;
-        ledG = 0;
-        ledB = 0;
+        controlStatus = RobotStatus.DISABLED;
+        segments = controlStatus.getSegments();
+    }
 
+    /**
+     * Sets control status
+     * @param status robot status
+     */
+    private void setControlStatus(RobotStatus status) {
+        if (controlStatus != status) {
+            controlStatus = status;
+            segments = status.getSegments();
+            outputsChanged = true;
+        }
+    }
+
+    /**
+     * Sets the default status
+     * @param defaultStatus default robot status
+     */
+    public void setDefaultStatus(RobotStatus defaultStatus) {
+        this.defaultStatus = defaultStatus;
+        indicateDefaultStatus();
+    }
+
+
+    /**
+     * Sets led color
+     *
+     * @param r Red
+     * @param g Green
+     * @param b Blue
+     */
+    private void setLedColor(int r, int g, int b) {
+        writeToLed(r, g, b);
+        outputsChanged = true;
     }
 
     /**
@@ -67,27 +103,20 @@ public class LedManager extends Subsystem {
      *
      * @param r Red
      * @param g Green
-     * @param b Bluee
+     * @param b Blue
      */
-    private void setLedColor(int r, int g, int b) {
-        if (ledR != r || ledG != g || ledB != b) {
-            ledR = r;
-            ledG = g;
-            ledB = b;
-            outputsChanged = true;
-        }
+    private void setLedColor(int r, int g, int b, int startIdx, int count) {
+        writeToLed(r, g, b, startIdx, count);
+        outputsChanged = true;
     }
 
+
+
     /**
-     * Sets LEDs to blink with a certain color
-     *
-     * @param r LED color red value (0-255)
-     * @param g LED color green value (0-255)
-     * @param b LED color blue value (0-255)
+     * Sets led blinking
      */
-    private void setLedColorBlink(int r, int g, int b) {
-        setLedColor(r, g, b);
-        controlState = LedControlState.BLINK;
+    private void setBlinkingLedColor(int r, int g, int b, int startIdx, int count) {
+        setLedColor(r, g, b, startIdx, count);
         this.period = 1000;
         outputsChanged = true;
     }
@@ -99,35 +128,57 @@ public class LedManager extends Subsystem {
      * @see RobotStatus
      */
     public void indicateStatus(RobotStatus status) {
-        controlState = LedControlState.STANDARD;
-        setLedColor(status.getRed(), status.getGreen(), status.getBlue());
+        setControlStatus(status);
     }
 
+    /**
+     * Indicates the default robot status
+     */
     public void indicateDefaultStatus() {
-        if (RAVE_ENABLED && defaultStatus != RobotStatus.DISABLED) {
-            controlState = LedControlState.RAVE;
-            setLedColor(0, 0, 0);
-        } else {
-            indicateStatus(defaultStatus);
-        }
+        indicateStatus(defaultStatus);
     }
 
-    public void blinkStatus(RobotStatus status) {
-        setLedColorBlink(status.getRed(), status.getGreen(), status.getBlue());
-    }
-
-    public void setDefaultStatus(RobotStatus defaultStatus) {
-        this.defaultStatus = defaultStatus;
-        indicateDefaultStatus();
-    }
-
+    /**
+     * Returns the blinking periodicity
+     * @return period
+     */
     public double getPeriod() {
         return period;
     }
 
+    /**
+     * Writes a specific color to the LEDs
+     *
+     * @param r red value [0, 255]
+     * @param g green value [0, 255]
+     * @param b blue value [0, 255]
+     */
+    public void writeToLed(int r, int g, int b, int startIdx, int count) {
+        ledManager.setLEDs(255, 255, 255, 0, 0, 8); // CANdle LEDs
+        ledManager.setLEDs(r, g, b, 0, startIdx, count);
+        outputsChanged = false;
+    }
+
+    /**
+     * Writes a specific color to the LEDs
+     *
+     * @param r red value [0, 255]
+     * @param g green value [0, 255]
+     * @param b blue value [0, 255]
+     */
     public void writeToLed(int r, int g, int b) {
         ledManager.setLEDs(255, 255, 255, 0, 0, 8); // CANdle LEDs
-        ledManager.setLEDs(r, g, b, 0, 0, 10 - 8);
+        ledManager.setLEDs(r, g, b, 0, 8, LED_COUNT - 8);
+        outputsChanged = false;
+    }
+
+    /**
+     * Writes led segments to the LEDs
+     *
+     * @param segments LEDSegments
+     */
+    public void writeToLed(List<LEDSegment> segments) {
+        //TODO
     }
 
     /**
@@ -135,38 +186,41 @@ public class LedManager extends Subsystem {
      */
     @Override
     public void readFromHardware() {
+
     }
 
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
-            switch (controlState) {
-                case RAVE:
-                    var color = Color.getHSBColor(raveHue, 1.0f, MAX / 255.0f);
-                    if (!color.equals(lastRaveColor)) {
-                        outputsChanged = true;
-                        writeToLed(color.getRed(), color.getGreen(), color.getBlue());
+            if (ledManager instanceof CanifierImpl) {
+                segments = controlStatus.getSegments();
+
+                // reformat segments
+                if (segments.size() > 0) {
+                    var seg = segments.get(0);
+                    if (seg.ledControlState == LedControlState.SINGLE_COLOR_ANIMATION || seg.ledControlState == LedControlState.MULTI_COLOR_ANIMATION) {
+                        segments.set(0, new LEDSegment(LED_COUNT, seg.color, LedControlState.SINGLE_COLOR_BLINK));
+                    } else {
+                        segments.set(0, new LEDSegment(LED_COUNT, seg.color, seg.ledControlState));
                     }
-                    raveHue += RAVE_SPEED;
-                    break;
-                case BLINK:
-                    if (System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
-                        if (blinkLedOn) {
-                            outputsChanged = true;
-                            writeToLed(0, 0, 0);
-                            blinkLedOn = false;
-                        } else {
-                            outputsChanged = true;
-                            writeToLed(ledR, ledG, ledB);
-                            blinkLedOn = true;
-                        }
-                        lastWriteTime = System.currentTimeMillis();
+                    segments = new ArrayList<>(List.of(segments.get(0)));
+                }
+                // TODO write outputs
+                writeToLed(segments);
+            } else if (ledManager instanceof CANdleImpl) {
+                int count = 0;
+                segments = controlStatus.getSegments();
+
+                // reformat segments
+                for (int i = 0; i < segments.size(); i++) {
+                    var seg = segments.get(i);
+                    if (seg.length + count > LED_COUNT) {
+                        segments.set(i, new LEDSegment(LED_COUNT - count, seg.color, seg.ledControlState));
                     }
-                    break;
-                case STANDARD:
-                    writeToLed(ledR, ledG, ledB);
-                    break;
+                }
+                // TODO write outputs
+                writeToLed(segments);
             }
         }
     }
@@ -196,7 +250,6 @@ public class LedManager extends Subsystem {
     public boolean testSubsystem() {
         // no checking performed
         System.out.println("Checking LED systems");
-        controlState = LedControlState.SINGLE_COLOR_SOLID;
         setLedColor(MAX, 0, 0); // set red
         testDelay();
         setLedColor(0, MAX, 0); // set green
@@ -211,7 +264,7 @@ public class LedManager extends Subsystem {
      */
     private void testDelay() {
         writeToHardware();
-        Timer.delay(1.5);
+        Timer.delay(1);
     }
 
     /**
@@ -230,23 +283,23 @@ public class LedManager extends Subsystem {
         /**
          * Primary
          */
-        public static Color strontium = new Color(1*MAX, 0*MAX, 0*MAX); // red
-        public static Color boron = new Color(0*MAX, 1*MAX, 0*MAX); // green
-        public static Color selenium = new Color(0*MAX, 0*MAX, 1*MAX); // blue
+        public static Color STRONTIUM = new Color(1*MAX, 0*MAX, 0*MAX); // red
+        public static Color BORON = new Color(0*MAX, 1*MAX, 0*MAX); // green
+        public static Color SELENIUM = new Color(0*MAX, 0*MAX, 1*MAX); // blue
 
         /**
          * Secondary
          */
-        public static Color sodium = new Color(1*MAX, 1*MAX, 0*MAX); // yellow
-        public static Color copper = new Color(0*MAX, 1*MAX, 1*MAX); // cyan
-        public static Color potassium = new Color(1*MAX, 0*MAX, 1*MAX); // magenta
-        public static Color calcium = new Color(1*MAX, (int) (1d/5 * MAX), 0*MAX); // orange
+        public static Color SODIUM = new Color(1*MAX, 1*MAX, 0*MAX); // yellow
+        public static Color COPPER = new Color(0*MAX, 1*MAX, 1*MAX); // cyan
+        public static Color POTASSIUM = new Color(1*MAX, 0*MAX, 1*MAX); // magenta
+        public static Color CALCIUM = new Color(1*MAX, (int) (1d/5 * MAX), 0*MAX); // orange
 
         /**
          * Tertiary
          */
-        public static Color arsenic = new Color((int) (155d/255 * MAX), (int) (220d/255 * MAX), (int) (225d/255 * MAX)); // gray
-        public static Color magnesium = new Color(1*MAX, 1*MAX, 1*MAX); // white
+        public static Color ARSENIC = new Color((int) (155d/255 * MAX), (int) (220d/255 * MAX), (int) (225d/255 * MAX)); // gray
+        public static Color MAGNESIUM = new Color(1*MAX, 1*MAX, 1*MAX); // white
 
     }
 
@@ -267,6 +320,7 @@ public class LedManager extends Subsystem {
         public int length;
         public Color color;
         public LedControlState ledControlState;
+        public int animationId = 0x0; // hexadecimal animation id
 
         public LEDSegment() {
             length = 0;
@@ -290,39 +344,33 @@ public class LedManager extends Subsystem {
 
     /**
      * Base enum for RobotStatus
-     * TODO: REWRITE with LED_SEGMENT
      */
     public enum RobotStatus {
-        ENABLED(0, MAX, 0), // green
-        DISABLED(MAX, MAX / 5, 0), // orange
-        ERROR(MAX, 0, 0), // red
-        AUTONOMOUS(0, MAX, MAX), // cyan
-        ENDGAME(0, 0, MAX), // blue
-        SEEN_TARGET(MAX, 0, MAX), // magenta
-        ON_TARGET(MAX, 0, 20), // deep magenta
-        DRIVETRAIN_FLIPPED(MAX, MAX, 0); // yellow,
+        ENABLED(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.BORON, LedControlState.SINGLE_COLOR_SOLID)))), // solid green
+        DISABLED(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.CALCIUM, LedControlState.SINGLE_COLOR_SOLID)))), // solid orange
+        ERROR(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.STRONTIUM, LedControlState.SINGLE_COLOR_SOLID)))), // solid red
+
+        AUTONOMOUS(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.COPPER, LedControlState.SINGLE_COLOR_SOLID)))), // solid cyan
+        ENDGAME(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.SELENIUM, LedControlState.SINGLE_COLOR_SOLID)))), // solid blue
+
+        CONE(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.SODIUM, LedControlState.SINGLE_COLOR_SOLID)))), // solid yellow
+        CUBE(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.POTASSIUM, LedControlState.SINGLE_COLOR_SOLID)))), // solid purple
+        CONTAINS_OBJECT(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.MAGNESIUM, LedControlState.SINGLE_COLOR_SOLID)))), // solid white
+        COLLECT(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.STRONTIUM, LedControlState.SINGLE_COLOR_BLINK)))), // blinking red
+        SEEN_TARGET(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.ARSENIC, LedControlState.SINGLE_COLOR_BLINK)))); // blinking light gray
 
 
-        final int red;
-        final int green;
-        final int blue;
-
-        RobotStatus(int r, int g, int b) {
-            this.red = r;
-            this.green = g;
-            this.blue = b;
+        private ArrayList<LEDSegment> segments;
+        RobotStatus(ArrayList<LEDSegment> segments) {
+            this.segments = segments;
         }
 
-        public int getRed() {
-            return red;
+        public List<LEDSegment> getSegments() {
+            return segments;
         }
 
-        public int getGreen() {
-            return green;
-        }
-
-        public int getBlue() {
-            return blue;
+        public void setSegments(ArrayList<LEDSegment> segments) {
+            this.segments = segments;
         }
     }
 }
