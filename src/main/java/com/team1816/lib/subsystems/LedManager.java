@@ -339,7 +339,7 @@ public class LedManager extends Subsystem {
          */
         public static Color STRONTIUM = new Color(1*MAX, 0*MAX, 0*MAX); // red
         public static Color BORON = new Color(0*MAX, 1*MAX, 0*MAX); // green
-        public static Color SELENIUM = new Color(0*MAX, 0*MAX, 1*MAX); // blue
+        public static Color INDIUM = new Color(0*MAX, 0*MAX, 1*MAX); // blue
 
         /**
          * Secondary
@@ -413,7 +413,7 @@ public class LedManager extends Subsystem {
         ERROR(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.STRONTIUM, LedControlState.SINGLE_COLOR_SOLID)))), // solid red
 
         AUTONOMOUS(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.COPPER, LedControlState.SINGLE_COLOR_SOLID)))), // solid cyan
-        ENDGAME(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.SELENIUM, LedControlState.SINGLE_COLOR_SOLID)))), // solid blue
+        ENDGAME(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.INDIUM, LedControlState.SINGLE_COLOR_SOLID)))), // solid blue
 
         CONE(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.SODIUM, LedControlState.SINGLE_COLOR_SOLID)))), // solid yellow
         CUBE(new ArrayList<>(List.of(new LEDSegment(LED_COUNT, LEDColor.POTASSIUM, LedControlState.SINGLE_COLOR_SOLID)))), // solid purple
