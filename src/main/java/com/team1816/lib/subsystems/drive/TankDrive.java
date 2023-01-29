@@ -1,6 +1,5 @@
 package com.team1816.lib.subsystems.drive;
 
-import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.NeutralMode;

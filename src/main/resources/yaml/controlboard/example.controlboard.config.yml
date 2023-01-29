@@ -30,7 +30,7 @@ operator:
         left: turretJogLeft
         right: turretJogRight
     buttonpad:
-        x: toggleCamera
+        x: toggleCameraLED
         y: autoClimb
         a: toggleTurretMode
         b: eject

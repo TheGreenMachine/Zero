@@ -48,6 +48,11 @@ public class GhostLEDManager implements ILEDManager {
     }
 
     @Override
+    public ErrorCode configV5Enabled(boolean enable5V, int timeoutMs) {
+        return null;
+    }
+
+    @Override
     public ErrorCode setStatusFramePeriod(
         CANifierStatusFrame statusFrame,
         int periodMs,

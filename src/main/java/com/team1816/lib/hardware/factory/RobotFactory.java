@@ -312,7 +312,8 @@ public class RobotFactory {
                     ledManager.configStatusLedState(true);
                     ledManager.configLOSBehavior(true);
                     ledManager.configLEDType(CANdle.LEDStripType.BRG);
-                    ledManager.configBrightnessScalar(1);
+                    ledManager.configV5Enabled(false, 0);
+                    ledManager.configBrightnessScalar(0.5);
                 }
                 return ledManager;
             }

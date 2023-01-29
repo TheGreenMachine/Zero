@@ -1,5 +1,9 @@
 package com.team1816.lib.subsystems;
 
+import com.ctre.phoenix.led.Animation;
+import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.RainbowAnimation;
+import com.ctre.phoenix.led.StrobeAnimation;
 import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.ledManager.CANdleImpl;
@@ -173,12 +177,59 @@ public class LedManager extends Subsystem {
     }
 
     /**
-     * Writes led segments to the LEDs
+     * Writes led segments to the LEDs periodically based on segment control states
      *
      * @param segments LEDSegments
      */
     public void writeToLed(List<LEDSegment> segments) {
-        //TODO
+        int count = 0;
+        for (int i = 0; i < segments.size(); i++) {
+            switch (segments.get(i).ledControlState) {
+                case SINGLE_COLOR_SOLID -> {
+                    var segmentColor = segments.get(i).color;
+                    setLedColor(segmentColor.getRed(), segmentColor.getGreen(), segmentColor.getBlue(), count, segments.get(i).length);
+                } case SINGLE_COLOR_BLINK -> {
+                    var segmentColor = segments.get(i).color;
+                    setLedColor(segmentColor.getRed(), segmentColor.getGreen(), segmentColor.getBlue(), count, segments.get(i).length);
+                    if (System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
+                        if (segments.get(i).blinkLedOn) {
+                            outputsChanged = true;
+                            setLedColor(0, 0, 0, count, segments.get(i).length);
+                            segments.get(i).blinkLedOn = false;
+                        } else {
+                            outputsChanged = true;
+                            setLedColor(segmentColor.getRed(), segmentColor.getGreen(), segmentColor.getBlue(), count, segments.get(i).length);
+                            segments.get(i).blinkLedOn = true;
+                        }
+                        lastWriteTime = System.currentTimeMillis();
+                    }
+                } case SINGLE_COLOR_ANIMATION -> {
+                    var segmentColor = segments.get(i).color;
+                    if (segments.get(i).animation == null) {
+                        ((CANdle) ledManager).animate(
+                            new StrobeAnimation(
+                                segmentColor.getRed(), segmentColor.getGreen(), segmentColor.getBlue(), 0, 0.25, count, segments.get(i).length
+                            )
+                        );
+                    } else {
+                        ((CANdle) ledManager).animate(
+                            segments.get(i).animation
+                        );
+                    }
+                } case MULTI_COLOR_ANIMATION -> {
+                    if (segments.get(i).animation == null) {
+                        ((CANdle) ledManager).animate(
+                            new RainbowAnimation()
+                        );
+                    } else {
+                        ((CANdle) ledManager).animate(
+                            segments.get(i).animation
+                        );
+                    }
+                }
+            }
+            count += segments.get(i).length;
+        }
     }
 
     /**
@@ -215,8 +266,11 @@ public class LedManager extends Subsystem {
                 // reformat segments
                 for (int i = 0; i < segments.size(); i++) {
                     var seg = segments.get(i);
+                    if (count > LED_COUNT) {
+                        segments.set(i, new LEDSegment(0, seg.color, seg.ledControlState));
+                    }
                     if (seg.length + count > LED_COUNT) {
-                        segments.set(i, new LEDSegment(LED_COUNT - count, seg.color, seg.ledControlState));
+                        segments.set(i, new LEDSegment(Math.max(0, LED_COUNT - count), seg.color, seg.ledControlState));
                     }
                 }
                 // TODO write outputs
@@ -320,7 +374,8 @@ public class LedManager extends Subsystem {
         public int length;
         public Color color;
         public LedControlState ledControlState;
-        public int animationId = 0x0; // hexadecimal animation id
+        public Animation animation;
+        public boolean blinkLedOn = false;
 
         public LEDSegment() {
             length = 0;
@@ -338,6 +393,13 @@ public class LedManager extends Subsystem {
             length = l;
             color = c;
             ledControlState = lcs;
+        }
+
+        public LEDSegment(int l, Color c, LedControlState lcs, Animation a) {
+            length = l;
+            color = c;
+            ledControlState = lcs;
+            animation = a;
         }
     }
 

@@ -248,8 +248,12 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
-                    )
+                    ),
                     // Operator Gamepad
+                    createAction(
+                        () -> controlBoard.getAsBool("toggleCameraLED"),
+                        () -> ledManager.setCameraLed(!ledManager.isCameraLedOn())
+                    )
                 );
         } catch (Throwable t) {
             faulted = true;
