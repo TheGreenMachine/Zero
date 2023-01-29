@@ -104,7 +104,6 @@ public class Camera extends Subsystem {
     @Override
     public boolean testSubsystem() {
         if (warnIfCameraOff()) {
-            led.setCameraLed(true);
             Timer.delay(2);
             if (getDistance() < 0 || getDistance() > MAX_DIST) {
                 System.out.println("getDistance failed test!");
@@ -115,7 +114,6 @@ public class Camera extends Subsystem {
                 System.out.println("getDeltaX failed test!");
                 return false;
             }
-            led.setCameraLed(false);
         }
         return true;
     }

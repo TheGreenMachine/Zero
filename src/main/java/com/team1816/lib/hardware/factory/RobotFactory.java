@@ -297,14 +297,14 @@ public class RobotFactory {
         var subsystem = getSubsystem(subsystemName);
         ILEDManager ledManager = null;
         if (subsystem.implemented) {
-            if (isHardwareValid(subsystem.canifier)) {
-                ledManager = new CanifierImpl(subsystem.canifier);
-            } else if (isHardwareValid(subsystem.candle)) {
+             if (isHardwareValid(subsystem.candle)) {
                 ledManager =
                     new CANdleImpl(
                         subsystem.candle,
                         config.infrastructure.canivoreBusName
                     );
+            } else if (isHardwareValid(subsystem.canifier)) {
+                ledManager = new CanifierImpl(subsystem.canifier);
             }
             if (ledManager != null) {
                 if (getConstant("resetFactoryDefaults") > 0) {

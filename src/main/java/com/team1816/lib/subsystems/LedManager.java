@@ -3,7 +3,6 @@ package com.team1816.lib.subsystems;
 import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.ledManager.ILEDManager;
-import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
@@ -24,10 +23,12 @@ public class LedManager extends Subsystem {
      */
     public static final String NAME = "ledmanager";
 
+    private static final int LED_COUNT = (int) factory.getConstant(NAME, "ledCount");
     private static final boolean RAVE_ENABLED =
         factory.getConstant(NAME, "raveEnabled") > 0;
     private static final double RAVE_SPEED = factory.getConstant(NAME, "raveSpeed", 1.0);
     private static final int MAX = (int) factory.getConstant(NAME, "maxLevel", 255);
+
 
     /**
      * Components
@@ -37,30 +38,12 @@ public class LedManager extends Subsystem {
     /**
      * State
      */
-    private boolean blinkLedOn = false;
     private boolean outputsChanged = false;
-    private boolean cameraLedChanged = false;
-
-    private int ledR;
-    private int ledG;
-    private int ledB;
-    private boolean cameraLedOn;
-
     private int period; // ms
     private long lastWriteTime = System.currentTimeMillis();
     private LedControlState controlState = LedControlState.STANDARD;
     private RobotStatus defaultStatus = RobotStatus.DISABLED;
-    private float raveHue;
-    private Color lastRaveColor;
 
-    /**
-     * Base enum for LED states
-     */
-    public enum LedControlState {
-        RAVE,
-        BLINK,
-        STANDARD,
-    }
 
     /**
      * Instantiates an LedManager with base subsystem properties
@@ -77,21 +60,6 @@ public class LedManager extends Subsystem {
         ledG = 0;
         ledB = 0;
 
-        cameraLedOn = false;
-    }
-
-    /** Actions */
-
-    /**
-     * Sets the Camera led(s) to be on or off
-     *
-     * @param cameraOn boolean
-     */
-    public void setCameraLed(boolean cameraOn) {
-        if (cameraLedOn != cameraOn) {
-            cameraLedChanged = true;
-            cameraLedOn = cameraOn;
-        }
     }
 
     /**
@@ -157,16 +125,9 @@ public class LedManager extends Subsystem {
         return period;
     }
 
-    private void writeToCameraLed(int r, int g, int b) {
-        if (cameraLedOn) {
-            ledManager.setLEDs(0, 255, 0, 0, 0, 8);
-        } else {
-            ledManager.setLEDs(r, g, b, 0, 0, 8);
-        }
-    }
-
     public void writeToLed(int r, int g, int b) {
-        ledManager.setLEDs(r, g, b, 0, 8, 10 - 8); // 8 == number of camera leds
+        ledManager.setLEDs(255, 255, 255, 0, 0, 8); // CANdle LEDs
+        ledManager.setLEDs(r, g, b, 0, 0, 10 - 8);
     }
 
     /**
@@ -174,12 +135,10 @@ public class LedManager extends Subsystem {
      */
     @Override
     public void readFromHardware() {
-        System.out.println("LED manager rread from hardware");
     }
 
     @Override
     public void writeToHardware() {
-        System.out.println("LED manager wwrite from hardware");
         if (outputsChanged) {
             outputsChanged = false;
             switch (controlState) {
@@ -210,10 +169,6 @@ public class LedManager extends Subsystem {
                     break;
             }
         }
-        if (cameraLedChanged) {
-            cameraLedChanged = false;
-            writeToCameraLed(ledR, ledG, ledB);
-        }
     }
 
     /** Config and Tests */
@@ -241,12 +196,8 @@ public class LedManager extends Subsystem {
     public boolean testSubsystem() {
         // no checking performed
         System.out.println("Checking LED systems");
-        controlState = LedControlState.STANDARD;
+        controlState = LedControlState.SINGLE_COLOR_SOLID;
         setLedColor(MAX, 0, 0); // set red
-        testDelay();
-        setCameraLed(true); // turn on camera
-        testDelay();
-        setCameraLed(false);
         testDelay();
         setLedColor(0, MAX, 0); // set green
         testDelay();
@@ -273,7 +224,73 @@ public class LedManager extends Subsystem {
     }
 
     /**
+     * Base class for Colors
+     */
+    public static class LEDColor {
+        /**
+         * Primary
+         */
+        public static Color strontium = new Color(1*MAX, 0*MAX, 0*MAX); // red
+        public static Color boron = new Color(0*MAX, 1*MAX, 0*MAX); // green
+        public static Color selenium = new Color(0*MAX, 0*MAX, 1*MAX); // blue
+
+        /**
+         * Secondary
+         */
+        public static Color sodium = new Color(1*MAX, 1*MAX, 0*MAX); // yellow
+        public static Color copper = new Color(0*MAX, 1*MAX, 1*MAX); // cyan
+        public static Color potassium = new Color(1*MAX, 0*MAX, 1*MAX); // magenta
+        public static Color calcium = new Color(1*MAX, (int) (1d/5 * MAX), 0*MAX); // orange
+
+        /**
+         * Tertiary
+         */
+        public static Color arsenic = new Color((int) (155d/255 * MAX), (int) (220d/255 * MAX), (int) (225d/255 * MAX)); // gray
+        public static Color magnesium = new Color(1*MAX, 1*MAX, 1*MAX); // white
+
+    }
+
+    /**
+     * Base enum for LED states
+     */
+    public enum LedControlState {
+        SINGLE_COLOR_SOLID,
+        SINGLE_COLOR_BLINK,
+        SINGLE_COLOR_ANIMATION, // CANdle ONLY
+        MULTI_COLOR_ANIMATION // CANdle ONLY
+    }
+
+    /**
+     * Base class for an LEDSegment
+     */
+    private static class LEDSegment {
+        public int length;
+        public Color color;
+        public LedControlState ledControlState;
+
+        public LEDSegment() {
+            length = 0;
+            color = Color.BLACK;
+            ledControlState = LedControlState.SINGLE_COLOR_SOLID;
+        }
+
+        public LEDSegment(int l, Color c) {
+            length = l;
+            color = c;
+            ledControlState = LedControlState.SINGLE_COLOR_SOLID;
+        }
+
+        public LEDSegment(int l, Color c, LedControlState lcs) {
+            length = l;
+            color = c;
+            ledControlState = lcs;
+        }
+    }
+
+
+    /**
      * Base enum for RobotStatus
+     * TODO: REWRITE with LED_SEGMENT
      */
     public enum RobotStatus {
         ENABLED(0, MAX, 0), // green

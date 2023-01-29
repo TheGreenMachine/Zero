@@ -380,7 +380,7 @@ public class Robot extends TimedRobot {
                 drive.zeroSensors(Constants.kDefaultZeroingPose);
                 ledManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
             } else {
-                // non-camera LEDs will flash red if robot periodic updates fail
+                // non-camera LEDs will  flash red if robot periodic updates fail
                 if (faulted) {
                     ledManager.blinkStatus(LedManager.RobotStatus.ERROR);
                 } else {
