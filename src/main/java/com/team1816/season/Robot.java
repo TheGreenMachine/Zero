@@ -248,11 +248,6 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
-                    ),
-                    // Operator Gamepad
-                    createAction(
-                        () -> controlBoard.getAsBool("toggleCameraLED"),
-                        () -> ledManager.setCameraLed(!ledManager.isCameraLedOn())
                     )
                 );
         } catch (Throwable t) {
@@ -342,7 +337,7 @@ public class Robot extends TimedRobot {
             disabledLoop.start();
             drive.zeroSensors();
 
-            ledManager.blinkStatus(LedManager.RobotStatus.DISABLED);
+            ledManager.indicateStatus(LedManager.RobotStatus.DISABLED);
 
             if (subsystemManager.testSubsystems()) {
                 System.out.println("ALL SYSTEMS PASSED");
@@ -385,7 +380,7 @@ public class Robot extends TimedRobot {
             } else {
                 // non-camera LEDs will  flash red if robot periodic updates fail
                 if (faulted) {
-                    ledManager.blinkStatus(LedManager.RobotStatus.ERROR);
+                    ledManager.indicateStatus(LedManager.RobotStatus.ERROR);
                 } else {
                     ledManager.indicateStatus(LedManager.RobotStatus.DISABLED);
                 }
