@@ -307,14 +307,12 @@ public class RobotFactory {
                 ledManager = new CanifierImpl(subsystem.canifier);
             }
             if (ledManager != null) {
-                if (getConstant("resetFactoryDefaults") > 0) {
-                    ledManager.configFactoryDefault();
-                    ledManager.configStatusLedState(true);
-                    ledManager.configLOSBehavior(true);
-                    ledManager.configLEDType(CANdle.LEDStripType.BRG);
-                    ledManager.configV5Enabled(false, 0);
-                    ledManager.configBrightnessScalar(0.5);
-                }
+                ledManager.configFactoryDefault();
+                ledManager.configStatusLedState(true);
+                ledManager.configLOSBehavior(true);
+                ledManager.configLEDType(CANdle.LEDStripType.BRG);
+                ledManager.configV5Enabled(false, 0);
+                ledManager.configBrightnessScalar(0.5);
                 return ledManager;
             }
             reportGhostWarning("LEDManager", subsystemName, "");
