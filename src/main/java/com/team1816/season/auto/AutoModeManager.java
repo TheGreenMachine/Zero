@@ -3,9 +3,7 @@ package com.team1816.season.auto;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.auto.modes.DoNothingMode;
-import com.team1816.season.auto.modes.DriveStraightMode;
-import com.team1816.season.auto.modes.LivingRoomMode;
-import com.team1816.season.auto.modes.TuneDrivetrainMode;
+import com.team1816.season.auto.modes.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -154,6 +152,7 @@ public class AutoModeManager {
         LIVING_ROOM,
         DRIVE_STRAIGHT,
         // 2023
+        AUTO_BALANCE
 
     }
 
@@ -174,6 +173,9 @@ public class AutoModeManager {
             }
             case LIVING_ROOM -> {
                 return new LivingRoomMode(getSelectedColor());
+            }
+            case AUTO_BALANCE -> {
+                return new AutoBalanceMode();
             }
             default -> {
                 System.out.println("Defaulting to drive straight mode");
