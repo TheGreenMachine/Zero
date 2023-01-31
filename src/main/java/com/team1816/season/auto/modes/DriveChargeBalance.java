@@ -5,15 +5,16 @@ import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
+import com.team1816.season.auto.actions.AutoBalanceAction;
 import com.team1816.season.auto.paths.DriveToChargePath;
 
 import java.util.List;
 
-public class DriveToChargeMode extends AutoMode {
-    public DriveToChargeMode(){
+public class DriveChargeBalance extends AutoMode {
+    public DriveChargeBalance(){
         super(List.of(new TrajectoryAction(new DriveToChargePath())));
     }
-    public DriveToChargeMode(Color color){
+    public DriveChargeBalance(Color color){
         super(List.of(new TrajectoryAction(new DriveToChargePath(color))));
     }
 
@@ -23,6 +24,7 @@ public class DriveToChargeMode extends AutoMode {
         System.out.println("Running Drive to Charge Mode");
         runAction(new WaitAction(.5));
         runAction(trajectoryActions.get(0));
+        runAction(new AutoBalanceAction(.4));
     }
 
 }

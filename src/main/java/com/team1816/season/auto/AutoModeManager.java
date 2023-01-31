@@ -179,7 +179,7 @@ public class AutoModeManager {
                 return new AutoBalanceMode();
             }
             case CHARGE_DIRECT -> {
-                return new DriveToChargeMode();
+                return new DriveChargeBalance();
             }
             default -> {
                 System.out.println("Defaulting to drive straight mode");
