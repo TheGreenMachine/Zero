@@ -152,7 +152,8 @@ public class AutoModeManager {
         LIVING_ROOM,
         DRIVE_STRAIGHT,
         // 2023
-        AUTO_BALANCE
+        AUTO_BALANCE,
+        CHARGE_DIRECT
 
     }
 
@@ -176,6 +177,9 @@ public class AutoModeManager {
             }
             case AUTO_BALANCE -> {
                 return new AutoBalanceMode();
+            }
+            case CHARGE_DIRECT -> {
+                return new DriveToChargeMode();
             }
             default -> {
                 System.out.println("Defaulting to drive straight mode");

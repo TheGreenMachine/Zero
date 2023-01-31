@@ -20,9 +20,9 @@ public class DriveToChargePath extends AutoPath {
     @Override
     protected List<Pose2d> getWaypoints() {
        return List.of(
-            new Pose2d(2.05, 2.7, Rotation2d.fromDegrees(0)),
-            new Pose2d(3.4, 2.7, Rotation2d.fromDegrees(0))
-        );
+           new Pose2d(1.7, 2.7, Rotation2d.fromDegrees(0)),
+           new Pose2d(3.9, 2.7, Rotation2d.fromDegrees(0))
+       );
     }
 
     @Override
