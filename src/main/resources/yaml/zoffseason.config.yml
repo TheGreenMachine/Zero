@@ -47,10 +47,11 @@ subsystems:
                         encoderOffset: 511
             drivePID:
                 slot0:
-                    kP: .3
+                    kP: .11
                     kI: 0.0001
                     kD: 4.0
-                    kF: 0.0499
+                    kF: 0.048077
+                    allowableError: 90
             azimuthPID:
                 slot0:
                     kP: 6.0
