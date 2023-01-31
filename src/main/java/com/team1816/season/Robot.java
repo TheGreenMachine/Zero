@@ -467,9 +467,10 @@ public class Robot extends TimedRobot {
             double roll = infrastructure.getRoll();
             double throttle = 0;
             double strafe = 0;
+            double maxFlatRange = 2.5;
             System.out.println("Autobalancing MC, " + pitch + ","  + roll) ;
 
-            if(Math.abs(pitch) > 2 || Math.abs(roll) > 2){
+            if(Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange){
                 throttle = pitch / 10;
                 strafe = roll / 10;
             }
