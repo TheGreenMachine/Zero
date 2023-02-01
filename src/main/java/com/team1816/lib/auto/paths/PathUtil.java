@@ -297,7 +297,7 @@ public class PathUtil {
             }
         }
 
-        /* Adds final heading to be the same as the previous so the path is aligned with the heading */
+        /* Adds final heading to match the previous so the path is aligned with the heading */
         generatedHeadings.add(swerveHeadings.get(swerveHeadings.size() - 1));
 
         return generatedHeadings;
