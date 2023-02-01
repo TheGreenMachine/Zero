@@ -80,6 +80,7 @@ public class Robot extends TimedRobot {
     /** Autobalancing stuff */
     private static SwerveDriveKinematics swerveKinematics;
     private static DifferentialDriveKinematics tankKinematics;
+    private static double initialYaw;
 
 
     /**
@@ -242,12 +243,7 @@ public class Robot extends TimedRobot {
                         (pressed) -> {
                             isAutoBalancing = pressed;
                             System.out.println("Autobalance value = " + isAutoBalancing);
-//                            if(balancing){
-//                                drive.setControlState(Drive.OpenState.AUTO_BALANCE);
-//                                System.out.println("YAAAAAY");
-//                            }
-//                            else
-//                                drive.setControlState(Drive.ControlState.OPEN_LOOP);
+                            initialYaw = robotState.fieldToVehicle.getRotation().getDegrees();
                         }
                     )
                     // Operator Gamepad
@@ -467,24 +463,34 @@ public class Robot extends TimedRobot {
             double roll = infrastructure.getRoll();
             double throttle = 0;
             double strafe = 0;
+            var heading = Constants.EmptyRotation2d;
+
+            double correction = (initialYaw - infrastructure.getYaw())/1440;
+
             double maxFlatRange = Constants.pitchRollMaxFlat;
             System.out.println("Autobalancing MC, " + pitch + ","  + roll) ;
 
             if(Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange){
-                throttle = pitch / 10;
-                strafe = roll / 10;
-            }
+                throttle = pitch / 100;
+                strafe = roll / 100;
 
-            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe, 0);
-            if (isSwerve) {
-                ((SwerveDrive) drive).setModuleStatesPercentOutput(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
-            } else {
-                DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
-                DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond/ TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond/TankDrive.kPathFollowingMaxVelMeters);
-                ((TankDrive) drive).setVelocity(driveSignal);
-            }
+                ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe, correction);
 
-        } else {
+                if (isSwerve) {
+                    ((SwerveDrive) drive).setModuleStatesPercentOutput(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
+                } else {
+                    DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
+                    DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond/ TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond/TankDrive.kPathFollowingMaxVelMeters);
+                    ((TankDrive) drive).setVelocity(driveSignal);
+                }
+            }
+            else{
+                heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
+                if(isSwerve){
+                }
+            }
+        }
+        else {
             drive.setTeleopInputs(
                 -controlBoard.getAsDouble("throttle"),
                 -controlBoard.getAsDouble("strafe"),
@@ -492,7 +498,6 @@ public class Robot extends TimedRobot {
             );
         }
 
-    }
 
     /**
      * Actions to perform periodically when the robot is in the test period

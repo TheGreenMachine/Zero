@@ -16,6 +16,9 @@ import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -321,17 +324,31 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      */
     @Override
     public void setTeleopInputs(double forward, double strafe, double rotation) {
+        SwerveDriveSignal signal;
         if (controlState != ControlState.OPEN_LOOP) {
             controlState = ControlState.OPEN_LOOP;
         }
-        SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
-            (isDemoMode ? forward * demoModeMultiplier : forward),
-            (isDemoMode ? strafe * demoModeMultiplier : strafe),
-            (isDemoMode ? rotation * demoModeMultiplier : rotation),
-            isSlowMode,
-            true,
-            false
-        );
+
+        if(forward == 0 && strafe == 0 && rotation == 0){
+
+            Rotation2d[] azimuths = new Rotation2d[4];
+
+            for (int i = 0; i<4; i++) {
+                azimuths[i] = Rotation2d.fromDegrees(swerveModules[i].azimuthActual);
+            }
+
+            signal = new SwerveDriveSignal(new double[]{0,0,0,0}, azimuths, false);
+        }
+        else {
+            signal = swerveDriveHelper.calculateDriveSignal(
+                (isDemoMode ? forward * demoModeMultiplier : forward),
+                (isDemoMode ? strafe * demoModeMultiplier : strafe),
+                (isDemoMode ? rotation * demoModeMultiplier : rotation),
+                isSlowMode,
+                true,
+                false
+            );
+        }
 
         // To avoid overriding brake command
         if (!isBraking) {
