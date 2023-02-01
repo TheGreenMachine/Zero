@@ -13,10 +13,7 @@ import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.SubsystemLooper;
-import com.team1816.lib.subsystems.drive.Drive;
-import com.team1816.lib.subsystems.drive.DrivetrainLogger;
-import com.team1816.lib.subsystems.drive.SwerveDrive;
-import com.team1816.lib.subsystems.drive.TankDrive;
+import com.team1816.lib.subsystems.drive.*;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.actions.PIDAutoBalanceAction;
@@ -25,51 +22,69 @@ import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 public class Robot extends TimedRobot {
 
-    /** Looper */
+    /**
+     * Looper
+     */
     private final Looper enabledLoop;
     private final Looper disabledLoop;
 
-    /** Logger */
+    /**
+     * Logger
+     */
     private static BadLog logger;
 
-    /** Controls */
+    /**
+     * Controls
+     */
     private IControlBoard controlBoard;
     private ActionManager actionManager;
 
     private final Infrastructure infrastructure;
     private final SubsystemLooper subsystemManager;
 
-    /** State Managers */
+    /**
+     * State Managers
+     */
     private final Orchestrator orchestrator;
     private final RobotState robotState;
 
-    /** Subsystems */
+    /**
+     * Subsystems
+     */
     private final Drive drive;
 
     private final LedManager ledManager;
 
-    /** Factory */
+    /**
+     * Factory
+     */
     private static RobotFactory factory;
 
-    /** Autonomous */
+    /**
+     * Autonomous
+     */
     private final AutoModeManager autoModeManager;
 
-    /** Timing */
+    /**
+     * Timing
+     */
     private double loopStart;
 
-    /** Properties */
+    /**
+     * Properties
+     */
     private boolean faulted;
     private Drive.ControlState prevState;
     private boolean isAutoBalancing;
@@ -77,7 +92,9 @@ public class Robot extends TimedRobot {
     private static boolean isSwerve = false;
 
 
-    /** Autobalancing stuff */
+    /**
+     * Autobalancing stuff
+     */
     private static SwerveDriveKinematics swerveKinematics;
     private static DifferentialDriveKinematics tankKinematics;
     private static double initialYaw;
@@ -105,6 +122,7 @@ public class Robot extends TimedRobot {
 
     /**
      * Returns the static factory instance of the Robot
+     *
      * @return RobotFactory
      */
     public static RobotFactory getFactory() {
@@ -114,6 +132,7 @@ public class Robot extends TimedRobot {
 
     /**
      * Returns the length of the last loop that the Robot was on
+     *
      * @return duration (ms)
      */
     public Double getLastRobotLoop() {
@@ -122,6 +141,7 @@ public class Robot extends TimedRobot {
 
     /**
      * Returns the duration of the last enabled loop
+     *
      * @return duration (ms)
      * @see Looper#getLastLoop()
      */
@@ -458,19 +478,19 @@ public class Robot extends TimedRobot {
             tankKinematics = ((TankDrive) drive).getKinematics();
         }
 
-        if(isAutoBalancing) {
+        if (isAutoBalancing) {
             double pitch = -infrastructure.getPitch();
             double roll = infrastructure.getRoll();
             double throttle = 0;
             double strafe = 0;
             var heading = Constants.EmptyRotation2d;
 
-            double correction = (initialYaw - infrastructure.getYaw())/1440;
+            double correction = (initialYaw - infrastructure.getYaw()) / 1440;
 
             double maxFlatRange = Constants.pitchRollMaxFlat;
-            System.out.println("Autobalancing MC, " + pitch + ","  + roll) ;
+            System.out.println("Autobalancing MC, " + pitch + "," + roll);
 
-            if(Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange){
+            if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
                 throttle = pitch / 100;
                 strafe = roll / 100;
 
@@ -480,28 +500,33 @@ public class Robot extends TimedRobot {
                     ((SwerveDrive) drive).setModuleStatesPercentOutput(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
                 } else {
                     DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
-                    DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond/ TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond/TankDrive.kPathFollowingMaxVelMeters);
+                    DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters);
                     ((TankDrive) drive).setVelocity(driveSignal);
                 }
-            }
-            else{
+            } else {
+
                 heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
-                if(isSwerve){
+
+                if (isSwerve) {
+                    SwerveModuleState templateState = new SwerveModuleState(0,heading);
+                    SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState,templateState,templateState,templateState};
+                    ((SwerveDrive) drive).setModuleStates(statePassIn);
                 }
+                //TODO is tankdrive needed here?
             }
-        }
-        else {
+        } else {
             drive.setTeleopInputs(
                 -controlBoard.getAsDouble("throttle"),
                 -controlBoard.getAsDouble("strafe"),
                 controlBoard.getAsDouble("rotation")
             );
         }
+    }
 
-
-    /**
-     * Actions to perform periodically when the robot is in the test period
-     */
-    @Override
-    public void testPeriodic() {}
-}
+        /**
+         * Actions to perform periodically when the robot is in the test period
+         */
+        @Override
+        public void testPeriodic () {
+        }
+    }
