@@ -72,6 +72,8 @@ public class Robot extends TimedRobot {
      * Autonomous
      */
     private final AutoModeManager autoModeManager;
+    private Thread autoTargetThread;
+    private Thread autoBalanceThread;
 
     /**
      * Timing
@@ -84,6 +86,8 @@ public class Robot extends TimedRobot {
      * Properties
      */
     private boolean faulted;
+    private boolean runningAutoTarget = false;
+    private boolean runningAutoBalance = false;
 
     /**
      * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
@@ -237,30 +241,43 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("autoTarget"),
                         () -> {
-                            orchestrator.updatePoseWithCamera();
-                            double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
-                            if (distance < Constants.kMinTrajectoryDistance) {
-                                System.out.println("Distance to target is " + distance + " m");
-                                System.out.println("Too close to target! can not start trajectory!");
+                            if (!runningAutoTarget) {
+                                runningAutoTarget = true;
+                                orchestrator.updatePoseWithCamera();
+                                double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
+                                if (distance < Constants.kMinTrajectoryDistance) {
+                                    System.out.println("Distance to target is " + distance + " m");
+                                    System.out.println("Too close to target! can not start trajectory!");
+                                } else {
+                                    System.out.println("Drive trajectory action started!");
+                                    TrajectoryToTargetMode mode = new TrajectoryToTargetMode();
+                                    autoTargetThread = new Thread(mode::run);
+                                    autoTargetThread.start();
+                                    System.out.println("Trajectory ended");
+                                }
                             } else {
-                                System.out.println("Drive trajectory action started!");
-                                TrajectoryToTargetMode mode = new TrajectoryToTargetMode();
-                                Thread autoTargetThread = new Thread(mode::run);
-                                autoTargetThread.start();
-                                autoTargetThread = null;
-                                System.out.println("Trajectory ended");
+                                autoTargetThread.stop();
+                                System.out.println("Stopped! driving to trajectory canceled!");
+                                runningAutoTarget = !runningAutoTarget;
                             }
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("autoBalance"),
                         () -> {
-                            System.out.println("Starting auto balance");
-                            AutoBalanceMode mode = new AutoBalanceMode();
-                            Thread autoBalanceThread = new Thread(mode::run);
-                            autoBalanceThread.start();
-                            autoBalanceThread = null;
-                            System.out.println("Balanced");
+                            if (!runningAutoBalance) {
+                                runningAutoBalance = true;
+                                System.out.println("Starting auto balance");
+                                AutoBalanceMode mode = new AutoBalanceMode();
+                                autoBalanceThread = new Thread(mode::run);
+                                autoBalanceThread.start();
+                                autoBalanceThread = null;
+                                System.out.println("Balanced");
+                            } else {
+                                autoBalanceThread.stop();
+                                System.out.println("Stopped! driving to trajectory canceled!");
+                                runningAutoBalance = !runningAutoBalance;
+                            }
                         }
                     ),
                     createHoldAction(
