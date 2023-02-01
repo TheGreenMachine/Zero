@@ -9,6 +9,8 @@ import com.team1816.season.states.RobotState;
 
 public class Collector extends Subsystem {
 
+
+    //piston is for the switch from cone collecting state to
     private final ISolenoid collectorPiston;
 
     private final IGreenMotor intakeMotor;
