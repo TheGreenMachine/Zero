@@ -77,14 +77,14 @@ public abstract class AutoPath {
      *
      * @return waypoints
      */
-    protected abstract List<Pose2d> getWaypoints();
+    public abstract List<Pose2d> getWaypoints();
 
     /**
      * Returns a list of Pose2d's that define the reflected trajectory/path to be followed
      *
      * @return waypoints
      */
-    protected List<Pose2d> getReflectedWaypoints() {
+    public List<Pose2d> getReflectedWaypoints() {
         List<Pose2d> waypoints = getWaypoints();
         List<Pose2d> reflectedWaypoints = new ArrayList<>();
         for (int i = 0; i < waypoints.size(); i++) {
@@ -99,7 +99,7 @@ public abstract class AutoPath {
      *
      * @return waypoints
      */
-    protected List<Pose2d> getRotatedWaypoints() {
+    public List<Pose2d> getRotatedWaypoints() {
         List<Pose2d> waypoints = getWaypoints();
         List<Pose2d> rotatedWaypoints = new ArrayList<>();
         for (int i = 0; i < waypoints.size(); i++) {
@@ -163,11 +163,11 @@ public abstract class AutoPath {
     public Trajectory getAsTrajectory() {
         if (trajectory == null) {
             if (!reflected && !rotated) {
-                trajectory = PathUtil.generateTrajectory(usingApp(), getWaypoints());
+                trajectory = PathUtil.generateTrajectory(getClass().getName(), usingApp(), getWaypoints());
             } else if (reflected) {
-                trajectory = PathUtil.generateTrajectory(usingApp(), getReflectedWaypoints());
+                trajectory = PathUtil.generateTrajectory(getClass().getName() + "-reversed", usingApp(), getReflectedWaypoints());
             } else {
-                trajectory = PathUtil.generateTrajectory(usingApp(), getRotatedWaypoints());
+                trajectory = PathUtil.generateTrajectory(getClass().getName() + "-rotated", usingApp(), getRotatedWaypoints());
             }
         }
         return trajectory;
@@ -181,9 +181,11 @@ public abstract class AutoPath {
      */
     public List<Rotation2d> getAsTrajectoryHeadings() {
         if (headings == null) {
+            String name = getClass().getName();
             if (!reflected && !rotated) {
                 headings =
                     PathUtil.generateHeadings(
+                        name,
                         usingApp(),
                         getWaypoints(),
                         getWaypointHeadings()
@@ -191,6 +193,7 @@ public abstract class AutoPath {
             } else if (reflected) {
                 headings =
                     PathUtil.generateHeadings(
+                        name + "-reversed",
                         usingApp(),
                         getReflectedWaypoints(),
                         getReflectedWaypointHeadings()
@@ -198,6 +201,7 @@ public abstract class AutoPath {
             } else {
                 headings =
                     PathUtil.generateHeadings(
+                        name + "-rotated",
                         usingApp(),
                         getRotatedWaypoints(),
                         getRotatedWaypointHeadings()

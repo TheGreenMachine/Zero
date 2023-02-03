@@ -20,7 +20,7 @@ public class ExampleAutoPath extends AutoPath {
      * into a trajectory for use in AutoModes
      */
     @Override
-    protected List<Pose2d> getWaypoints() {
+    public List<Pose2d> getWaypoints() {
         // path looks like a deformed and mirrored C shape
         return List.of(
             new Pose2d(1.72, 0.49, Rotation2d.fromDegrees(0)),
@@ -51,7 +51,7 @@ public class ExampleAutoPath extends AutoPath {
     }
 
     @Override
-    protected List<Pose2d> getReflectedWaypoints() {
+    public List<Pose2d> getReflectedWaypoints() {
         return null;
     }
 

@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import com.team1816.lib.motion.Trajectories;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,14 @@ public class PathUtil {
     private static final double kMaxVelocity = kPathFollowingMaxVelMeters;
     private static final double kMaxAccel = kPathFollowingMaxAccelMeters;
 
+    public static Trajectory generateTrajectory(
+        String pathName,
+        boolean usingApp,
+        List<Pose2d> waypoints
+    ) {
+        return generateTrajectory(pathName, usingApp, waypoints, false);
+    }
+
     /**
      * Generates a trajectory based on a list of waypoints based on WPIlib's TrajectoryGenerator
      *
@@ -32,9 +41,14 @@ public class PathUtil {
      * @see edu.wpi.first.math.trajectory.TrajectoryGenerator
      */
     public static Trajectory generateTrajectory(
+        String pathName,
         boolean usingApp,
-        List<Pose2d> waypoints
+        List<Pose2d> waypoints,
+        boolean noLoad
     ) {
+        if (!noLoad) {
+            return Trajectories.loadTrajectory(pathName);
+        }
         /* Inch to meter conversions for waypoints for trajectory calculations */
         List<Pose2d> waypointsMeters = new ArrayList<>();
         for (Pose2d pose2d : waypoints) {
@@ -74,6 +88,7 @@ public class PathUtil {
      * @return headings
      */
     public static List<Rotation2d> generateHeadings(
+        String name,
         boolean usingApp,
         List<Pose2d> waypoints,
         List<Rotation2d> swerveHeadings
@@ -86,7 +101,7 @@ public class PathUtil {
         double startY = Constants.fieldCenterY;
 
         /* Trajectory is generated */
-        Trajectory trajectory = generateTrajectory(usingApp, waypoints);
+        Trajectory trajectory = generateTrajectory(name, usingApp, waypoints);
         List<Pose2d> waypointsMeters = new ArrayList<>();
         if (usingApp) {
             startX = 0;

@@ -183,6 +183,16 @@ task runZodiac(type: JavaExec) {
     classpath = files(jar)
     jvmArgs "-Djava.library.path=${jniDir}"
 }
+apply plugin: 'java';
+task calculateTrajectories() {
+    dependsOn compileJava
+    doLast {
+        URL[] urls = sourceSets.main.runtimeClasspath.files.collect { it.toURI().toURL() } as URL[]
+        def classloader = new java.net.URLClassLoader(urls)
+        Class type = classloader.loadClass("com.team1816.lib.motion.Trajectories");
+        type.calculate()
+    }
+}
 
 processResources {
     include '**/*.config.yml'
