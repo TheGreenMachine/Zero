@@ -267,6 +267,7 @@ public class Robot extends TimedRobot {
             // Stop any running autos
             autoModeManager.stopAuto();
             ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
+            ledManager.indicateDefaultStatus();
 
             if (autoModeManager.getSelectedAuto() == null) {
                 autoModeManager.reset();
@@ -291,6 +292,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         disabledLoop.stop();
         ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
+        ledManager.indicateDefaultStatus();
 
         drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
 
@@ -309,6 +311,7 @@ public class Robot extends TimedRobot {
         try {
             disabledLoop.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.ENABLED);
+            ledManager.indicateDefaultStatus();
 
             infrastructure.startCompressor();
 
@@ -374,9 +377,10 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic() {
         loopStart = Timer.getFPGATimestamp();
         try {
+            ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
             if (RobotController.getUserButton()) {
                 drive.zeroSensors(Constants.kDefaultZeroingPose);
-                ledManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
+                ledManager.indicateStatus(LedManager.RobotStatus.DISABLED);
             } else {
                 // non-camera LEDs will  flash red if robot periodic updates fail
                 if (faulted) {
