@@ -285,7 +285,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         SmartDashboard.putNumber("Drive/Temperature", motorTemperatures[0]);
         robotState.drivetrainTemp = motorTemperatures[0];
 
-        robotState.vehicleToFloorProximity = infrastructure.getMaximumProximity();
+        robotState.vehicleToFloorProximityCentimeters = infrastructure.getMaximumProximity();
     }
 
     /** Open Loop control */

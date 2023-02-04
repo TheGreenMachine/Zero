@@ -8,11 +8,12 @@ import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.drive.TankDrive;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.season.Robot;
+import com.team1816.season.configuration.Constants;
+import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -21,10 +22,12 @@ import edu.wpi.first.wpilibj.Timer;
  * @see AutoAction
  */
 public class AutoBalanceAction implements AutoAction {
-    private static Drive drive;
-    private static Infrastructure infrastructure;
-    private static SwerveDriveKinematics swerveKinematics;
-    private static DifferentialDriveKinematics tankKinematics;
+
+    private RobotState robotState;
+    private Drive drive;
+    private Infrastructure infrastructure;
+    private SwerveDriveKinematics swerveKinematics;
+    private DifferentialDriveKinematics tankKinematics;
 
     private static boolean isSwerve = false;
     private double maxVelocity;
@@ -35,6 +38,7 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public void start() {
+        robotState = Injector.get(RobotState.class);
         drive = Injector.get(Drive.Factory.class).getInstance();
         infrastructure = Injector.get(Infrastructure.class);
 
@@ -49,13 +53,24 @@ public class AutoBalanceAction implements AutoAction {
     }
 
     @Override
-    public void update() {
-        double velocity = 0;
-        if (Math.abs(infrastructure.getFieldCentricPitch()) > 2) { // degrees
-            double pitch = infrastructure.getFieldCentricPitch();
-            velocity = -1 * (1 - Math.cos(Units.degreesToRadians(45d / 11 * pitch))) * maxVelocity * pitch / Math.abs(pitch);
+    public void update() { // TODO Implement proximity
+        double pitch = -infrastructure.getPitch();
+        double roll = infrastructure.getRoll();
+        double velocityX = 0;
+        double velocityY = 0;
+
+        if (robotState.vehicleToFloorProximityCentimeters > Constants.kMaxProximityThresholdCentimeters) {
+            velocityX = 0;
+            velocityY = 0;
+        } else {
+            if (Math.abs(pitch) > 1 || Math.abs(roll) > 1) {
+                velocityX = pitch / 40;
+                velocityY = roll / 40;
+            }
         }
-        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(velocity, 0, 0);
+
+        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(velocityX, velocityY, 0);
+
         if (isSwerve) {
             ((SwerveDrive) drive).setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
         } else {

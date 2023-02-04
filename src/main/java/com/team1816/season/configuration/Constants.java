@@ -70,6 +70,7 @@ public class Constants {
     public static double kMaxAccelDiffThreshold = 2d; // m/s^2
     public static double kMaxBalancingVelocity = 0.2; // m/s
     public static double kMinTrajectoryDistance = 0.05; // m
+    public static double kMaxProximityThresholdCentimeters = 25; // cm
 
     /**
      * Camera characterization
