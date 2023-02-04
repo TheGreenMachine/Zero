@@ -23,7 +23,7 @@ $ git clone https://github.com/TheGreenMachine/Zero.git
 4. Select `Import project from external model`. Then select 'Gradle'.
 5. Configure your Gradle options:
     * Make sure to select the "Use gradle 'wrapper' task configuration' option.
-    * Verify that the Gradle JVM is set to 'Use Project JDK' (which should be Java 11).
+    * Verify that the Gradle JVM is set to 'Use Project JDK' (which should be Java 17).
     * Keep other options as their defaults.
 6. Select 'Finish'. Your project should load in and be set up without issues.
 
