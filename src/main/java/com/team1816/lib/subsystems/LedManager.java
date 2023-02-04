@@ -169,7 +169,7 @@ public class LedManager extends Subsystem {
      */
     public void writeToLed(int r, int g, int b) {
         ledManager.setLEDs(255, 255, 255, 0, 0, 8); // CANdle LEDs
-        ledManager.setLEDs(r, g, b, 0, 8, LED_STRIP_COUNT + 8);
+        ledManager.setLEDs(r, g, b, 0, 8, LED_STRIP_COUNT);
         outputsChanged = false;
     }
 
