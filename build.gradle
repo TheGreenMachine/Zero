@@ -98,7 +98,6 @@ jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
-
 }
 
 jsonSchema2Pojo {
@@ -184,14 +183,21 @@ task runZodiac(type: JavaExec) {
     jvmArgs "-Djava.library.path=${jniDir}"
 }
 apply plugin: 'java';
-task calculateTrajectories() {
-    dependsOn compileJava
-    doLast {
-        URL[] urls = sourceSets.main.runtimeClasspath.files.collect { it.toURI().toURL() } as URL[]
-        def classloader = new java.net.URLClassLoader(urls)
-        Class type = classloader.loadClass("com.team1816.lib.motion.Trajectories");
-        type.calculate()
+task calculateTrajectories(type: JavaExec) {
+    String jniDir = "${project.buildDir}/jni/release"
+    environment "PATH", jniDir
+    String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
+    if (!DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+        environment "LD_LIBRARY_PATH", jniDir
+        environment "DYLD_FALLBACK_LIBRARY_PATH", jniDir
+        environment "DYLD_LIBRARY_PATH", jniDir
+        jvmArgs "-XstartOnFirstThread"
     }
+    environment "HALSIM_EXTENSIONS", hal
+    environment "ROBOT_NAME", "alpha"
+    classpath = files(jar)
+    jvmArgs "-Djava.library.path=${jniDir}"
+    main = "com.team1816.lib.motion.Trajectories"
 }
 
 processResources {
@@ -211,4 +217,9 @@ wpi.java.configureTestTasks(test)
 
 compileJava {
     //dependsOn tasks.named("spotlessApply")
+}
+
+task fullDeploy() {
+    dependsOn tasks.named("calculateTrajectories")
+    dependsOn 'deploy'
 }

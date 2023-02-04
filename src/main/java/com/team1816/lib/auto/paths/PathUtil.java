@@ -46,6 +46,7 @@ public class PathUtil {
         List<Pose2d> waypoints,
         boolean noLoad
     ) {
+        pathName = Trajectories.formatClassName(pathName);
         if (!noLoad) {
             return Trajectories.loadTrajectory(pathName);
         }
