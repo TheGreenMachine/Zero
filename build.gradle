@@ -137,7 +137,8 @@ task calculateTrajectories(type: JavaExec) {
 
 // Simulates robot with characterization alpha.config.yml
 task runAlpha(type: JavaExec) {
-    calculateTrajectories
+    dependsOn tasks.named("calculateTrajectories")
+
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
     String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
@@ -156,7 +157,8 @@ task runAlpha(type: JavaExec) {
 
 // Simulates robot with characterization zero.config.yml
 task runZero(type: JavaExec) {
-    calculateTrajectories
+    dependsOn tasks.named("calculateTrajectories")
+
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
     String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
@@ -175,7 +177,8 @@ task runZero(type: JavaExec) {
 
 // Simulates robot with characterization zoffseason.config.yml
 task runZoffseason(type: JavaExec) {
-    calculateTrajectories
+    dependsOn tasks.named("calculateTrajectories")
+
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
     String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
@@ -194,7 +197,8 @@ task runZoffseason(type: JavaExec) {
 
 // Simulates robot with characterization zodiac_pro.config.yml
 task runZodiac(type: JavaExec) {
-    calculateTrajectories
+    dependsOn tasks.named("calculateTrajectories")
+
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
     String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath

@@ -39,11 +39,11 @@ public class TrajectoryCalculator {
      */
     public static void main(String[] args) {
         deleteTrajectories();
-        System.out.println("Calculating " + paths.size() + " Trajectories!");
+        System.out.println("Calculating " + paths.size() + " Trajectories:");
         for (AutoPath path: paths) {
             calcAllTrajectoryFormats(path);
+            System.out.println("\tCalculated " + path.getClass().getName());
         }
-        System.out.println("Calculated " + paths.size() + " Trajectories!");
     }
 
     /**
