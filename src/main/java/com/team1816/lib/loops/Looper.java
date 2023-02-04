@@ -2,6 +2,7 @@ package com.team1816.lib.loops;
 
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.season.Robot;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -51,7 +52,7 @@ public class Looper implements ILooper {
             }
         };
 
-        robot.addPeriodic(runnable_, 0.035, 0.005); // offsets periodic loop
+        robot.addPeriodic(runnable_, Constants.kLooperDt, 0.005); // offsets periodic loop
         mRunning = false;
         mLoops = new ArrayList<>();
     }
