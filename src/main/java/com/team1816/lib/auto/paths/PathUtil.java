@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import com.team1816.lib.motion.Trajectories;
+import com.team1816.lib.motion.TrajectoryCalculator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +46,9 @@ public class PathUtil {
         List<Pose2d> waypoints,
         boolean noLoad
     ) {
-        pathName = Trajectories.formatClassName(pathName);
+        pathName = TrajectoryCalculator.formatClassName(pathName);
         if (!noLoad) {
-            return Trajectories.loadTrajectory(pathName);
+            return TrajectoryCalculator.loadTrajectory(pathName);
         }
         /* Inch to meter conversions for waypoints for trajectory calculations */
         List<Pose2d> waypointsMeters = new ArrayList<>();

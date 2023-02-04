@@ -81,6 +81,7 @@ dependencies {
     implementation 'com.google.inject:guice:5.1.0'
     implementation 'com.google.inject.extensions:guice-assistedinject:5.1.0'
     implementation 'org.apache.commons:commons-math3:3.6.1'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.7'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-inline:4.7.0'
@@ -100,6 +101,7 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
+// Converts JSON Schema to Classes
 jsonSchema2Pojo {
     targetPackage = 'com.team1816.lib'
     useTitleAsClassname = true
@@ -114,7 +116,28 @@ jsonSchema2Pojo {
     )
 }
 
+// Calculates Trajectories
+apply plugin: 'java';
+task calculateTrajectories(type: JavaExec) {
+    String jniDir = "${project.buildDir}/jni/release"
+    environment "PATH", jniDir
+    String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
+    if (!DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+        environment "LD_LIBRARY_PATH", jniDir
+        environment "DYLD_FALLBACK_LIBRARY_PATH", jniDir
+        environment "DYLD_LIBRARY_PATH", jniDir
+        jvmArgs "-XstartOnFirstThread"
+    }
+    environment "HALSIM_EXTENSIONS", hal
+    environment "ROBOT_NAME", "alpha"
+    classpath = files(jar)
+    jvmArgs "-Djava.library.path=${jniDir}"
+    main = "com.team1816.lib.motion.TrajectoryCalculator"
+}
+
+// Simulates robot with characterization alpha.config.yml
 task runAlpha(type: JavaExec) {
+    calculateTrajectories
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
     String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
@@ -131,7 +154,9 @@ task runAlpha(type: JavaExec) {
     jvmArgs "-Djava.library.path=${jniDir}"
 }
 
+// Simulates robot with characterization zero.config.yml
 task runZero(type: JavaExec) {
+    calculateTrajectories
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
     String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
@@ -148,7 +173,9 @@ task runZero(type: JavaExec) {
     jvmArgs "-Djava.library.path=${jniDir}"
 }
 
+// Simulates robot with characterization zoffseason.config.yml
 task runZoffseason(type: JavaExec) {
+    calculateTrajectories
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
     String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
@@ -165,8 +192,9 @@ task runZoffseason(type: JavaExec) {
     jvmArgs "-Djava.library.path=${jniDir}"
 }
 
-
+// Simulates robot with characterization zodiac_pro.config.yml
 task runZodiac(type: JavaExec) {
+    calculateTrajectories
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
     String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
@@ -181,23 +209,6 @@ task runZodiac(type: JavaExec) {
     dependsOn(jar, simulateExternalJavaRelease)
     classpath = files(jar)
     jvmArgs "-Djava.library.path=${jniDir}"
-}
-apply plugin: 'java';
-task calculateTrajectories(type: JavaExec) {
-    String jniDir = "${project.buildDir}/jni/release"
-    environment "PATH", jniDir
-    String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
-    if (!DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-        environment "LD_LIBRARY_PATH", jniDir
-        environment "DYLD_FALLBACK_LIBRARY_PATH", jniDir
-        environment "DYLD_LIBRARY_PATH", jniDir
-        jvmArgs "-XstartOnFirstThread"
-    }
-    environment "HALSIM_EXTENSIONS", hal
-    environment "ROBOT_NAME", "alpha"
-    classpath = files(jar)
-    jvmArgs "-Djava.library.path=${jniDir}"
-    main = "com.team1816.lib.motion.Trajectories"
 }
 
 processResources {
