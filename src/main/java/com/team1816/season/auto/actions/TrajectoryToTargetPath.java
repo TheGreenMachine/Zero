@@ -32,7 +32,7 @@ public class TrajectoryToTargetPath extends AutoPath {
     }
 
     @Override
-    protected List<Pose2d> getWaypoints() {
+    public List<Pose2d> getWaypoints() {
         List<Pose2d> waypoints = new ArrayList<>();
         waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
         waypoints.add(target);
@@ -40,7 +40,7 @@ public class TrajectoryToTargetPath extends AutoPath {
     }
 
     @Override
-    protected List<Rotation2d> getWaypointHeadings() {
+    public List<Rotation2d> getWaypointHeadings() {
         List<Rotation2d> headings = new ArrayList<>();
         headings.add(robotState.fieldToVehicle.getRotation());
         headings.add(target.getRotation());
@@ -58,7 +58,7 @@ public class TrajectoryToTargetPath extends AutoPath {
             translatedVelocity.getY(),
             robotState.deltaVehicle.omegaRadiansPerSecond
         );
-        return PathUtil.generateTrajectory(usingApp(), translatedChassisSpeeds, getWaypoints());
+        return PathUtil.generateTrajectory(translatedChassisSpeeds, getWaypoints());
     }
 
     @Override
@@ -73,15 +73,9 @@ public class TrajectoryToTargetPath extends AutoPath {
             robotState.deltaVehicle.omegaRadiansPerSecond
         );
         return PathUtil.generateHeadings(
-            usingApp(),
             getWaypoints(),
             getWaypointHeadings(),
             translatedChassisSpeeds
         );
-    }
-
-    @Override
-    protected boolean usingApp() {
-        return true;
     }
 }

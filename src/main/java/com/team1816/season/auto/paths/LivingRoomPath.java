@@ -36,7 +36,7 @@ public class LivingRoomPath extends AutoPath {
     }
 
     @Override
-    public boolean usingApp() {
+    public boolean isPrecalculated() {
         return true;
     }
 }

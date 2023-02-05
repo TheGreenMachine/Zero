@@ -66,7 +66,7 @@ public class ExampleAutoPath extends AutoPath {
      * @return just make this return true - we're always using the app
      */
     @Override
-    protected boolean usingApp() {
+    protected boolean isPrecalculated() {
         return true;
-    } // TODO remove me :)
+    }
 }

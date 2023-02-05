@@ -38,10 +38,16 @@ public abstract class AutoPath {
      */
     boolean rotated;
 
+    /**
+     * State: contains information about whether the trajectory is generated with TrajectoryCalculator
+     */
+    boolean precalculated;
+
     public AutoPath() {
     }
 
     public AutoPath(Color color) {
+        setPrecalculated(false);
         if (Constants.fieldSymmetry == Symmetry.AXIS && color == Color.RED) {
             setReflected(true);
             setRotated(false);
@@ -70,6 +76,20 @@ public abstract class AutoPath {
      */
     protected void setRotated(boolean rotated) {
         this.rotated = rotated;
+    }
+
+    /**
+     * Sets whether the trajectory is pre-calculated or generated
+     */
+    protected void setPrecalculated(boolean precalculated) {
+        this.precalculated = precalculated;
+    }
+
+    /**
+     * Returns whether the trajectory is pre-calculated
+     */
+    protected boolean isPrecalculated() {
+        return precalculated;
     }
 
     /**
@@ -147,14 +167,6 @@ public abstract class AutoPath {
     }
 
     /**
-     * Checks if the path was made using the CheesyPath web application.
-     * If false, the starting pose of the trajectory will be set to the default starting pose.
-     *
-     * @return boolean usingApp
-     */
-    protected abstract boolean usingApp();
-
-    /**
      * Returns the generated trajectory associated with the AutoPath
      *
      * @return trajectory
@@ -163,11 +175,11 @@ public abstract class AutoPath {
     public Trajectory getAsTrajectory() {
         if (trajectory == null) {
             if (!reflected && !rotated) {
-                trajectory = PathUtil.generateTrajectory(getClass().getName(), usingApp(), getWaypoints());
+                trajectory = PathUtil.generateTrajectory(getClass().getName(), getWaypoints(), isPrecalculated());
             } else if (reflected) {
-                trajectory = PathUtil.generateTrajectory(getClass().getName() + "-reversed", usingApp(), getReflectedWaypoints());
+                trajectory = PathUtil.generateTrajectory(getClass().getName() + "_Reversed", getReflectedWaypoints(), isPrecalculated());
             } else {
-                trajectory = PathUtil.generateTrajectory(getClass().getName() + "-rotated", usingApp(), getRotatedWaypoints());
+                trajectory = PathUtil.generateTrajectory(getClass().getName() + "_Rotated", getRotatedWaypoints(), isPrecalculated());
             }
         }
         return trajectory;
@@ -181,30 +193,30 @@ public abstract class AutoPath {
      */
     public List<Rotation2d> getAsTrajectoryHeadings() {
         if (headings == null) {
-            String name = getClass().getName();
+            String name = getClass().getName()+"Headings";
             if (!reflected && !rotated) {
                 headings =
                     PathUtil.generateHeadings(
                         name,
-                        usingApp(),
                         getWaypoints(),
-                        getWaypointHeadings()
+                        getWaypointHeadings(),
+                        isPrecalculated()
                     );
             } else if (reflected) {
                 headings =
                     PathUtil.generateHeadings(
-                        name + "-reversed",
-                        usingApp(),
+                        name + "_Reversed",
                         getReflectedWaypoints(),
-                        getReflectedWaypointHeadings()
+                        getReflectedWaypointHeadings(),
+                        isPrecalculated()
                     );
             } else {
                 headings =
                     PathUtil.generateHeadings(
-                        name + "-rotated",
-                        usingApp(),
+                        name + "_Rotated",
                         getRotatedWaypoints(),
-                        getRotatedWaypointHeadings()
+                        getRotatedWaypointHeadings(),
+                        isPrecalculated()
                     );
             }
         }

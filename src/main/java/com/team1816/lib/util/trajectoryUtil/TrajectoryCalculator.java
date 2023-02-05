@@ -10,6 +10,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -89,7 +90,7 @@ public class TrajectoryCalculator {
         if (waypoints == null) {
             return;
         }
-        var trajectory = PathUtil.generateTrajectory(name, true, waypoints, true);
+        var trajectory = PathUtil.generateTrajectory(name, waypoints, false);
         ObjectMapper mapper = new ObjectMapper();
         try {
             File file = new File(System.getProperty("user.dir") + "/src/main/resources/trajectories/" + name + ".json");
@@ -113,7 +114,7 @@ public class TrajectoryCalculator {
             return;
         }
 
-        var trajectoryHeadings = PathUtil.generateHeadings(name, true, waypoints, headings);
+        var trajectoryHeadings = PathUtil.generateHeadings(name, waypoints, headings, false);
         ObjectMapper mapper = new ObjectMapper();
         try {
             File file = new File(System.getProperty("user.dir") + "/src/main/resources/trajectories/" + name + ".json");
@@ -127,7 +128,7 @@ public class TrajectoryCalculator {
     }
 
     /**
-     * Loads the Trajectory states into the associated JSON storing it
+     * Loads the Trajectory states with the associated JSON storing it
      * @param name path name
      * @return Trajectory
      * @see Trajectory
@@ -143,6 +144,23 @@ public class TrajectoryCalculator {
         } catch (Exception e) {
             System.out.println("Error parsing path JSON: " + name + "\n" + e.getMessage());
             return new Trajectory();
+        }
+    }
+
+    /**
+     * Loads the Headings with the associated JSON storing it
+     */
+    public static List<Rotation2d> loadTrajectoryHeadings(String name) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            List<Rotation2d> list = mapper.readValue(
+                new File(System.getProperty("user.dir") + "/src/main/resources/trajectories/" + name + ".json"),
+                new TypeReference<List<Rotation2d>>() { }
+            );
+            return list;
+        } catch (Exception e) {
+            System.out.println("Error parsing path JSON: " + name + "\n" + e.getMessage());
+            return new ArrayList<>();
         }
     }
 

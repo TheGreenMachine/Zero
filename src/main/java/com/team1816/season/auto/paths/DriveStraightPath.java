@@ -28,19 +28,23 @@ public class DriveStraightPath extends AutoPath {
     @Override
     public List<Pose2d> getWaypoints() {
         var waypoints = List.of(
-            new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)),
-            new Pose2d((driveDistance), 0.0, Rotation2d.fromDegrees(0))
+            new Pose2d(0.0, 4.0, Rotation2d.fromDegrees(0)),
+            new Pose2d((driveDistance), 4.0, Rotation2d.fromDegrees(0))
         );
         return waypoints;
     }
 
     @Override
     public List<Rotation2d> getWaypointHeadings() {
-        return null;
+        var headings = List.of(
+            Constants.EmptyRotation2d,
+            Constants.EmptyRotation2d
+        );
+        return headings;
     }
 
     @Override
-    public boolean usingApp() {
-        return false;
+    public boolean isPrecalculated() {
+        return true;
     }
 }
