@@ -8,14 +8,10 @@ import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 
+import javax.inject.Inject;
+
 public class Elevator extends Subsystem {
-    /**
-     * Base parameters needed to instantiate a subsystem
-     *
-     * @param name String
-     * @param inf  Infrastructure
-     * @param rs   RobotState
-     */
+
 
     private static final String NAME = "elevator";
 
@@ -35,10 +31,16 @@ public class Elevator extends Subsystem {
     private ANGLE_STATE desiredAnglePosition = ANGLE_STATE.STOW;
     private EXTENSION_STATE desiredExtensionPosition = EXTENSION_STATE.MIN;
     private boolean outputsChanged;
-    private final double ALLOWABLE_ERROR;
 
-    public Elevator(String name, Infrastructure inf, RobotState rs, ISolenoid elevatorSolenoid, IGreenMotor angleMotor, IGreenMotor elevatorMotor, IGreenMotor angleMotorFollower, double allowable_error) {
-        super(name, inf, rs);
+    /**
+     * Base parameters needed to instantiate a subsystem
+     *
+     * @param inf  Infrastructure
+     * @param rs   RobotState
+     */
+    @Inject
+    public Elevator(Infrastructure inf, RobotState rs) {
+        super(NAME, inf, rs);
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
 
         //components
@@ -47,7 +49,6 @@ public class Elevator extends Subsystem {
         this.extensionMotor = factory.getMotor(NAME,"extensionMotor");
 
         //constants
-        ALLOWABLE_ERROR = config.allowableError;
         double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
         stowAngle = factory.getConstant("elevator","stowPose");
         collectAngle = factory.getConstant("elevator", "collectPose");

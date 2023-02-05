@@ -18,6 +18,8 @@ import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
+import com.team1816.season.subsystems.Collector;
+import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.wpilibj.*;
 
 import java.nio.file.Files;
@@ -63,6 +65,8 @@ public class Robot extends TimedRobot {
 
     private final LedManager ledManager;
     private final Camera camera;
+    private final Elevator elevator;
+    private final Collector collector;
 
     /**
      * Factory
@@ -100,6 +104,8 @@ public class Robot extends TimedRobot {
         enabledLoop = new Looper(this);
         disabledLoop = new Looper(this);
         drive = (Injector.get(Drive.Factory.class)).getInstance();
+        elevator = Injector.get(Elevator.class);
+        collector = Injector.get(Collector.class);
         ledManager = Injector.get(LedManager.class);
         camera = Injector.get(Camera.class);
         robotState = Injector.get(RobotState.class);

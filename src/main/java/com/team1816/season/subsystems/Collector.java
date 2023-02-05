@@ -7,6 +7,8 @@ import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 
+import javax.inject.Inject;
+
 public class Collector extends Subsystem {
 
 
@@ -25,6 +27,7 @@ public class Collector extends Subsystem {
 
     private static final String NAME = "collector";
 
+    @Inject
     public Collector (Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         collectorPiston = factory.getSolenoid(NAME, "collectorSolenoid");

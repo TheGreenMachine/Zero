@@ -63,7 +63,7 @@ public class Orchestrator {
      * @param led LedManager
      */
     @Inject
-    public Orchestrator(Drive.Factory df, Turret tur, LedManager led, Collector col, Elevator el) {
+    public Orchestrator(Drive.Factory df, LedManager led, Collector col, Elevator el) {
         drive = df.getInstance();
         ledManager = led;
         collector = col;
