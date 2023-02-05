@@ -34,9 +34,7 @@ public class TrajectoryParser {
     public static Trajectory parseTrajectory(String name) {
         File file = new File(directory.getPath() + name + ".json");
         try {
-            List<Trajectory.State> trajectoryStates = mapper.readValue(
-                file, new TypeReference<List<Trajectory.State>>() {}
-            );
+            List<Trajectory.State> trajectoryStates = mapper.readValue(file, new TypeReference<List<Trajectory.State>>(){});
             var trajectory = new Trajectory(trajectoryStates);
             return trajectory;
         } catch (Exception e) {
