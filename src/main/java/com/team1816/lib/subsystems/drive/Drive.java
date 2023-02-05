@@ -152,13 +152,16 @@ public abstract class Drive
     );
 
     public static final double kPXController = 1;
+    public static final double kDXController = 0;
     public static final double kPYController = 1;
+    public static final double kDYController = 0;
     public static final double kPThetaController = 4;
+    public static final double kDThetaController = 0;
     public static final double kMaxAngularSpeed = factory.getConstant(NAME, "maxRotVel"); // rad/sec
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared =
         2 * Math.PI;
 
-    // Constraint for the motion profilied robot angle controller
+    // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeed,
         kMaxAngularAccelerationRadiansPerSecondSquared
