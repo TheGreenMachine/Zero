@@ -82,6 +82,7 @@ public abstract class Drive
     protected Pose2d startingPose = Constants.kDefaultZeroingPose;
     protected Trajectory trajectory;
     protected static double timestamp;
+    protected static double prevTimestamp;
 
     /**
      * Simulator
@@ -215,6 +216,7 @@ public abstract class Drive
                 @Override
                 public void onLoop(double timestamp) {
                     synchronized (Drive.this) {
+                        Drive.prevTimestamp = Drive.timestamp;
                         Drive.timestamp = timestamp;
                         switch (controlState) {
                             case OPEN_LOOP:

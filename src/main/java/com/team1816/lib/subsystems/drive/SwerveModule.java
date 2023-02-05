@@ -15,8 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 
-import static com.team1816.lib.subsystems.drive.Drive.NAME;
-import static com.team1816.lib.subsystems.drive.Drive.factory;
+import static com.team1816.lib.subsystems.drive.Drive.*;
 
 public class SwerveModule implements ISwerveModule {
 
@@ -160,7 +159,7 @@ public class SwerveModule implements ISwerveModule {
         moduleState.speedMetersPerSecond = driveActual;
         moduleState.angle = Rotation2d.fromDegrees(azimuthActual);
 
-        drivePosition += driveActual * Constants.kLooperDt;
+        drivePosition += driveActual * (timestamp-prevTimestamp);
         modulePosition.distanceMeters = drivePosition;
         modulePosition.angle = Rotation2d.fromDegrees(azimuthActual);
 
