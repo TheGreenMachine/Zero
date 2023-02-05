@@ -147,7 +147,7 @@ public class TrajectoryCalculator {
     }
 
     /**
-     * Clears the Trajectories located in the resources directory
+     * Clears the json files storing trajectories and headings located in the resources directory
      */
     public static void deleteTrajectories() {
         try {
