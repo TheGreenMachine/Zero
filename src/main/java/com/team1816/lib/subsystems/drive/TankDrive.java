@@ -333,8 +333,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      */
     public synchronized void setVelocity(DriveSignal signal) {
         if (controlState == ControlState.OPEN_LOOP) {
-            System.out.println("Switching to Velocity");
-
             leftMain.selectProfileSlot(0, 0);
             rightMain.selectProfileSlot(0, 0);
 
