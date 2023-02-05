@@ -103,7 +103,7 @@ public class TrajectoryCalculator {
     }
 
     /**
-     * Calculates the Headings associated with the AutoPath
+     * Calculates the headings associated with the AutoPath
      * @param name path name
      * @param waypoints path waypoints
      * @param headings path headings
