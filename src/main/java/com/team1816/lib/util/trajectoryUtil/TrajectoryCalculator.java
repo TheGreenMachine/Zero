@@ -1,4 +1,4 @@
-package com.team1816.lib.motion;
+package com.team1816.lib.util.trajectoryUtil;
 import com.team1816.season.auto.paths.*;
 import com.team1816.lib.auto.paths.AutoPath;
 import com.team1816.lib.auto.paths.*;
@@ -13,7 +13,7 @@ import java.io.*;
 import java.util.List;
 
 /**
- * Class that efficiently pre-calculates trajectories to limit resource utilization.
+ * Utility that efficiently pre-calculates trajectories to limit resource utilization.
  * Generated Trajectories are located in src/resources/trajectories
  *
  * @see Trajectory

@@ -132,7 +132,7 @@ task calculateTrajectories(type: JavaExec) {
     environment "ROBOT_NAME", "alpha"
     classpath = files(jar)
     jvmArgs "-Djava.library.path=${jniDir}"
-    main = "com.team1816.lib.motion.TrajectoryCalculator"
+    main = "com.team1816.lib.util.trajectoryUtil.TrajectoryCalculator"
 }
 
 // Simulates robot with characterization alpha.config.yml

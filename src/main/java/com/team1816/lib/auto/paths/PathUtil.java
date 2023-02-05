@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import com.team1816.lib.motion.TrajectoryCalculator;
+import com.team1816.lib.util.trajectoryUtil.TrajectoryCalculator;
 
 import java.util.ArrayList;
 import java.util.List;
