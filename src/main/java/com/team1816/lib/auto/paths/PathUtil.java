@@ -35,6 +35,7 @@ public class PathUtil {
      *
      * @param usingApp
      * @param waypoints
+     * @param loadTrajectories
      * @return trajectory
      * @see com.team1816.lib.auto.modes.AutoMode
      * @see AutoPath
@@ -44,10 +45,10 @@ public class PathUtil {
         String pathName,
         boolean usingApp,
         List<Pose2d> waypoints,
-        boolean noLoad
+        boolean loadTrajectories
     ) {
         pathName = TrajectoryCalculator.formatClassName(pathName);
-        if (!noLoad) {
+        if (loadTrajectories) {
             return TrajectoryCalculator.loadTrajectory(pathName);
         }
         /* Inch to meter conversions for waypoints for trajectory calculations */

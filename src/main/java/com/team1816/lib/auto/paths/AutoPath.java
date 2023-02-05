@@ -114,14 +114,14 @@ public abstract class AutoPath {
      *
      * @return waypointHeadings
      */
-    protected abstract List<Rotation2d> getWaypointHeadings();
+    public abstract List<Rotation2d> getWaypointHeadings();
 
     /**
      * Returns a list of Rotation2d's corresponding to the rotation respect to a reflected trajectory
      *
      * @return waypointHeadings
      */
-    protected List<Rotation2d> getReflectedWaypointHeadings() {
+    public List<Rotation2d> getReflectedWaypointHeadings() {
         List<Rotation2d> waypointHeadings = getWaypointHeadings();
         List<Rotation2d> reflectedWaypointHeadings = new ArrayList<>();
         for (int i = 0; i < waypointHeadings.size(); i++) {
@@ -136,7 +136,7 @@ public abstract class AutoPath {
      *
      * @return waypointHeadings
      */
-    protected List<Rotation2d> getRotatedWaypointHeadings() {
+    public List<Rotation2d> getRotatedWaypointHeadings() {
         List<Rotation2d> waypointHeadings = getWaypointHeadings();
         List<Rotation2d> rotatedWaypointHeadings = new ArrayList<>();
         for (int i = 0; i < waypointHeadings.size(); i++) {

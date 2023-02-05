@@ -5,6 +5,7 @@ import com.team1816.lib.auto.paths.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import org.apache.commons.io.FileUtils;
 
@@ -55,9 +56,16 @@ public class TrajectoryCalculator {
             directory.mkdir();
         }
         String name = formatClassName(path.getClass().getName());
+
         calcTrajectory(name, path.getWaypoints());
         calcTrajectory(name + "_Reflected", path.getReflectedWaypoints());
         calcTrajectory(name + "_Rotated", path.getRotatedWaypoints());
+
+        if (path.getWaypointHeadings() != null) {
+            calcHeadings(name + "Headings", path.getWaypoints(), path.getWaypointHeadings());
+            calcHeadings(name + "Headings_Reflected", path.getReflectedWaypoints(), path.getReflectedWaypointHeadings());
+            calcHeadings(name + "Headings_Rotated", path.getRotatedWaypoints(), path.getRotatedWaypointHeadings());
+        }
     }
 
     /**
@@ -89,6 +97,30 @@ public class TrajectoryCalculator {
                 file.createNewFile();
             }
             mapper.writeValue(file, trajectory.getStates());
+        } catch (Exception e) {
+            System.out.println("Error while writing JSON: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Calculates the Headings associated with the AutoPath
+     * @param name path name
+     * @param waypoints path waypoints
+     * @param headings path headings
+     */
+    public static void calcHeadings(String name, List<Pose2d> waypoints, List<Rotation2d> headings) {
+        if (headings == null) {
+            return;
+        }
+
+        var trajectoryHeadings = PathUtil.generateHeadings(name, true, waypoints, headings);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            File file = new File(System.getProperty("user.dir") + "/src/main/resources/trajectories/" + name + ".json");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            mapper.writeValue(file, trajectoryHeadings);
         } catch (Exception e) {
             System.out.println("Error while writing JSON: " + e.getMessage());
         }

@@ -39,7 +39,7 @@ public class ExampleAutoPath extends AutoPath {
      * in chezy path that includes this, you just have to eyeball where the robot should face using the simulator.
      */
     @Override
-    protected List<Rotation2d> getWaypointHeadings() {
+    public List<Rotation2d> getWaypointHeadings() {
         // this will make a SwerveDrive robot face the opponent alliance wall throughout the entire path
         return List.of(
             Rotation2d.fromDegrees(0),
@@ -56,7 +56,7 @@ public class ExampleAutoPath extends AutoPath {
     }
 
     @Override
-    protected List<Rotation2d> getReflectedWaypointHeadings() {
+    public List<Rotation2d> getReflectedWaypointHeadings() {
         return null;
     }
 
