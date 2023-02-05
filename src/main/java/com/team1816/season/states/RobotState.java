@@ -25,14 +25,14 @@ public class RobotState {
     public final Field2d field = new Field2d();
     public Pose2d fieldToVehicle = Constants.EmptyPose2d;
     public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose2d;
+    public Pose2d target = Constants.EmptyPose2d;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation2d;
     public Pose2d fieldToTurret = Constants.EmptyPose2d;
-
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds(); // velocities of vehicle
     public ChassisSpeeds calculatedVehicleAccel = new ChassisSpeeds(); // accel values calculated by watching drivetrain encoders
     public Double[] triAxialAcceleration = new Double[]{0d, 0d, 0d};
     public boolean isPoseUpdated = true;
-    public double vehicleToFloorProximity = 0;
+    public double vehicleToFloorProximityCentimeters = 0;
 
     /**
      * Inertial characterization
@@ -97,7 +97,8 @@ public class RobotState {
         isPoseUpdated = true;
         visibleTargets.clear();
         drivetrainTemp = 0;
-        vehicleToFloorProximity = 0;
+        vehicleToFloorProximityCentimeters = 0;
+        target = new Pose2d(5.0, Constants.fieldCenterY, new Rotation2d());
     }
 
     /**
@@ -105,6 +106,9 @@ public class RobotState {
      *
      * @return Rotation2d
      */
+    public Rotation2d getLatestFieldToTurret() {
+        return fieldToTurret.getRotation();
+    }
 
     /**
      * Returns rotation of the camera with respect to the field
@@ -121,7 +125,9 @@ public class RobotState {
      *
      * @return Pose2d
      */
-
+    public synchronized Pose2d getFieldToTurretPos() {
+        return fieldToTurret;
+    }
 
     /**
      * Returns the estimated pose of the turret with respect to the field based on a look-ahead time
@@ -141,7 +147,6 @@ public class RobotState {
             getLatestFieldToTurret()
         );
     }
-
 
     /**
      * Returns the estimated / calculated acceleration of the robot based on sensor readings

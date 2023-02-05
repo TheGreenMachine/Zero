@@ -7,15 +7,17 @@ import com.team1816.lib.controlboard.ActionManager;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
+import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
+import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.modes.AutoBalanceMode;
+import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
-import com.team1816.lib.subsystems.LedManager;
 import edu.wpi.first.wpilibj.*;
 
 import java.nio.file.Files;
@@ -58,13 +60,9 @@ public class Robot extends TimedRobot {
      * Subsystems
      */
     private final Drive drive;
-<<<<<<< HEAD
-    private final Cooler cooler;
-    private final Camera camera;
-=======
 
->>>>>>> f4e33bd5ff3179bf9691eaf230d1a8c85a5dd278
     private final LedManager ledManager;
+    private final Camera camera;
 
     /**
      * Factory
@@ -75,6 +73,8 @@ public class Robot extends TimedRobot {
      * Autonomous
      */
     private final AutoModeManager autoModeManager;
+    private Thread autoTargetThread;
+    private Thread autoBalanceThread;
 
     /**
      * Timing
@@ -83,14 +83,12 @@ public class Robot extends TimedRobot {
     public static double autoStart;
     public static double teleopStart;
 
-<<<<<<< HEAD
-    /** Properties */
-=======
     /**
      * Properties
      */
->>>>>>> f4e33bd5ff3179bf9691eaf230d1a8c85a5dd278
     private boolean faulted;
+    private boolean runningAutoTarget = false;
+    private boolean runningAutoBalance = false;
 
     /**
      * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
@@ -103,6 +101,7 @@ public class Robot extends TimedRobot {
         disabledLoop = new Looper(this);
         drive = (Injector.get(Drive.Factory.class)).getInstance();
         ledManager = Injector.get(LedManager.class);
+        camera = Injector.get(Camera.class);
         robotState = Injector.get(RobotState.class);
         orchestrator = Injector.get(Orchestrator.class);
         infrastructure = Injector.get(Infrastructure.class);
@@ -150,7 +149,7 @@ public class Robot extends TimedRobot {
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            subsystemManager.setSubsystems(drive, ledManager);
+            subsystemManager.setSubsystems(drive, ledManager, camera);
 
             /** Register BadLogs */
             if (Constants.kIsBadlogEnabled) {
@@ -241,13 +240,45 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
+                        () -> controlBoard.getAsBool("autoTarget"),
+                        () -> {
+                            if (!runningAutoTarget) {
+                                runningAutoTarget = true;
+                                orchestrator.updatePoseWithCamera();
+                                double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
+                                if (distance < Constants.kMinTrajectoryDistance) {
+                                    System.out.println("Distance to target is " + distance + " m");
+                                    System.out.println("Too close to target! can not start trajectory!");
+                                } else {
+                                    System.out.println("Drive trajectory action started!");
+                                    TrajectoryToTargetMode mode = new TrajectoryToTargetMode();
+                                    autoTargetThread = new Thread(mode::run);
+                                    autoTargetThread.start();
+                                    System.out.println("Trajectory ended");
+                                }
+                            } else {
+                                autoTargetThread.stop();
+                                System.out.println("Stopped! driving to trajectory canceled!");
+                                runningAutoTarget = !runningAutoTarget;
+                            }
+                        }
+                    ),
+                    createAction(
                         () -> controlBoard.getAsBool("autoBalance"),
                         () -> {
-                            System.out.println("Starting auto balance");
-                            AutoBalanceMode mode = new AutoBalanceMode();
-                            Thread autoBalanceThread = new Thread(mode::run);
-                            autoBalanceThread.start();
-                            System.out.println("Balanced");
+                            if (!runningAutoBalance) {
+                                runningAutoBalance = true;
+                                System.out.println("Starting auto balance");
+                                AutoBalanceMode mode = new AutoBalanceMode();
+                                autoBalanceThread = new Thread(mode::run);
+                                autoBalanceThread.start();
+                                autoBalanceThread = null;
+                                System.out.println("Balanced");
+                            } else {
+                                autoBalanceThread.stop();
+                                System.out.println("Stopped! driving to trajectory canceled!");
+                                runningAutoBalance = !runningAutoBalance;
+                            }
                         }
                     ),
                     createHoldAction(
@@ -257,8 +288,12 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
-                    )
+                    ),
                     // Operator Gamepad
+                    createAction( // TODO remove, for testing purposes only
+                        () -> controlBoard.getAsBool("updatePose"),
+                        orchestrator::updatePoseWithCamera
+                    )
                 );
         } catch (Throwable t) {
             faulted = true;

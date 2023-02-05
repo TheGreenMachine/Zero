@@ -40,10 +40,6 @@ public class Constants {
      * Field characterization
      */
     public static final Symmetry fieldSymmetry = Symmetry.AXIS;
-    public static final double kCameraMountingAngleY = 20; // degrees
-
-    public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters
-
     public static final double fieldCenterY = 8.23 / 2.0;
     public static final double fieldCenterX = 16.46 / 2.0;
     public static final Pose2d fieldCenterPose = new Pose2d(
@@ -62,16 +58,28 @@ public class Constants {
         EmptyRotation2d
     );
 
-
+    public static final Translation2d kTurretMountingOffset = new Translation2d(
+        -.12065,
+        .13335
+    );
 
     /**
      * Drivetrain characterization
      */
     public static final double gravitationalAccelerationConstant = 9.8d;
     public static double kMaxAccelDiffThreshold = 2d; // m/s^2
+    public static double kMaxBalancingVelocity = 0.2; // m/s
+    public static double kMinTrajectoryDistance = 0.05; // m
+    public static double kMaxProximityThresholdCentimeters = 25; // cm
 
     /**
-     * Badlog
+     * Camera characterization
+     */
+    public static final double kCameraMountingAngleY = 20; // degrees
+    public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters
+
+    /**
+     * Badlog characterization
      */
     public static boolean kIsBadlogEnabled = factory.getConstant("badLogEnabled") > 0;
     public static boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0;
