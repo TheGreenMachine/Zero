@@ -136,7 +136,6 @@ public class Elevator extends Subsystem {
         COLLECT(collectAngle),
         SCORE(scoreAngle);
 
-        // if only I (angle) could be final
         private final double angle;
         ANGLE_STATE(double angle) {this.angle = angle;}
         public double getAngle() {return angle;}
@@ -148,7 +147,6 @@ public class Elevator extends Subsystem {
         MID(midExtension),
         MAX(maxExtension);
 
-        // if only I (extension) could be final
         private final double extension;
         EXTENSION_STATE(double extension) {this.extension = extension;}
         public double getExtension() {return extension;}
