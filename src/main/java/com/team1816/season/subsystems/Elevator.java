@@ -73,6 +73,7 @@ public class Elevator extends Subsystem {
         }
     }
 
+    // omg I'm in antartica, whats my (the elevator's) position??
     @Override
     public void readFromHardware() {
 
@@ -109,7 +110,7 @@ public class Elevator extends Subsystem {
         }
     }
 
-
+    // TODO later
     @Override
     public void zeroSensors() {
 
@@ -131,6 +132,7 @@ public class Elevator extends Subsystem {
         COLLECT(collectAngle),
         SCORE(scoreAngle);
 
+        // if only I (angle) could be final
         private double angle;
         ANGLE_STATE(double angle) {this.angle = angle;}
         public double getAngle() {return angle;}
