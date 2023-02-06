@@ -1,10 +1,8 @@
 package com.team1816.lib.auto.paths;
 
 import com.team1816.lib.util.trajectoryUtil.TrajectoryCalculator;
-import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -21,11 +19,11 @@ public class PathUtil {
      * Constraints
      */
     private static double kMaxVelocity = kPathFollowingMaxVelMeters;
-    private static double kMaxAccel = kPathFollowingMaxAccelMeters;
+    private static double kMaxAcceleration = kPathFollowingMaxAccelMeters;
 
-    public static void setCalculateParams(double kMaxVel, double kMaxAc) {
+    public static void setCalculationParameters(double kMaxVel, double kMaxAccel) {
         kMaxVelocity = kMaxVel;
-        kMaxAccel = kMaxAc;
+        kMaxAcceleration = kMaxAccel;
     }
     /**
      * Generates a trajectory when TrajectoryCalculator is not used
@@ -75,7 +73,7 @@ public class PathUtil {
             );
         }
         /* Configures trajectory constraints */
-        TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAccel);
+        TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAcceleration);
         var baseTrajectory = edu.wpi.first.math.trajectory.TrajectoryGenerator.generateTrajectory(
             waypointsMeters,
             config
@@ -109,7 +107,7 @@ public class PathUtil {
             );
         }
         /* Configures trajectory constraints */
-        TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAccel);
+        TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAcceleration);
         config.setStartVelocity(initial.vxMetersPerSecond);
         config.setEndVelocity(0);
         var baseTrajectory = edu.wpi.first.math.trajectory.TrajectoryGenerator.generateTrajectory(

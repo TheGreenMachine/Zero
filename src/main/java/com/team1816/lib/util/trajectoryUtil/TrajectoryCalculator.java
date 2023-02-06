@@ -46,7 +46,7 @@ public class TrajectoryCalculator {
         RobotFactory factory = new RobotFactory();
         for (String robot : robots) {
             factory.loadConfig(robot);
-            PathUtil.setCalculateParams(
+            PathUtil.setCalculationParameters(
                 factory.getConstant("drivetrain", "maxVelPathFollowing"),
                 factory.getConstant("drivetrain", "maxAccel", 4)
             );
