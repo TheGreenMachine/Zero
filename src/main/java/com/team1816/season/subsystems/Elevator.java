@@ -10,6 +10,7 @@ import com.team1816.season.states.RobotState;
 
 import javax.inject.Inject;
 
+// Uh-oh... theres no "@Singleton" annotation here! You don't want more than one instance of this being created
 public class Elevator extends Subsystem {
 
 
@@ -48,8 +49,9 @@ public class Elevator extends Subsystem {
         this.angleMotorFollower = factory.getFollowerMotor(NAME,"angleMotorFollower", angleMotorMain);
         this.extensionMotor = factory.getMotor(NAME,"extensionMotor");
 
-        //constants
+        // constants
         double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
+        // Uk u can use the NAME variable instead of typing "elevator" over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over again
         stowAngle = factory.getConstant("elevator","stowPose");
         collectAngle = factory.getConstant("elevator", "collectPose");
         scoreAngle = factory.getConstant("elevator", "scorePose");
