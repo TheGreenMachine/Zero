@@ -84,7 +84,6 @@ public class Elevator extends Subsystem {
     public void readFromHardware() {
         actualAnglePosition = angleMotorMain.getSelectedSensorPosition(0);
         actualExtensionPosition = extensionMotor.getSelectedSensorPosition(0);
-
     }
 
     @Override
