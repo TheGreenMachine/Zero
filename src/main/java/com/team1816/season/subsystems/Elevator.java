@@ -24,7 +24,11 @@ public class Elevator extends Subsystem {
     private final IGreenMotor angleMotorFollower;
     private final IGreenMotor extensionMotor;
 
-    // are these characterizations? //
+    /**
+     * Properties
+     */
+
+
     private static double stowAngle;
     private static double collectAngle;
     private static double scoreAngle;
@@ -32,9 +36,13 @@ public class Elevator extends Subsystem {
     private static double midExtension;
     private static double maxExtension;
 
-    // are these states?
+    /**
+     * States
+     */
     private double actualExtensionPosition;
     private double actualAnglePosition;
+    private double actualAngleVel;
+    private double actualExtensionVel;
     private ANGLE_STATE desiredAnglePosition = ANGLE_STATE.STOW;
     private EXTENSION_STATE desiredExtensionPosition = EXTENSION_STATE.MIN;
     private boolean outputsChanged;
@@ -65,24 +73,53 @@ public class Elevator extends Subsystem {
         maxExtension = factory.getConstant(NAME, "maxPose");
     }
 
-    public void setDesiredState(ANGLE_STATE elevatorAngle, EXTENSION_STATE elevatorExtension) {
-        if (desiredAnglePosition != elevatorAngle) {
-            desiredAnglePosition = elevatorAngle;
-            outputsChanged = true;
-        }
+    /**
+     * Sets the desired angle and extension state of the elevator
+     * @param elevatorAngleState - the angle of the elevator
+     * @param elevatorExtensionState - how far the elevator is extended
+     * @see this#setDesiredAngleState(ANGLE_STATE)
+     * @see this#setDesiredExtensionState(EXTENSION_STATE)
+     */
+    public void setDesiredState(ANGLE_STATE elevatorAngleState, EXTENSION_STATE elevatorExtensionState) {
+        setDesiredAngleState(elevatorAngleState);
+        setDesiredExtensionState(elevatorExtensionState);
+    }
 
-        if (desiredExtensionPosition != elevatorExtension) {
-            desiredExtensionPosition = elevatorExtension;
+    /**
+     * Sets the desired angle and extension state of the elevator
+     * 
+     */
+    public void setDesiredAngleState(ANGLE_STATE desiredAngleState) {
+        if (desiredAnglePosition != desiredAngleState) {
+            desiredAnglePosition = desiredAngleState;
             outputsChanged = true;
         }
     }
 
+    public void setDesiredExtensionState(EXTENSION_STATE desiredExtensionState) {
+        if (desiredExtensionPosition != desiredExtensionState) {
+            desiredExtensionPosition = desiredExtensionState;
+            outputsChanged = true;
+        }
+    }
+
+    /**
+     * Reads extension and angle motor positions and their corresponding velocities
+     * @see Subsystem#readFromHardware()
+     */
     @Override
     public void readFromHardware() {
         actualAnglePosition = angleMotorMain.getSelectedSensorPosition(0);
+        actualAngleVel = angleMotorMain.getSelectedSensorVelocity(0);
+
         actualExtensionPosition = extensionMotor.getSelectedSensorPosition(0);
+        actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0);
     }
 
+    /**
+     * Writes outputs to extension and angle motors
+     * @see Subsystem#writeToHardware()
+     */
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
