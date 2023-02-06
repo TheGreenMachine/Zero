@@ -6,4 +6,4 @@ simgui-window.json
 bin/
 *.bag
 Compiler
-src/main/resources/trajectories/*.json
+src/main/resources/trajectories/**/*.json

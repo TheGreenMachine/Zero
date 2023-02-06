@@ -25,7 +25,7 @@ public class TrajectoryCalculator {
     /**
      * Root directory that trajectories are placed in
      */
-    private static final File directory = new File(System.getProperty("user.dir") + "/src/main/resources/trajectories/");
+    private static final File mainDirectory = getFile("/src/main/resources/trajectories/");
 
     /**
      * List of all AutoPaths that are to be calculated
@@ -58,25 +58,33 @@ public class TrajectoryCalculator {
         }
     }
     
+    private static File getFile(String path) {
+        return new File(System.getProperty("user.dir") + path);
+    }
 
     /**
      * Calculates all formats of the trajectories associated with an AutoPath {standard, reflected, rotated}
      * @param path AutoPath
      */
     public static void calcAllTrajectoryFormats(String robotName, AutoPath path) {
+        if (!mainDirectory.exists()) {
+            mainDirectory.mkdir();
+        }
+        File directory = getFile("/src/main/resources/trajectories/" + robotName + "/");
         if (!directory.exists()) {
             directory.mkdir();
         }
-        String name = robotName + "-" + formatClassName(path.getClass().getName());
 
-        calcTrajectory(name, path.getWaypoints());
-        calcTrajectory(name + "_Reflected", path.getReflectedWaypoints());
-        calcTrajectory(name + "_Rotated", path.getRotatedWaypoints());
+        String name = formatClassName(path.getClass().getName());
+
+        calcTrajectory(robotName, name, path.getWaypoints());
+        calcTrajectory(robotName, name + "_Reflected", path.getReflectedWaypoints());
+        calcTrajectory(robotName, name + "_Rotated", path.getRotatedWaypoints());
 
         if (path.getWaypointHeadings() != null) {
-            calcHeadings(name + "Headings", path.getWaypoints(), path.getWaypointHeadings());
-            calcHeadings(name + "Headings_Reflected", path.getReflectedWaypoints(), path.getReflectedWaypointHeadings());
-            calcHeadings(name + "Headings_Rotated", path.getRotatedWaypoints(), path.getRotatedWaypointHeadings());
+            calcHeadings(robotName, name + "Headings", path.getWaypoints(), path.getWaypointHeadings());
+            calcHeadings(robotName, name + "Headings_Reflected", path.getReflectedWaypoints(), path.getReflectedWaypointHeadings());
+            calcHeadings(robotName, name + "Headings_Rotated", path.getRotatedWaypoints(), path.getRotatedWaypointHeadings());
         }
     }
 
@@ -97,14 +105,14 @@ public class TrajectoryCalculator {
      * @see AutoPath
      * @see PathUtil
      */
-    public static void calcTrajectory(String name, List<Pose2d> waypoints) {
+    public static void calcTrajectory(String robotName, String name, List<Pose2d> waypoints) {
         if (waypoints == null) {
             return;
         }
         var trajectory = PathUtil.generateTrajectory(name, waypoints, false);
         ObjectMapper mapper = new ObjectMapper();
         try {
-            File file = new File(System.getProperty("user.dir") + "/src/main/resources/trajectories/" + name + ".json");
+            File file = getFile("/src/main/resources/trajectories/" + robotName + "/" + name + ".json");
             if (!file.exists()) {
                 file.createNewFile();
             }
@@ -120,7 +128,7 @@ public class TrajectoryCalculator {
      * @param waypoints path waypoints
      * @param headings path headings
      */
-    public static void calcHeadings(String name, List<Pose2d> waypoints, List<Rotation2d> headings) {
+    public static void calcHeadings(String robotName, String name, List<Pose2d> waypoints, List<Rotation2d> headings) {
         if (headings == null) {
             return;
         }
@@ -128,7 +136,7 @@ public class TrajectoryCalculator {
         var trajectoryHeadings = PathUtil.generateHeadings(name, waypoints, headings, false);
         ObjectMapper mapper = new ObjectMapper();
         try {
-            File file = new File(System.getProperty("user.dir") + "/src/main/resources/trajectories/" + name + ".json");
+            File file = getFile("/src/main/resources/trajectories/" + robotName + "/" + name + ".json");
             if (!file.exists()) {
                 file.createNewFile();
             }
@@ -145,11 +153,10 @@ public class TrajectoryCalculator {
      * @see Trajectory
      */
     public static Trajectory loadTrajectory(String name) {
-        name = System.getenv("ROBOT_NAME") + "-" + name;
         ObjectMapper mapper = new ObjectMapper();
         try {
             List<Trajectory.State> list = mapper.readValue(
-                new File(System.getProperty("user.dir") + "/src/main/resources/trajectories/" + name + ".json"),
+                getFile("/src/main/resources/trajectories/" + System.getenv("ROBOT_NAME") + "/" + name + ".json"),
                 new TypeReference<List<Trajectory.State>>() { }
             );
             return new Trajectory(list);
@@ -181,7 +188,8 @@ public class TrajectoryCalculator {
      */
     public static void deleteTrajectories() {
         try {
-            FileUtils.cleanDirectory(new File(System.getProperty("user.dir") + "/src/main/resources/trajectories/"));
+            FileUtils.cleanDirectory(getFile("/src/main/resources/trajectories/"));
+            FileUtils.cleanDirectory(getFile("/bin/main/trajectories"));
         } catch (Exception e) {
             System.out.println("Error deleting contents of trajectories directory" + e.getStackTrace());
         }
