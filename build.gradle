@@ -3,7 +3,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2023.2.1"
+    id "edu.wpi.first.GradleRIO" version "2023.3.1"
     id 'org.jsonschema2dataclass' version '4.0.1'
 }
 
@@ -99,9 +99,9 @@ jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
 }
 
-// Converts JSON Schema to Classes
 jsonSchema2Pojo {
     targetPackage = 'com.team1816.lib'
     useTitleAsClassname = true
@@ -217,7 +217,8 @@ task runZodiac(type: JavaExec) {
 
 processResources {
     include '**/*.config.yml'
-    eachFile { fileCopyDetails ->
+    eachFile {
+        fileCopyDetails ->
     }
 }
 
