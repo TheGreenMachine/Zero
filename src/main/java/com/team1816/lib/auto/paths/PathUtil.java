@@ -20,9 +20,13 @@ public class PathUtil {
     /**
      * Constraints
      */
-    private static final double kMaxVelocity = kPathFollowingMaxVelMeters;
-    private static final double kMaxAccel = kPathFollowingMaxAccelMeters;
+    private static double kMaxVelocity = kPathFollowingMaxVelMeters;
+    private static double kMaxAccel = kPathFollowingMaxAccelMeters;
 
+    public static void setCalculateParams(double kMaxVel, double kMaxAc) {
+        kMaxVelocity = kMaxVel;
+        kMaxAccel = kMaxAc;
+    }
     /**
      * Generates a trajectory when TrajectoryCalculator is not used
      *

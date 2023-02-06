@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import org.apache.commons.io.FileUtils;
+import com.team1816.lib.hardware.factory.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -41,22 +42,32 @@ public class TrajectoryCalculator {
      */
     public static void main(String[] args) {
         deleteTrajectories();
-        System.out.println("Calculating " + paths.size() + " Trajectories:");
-        for (AutoPath path: paths) {
-            calcAllTrajectoryFormats(path);
-            System.out.println("\tCalculated " + path.getClass().getName());
+        String[] robots = {"alpha", "zero", "zoffseason"};
+        RobotFactory factory = new RobotFactory();
+        for (String robot : robots) {
+            factory.loadConfig(robot);
+            PathUtil.setCalculateParams(
+                factory.getConstant("drivetrain", "maxVelPathFollowing"),
+                factory.getConstant("drivetrain", "maxAccel", 4)
+            );
+            System.out.println("Calculating " + paths.size() + " Trajectories:");
+            for (AutoPath path: paths) {
+                calcAllTrajectoryFormats(robot, path);
+                System.out.println("\tCalculated " + path.getClass().getName());
+            }
         }
     }
+    
 
     /**
      * Calculates all formats of the trajectories associated with an AutoPath {standard, reflected, rotated}
      * @param path AutoPath
      */
-    public static void calcAllTrajectoryFormats(AutoPath path) {
+    public static void calcAllTrajectoryFormats(String robotName, AutoPath path) {
         if (!directory.exists()) {
             directory.mkdir();
         }
-        String name = formatClassName(path.getClass().getName());
+        String name = robotName + "-" + formatClassName(path.getClass().getName());
 
         calcTrajectory(name, path.getWaypoints());
         calcTrajectory(name + "_Reflected", path.getReflectedWaypoints());
@@ -134,6 +145,7 @@ public class TrajectoryCalculator {
      * @see Trajectory
      */
     public static Trajectory loadTrajectory(String name) {
+        name = System.getenv("ROBOT_NAME") + "-" + name;
         ObjectMapper mapper = new ObjectMapper();
         try {
             List<Trajectory.State> list = mapper.readValue(

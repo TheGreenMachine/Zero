@@ -51,6 +51,10 @@ public class RobotFactory {
                 false
             );
         }
+        loadConfig(robotName);
+    }
+
+    public void loadConfig(String robotName) {
         System.out.println("Loading Config for " + robotName);
         try {
             config =
