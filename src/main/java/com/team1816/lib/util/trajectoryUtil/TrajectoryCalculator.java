@@ -42,7 +42,7 @@ public class TrajectoryCalculator {
      */
     public static void main(String[] args) {
         deleteTrajectories();
-        String[] robots = {"alpha", "zero", "zoffseason", "zodiac_pro"};
+        String[] robots = {"alpha", "zero", "zoffseason"};
         RobotFactory factory = new RobotFactory();
         for (String robot : robots) {
             factory.loadConfig(robot);

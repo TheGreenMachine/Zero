@@ -58,7 +58,10 @@ public class PathUtil {
     ) {
         pathName = TrajectoryCalculator.formatClassName(pathName);
         if (loadTrajectories) {
-            return TrajectoryCalculator.loadTrajectory(pathName);
+            var trajectory = TrajectoryCalculator.loadTrajectory(pathName);
+            if (!trajectory.equals(new Trajectory())) {
+                return trajectory;
+            }
         }
         /* Inch to meter conversions for waypoints for trajectory calculations */
         List<Pose2d> waypointsMeters = new ArrayList<>();
@@ -131,7 +134,10 @@ public class PathUtil {
     ) {
         name = TrajectoryCalculator.formatClassName(name);
         if (loadTrajectories) {
-            return TrajectoryCalculator.loadTrajectoryHeadings(name);
+            var trajectoryHeadings = TrajectoryCalculator.loadTrajectoryHeadings(name);
+            if (trajectoryHeadings.size() > 0) {
+                return trajectoryHeadings;
+            }
         }
         if (waypoints == null || swerveHeadings == null) {
             return null;
