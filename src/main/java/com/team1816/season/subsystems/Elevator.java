@@ -19,7 +19,7 @@ public class Elevator extends Subsystem {
 
     private static final String NAME = "elevator";
 
-    /** components */
+    /** components */ // is this not a capital I see???
     private final IGreenMotor angleMotorMain;
     private final IGreenMotor angleMotorFollower;
     private final IGreenMotor extensionMotor;
@@ -124,7 +124,7 @@ public class Elevator extends Subsystem {
         }
     }
 
-
+    // TODO later
     @Override
     public void zeroSensors() {
 
