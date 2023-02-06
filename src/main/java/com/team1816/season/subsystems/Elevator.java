@@ -52,7 +52,6 @@ public class Elevator extends Subsystem {
 
         // constants
         double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
-        // Uk u can use the NAME variable instead of typing "elevator" over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over again
         stowAngle = factory.getConstant(NAME,"stowPose");
         collectAngle = factory.getConstant(NAME, "collectPose");
         scoreAngle = factory.getConstant(NAME, "scorePose");
@@ -77,7 +76,6 @@ public class Elevator extends Subsystem {
 
     @Override
     public void readFromHardware() {
- // #TODO talk to keerthi and see if anything needs to go here
     }
 
     @Override
