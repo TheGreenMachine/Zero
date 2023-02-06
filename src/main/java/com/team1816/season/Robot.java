@@ -158,7 +158,7 @@ public class Robot extends TimedRobot {
             // Remember to register our elevator and collector subsystems below!! The subsystem manager deals with calling
             // read/writetohardware on a loop, but it can only call read/write if it recognizes said subsystem. To recognize
             // your subsystem, just add it alongside the drive, ledManager, and camera parameters :)
-            subsystemManager.setSubsystems(drive, ledManager, camera);
+            subsystemManager.setSubsystems(drive, ledManager, camera, elevator, collector);
 
             /** Register BadLogs */
             if (Constants.kIsBadlogEnabled) {
