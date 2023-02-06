@@ -81,25 +81,25 @@ public class Elevator extends Subsystem {
             outputsChanged = false;
             switch (desiredExtensionPosition){
                 case MAX:
-                    extensionMotor.set(ControlMode.Velocity, (maxExtension));
+                    extensionMotor.set(ControlMode.Position, (maxExtension));
                     break;
                 case MID:
-                    extensionMotor.set(ControlMode.Velocity, (midExtension));
+                    extensionMotor.set(ControlMode.Position, (midExtension));
                     break;
                 case MIN:
-                    extensionMotor.set(ControlMode.Velocity, (minExtension));
+                    extensionMotor.set(ControlMode.Position, (minExtension));
                     break;
 
             }
             switch (desiredAnglePosition) {
                 case STOW:
-                    angleMotorMain.set(ControlMode.Velocity, (stowAngle));
+                    angleMotorMain.set(ControlMode.Position, (stowAngle));
                     break;
                 case COLLECT:
-                    angleMotorMain.set(ControlMode.Velocity, (collectAngle));
+                    angleMotorMain.set(ControlMode.Position, (collectAngle));
                     break;
                 case SCORE:
-                    angleMotorMain.set(ControlMode.Velocity, (scoreAngle));
+                    angleMotorMain.set(ControlMode.Position, (scoreAngle));
                     break;
             }
 
