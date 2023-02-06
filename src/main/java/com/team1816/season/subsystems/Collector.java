@@ -8,8 +8,9 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
-// Uh-oh... theres no "@Singleton" annotation here! You don't want more than one instance of this being created
+@Singleton
 public class Collector extends Subsystem {
 
 

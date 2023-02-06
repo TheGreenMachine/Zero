@@ -76,6 +76,7 @@ public class Elevator extends Subsystem {
 
     @Override
     public void readFromHardware() {
+
     }
 
     @Override
