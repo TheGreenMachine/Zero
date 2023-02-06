@@ -59,8 +59,9 @@ public class Orchestrator {
      * Instantiates an Orchestrator with all its subsystems
      *
      * @param df  Drive.Factory (derives drivetrain)
-     * @param tur Turret
      * @param led LedManager
+     * @param el  Elevator
+     * @param col Collector
      */
     @Inject
     public Orchestrator(Drive.Factory df, LedManager led, Collector col, Elevator el) {
