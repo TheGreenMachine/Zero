@@ -24,12 +24,15 @@ public class Elevator extends Subsystem {
     private final IGreenMotor angleMotorFollower;
     private final IGreenMotor extensionMotor;
 
+    // are these characterizations? //
     private static double stowAngle;
     private static double collectAngle;
     private static double scoreAngle;
     private static double minExtension;
     private static double midExtension;
     private static double maxExtension;
+
+    // are these states?
     private double actualExtensionPosition;
     private double actualAnglePosition;
     private ANGLE_STATE desiredAnglePosition = ANGLE_STATE.STOW;
