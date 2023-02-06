@@ -63,7 +63,6 @@ public class Orchestrator {
         drive = df.getInstance();
         turret = tur;
         ledManager = led;
-        superstructureState = STATE.FAT_BOY;
     }
 
     /** TODO: Actions */
@@ -166,7 +165,6 @@ public class Orchestrator {
      * Base enum for Orchestrator states
      */
     public enum STATE {
-        FAT_BOY,
-        LITTLE_MAN,
+
     }
 }
