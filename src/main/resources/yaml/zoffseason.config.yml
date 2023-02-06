@@ -2,14 +2,15 @@ subsystems:
     drivetrain:
         implemented: true
         talons:
-            FLDr: -1 #3
-            FRDr: -1 #13
-            RLDr: -1 #1 #13
-            RRDr: -1 #14
-            FLAz: -1 #2
-            FRAz: -1 #12
-            RLAz: -1 #10
-            RRAz: -1 #15
+            FLAz: 2
+            FRAz: 12
+            RLAz: 10
+            RRAz: 15
+        falcons:
+            FLDr: 3
+            FRDr: 13
+            RLDr: 1
+            RRDr: 14
         invertMotor:
             - FRDr
             - RRDr
@@ -28,28 +29,29 @@ subsystems:
                     drive: FLDr
                     azimuth: FLAz
                     constants:
-                        encoderOffset: 2463
+                        encoderOffset: 2445
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
                     constants:
-                        encoderOffset: 1482
+                        encoderOffset: 1479
                 backLeft:
                     drive: RLDr
                     azimuth: RLAz
                     constants:
-                        encoderOffset: 506
+                        encoderOffset: 2396
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     constants:
-                        encoderOffset: 497
+                        encoderOffset: 224
             drivePID:
                 slot0:
-                    kP: .3
+                    kP: .11
                     kI: 0.0001
                     kD: 4.0
-                    kF: 0.0499
+                    kF: 0.048077
+                    allowableError: 40
             azimuthPID:
                 slot0:
                     kP: 6.0
@@ -61,7 +63,7 @@ subsystems:
             maxVelTicks100ms: 12275.7 # ticks per 100ms
             openLoopRampRate: 0.8
             isSwerve: 1
-            encPPR: 14255
+            encPPR: 13260.36 #Use for distance calibration
             azimuthEncPPR: 4096
             maxRotVel: 14
             trackWidth: 21 #inches
@@ -69,9 +71,11 @@ subsystems:
             wheelDiameter: 4
             kTrackScrubFactor: 1.0
             maxVelOpenLoop: 3 # meters/s
-            maxVelPathFollowing: 3 # meters/s (2.2)
-            maxAccel: 2.54 # meters/s^ 2
+            maxVelPathFollowing: 2.5 # meters/s (2.2)
+            maxAccel: 1.27 # meters/s^ 2
             isDemoMode: 0
+            autoBalanceDivider: 30
+            pitchRollMaxFlat: 2.5
 infrastructure:
     canivoreBusName: rio
     # power distribution
@@ -83,7 +87,7 @@ infrastructure:
     pcmId: 2
     # pigeon
     pigeonId: 32
-    isPigeon2: false
+    isPigeon2: true
 controlboard: example
 constants:
     # drivetrain misc
@@ -97,5 +101,6 @@ constants:
     ## General ##
     EnableBucketTuning: 0
     teleopFieldCentric: 1 # 0 or 1
-    kLooperDt: .035 # seconds
-    resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
+    kLooperDt: .050 # seconds
+    resetFactoryDefaults: 0 # whether motors get reset to factory default - doesn't affect motor encoder offset
+    # - if motors reset, rebooting the robot mid-match would kill the turret

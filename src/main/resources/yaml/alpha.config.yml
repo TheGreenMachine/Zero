@@ -65,6 +65,8 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255
+    camera:
+        implemented: true
 infrastructure:
     canivoreBusName: rio
     # power distribution

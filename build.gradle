@@ -1,4 +1,3 @@
-import edu.wpi.first.gradlerio.deploy.roborio.RoboRIO
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
@@ -186,7 +185,8 @@ task runZodiac(type: JavaExec) {
 
 processResources {
     include '**/*.config.yml'
-    eachFile { fileCopyDetails ->
+    eachFile {
+        fileCopyDetails ->
     }
 }
 
