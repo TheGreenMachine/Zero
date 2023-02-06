@@ -265,9 +265,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         robotState.calculatedVehicleAccel =
             new ChassisSpeeds(
                 (cs.vxMetersPerSecond - robotState.deltaVehicle.vxMetersPerSecond) /
-                    Constants.kLooperDt,
+                    (timestamp-prevTimestamp),
                 (cs.vyMetersPerSecond - robotState.deltaVehicle.vyMetersPerSecond) /
-                    Constants.kLooperDt,
+                    (timestamp-prevTimestamp),
                 cs.omegaRadiansPerSecond - robotState.deltaVehicle.omegaRadiansPerSecond
             );
         robotState.deltaVehicle = cs;

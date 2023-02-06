@@ -157,8 +157,6 @@ public class Camera extends Subsystem {
             p.id = bestTarget.getFiducialId();
             p.cameraToTarget = bestTarget.getBestCameraToTarget(); // missing method in PhotonTrackedTarget
             targets.add(p);
-        } else {
-            System.out.println("camera not returning points b/c camera not implemented");
         }
         return targets;
     }

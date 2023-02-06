@@ -42,7 +42,7 @@ public class TrajectoryCalculator {
      */
     public static void main(String[] args) {
         deleteTrajectories();
-        String[] robots = {"alpha", "zero", "zoffseason"};
+        String[] robots = {"alpha", "zero", "zoffseason", "zodiac_pro"};
         RobotFactory factory = new RobotFactory();
         for (String robot : robots) {
             factory.loadConfig(robot);
@@ -173,7 +173,7 @@ public class TrajectoryCalculator {
         ObjectMapper mapper = new ObjectMapper();
         try {
             List<Rotation2d> list = mapper.readValue(
-                new File(System.getProperty("user.dir") + "/src/main/resources/trajectories/" + name + ".json"),
+                new File(System.getProperty("user.dir") + "/src/main/resources/trajectories/" + System.getenv("ROBOT_NAME") + "/" + name + ".json"),
                 new TypeReference<List<Rotation2d>>() { }
             );
             return list;
