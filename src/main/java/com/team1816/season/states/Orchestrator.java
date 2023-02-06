@@ -60,7 +60,6 @@ public class Orchestrator {
     public Orchestrator(Drive.Factory df, LedManager led) {
         drive = df.getInstance();
         ledManager = led;
-        superstructureState = STATE.FAT_BOY;
     }
 
     /** TODO: Actions */
@@ -157,5 +156,12 @@ public class Orchestrator {
             robotState.fieldToVehicle = newRobotPose;
             robotState.isPoseUpdated = true;
         }
+    }
+
+    /**
+     * Base enum for Orchestrator states
+     */
+    public enum STATE {
+
     }
 }
