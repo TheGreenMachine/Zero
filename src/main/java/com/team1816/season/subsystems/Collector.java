@@ -98,12 +98,12 @@ public class Collector extends Subsystem {
     //rotate after getting a cube anyways
     public enum PIVOT_STATE {
         UP,
-        DOWN,
+        DOWN
     }
 
     public enum COLLECTOR_STATE {
         STOP,
         COLLECT,
-        FLUSH,
+        FLUSH
     }
 }
