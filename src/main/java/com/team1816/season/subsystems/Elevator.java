@@ -66,20 +66,17 @@ public class Elevator extends Subsystem {
     }
 
     public void setDesiredState(ANGLE_STATE elevatorAngle, EXTENSION_STATE elevatorExtension) {
-        // sets the desired state for the angle motor
         if (desiredAnglePosition != elevatorAngle) {
             desiredAnglePosition = elevatorAngle;
             outputsChanged = true;
         }
 
-        // sets the desired state for the extension motor
         if (desiredExtensionPosition != elevatorExtension) {
             desiredExtensionPosition = elevatorExtension;
             outputsChanged = true;
         }
     }
 
-    // omg I'm in antartica, whats my (the elevator's) position??
     @Override
     public void readFromHardware() {
         actualAnglePosition = angleMotorMain.getSelectedSensorPosition(0);
@@ -92,30 +89,24 @@ public class Elevator extends Subsystem {
         if (outputsChanged) {
             outputsChanged = false;
             switch (desiredExtensionPosition){
-                // extends the elevator to the top rung
                 case MAX:
                     extensionMotor.set(ControlMode.Position, (maxExtension));
                     break;
-                //extends the elevator to the middle rung
                 case MID:
                     extensionMotor.set(ControlMode.Position, (midExtension));
                     break;
-                //extends the elevator to the lowest rung
                 case MIN:
                     extensionMotor.set(ControlMode.Position, (minExtension));
                     break;
 
             }
             switch (desiredAnglePosition) {
-                // angles the elevator for stowing
                 case STOW:
                     angleMotorMain.set(ControlMode.Position, (stowAngle));
                     break;
-                // angles the elvator to collect
                 case COLLECT:
                     angleMotorMain.set(ControlMode.Position, (collectAngle));
                     break;
-                // angles the elevator to score the game element
                 case SCORE:
                     angleMotorMain.set(ControlMode.Position, (scoreAngle));
                     break;
@@ -147,7 +138,7 @@ public class Elevator extends Subsystem {
         SCORE(scoreAngle);
 
         // if only I (angle) could be final
-        private double angle;
+        private final double angle;
         ANGLE_STATE(double angle) {this.angle = angle;}
         public double getAngle() {return angle;}
 
@@ -159,7 +150,7 @@ public class Elevator extends Subsystem {
         MAX(maxExtension);
 
         // if only I (extension) could be final
-        private double extension;
+        private final double extension;
         EXTENSION_STATE(double extension) {this.extension = extension;}
         public double getExtension() {return extension;}
     }
