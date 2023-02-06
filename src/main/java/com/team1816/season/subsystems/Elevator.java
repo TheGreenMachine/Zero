@@ -79,6 +79,8 @@ public class Elevator extends Subsystem {
     // omg I'm in antartica, whats my (the elevator's) position??
     @Override
     public void readFromHardware() {
+        actualAnglePosition = angleMotorMain.getSelectedSensorPosition(0);
+        actualExtensionPosition = extensionMotor.getSelectedSensorPosition(0);
 
     }
 
