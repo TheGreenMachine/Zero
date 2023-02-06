@@ -11,6 +11,7 @@ import com.team1816.season.states.RobotState;
 import javax.inject.Inject;
 
 // Uh-oh... theres no "@Singleton" annotation here! You don't want more than one instance of this being created
+// Oh my, where's the well formatted documentation?
 public class Elevator extends Subsystem {
 
 
@@ -128,8 +129,8 @@ public class Elevator extends Subsystem {
     public enum ANGLE_STATE {
         STOW(stowAngle),
         COLLECT(collectAngle),
-        SCORE(scoreAngle),
-        ;
+        SCORE(scoreAngle);
+
         private double angle;
         ANGLE_STATE(double angle) {this.angle = angle;}
         public double getAngle() {return angle;}
@@ -139,8 +140,7 @@ public class Elevator extends Subsystem {
     public enum EXTENSION_STATE {
         MIN(minExtension),
         MID(midExtension),
-        MAX(maxExtension),
-        ;
+        MAX(maxExtension);
         private double extension;
         EXTENSION_STATE(double extension) {this.extension = extension;}
         public double getExtension() {return extension;}

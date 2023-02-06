@@ -10,12 +10,12 @@ import com.team1816.season.states.RobotState;
 import javax.inject.Inject;
 
 // Uh-oh... theres no "@Singleton" annotation here! You don't want more than one instance of this being created
+// Oh my, where's the well formatted documentation??
 public class Collector extends Subsystem {
 
 
     //piston is for the switch from cone collecting state to
     private final ISolenoid collectorPiston;
-
     private final IGreenMotor intakeMotor;
 
     private double intakeVel;
