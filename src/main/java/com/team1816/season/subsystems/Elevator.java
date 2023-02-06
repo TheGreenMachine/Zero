@@ -9,9 +9,11 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 // Uh-oh... theres no "@Singleton" annotation here! You don't want more than one instance of this being created
 // Oh my, where's the well formatted documentation?
+@Singleton
 public class Elevator extends Subsystem {
 
 
@@ -52,21 +54,22 @@ public class Elevator extends Subsystem {
 
         // constants
         double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
-        // Uk u can use the NAME variable instead of typing "elevator" over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over again
-        stowAngle = factory.getConstant("elevator","stowPose");
-        collectAngle = factory.getConstant("elevator", "collectPose");
-        scoreAngle = factory.getConstant("elevator", "scorePose");
-        minExtension = factory.getConstant("elevator", "minPose");
-        midExtension = factory.getConstant("elevator", "midPose");
-        maxExtension = factory.getConstant("elevator", "maxPose");
+        stowAngle = factory.getConstant(NAME,"stowPose");
+        collectAngle = factory.getConstant(NAME, "collectPose");
+        scoreAngle = factory.getConstant(NAME, "scorePose");
+        minExtension = factory.getConstant(NAME, "minPose");
+        midExtension = factory.getConstant(NAME, "midPose");
+        maxExtension = factory.getConstant(NAME, "maxPose");
     }
 
     public void setDesiredState(ANGLE_STATE elevatorAngle, EXTENSION_STATE elevatorExtension) {
+        // sets the desired state for the angle motor
         if (desiredAnglePosition != elevatorAngle) {
             desiredAnglePosition = elevatorAngle;
             outputsChanged = true;
         }
 
+        // sets the desired state for the extension motor
         if (desiredExtensionPosition != elevatorExtension) {
             desiredExtensionPosition = elevatorExtension;
             outputsChanged = true;
@@ -84,24 +87,30 @@ public class Elevator extends Subsystem {
         if (outputsChanged) {
             outputsChanged = false;
             switch (desiredExtensionPosition){
+                // extends the elevator to the top rung
                 case MAX:
                     extensionMotor.set(ControlMode.Position, (maxExtension));
                     break;
+                //extends the elevator to the middle rung
                 case MID:
                     extensionMotor.set(ControlMode.Position, (midExtension));
                     break;
+                //extends the elevator to the lowest rung
                 case MIN:
                     extensionMotor.set(ControlMode.Position, (minExtension));
                     break;
 
             }
             switch (desiredAnglePosition) {
+                // angles the elevator for stowing
                 case STOW:
                     angleMotorMain.set(ControlMode.Position, (stowAngle));
                     break;
+                // angles the elvator to collect
                 case COLLECT:
                     angleMotorMain.set(ControlMode.Position, (collectAngle));
                     break;
+                // angles the elevator to score the game element
                 case SCORE:
                     angleMotorMain.set(ControlMode.Position, (scoreAngle));
                     break;
@@ -110,7 +119,7 @@ public class Elevator extends Subsystem {
         }
     }
 
-    // TODO later
+
     @Override
     public void zeroSensors() {
 
@@ -143,6 +152,8 @@ public class Elevator extends Subsystem {
         MIN(minExtension),
         MID(midExtension),
         MAX(maxExtension);
+
+        // if only I (extension) could be final
         private double extension;
         EXTENSION_STATE(double extension) {this.extension = extension;}
         public double getExtension() {return extension;}
