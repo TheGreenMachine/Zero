@@ -29,22 +29,22 @@ subsystems:
                     drive: FLDr
                     azimuth: FLAz
                     constants:
-                        encoderOffset: 2445
+                        encoderOffset: 2305
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
                     constants:
-                        encoderOffset: 1479
+                        encoderOffset: 1343
                 backLeft:
                     drive: RLDr
                     azimuth: RLAz
                     constants:
-                        encoderOffset: 2396
+                        encoderOffset: 536
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     constants:
-                        encoderOffset: 511
+                        encoderOffset: 108
             drivePID:
                 slot0:
                     kP: .11
