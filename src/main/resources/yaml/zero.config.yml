@@ -8,8 +8,8 @@ subsystems:
             RRDr: 15
             FLAz: 8
             FRAz: 11
-            RLAz: 19
-            RRAz: 14
+            BLAz: 19
+            BRAz: 14
         canCoders:
             FLEnc: 9 #TODO check values
             FREnc: 12
@@ -91,6 +91,11 @@ subsystems:
         implemented: true
         constants:
             usingCamToUpdatePose: 0
+    elevator:
+        falcons:
+            ELR: 0
+            ELRFollower: 0
+        contants:
 infrastructure:
     canivoreBusName: highSpeed
     # power distribution
