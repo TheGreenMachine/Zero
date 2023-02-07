@@ -39,7 +39,7 @@ subsystems:
                     drive: RLDr
                     azimuth: RLAz
                     constants:
-                        encoderOffset: 2396
+                        encoderOffset: 539
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
@@ -63,16 +63,16 @@ subsystems:
             maxVelTicks100ms: 12275.7 # ticks per 100ms
             openLoopRampRate: 0.8
             isSwerve: 1
-            encPPR: 13260.36 #Use for distance calibration
+            encPPR: 12855.51 #Use for distance calibration
             azimuthEncPPR: 4096
             maxRotVel: 14
             trackWidth: 21 #inches
             wheelbaseLength: 21.5 #inches
             wheelDiameter: 4
             kTrackScrubFactor: 1.0
-            maxVelOpenLoop: 3 # meters/s
-            maxVelPathFollowing: 2.5 # meters/s (2.2)
-            maxAccel: 1.27 # meters/s^ 2
+            maxVelOpenLoop: 1 # meters/s
+            maxVelPathFollowing: .5 # meters/s (2.2)
+            maxAccel: .5 # meters/s^ 2
             isDemoMode: 0
             autoBalanceDivider: 30
             pitchRollMaxFlat: 2.5
