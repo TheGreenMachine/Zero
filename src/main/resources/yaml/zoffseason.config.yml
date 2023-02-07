@@ -71,7 +71,7 @@ subsystems:
             wheelDiameter: 4
             kTrackScrubFactor: 1.0
             maxVelOpenLoop: 1 # meters/s
-            maxVelPathFollowing: .5 # meters/s (2.2)
+            maxVelPathFollowing: 1 # meters/s (2.2)
             maxAccel: .5 # meters/s^ 2
             isDemoMode: 0
             autoBalanceDivider: 30
