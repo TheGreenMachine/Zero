@@ -87,8 +87,8 @@ public class Robot extends TimedRobot {
      * Properties
      */
     private boolean faulted;
-    private boolean runningAutoTarget = false;
-    private boolean runningAutoBalance = false;
+    public static boolean runningAutoTarget = false;
+    public static boolean runningAutoBalance = false;
 
     /**
      * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
