@@ -2,7 +2,7 @@
 Zero is FRC Team 1816's robot for the 2023 FRC season, *FIRST Charged Up*. This software uses Java 11, the [WPILib](https://github.com/wpilibsuite/allwpilib) library, and the [CTRE Phoenix](https://github.com/CrossTheRoadElec/Phoenix-api) library.
 
 ## Prerequisites
-1. You must have Java 17 installed on your system. You can [download OpenJDK 17 here](https://openjdk.java.net/projects/jdk/17/) or [download Oracle's JDK 11 here](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html). Alternatively, this will be installed through the WPILib One-Click Installer.
+1. You must have Java 17 installed on your system. You can [download OpenJDK 17 here](https://openjdk.java.net/projects/jdk/17/) or [download Oracle's JDK 17 here](https://www.oracle.com/java/technologies/downloads/#java17). Alternatively, this will be installed through the WPILib One-Click Installer.
 2. You must have an IDE of your choice installed. [Visual Studio Code](https://code.visualstudio.com/) or [IntelliJ IDEA](https://www.jetbrains.com/idea/) are recommended as official and unofficial options. VSCode can be optionally installed using the WPILib One-Click Installer.
 3. You must have [Git](https://git-scm.com/) installed.
 4. It is recommended that you run the [WPILib One-Click Installer](https://github.com/wpilibsuite/allwpilib/releases). This includes the VSCode plugins as well as all NI software tools. It does **NOT** include any CTRE software tools.
