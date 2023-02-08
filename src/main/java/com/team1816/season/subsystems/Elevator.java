@@ -11,8 +11,6 @@ import com.team1816.season.states.RobotState;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-// Uh-oh... theres no "@Singleton" annotation here! You don't want more than one instance of this being created
-// Oh my, where's the well formatted documentation?
 @Singleton
 public class Elevator extends Subsystem {
 
@@ -87,7 +85,7 @@ public class Elevator extends Subsystem {
 
     /**
      * Sets the desired angle and extension state of the elevator
-     * 
+     * @param desiredAngleState - Desired state for the angle of the elevator
      */
     public void setDesiredAngleState(ANGLE_STATE desiredAngleState) {
         if (desiredAnglePosition != desiredAngleState) {
@@ -96,6 +94,10 @@ public class Elevator extends Subsystem {
         }
     }
 
+    /**
+     * Sets the desired angle and extension state of the elevator
+     * @param desiredExtensionState - Desired state for the extension of the elevator
+     */
     public void setDesiredExtensionState(EXTENSION_STATE desiredExtensionState) {
         if (desiredExtensionPosition != desiredExtensionState) {
             desiredExtensionPosition = desiredExtensionState;
