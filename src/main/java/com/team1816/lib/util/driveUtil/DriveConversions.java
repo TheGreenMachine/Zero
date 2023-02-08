@@ -64,16 +64,16 @@ public class DriveConversions {
         return inchesPerSecondToTicksPer100ms(Units.metersToInches(meters_per_second));
     }
 
-    public static double ticksPerSecondToMetersPer100ms(double ticks_per_second) {
-        return ((Units.inchesToMeters(ticksPerSecondToInchesPer100ms(ticks_per_second))));
+    public static double ticksPer100msToMetersPerSecond(double ticks_per_second) {
+        return ((Units.inchesToMeters(ticksPer100msToInchesPerSecond(ticks_per_second))));
     }
 
     public static double inchesPerSecondToTicksPer100ms(double inches_per_second) {
         return inchesToRotations(inches_per_second) * drivePPR / 10.0;
     }
 
-    public static double ticksPerSecondToInchesPer100ms(double ticks_per_second) {
-        return rotationsToInches(ticks_per_second / drivePPR) / 10.0;
+    public static double ticksPer100msToInchesPerSecond(double ticks_per_100ms) {
+        return rotationsToInches(ticks_per_100ms / drivePPR) * 10.0;
     }
 
     public static double ticksPer100MSToMPS(double ticksPer100MS) { // ticks/100ms to meters / second

@@ -31,11 +31,11 @@ public class SwerveModule implements ISwerveModule {
      */
     public SwerveModuleState moduleState;
     public SwerveModulePosition modulePosition;
-    public double driveDemand;
-    public double driveActual;
-    public double drivePosition;
-    public double azimuthDemand;
-    public double azimuthActual;
+    public double driveDemand; // ticks
+    public double driveActual; // m/s
+    public double driveDistance; // m
+    public double azimuthDemand; // ticks
+    public double azimuthActual; // degrees
     public double motorTemp; // Drive Motor Temperature
 
     /**
@@ -105,7 +105,6 @@ public class SwerveModule implements ISwerveModule {
         );
 
         allowableError = 5; // TODO this is a dummy value for checkSystem
-        drivePosition = 0;
 
         moduleState = new SwerveModuleState();
         modulePosition = new SwerveModulePosition();
@@ -148,19 +147,17 @@ public class SwerveModule implements ISwerveModule {
      * @see this#getActualPosition()
      */
     public void update() {
-        driveActual =
-            DriveConversions.ticksToMeters(driveMotor.getSelectedSensorVelocity(0)) * 10;
+        driveActual = driveMotor.getSelectedSensorVelocity(0);
         azimuthActual =
             DriveConversions.convertTicksToDegrees(
                 azimuthMotor.getSelectedSensorPosition(0) -
                     mModuleConfig.azimuthEncoderHomeOffset
             );
 
-        moduleState.speedMetersPerSecond = driveActual;
+        moduleState.speedMetersPerSecond = DriveConversions.ticksPer100msToMetersPerSecond(driveActual);
         moduleState.angle = Rotation2d.fromDegrees(azimuthActual);
 
-        drivePosition += driveActual * (timestamp-prevTimestamp);
-        modulePosition.distanceMeters = drivePosition;
+        modulePosition.distanceMeters += moduleState.speedMetersPerSecond * (timestamp-prevTimestamp);
         modulePosition.angle = Rotation2d.fromDegrees(azimuthActual);
 
         motorTemp = driveMotor.getTemperature(); // Celsius
@@ -254,16 +251,6 @@ public class SwerveModule implements ISwerveModule {
     @Override
     public double getActualDrive() {
         return driveActual;
-    }
-
-    /**
-     * Returns the "position" of the Drive motor
-     *
-     * @return drivePosition
-     */
-    @Override
-    public double getDrivePosition() {
-        return drivePosition;
     }
 
     /**

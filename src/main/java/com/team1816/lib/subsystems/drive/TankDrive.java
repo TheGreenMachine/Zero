@@ -399,7 +399,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      * @see com.team1816.lib.util.driveUtil.DriveConversions#ticksPer100MSToMPS(double)
      */
     public double getLeftMPSActual() {
-        return ticksPer100MSToMPS(leftActualVelocity);
+        return ticksPer100msToMetersPerSecond(leftActualVelocity);
     }
 
     /**
@@ -409,7 +409,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      * @see com.team1816.lib.util.driveUtil.DriveConversions#ticksPer100MSToMPS(double)
      */
     public double getRightMPSActual() {
-        return ticksPer100MSToMPS(rightActualVelocity);
+        return ticksPer100msToMetersPerSecond(rightActualVelocity);
     }
 
     /**

@@ -18,8 +18,6 @@ public interface ISwerveModule {
 
     double getDesiredDrive();
 
-    double getDrivePosition();
-
     double getDriveError();
 
     // Temperature C
