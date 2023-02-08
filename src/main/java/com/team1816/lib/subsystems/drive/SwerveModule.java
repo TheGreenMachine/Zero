@@ -154,7 +154,7 @@ public class SwerveModule implements ISwerveModule {
         moduleState.angle = Rotation2d.fromDegrees(DriveConversions.convertTicksToDegrees(azimuthActual - mModuleConfig.azimuthEncoderHomeOffset));
 
         modulePosition.distanceMeters += moduleState.speedMetersPerSecond * (timestamp-prevTimestamp);
-        modulePosition.angle = Rotation2d.fromDegrees(azimuthActual);
+        modulePosition.angle = Rotation2d.fromDegrees(DriveConversions.convertTicksToDegrees(azimuthActual - mModuleConfig.azimuthEncoderHomeOffset));
 
         motorTemp = driveMotor.getTemperature(); // Celsius
     }
