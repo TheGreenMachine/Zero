@@ -148,14 +148,10 @@ public class SwerveModule implements ISwerveModule {
      */
     public void update() {
         driveActual = driveMotor.getSelectedSensorVelocity(0);
-        azimuthActual =
-            DriveConversions.convertTicksToDegrees(
-                azimuthMotor.getSelectedSensorPosition(0) -
-                    mModuleConfig.azimuthEncoderHomeOffset
-            );
+        azimuthActual = azimuthMotor.getSelectedSensorPosition(0);
 
         moduleState.speedMetersPerSecond = DriveConversions.ticksPer100msToMetersPerSecond(driveActual);
-        moduleState.angle = Rotation2d.fromDegrees(azimuthActual);
+        moduleState.angle = Rotation2d.fromDegrees(DriveConversions.convertTicksToDegrees(azimuthActual - mModuleConfig.azimuthEncoderHomeOffset));
 
         modulePosition.distanceMeters += moduleState.speedMetersPerSecond * (timestamp-prevTimestamp);
         modulePosition.angle = Rotation2d.fromDegrees(azimuthActual);
@@ -261,6 +257,24 @@ public class SwerveModule implements ISwerveModule {
     @Override
     public double getDriveError() {
         return driveMotor.getClosedLoopError(0);
+    }
+
+    /**
+     * Returns the normalized azimuth demand in ticks with respect to the zero offset
+     * Used for logging only
+     */
+    @Override
+    public double getDesiredNormalizedAzimuth() {
+        return azimuthDemand - mModuleConfig.azimuthEncoderHomeOffset;
+    }
+
+    /**
+     * Returns the normalized azimuth position in ticks
+     * Used for logging only
+     */
+    @Override
+    public double getActualNormalizedAzimuth() {
+        return azimuthActual - mModuleConfig.azimuthEncoderHomeOffset;
     }
 
     /**

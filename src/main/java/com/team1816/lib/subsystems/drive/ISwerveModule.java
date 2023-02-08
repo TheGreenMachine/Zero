@@ -13,6 +13,10 @@ public interface ISwerveModule {
 
     double getDesiredAzimuth();
 
+    double getDesiredNormalizedAzimuth();
+
+    double getActualNormalizedAzimuth();
+
     // velocity ticks/100ms
     double getActualDrive();
 

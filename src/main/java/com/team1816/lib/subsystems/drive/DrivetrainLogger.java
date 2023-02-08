@@ -13,7 +13,7 @@ public class DrivetrainLogger {
         if (isSwerve) {
             for (
                 int i = 0;
-                i < 1; //((SwerveDrivetrain) drivetrain).getSwerveModules().length;
+                i < ((SwerveDrivetrain) drivetrain).getSwerveModules().length; // 1;
                 i++
             ) {
                 var module = ((SwerveDrivetrain) drivetrain).getSwerveModules()[i];
@@ -40,6 +40,20 @@ public class DrivetrainLogger {
                     module::getAzimuthError,
                     "hide",
                     "join:Drivetrain/AzimuthError"
+                );
+                subsystem.createBadLogTopic(
+                    prefix + "NormalizedAzimuthDemand",
+                    "ticks",
+                    module::getDesiredNormalizedAzimuth,
+                    "hide",
+                    "join:Drivetrain/NormalizedAzimuthDemand"
+                );
+                subsystem.createBadLogTopic(
+                    prefix + "NormalizedAzimuthPosition",
+                    "ticks",
+                    module::getActualNormalizedAzimuth,
+                    "hide",
+                    "join:Drivetrain/NormalizedAzimuthPosition"
                 );
 
                 // Drive
