@@ -114,9 +114,6 @@ public abstract class Drive
         NAME,
         "wheelDiameter"
     );
-    public static final double kWheelCircumferenceInches =
-        kDriveWheelDiameterInches * Math.PI;
-    public static final double kDriveWheelRadiusInches = kDriveWheelDiameterInches / 2.0;
 
     public static final double kDriveWheelTrackWidthMeters = Units.inchesToMeters(
         kDriveWheelTrackWidthInches
@@ -124,15 +121,9 @@ public abstract class Drive
     public static final double kDriveWheelbaseLengthMeters = Units.inchesToMeters(
         kDriveWheelbaseLengthInches
     );
-    public static final double kDriveWheelDiameterMeters = Units.inchesToMeters(
-        kDriveWheelDiameterInches
-    );
     public static final double kWheelCircumferenceMeters = Units.inchesToMeters(
-        kWheelCircumferenceInches
-    );
-    public static final double kDriveWheelRadiusMeters = Units.inchesToMeters(
-        kDriveWheelRadiusInches
-    );
+        kDriveWheelDiameterInches
+    ) * Math.PI;
     public static double kTrackScrubFactor = factory.getConstant(
         NAME,
         "kTrackScrubFactor"

@@ -98,7 +98,7 @@ public class RobotState {
         visibleTargets.clear();
         drivetrainTemp = 0;
         vehicleToFloorProximityCentimeters = 0;
-        target = new Pose2d(5.0, Constants.fieldCenterY, new Rotation2d());
+        target = Constants.fieldCenterPose;
     }
 
     /**

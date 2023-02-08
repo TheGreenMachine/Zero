@@ -37,8 +37,8 @@ public class SwerveKinematics implements DriveKinematics {
         return directions;
     }
 
-    private static final double L = kDriveWheelTrackWidthInches;
-    private static final double W = kDriveWheelbaseLengthInches; // Intentional
+    private static final double L = Drive.kDriveWheelTrackWidthMeters;
+    private static final double W = kDriveWheelbaseLengthInches;
     private static final double R = Math.hypot(L, W);
 
     private static Rotation2d[] prev_wheel_azimuths = SwerveDriveSignal.ZERO_AZIMUTH;

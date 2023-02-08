@@ -88,7 +88,7 @@ public class TrajectoryAction implements AutoAction {
                     drive::getPose,
                     new RamseteController(), //defaults of
                     new DifferentialDriveKinematics(
-                        Units.inchesToMeters(kDriveWheelTrackWidthInches)
+                        kDriveWheelTrackWidthMeters
                     ),
                     ((TankDrive) drive)::updateTrajectoryVelocities
                 );

@@ -76,7 +76,7 @@ public class Constants {
      * Camera characterization
      */
     public static final double kCameraMountingAngleY = 20; // degrees
-    public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters
+    public static final double kTurretZedRadius = 0.2; // meters
 
     /**
      * Badlog characterization
