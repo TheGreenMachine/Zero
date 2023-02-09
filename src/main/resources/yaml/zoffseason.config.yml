@@ -51,7 +51,7 @@ subsystems:
                     kI: 0.0001
                     kD: 4.0
                     kF: 0.048077
-                    allowableError: 90
+                    allowableError: 40
             azimuthPID:
                 slot0:
                     kP: 6.0
@@ -63,7 +63,7 @@ subsystems:
             maxVelTicks100ms: 12275.7 # ticks per 100ms
             openLoopRampRate: 0.8
             isSwerve: 1
-            encPPR: 14255
+            encPPR: 13260.36 #Use for distance calibration
             azimuthEncPPR: 4096
             maxRotVel: 14
             trackWidth: 21 #inches
@@ -71,8 +71,8 @@ subsystems:
             wheelDiameter: 4
             kTrackScrubFactor: 1.0
             maxVelOpenLoop: 3 # meters/s
-            maxVelPathFollowing: 3 # meters/s (2.2)
-            maxAccel: 2.54 # meters/s^ 2
+            maxVelPathFollowing: 2.5 # meters/s (2.2)
+            maxAccel: 1.27 # meters/s^ 2
             isDemoMode: 0
             autoBalanceDivider: 30
             pitchRollMaxFlat: 2.5
@@ -101,6 +101,6 @@ constants:
     ## General ##
     EnableBucketTuning: 0
     teleopFieldCentric: 1 # 0 or 1
-    kLooperDt: .035 # seconds
+    kLooperDt: .050 # seconds
     resetFactoryDefaults: 0 # whether motors get reset to factory default - doesn't affect motor encoder offset
-        # - if motors reset, rebooting the robot mid-match would kill the turret
+    # - if motors reset, rebooting the robot mid-match would kill the turret
