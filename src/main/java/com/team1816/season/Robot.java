@@ -479,22 +479,20 @@ public class Robot extends TimedRobot {
         }
 
         if (isAutoBalancing) {
-            double pitch = -infrastructure.getPitch();
+            double pitch = infrastructure.getPitch();
             double roll = infrastructure.getRoll();
             double throttle = 0;
             double strafe = 0;
             var heading = Constants.EmptyRotation2d;
 
-            double correction = (initialYaw - infrastructure.getYaw()) / 1440;
-
             double maxFlatRange = Constants.pitchRollMaxFlat;
-            System.out.println("Autobalancing MC, " + pitch + "," + roll);
+            System.out.println("Autobalancing MC, " + pitch + "," + roll); //TODO delete this
 
             if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
-                throttle = pitch / 100;
-                strafe = roll / 100;
+                throttle = pitch;
+                strafe = roll;
 
-                ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe, correction);
+                ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe,0);
 
                 if (isSwerve) {
                     ((SwerveDrive) drive).setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
@@ -506,13 +504,13 @@ public class Robot extends TimedRobot {
             } else {
 
                 heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
-
                 if (isSwerve) {
                     SwerveModuleState templateState = new SwerveModuleState(0,heading);
                     SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState,templateState,templateState,templateState};
                     ((SwerveDrive) drive).setModuleStates(statePassIn);
                 }
                 //TODO is tankdrive needed here?
+
             }
         } else {
             drive.setTeleopInputs(

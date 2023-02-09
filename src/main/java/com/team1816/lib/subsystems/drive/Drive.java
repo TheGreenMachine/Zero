@@ -299,6 +299,12 @@ public abstract class Drive
     }
 
     /**
+     * Autobalances during manual control
+     * @param balancing (boolean) isAutoBalancing
+     */
+    public void autoBalanceManual(boolean balancing){}
+
+    /**
      * Returns the actual heading of the drivetrain based on Odometry and gyroscopic measurements
      * @return (Rotation2d) actualHeading
      */

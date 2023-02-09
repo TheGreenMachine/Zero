@@ -247,7 +247,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
     }
 
-    public void setModuleStatesPercentOutput(SwerveModuleState[] desiredStates) { // TODO this is a massive hack that makes my eyes bleed
+    public void setModuleStatesPercentOutput(SwerveModuleState[] desiredStates) { //TODO keep for now but delete when other works
         if (controlState != ControlState.OPEN_LOOP) {
             controlState = ControlState.OPEN_LOOP;
         }
@@ -260,6 +260,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             swerveModules[i].setDesiredState(desiredStates[i], true);
         }
     }
+
+    /**
+     * Autobalances while in Swervedrive manual control
+     *
+     */
 
     /**
      * Updates robotState based on values from odometry and sensor readings in readFromHardware
