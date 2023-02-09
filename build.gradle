@@ -3,7 +3,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2023.3.1"
+    id "edu.wpi.first.GradleRIO" version "2023.3.2"
     id 'org.jsonschema2dataclass' version '4.0.1'
 }
 
