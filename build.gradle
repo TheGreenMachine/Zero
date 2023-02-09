@@ -222,6 +222,20 @@ processResources {
     }
 }
 
+task deployInfo(type: Exec) {
+    Runtime r = Runtime.getRuntime();
+    PrintWriter writer = new PrintWriter("deploy.tmp", "UTF-8");
+    writer.println(new Scanner(r.exec("git symbolic-ref --short HEAD").getInputStream()).nextLine());
+    writer.println(new Scanner(r.exec("git rev-parse HEAD").getInputStream()).nextLine());
+    writer.println(new Date().toString());
+    writer.close();
+    commandLine "scp", "./deploy.tmp", "lvuser@10.18.16.2:/home/lvuser/version.info";
+    
+    doLast {
+        commandLine "rm", "deploy.tmp";
+    }
+}
+
 wrapper {
     gradleVersion = '7.2'
 }
@@ -238,4 +252,5 @@ compileJava {
 task fullDeploy() {
     dependsOn tasks.named("calculateTrajectories")
     dependsOn 'deploy'
+    dependsOn 'deployInfo'
 }
