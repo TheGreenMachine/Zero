@@ -497,7 +497,7 @@ public class Robot extends TimedRobot {
                 ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe, correction);
 
                 if (isSwerve) {
-                    ((SwerveDrive) drive).setModuleStatesPercentOutput(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
+                    ((SwerveDrive) drive).setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
                 } else {
                     DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
                     DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters);
