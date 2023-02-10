@@ -58,7 +58,10 @@ public class PathUtil {
         if (loadTrajectories) {
             var trajectory = TrajectoryCalculator.loadTrajectory(pathName);
             if (!trajectory.equals(new Trajectory())) {
+                System.out.println("Loaded Trajectory: " + pathName);
                 return trajectory;
+            } else {
+                System.out.println("PathUtil Failed to Load Trajectory: " + pathName);
             }
         }
         /* Inch to meter conversions for waypoints for trajectory calculations */
@@ -134,7 +137,10 @@ public class PathUtil {
         if (loadTrajectories) {
             var trajectoryHeadings = TrajectoryCalculator.loadTrajectoryHeadings(name);
             if (trajectoryHeadings.size() > 0) {
+                System.out.println("Loaded Trajectory Headings: " + name);
                 return trajectoryHeadings;
+            } else {
+                System.out.println("PathUtil Failed to Load Trajectory Headings: " + name);
             }
         }
         if (waypoints == null || swerveHeadings == null) {
