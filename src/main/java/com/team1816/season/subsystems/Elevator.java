@@ -169,7 +169,7 @@ public class Elevator extends Subsystem {
         return false;
     }
 
-    /** enums */
+    /** enums a **/
     public enum ANGLE_STATE {
         STOW(stowAngle),
         COLLECT(collectAngle),
