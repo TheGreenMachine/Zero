@@ -68,7 +68,7 @@ subsystems:
             maxVelTicks100ms: 12275.7 # ticks per 100ms
             openLoopRampRate: 0.8
             isSwerve: 1
-            encPPR: 14255
+            encPPR: 13464
             azimuthEncPPR: 4096
             maxRotVel: 18
             trackWidth: 21 #inches
