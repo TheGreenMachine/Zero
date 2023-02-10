@@ -34,6 +34,8 @@ public class RobotState {
     public boolean isPoseUpdated = true;
     public double vehicleToFloorProximityCentimeters = 0;
 
+    public double dt; // detected actual robot loop time in ms
+
     /**
      * Inertial characterization
      */
