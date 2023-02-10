@@ -262,9 +262,33 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     /**
-     * Autobalances while in Swervedrive manual control
-     *
+     * Autobalances while in Swervedrive manual control TODO redo description
      */
+    @Override
+    public void autoBalanceManual(){
+        double pitch = infrastructure.getPitch();
+        double roll = infrastructure.getRoll();
+        double throttle = 0;
+        double strafe = 0;
+        var heading = Constants.EmptyRotation2d;
+
+        double maxFlatRange = Constants.pitchRollMaxFlat;
+        double correction = (getInitialYaw() - infrastructure.getYaw()) / 1440;
+
+        if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
+            throttle = pitch;
+            strafe = roll;
+
+            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe,correction);
+            setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
+        }
+        else {
+            heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
+                SwerveModuleState templateState = new SwerveModuleState(0,heading);
+                SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState,templateState,templateState,templateState};
+                setModuleStates(statePassIn);
+        }
+    }
 
     /**
      * Updates robotState based on values from odometry and sensor readings in readFromHardware

@@ -329,10 +329,42 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     /**
-     * Utilizes a DriveSignal to adapt Trajectory demands for TRAJECTORY_FOLLOWING and closed loop control
-     * @param leftVel left velocity
-     * @param rightVel right velocity
+     * Autobalances while in Tankdrive manual control TODO redo description
      */
+    @Override
+    public void autoBalanceManual() {
+        double pitch = infrastructure.getPitch();
+        double roll = infrastructure.getRoll();
+        double throttle = 0;
+        double strafe = 0;
+        var heading = Constants.EmptyRotation2d;
+
+        double maxFlatRange = Constants.pitchRollMaxFlat;
+        double correction = (getInitialYaw() - infrastructure.getYaw()) / 1440;
+
+        if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
+            throttle = pitch/4;
+            strafe = roll/4;
+
+            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe,correction);
+
+
+            DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
+            DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters);
+            setVelocity(driveSignal);
+        } else {
+
+            heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
+            //TODO tankdrive jolt align
+        }
+
+    }
+
+        /**
+         * Utilizes a DriveSignal to adapt Trajectory demands for TRAJECTORY_FOLLOWING and closed loop control
+         * @param leftVel left velocity
+         * @param rightVel right velocity
+         */
     public void updateTrajectoryVelocities(Double leftVel, Double rightVel) {
         // Velocities are in m/sec comes from trajectory command
         var signal = new DriveSignal(

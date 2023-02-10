@@ -2,35 +2,26 @@ package com.team1816.season;
 
 import static com.team1816.lib.controlboard.ControlUtils.createAction;
 import static com.team1816.lib.controlboard.ControlUtils.createHoldAction;
-import static com.team1816.lib.subsystems.Subsystem.factory;
 
 import badlog.lib.BadLog;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
-import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.controlboard.ActionManager;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.*;
-import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.season.auto.AutoModeManager;
-import com.team1816.season.auto.actions.PIDAutoBalanceAction;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.*;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 public class Robot extends TimedRobot {
 
@@ -92,12 +83,6 @@ public class Robot extends TimedRobot {
     private static boolean isSwerve = false;
 
 
-    /**
-     * Autobalancing stuff
-     */
-    private static SwerveDriveKinematics swerveKinematics;
-    private static DifferentialDriveKinematics tankKinematics;
-    private static double initialYaw;
 
 
     /**
@@ -148,6 +133,9 @@ public class Robot extends TimedRobot {
     public Double getLastEnabledLoop() {
         return enabledLoop.getLastLoop();
     }
+
+
+
 
     /**
      * Actions to perform when the robot has just begun being powered and is done booting up.
@@ -260,11 +248,7 @@ public class Robot extends TimedRobot {
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("autoBalance"),
-                        (pressed) -> {
-                            isAutoBalancing = pressed;
-                            System.out.println("Autobalance value = " + isAutoBalancing);
-                            initialYaw = robotState.fieldToVehicle.getRotation().getDegrees();
-                        }
+                        drive::setAutoBalanceManual
                     )
                     // Operator Gamepad
                 );
@@ -467,52 +451,13 @@ public class Robot extends TimedRobot {
     public void manualControl() {
         actionManager.update();
 
-        //Auto balancing stuff!
-        if (drive instanceof SwerveDrive) {
-            isSwerve = true;
+        isSwerve = drive instanceof SwerveDrive;
+
+        if(drive.isAutoBalancing() && !drive.isBraking()){
+            //TODO Make it not go while braked in autobalance the same way it does for normal input
+            drive.autoBalanceManual();
         }
-
-        if (isSwerve) {
-            swerveKinematics = ((SwerveDrive) drive).getKinematics();
-        } else {
-            tankKinematics = ((TankDrive) drive).getKinematics();
-        }
-
-        if (isAutoBalancing) {
-            double pitch = infrastructure.getPitch();
-            double roll = infrastructure.getRoll();
-            double throttle = 0;
-            double strafe = 0;
-            var heading = Constants.EmptyRotation2d;
-
-            double maxFlatRange = Constants.pitchRollMaxFlat;
-            System.out.println("Autobalancing MC, " + pitch + "," + roll); //TODO delete this
-
-            if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
-                throttle = pitch;
-                strafe = roll;
-
-                ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe,0);
-
-                if (isSwerve) {
-                    ((SwerveDrive) drive).setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
-                } else {
-                    DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
-                    DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters);
-                    ((TankDrive) drive).setVelocity(driveSignal);
-                }
-            } else {
-
-                heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
-                if (isSwerve) {
-                    SwerveModuleState templateState = new SwerveModuleState(0,heading);
-                    SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState,templateState,templateState,templateState};
-                    ((SwerveDrive) drive).setModuleStates(statePassIn);
-                }
-                //TODO is tankdrive needed here?
-
-            }
-        } else {
+        else {
             drive.setTeleopInputs(
                 -controlBoard.getAsDouble("throttle"),
                 -controlBoard.getAsDouble("strafe"),
