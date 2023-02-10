@@ -5,11 +5,11 @@ subsystems:
             FLDr: 11
             FRDr: 9
             RLDr: 18
-            RRDr: 5
+            RRDr: 1
             FLAz: 10
             FRAz: 8
             RLAz: 19
-            RRAz: 4
+            RRAz: 2
         canCoders:
             FLEnc: 25 #TODO check values
             FREnc: 27
@@ -53,9 +53,9 @@ subsystems:
                         invertSensorPhase: 1
             drivePID:
                 slot0:
-                    kP: .3
-                    kI: 0.0001
-                    kD: 4.0
+                    kP: .04
+                    kI: 0.00001
+                    kD: 2.0
                     kF: 0.0499
             azimuthPID:
                 slot0:
