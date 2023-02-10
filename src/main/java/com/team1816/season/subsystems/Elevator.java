@@ -54,7 +54,6 @@ public class Elevator extends Subsystem {
     @Inject
     public Elevator(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
-        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
 
         //components
         this.angleMotorMain = factory.getMotor(NAME,"angleMotorMain");
