@@ -4,6 +4,6 @@ build
 .gradle
 simgui-window.json
 bin/
-*.bag
+*.bag*
 Compiler
 src/main/resources/trajectories/**/*.json
