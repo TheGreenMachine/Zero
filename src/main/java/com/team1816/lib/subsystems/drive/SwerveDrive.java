@@ -273,11 +273,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         var heading = Constants.EmptyRotation2d;
 
         double maxFlatRange = Constants.pitchRollMaxFlat;
-        double correction = (getInitialYaw() - infrastructure.getYaw()) / 100;
+        double correction = (getInitialYaw() - infrastructure.getYaw()) * (14/1440);
 
         if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
-            throttle = pitch;
-            strafe = roll;
+            throttle = pitch / 3;
+            strafe = roll / 3;
 
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe,correction);
             setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));

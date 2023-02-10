@@ -80,6 +80,7 @@ subsystems:
             maxAccel: 2.54 # meters/s^ 2
             isDemoMode: 0
             autoBalanceDivider: 40
+            pitchRollMaxFlat: 2.5
     ledmanager:
         implemented: false
         canifier: -1

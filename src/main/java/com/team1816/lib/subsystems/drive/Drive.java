@@ -297,6 +297,7 @@ public abstract class Drive
      */
     public void setInitialYaw(){
         initialYaw = robotState.fieldToVehicle.getRotation().getDegrees();
+        System.out.println("called");
     }
 
     /**
