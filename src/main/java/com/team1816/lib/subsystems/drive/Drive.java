@@ -334,7 +334,7 @@ public abstract class Drive
     /**
      * Autobalances in teleop TODO redo description
      */
-    public void autoBalanceManual(){}
+    public void autoBalance(){}
 
     /**
      * Returns the actual heading of the drivetrain based on Odometry and gyroscopic measurements

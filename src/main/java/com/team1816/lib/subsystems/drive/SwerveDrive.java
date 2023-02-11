@@ -265,13 +265,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      * Autobalances while in Swervedrive manual control TODO redo description
      */
     @Override
-    public void autoBalanceManual(){
+    public void autoBalance(){
         double pitch = infrastructure.getPitch();
         double roll = -infrastructure.getRoll();
-        System.out.println("pitch = " + pitch + ", roll = " + roll);
         double throttle = 0;
         double strafe = 0;
-        double correction = 0;
         var heading = Constants.EmptyRotation2d;
 
         double maxFlatRange = Constants.pitchRollMaxFlat;
@@ -280,7 +278,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             throttle = pitch / 30;
             strafe = roll / 30;
 
-            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe,correction);
+            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe,0);
             setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
         }
         else {

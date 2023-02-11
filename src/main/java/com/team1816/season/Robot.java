@@ -456,8 +456,7 @@ public class Robot extends TimedRobot {
         isSwerve = drive instanceof SwerveDrive;
 
         if(drive.isAutoBalancing() && !drive.isBraking()){
-            //TODO Make it not go while braked in autobalance the same way it does for normal input
-            drive.autoBalanceManual();
+            drive.autoBalance();
         }
         else {
             drive.setTeleopInputs(
