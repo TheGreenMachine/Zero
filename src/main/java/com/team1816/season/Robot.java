@@ -7,6 +7,7 @@ import com.team1816.lib.controlboard.ActionManager;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
+import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
@@ -17,7 +18,8 @@ import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.subsystems.LedManager;
+import com.team1816.season.subsystems.Collector;
+import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.wpilibj.*;
 
 import java.nio.file.Files;
@@ -63,6 +65,8 @@ public class Robot extends TimedRobot {
 
     private final LedManager ledManager;
     private final Camera camera;
+    private final Elevator elevator;
+    private final Collector collector;
 
     /**
      * Factory
@@ -100,8 +104,10 @@ public class Robot extends TimedRobot {
         enabledLoop = new Looper(this);
         disabledLoop = new Looper(this);
         drive = (Injector.get(Drive.Factory.class)).getInstance();
-        camera = Injector.get(Camera.class);
+        elevator = Injector.get(Elevator.class);
+        collector = Injector.get(Collector.class);
         ledManager = Injector.get(LedManager.class);
+        camera = Injector.get(Camera.class);
         robotState = Injector.get(RobotState.class);
         orchestrator = Injector.get(Orchestrator.class);
         infrastructure = Injector.get(Infrastructure.class);
@@ -149,7 +155,10 @@ public class Robot extends TimedRobot {
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            subsystemManager.setSubsystems(drive, ledManager, camera);
+            // Remember to register our elevator and collector subsystems below!! The subsystem manager deals with calling
+            // read/writetohardware on a loop, but it can only call read/write if it recognizes said subsystem. To recognize
+            // your subsystem, just add it alongside the drive, ledManager, and camera parameters :)
+            subsystemManager.setSubsystems(drive, ledManager, camera, elevator, collector);
 
             /** Register BadLogs */
             if (Constants.kIsBadlogEnabled) {
