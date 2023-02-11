@@ -259,13 +259,13 @@ public class Robot extends TimedRobot {
                         drive::setSlowMode
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("manualCollect"),
+                        () -> controlBoard.getAsBool("collectCone"),
                         (pressed) -> {
                             collector.setCollect(pressed);
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("manualEject"),
+                        () -> controlBoard.getAsBool("coll"),
                         (pressed) -> {
                             collector.setEject(pressed);
                         }
