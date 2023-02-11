@@ -88,17 +88,17 @@ public class Collector extends Subsystem {
 
     @Override
     public void writeToHardware() {
+        switch (desiredPivotState) {
+            case UP:
+                collectorPiston.set(false);
+                break;
+            case DOWN:
+                collectorPiston.set(true);
+                break;
+        }
         if (outputsChanged) {
             outputsChanged = false;
             if(negation) {
-                switch (desiredPivotState) {
-                    case UP:
-                        collectorPiston.set(false);
-                        break;
-                    case DOWN:
-                        collectorPiston.set(true);
-                        break;
-                }
                 switch (desiredCollectorState) {
                     case STOP:
                         intakeMotor.set(ControlMode.Velocity, 0);
@@ -111,14 +111,6 @@ public class Collector extends Subsystem {
                         break;
                 }
             } else {
-                switch (desiredPivotState) {
-                    case UP:
-                        collectorPiston.set(false);
-                        break;
-                    case DOWN:
-                        collectorPiston.set(true);
-                        break;
-                }
                 switch (desiredCollectorState) {
                     case STOP:
                         intakeMotor.set(ControlMode.Velocity, 0);
