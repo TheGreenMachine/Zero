@@ -17,7 +17,7 @@ public class Collector extends Subsystem {
 
 
     //piston is for the switch from cone collecting state to
-    private final ISolenoid collectorPiston;
+    //private final ISolenoid collectorPiston;
     private final IGreenMotor intakeMotor;
 
     private double intakeVel;
@@ -33,7 +33,7 @@ public class Collector extends Subsystem {
     @Inject
     public Collector (Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
-        collectorPiston = factory.getSolenoid(NAME, "collectorSolenoid");
+        //collectorPiston = factory.getSolenoid(NAME, "collectorSolenoid");
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
     }
 
@@ -72,10 +72,10 @@ public class Collector extends Subsystem {
             outputsChanged = false;
             switch (desiredPivotState) {
                 case UP:
-                    collectorPiston.set(true);
+                    //collectorPiston.set(true);
                     break;
                 case DOWN:
-                    collectorPiston.set(false);
+                    //collectorPiston.set(false);
                     break;
             }
             switch (desiredCollectorState) {
@@ -84,6 +84,7 @@ public class Collector extends Subsystem {
                     break;
                 case COLLECT:
                     intakeMotor.set(ControlMode.PercentOutput, factory.getConstant(NAME, "collecting"));
+                    System.out.println("intakeMotor is set to COLLECT (percentoutput)");
                     break;
                 case FLUSH:
                     intakeMotor.set(ControlMode.PercentOutput, factory.getConstant(NAME, "ejecting"));
