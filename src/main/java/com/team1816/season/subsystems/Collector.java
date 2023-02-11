@@ -60,6 +60,7 @@ public class Collector extends Subsystem {
             outputsChanged = true;
         }
     }
+
     @Override
     public void readFromHardware() {
         intakeVel = intakeMotor.getSelectedSensorVelocity(0);

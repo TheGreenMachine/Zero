@@ -9,12 +9,11 @@ driver:
     buttonpad:
         x: toggleManualShoot
         y: unlockClimber
-        a: manualCollect
     axes:
         leftTrigger: brakeMode
         rightTrigger: slowMode
     buttons:
-        leftBumper: toggleCollector
+        leftBumper: manualCollect
         rightBumper: toggleCollectorReverse
         start: zeroPose
 operator:

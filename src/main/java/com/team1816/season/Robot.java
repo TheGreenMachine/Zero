@@ -263,7 +263,6 @@ public class Robot extends TimedRobot {
                         collector::setCollect
                     )
                     // Operator Gamepad
-
                 );
         } catch (Throwable t) {
             faulted = true;
