@@ -29,7 +29,7 @@ subsystems:
                     drive: FLDr
                     azimuth: FLAz
                     constants:
-                        encoderOffset: 2305
+                        encoderOffset: 1264
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
@@ -65,7 +65,7 @@ subsystems:
             isSwerve: 1
             encPPR: 13260.36 #Use for distance calibration
             azimuthEncPPR: 4096
-            maxRotVel: 14
+            maxRotVel: 7
             trackWidth: 21 #inches
             wheelbaseLength: 21.5 #inches
             wheelDiameter: 4
