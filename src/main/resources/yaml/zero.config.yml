@@ -87,6 +87,8 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255
+    elevator:
+        implemented: false
     collector:
         implemented: true
         solenoids:
@@ -94,8 +96,8 @@ subsystems:
         neo550s:
             intakeMotor: 14
         constants:
-            collectTicks: 10
-            flushTicks: -10
+            collecting: -.1
+            ejecting: .1
     cooler:
         implemented: true
         solenoids:
