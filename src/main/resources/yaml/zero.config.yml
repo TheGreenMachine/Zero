@@ -3,9 +3,9 @@ subsystems:
         implemented: false
         falcons:
             FLDr: 11
-            FRDr: 1 #1
+            FRDr: 9 #1
             RLDr: 18 #13
-            RRDr: 5
+            RRDr: 1
             FLAz: 10
             FRAz: 8
             RLAz: 19
@@ -87,6 +87,15 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255
+    collector:
+        implemented: true
+        solenoids:
+            collectorPiston: -1
+        neo550s:
+            intakeMotor: 14
+        constants:
+            collectTicks: 10
+            flushTicks: -10
     cooler:
         implemented: true
         solenoids:
