@@ -9,7 +9,7 @@ subsystems:
             FLAz: 10
             FRAz: 8
             RLAz: 19
-            RRAz: 4
+            RRAz: 2
         canCoders:
             FLEnc: 25 #TODO check values
             FREnc: 27
