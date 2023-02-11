@@ -62,9 +62,9 @@ infrastructure:
     pdId: 0
     pdIsRev: false
     # pneumatics control
-    compressorEnabled: false
+    compressorEnabled: true
     pcmIsRev: false
-    pcmId: -1
+    pcmId: 8
     # pigeon
     pigeonId: 9
     isPigeon2: false
