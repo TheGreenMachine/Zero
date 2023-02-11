@@ -11,6 +11,6 @@ public class AutoBalanceMode extends AutoMode {
     public AutoBalanceMode(){}
     @Override
     protected void routine() throws AutoModeEndedException {
-        runAction(new AutoBalanceAction(5));
+        runAction(new AutoBalanceAction());
     }
 }
