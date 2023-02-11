@@ -2,14 +2,14 @@ subsystems:
     drivetrain:
         implemented: false
         falcons:
-            FLDr: 7
-            FRDr: 10 #1
+            FLDr: 11
+            FRDr: 1 #1
             RLDr: 18 #13
-            RRDr: 15
-            FLAz: 8
-            FRAz: 11
+            RRDr: 5
+            FLAz: 10
+            FRAz: 8
             RLAz: 19
-            RRAz: 14
+            RRAz: 2
         canCoders:
             FLEnc: 9 #TODO check values
             FREnc: 12
