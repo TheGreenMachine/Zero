@@ -1,6 +1,6 @@
 subsystems:
     drivetrain:
-        implemented: true
+        implemented: false
         falcons:
             FLDr: 7
             FRDr: 10 #1

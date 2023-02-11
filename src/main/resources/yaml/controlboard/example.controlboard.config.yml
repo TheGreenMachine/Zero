@@ -9,6 +9,7 @@ driver:
     buttonpad:
         x: toggleManualShoot
         y: unlockClimber
+        a: manualCollect
     axes:
         leftTrigger: brakeMode
         rightTrigger: slowMode

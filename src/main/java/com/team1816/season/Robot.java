@@ -16,6 +16,8 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
 import com.team1816.lib.subsystems.LedManager;
+import com.team1816.season.subsystems.Collector;
+import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.wpilibj.*;
 
 import java.nio.file.Files;
@@ -61,6 +63,10 @@ public class Robot extends TimedRobot {
 
     private final LedManager ledManager;
 
+    private final Collector collector;
+
+    private final Elevator elevator;
+
     /**
      * Factory
      */
@@ -99,6 +105,8 @@ public class Robot extends TimedRobot {
         infrastructure = Injector.get(Infrastructure.class);
         subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
+        collector = Injector.get(Collector.class);
+        elevator = Injector.get(Elevator.class);
     }
 
     /**
@@ -249,8 +257,13 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("manualCollect"),
+                        collector::setCollect
                     )
                     // Operator Gamepad
+
                 );
         } catch (Throwable t) {
             faulted = true;
