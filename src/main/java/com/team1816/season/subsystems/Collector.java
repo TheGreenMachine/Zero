@@ -21,6 +21,10 @@ public class Collector extends Subsystem {
 
     private double intakeVel;
 
+
+    //this is for negating the direction for cone/cube
+    private boolean negation;
+
     private PIVOT_STATE desiredPivotState = PIVOT_STATE.DOWN;
 
     private COLLECTOR_STATE desiredCollectorState = COLLECTOR_STATE.STOP;
@@ -36,7 +40,12 @@ public class Collector extends Subsystem {
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
     }
 
-    public void setDesiredState(PIVOT_STATE pivotState, COLLECTOR_STATE collectorState){
+    public void setDesiredState(boolean isCube, PIVOT_STATE pivotState, COLLECTOR_STATE collectorState){
+        if (isCube) {
+            negation = true;
+        } else {
+            negation = false;
+        }
         if (desiredPivotState != pivotState) {
             desiredPivotState = pivotState;
             outputsChanged = true;
@@ -47,7 +56,7 @@ public class Collector extends Subsystem {
         }
     }
 
-    public void setCollect(boolean setCollect){
+    /*public void setCollect(boolean setCollect){
         System.out.println("setCollect method is called");
         if(setCollect) {
             setDesiredState(PIVOT_STATE.DOWN, COLLECTOR_STATE.COLLECT);
@@ -69,7 +78,7 @@ public class Collector extends Subsystem {
             setDesiredState(PIVOT_STATE.DOWN, COLLECTOR_STATE.STOP);
             outputsChanged = true;
         }
-    }
+    }*/
 
 
     @Override
@@ -89,16 +98,30 @@ public class Collector extends Subsystem {
                     collectorPiston.set(false);
                     break;
             }
-            switch (desiredCollectorState) {
-                case STOP:
-                    intakeMotor.set(ControlMode.Velocity, 0);
-                    break;
-                case COLLECT:
-                    intakeMotor.set(ControlMode.Velocity, factory.getConstant(NAME, "collecting"));
-                    break;
-                case EJECT:
-                    intakeMotor.set(ControlMode.Velocity, factory.getConstant(NAME, "ejecting"));
-                    break;
+            if(negation) {
+                switch (desiredCollectorState) {
+                    case STOP:
+                        intakeMotor.set(ControlMode.Velocity, 0);
+                        break;
+                    case COLLECT:
+                        intakeMotor.set(ControlMode.Velocity, -(factory.getConstant(NAME, ("collecting"))));
+                        break;
+                    case EJECT:
+                        intakeMotor.set(ControlMode.Velocity, -(factory.getConstant(NAME, ("ejecting"))));
+                        break;
+                }
+            } else {
+                switch (desiredCollectorState) {
+                    case STOP:
+                        intakeMotor.set(ControlMode.Velocity, 0);
+                        break;
+                    case COLLECT:
+                        intakeMotor.set(ControlMode.Velocity, factory.getConstant(NAME, "collecting"));
+                        break;
+                    case EJECT:
+                        intakeMotor.set(ControlMode.Velocity, factory.getConstant(NAME, "ejecting"));
+                        break;
+                }
             }
         }
     }
