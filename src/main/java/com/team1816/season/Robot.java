@@ -265,7 +265,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("coll"),
+                        () -> controlBoard.getAsBool("collect"),
                         (pressed) -> {
                             collector.setEject(pressed);
                         }
