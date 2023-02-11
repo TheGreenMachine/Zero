@@ -119,7 +119,7 @@ infrastructure:
     pcmIsRev: false
     pcmId: 2
     # pigeon
-    pigeonId: 13
+    pigeonId: 32
     isPigeon2: true
 controlboard: example
 constants:
