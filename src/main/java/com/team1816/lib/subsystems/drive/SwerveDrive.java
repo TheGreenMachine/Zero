@@ -275,21 +275,19 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         var heading = Constants.EmptyRotation2d;
 
         double maxFlatRange = Constants.pitchRollMaxFlat;
-        correction = (getInitialYaw() - robotState.fieldToVehicle.getRotation().getDegrees()) * (7.0/1440); // TODO define this math as a const
 
         if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
-            throttle = pitch / 4;
-            strafe = roll / 4;
-            correction = (getInitialYaw() - robotState.fieldToVehicle.getRotation().getDegrees()) * (7.0/1440); // TODO define this math as a const
+            throttle = pitch / 30;
+            strafe = roll / 30;
 
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe,correction);
             setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
         }
         else {
-//            heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
-//                SwerveModuleState templateState = new SwerveModuleState(0,heading);
-//                SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState,templateState,templateState,templateState};
-//                setModuleStates(statePassIn);
+            heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
+                SwerveModuleState templateState = new SwerveModuleState(0,heading);
+                SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState,templateState,templateState,templateState};
+                setModuleStates(statePassIn);
         }
     }
 
