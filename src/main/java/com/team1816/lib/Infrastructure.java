@@ -73,6 +73,10 @@ public class Infrastructure {
         pigeon.setYaw(angle.getDegrees());
     }
 
+    public void zeroPidgeon(){
+        //TODO set this up lol
+    }
+
     /**
      * Returns the pigeon associated with the infrastructure
      * @return IPigeonIMU
