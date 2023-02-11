@@ -50,13 +50,12 @@ public class Collector extends Subsystem {
 
     public void setCollect(boolean setCollect){
         System.out.println("setCollect method is called");
-        if(setCollect && (desiredCollectorState!=COLLECTOR_STATE.COLLECT)) {
-            desiredCollectorState = COLLECTOR_STATE.COLLECT;
+        if(setCollect) {
+            setDesiredState(PIVOT_STATE.DOWN, COLLECTOR_STATE.COLLECT);
             System.out.println("desired state is set to true!");
             outputsChanged = true;
-        }
-        else if(!setCollect) {
-            desiredCollectorState = COLLECTOR_STATE.STOP;
+        } else {
+            setDesiredState(PIVOT_STATE.DOWN, COLLECTOR_STATE.STOP);
             outputsChanged = true;
         }
     }
