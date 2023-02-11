@@ -10,7 +10,8 @@ import edu.wpi.first.wpilibj.I2C;
  * This class like MotorFactory is the ultimate entry point for creating any and all sensors:
  * Color Sensors, Beam Breaks, Limit Switches, Hall Effects, etc.
  */
-public class SensorFactory {
+public class
+SensorFactory {
 
     private ColorSensorV3 createColorSensor(I2C.Port id, boolean ghost) {
         if (ghost) {
@@ -45,11 +46,11 @@ public class SensorFactory {
         sensor.configureColorSensor(res, mr, gf);
     }
 
-    private DigitalInput createBeamBreakSensor(int id) {
+    private DigitalInput getDigitalInput (int id) {
         return new DigitalInput(id);
     }
 
-    private DigitalInput createLimitSwitch(int id) {
+    private DigitalInput getBeamBreak(int id) {
         return new DigitalInput(id);
     }
 
