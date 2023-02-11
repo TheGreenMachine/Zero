@@ -99,8 +99,8 @@ subsystems:
             slot0:
                 kF: 0.0000899
         constants:
-            collecting: -5
-            ejecting: 5
+            collecting: -7500
+            ejecting: 7500
     cooler:
         implemented: true
         solenoids:

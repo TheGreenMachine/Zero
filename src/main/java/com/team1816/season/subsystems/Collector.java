@@ -3,20 +3,20 @@ package com.team1816.season.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
+import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-// Uh-oh... theres no "@Singleton" annotation here! You don't want more than one instance of this being created
 // Oh my, where's the well formatted documentation??
 @Singleton
 public class Collector extends Subsystem {
 
 
     //piston is for the switch from cone collecting state to
-    //private final ISolenoid collectorPiston;
+    private final ISolenoid collectorPiston;
     private final IGreenMotor intakeMotor;
 
     private double intakeVel;
@@ -32,7 +32,7 @@ public class Collector extends Subsystem {
     @Inject
     public Collector (Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
-        //collectorPiston = factory.getSolenoid(NAME, "collectorSolenoid");
+        collectorPiston = factory.getSolenoid(NAME, "collectorSolenoid");
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
     }
 
@@ -83,10 +83,10 @@ public class Collector extends Subsystem {
             outputsChanged = false;
             switch (desiredPivotState) {
                 case UP:
-                    //collectorPiston.set(true);
+                    collectorPiston.set(true);
                     break;
                 case DOWN:
-                    //collectorPiston.set(false);
+                    collectorPiston.set(false);
                     break;
             }
             switch (desiredCollectorState) {
