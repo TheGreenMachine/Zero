@@ -261,13 +261,19 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("collectCone"),
                         (pressed) -> {
-                            collector.setCollect(pressed);
+                            orchestrator.setCollectCone(pressed);
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("collect"),
+                        () -> controlBoard.getAsBool("collectCube"),
                         (pressed) -> {
-                            collector.setEject(pressed);
+                            orchestrator.setCollectCube(pressed);
+                        }
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("eject"),
+                        (pressed) -> {
+                            orchestrator.setEject(pressed);
                         }
                     )
                     // Operator Gamepad

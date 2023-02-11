@@ -7,8 +7,9 @@ driver:
         right:
             horizontal: rotation
     buttonpad:
-        x: toggleManualShoot
-        y: unlockClimber
+        x: collectCone
+        y: collectCube
+        a: eject
     axes:
         leftTrigger: brakeMode
         rightTrigger: slowMode

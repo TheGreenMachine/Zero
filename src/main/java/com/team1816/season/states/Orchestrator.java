@@ -70,7 +70,6 @@ public class Orchestrator {
         desiredObject = OBJECT.CONE;
         desiredState = STATE.STOP;
         collector = Injector.get(Collector.class);
-        isCone = false;
         isCube = false;
     }
 
@@ -180,18 +179,30 @@ public class Orchestrator {
         return robotState.fieldToVehicle;
     }
 
-    public void setCollectCone(){
+    public void setCollectCone(boolean pressed){
         isCube = false;
-        collector.setDesiredState(isCube, Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.COLLECT);
+        if(pressed) {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.COLLECT);
+        } else {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.STOP);
+        }
     }
 
-    public void setCollectCube(){
+    public void setCollectCube(boolean pressed){
         isCube = true;
-        collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.COLLECT);
+        if(pressed) {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.COLLECT);
+        } else {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.STOP);
+        }
     }
 
-    public void setEject(){
-        collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.EJECT);
+    public void setEject(boolean pressed){
+        if(pressed) {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.EJECT);
+        } else {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.STOP);
+        }
     }
 
 
