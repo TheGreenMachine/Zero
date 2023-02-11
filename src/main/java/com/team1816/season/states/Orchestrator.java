@@ -2,12 +2,14 @@ package com.team1816.season.states;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.Injector;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.turret.Turret;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.lib.subsystems.LedManager;
+import com.team1816.season.subsystems.Collector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -31,6 +33,8 @@ import static com.team1816.lib.subsystems.Subsystem.robotState;
 @Singleton
 public class Orchestrator {
 
+    private static Collector collector;
+
     /**
      * Subsystems
      */
@@ -41,7 +45,9 @@ public class Orchestrator {
     /**
      * State
      */
-    private STATE superstructureState;
+    private OBJECT desiredObject;
+    private STATE desiredState;
+    private boolean isCube;
     private final double maxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
         4
@@ -55,15 +61,17 @@ public class Orchestrator {
      * Instantiates an Orchestrator with all its subsystems
      *
      * @param df  Drive.Factory (derives drivetrain)
-     * @param tur Turret
      * @param led LedManager
      */
     @Inject
-    public Orchestrator(Drive.Factory df, Turret tur, LedManager led) {
+    public Orchestrator(Drive.Factory df, LedManager led) {
         drive = df.getInstance();
-        turret = tur;
         ledManager = led;
-        superstructureState = STATE.FAT_BOY;
+        desiredObject = OBJECT.CONE;
+        desiredState = STATE.STOP;
+        collector = Injector.get(Collector.class);
+        isCone = false;
+        isCube = false;
     }
 
     /** Actions */
@@ -172,6 +180,21 @@ public class Orchestrator {
         return robotState.fieldToVehicle;
     }
 
+    public void setCollectCone(){
+        isCube = false;
+        collector.setDesiredState(isCube, Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.COLLECT);
+    }
+
+    public void setCollectCube(){
+        isCube = true;
+        collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.COLLECT);
+    }
+
+    public void setEject(){
+        collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.EJECT);
+    }
+
+
     /**
      * Updates the pose of the drivetrain based on specified criteria
      */
@@ -195,8 +218,14 @@ public class Orchestrator {
     /**
      * Base enum for Orchestrator states
      */
+    public enum OBJECT {
+        CONE,
+        CUBE
+    }
+
     public enum STATE {
-        FAT_BOY,
-        LITTLE_MAN,
+        COLLECTING,
+        EJECTING,
+        STOP
     }
 }

@@ -10,7 +10,6 @@ import com.team1816.season.states.RobotState;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-// Uh-oh... theres no "@Singleton" annotation here! You don't want more than one instance of this being created
 // Oh my, where's the well formatted documentation??
 @Singleton
 public class Collector extends Subsystem {
@@ -21,6 +20,10 @@ public class Collector extends Subsystem {
     private final IGreenMotor intakeMotor;
 
     private double intakeVel;
+
+
+    //this is for negating the direction for cone/cube
+    private boolean negation;
 
     private PIVOT_STATE desiredPivotState = PIVOT_STATE.DOWN;
 
@@ -37,7 +40,12 @@ public class Collector extends Subsystem {
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
     }
 
-    public void setDesiredState(PIVOT_STATE pivotState, COLLECTOR_STATE collectorState){
+    public void setDesiredState(boolean isCube, PIVOT_STATE pivotState, COLLECTOR_STATE collectorState){
+        if (isCube) {
+            negation = true;
+        } else {
+            negation = false;
+        }
         if (desiredPivotState != pivotState) {
             desiredPivotState = pivotState;
             outputsChanged = true;
@@ -48,18 +56,30 @@ public class Collector extends Subsystem {
         }
     }
 
-    public void setCollect(boolean setCollect){
+    /*public void setCollect(boolean setCollect){
         System.out.println("setCollect method is called");
-        if(setCollect && (desiredCollectorState!=COLLECTOR_STATE.COLLECT)) {
-            desiredCollectorState = COLLECTOR_STATE.COLLECT;
+        if(setCollect) {
+            setDesiredState(PIVOT_STATE.DOWN, COLLECTOR_STATE.COLLECT);
             System.out.println("desired state is set to true!");
             outputsChanged = true;
-        }
-        else if(!setCollect) {
-            desiredCollectorState = COLLECTOR_STATE.STOP;
+        } else {
+            setDesiredState(PIVOT_STATE.DOWN, COLLECTOR_STATE.STOP);
             outputsChanged = true;
         }
     }
+
+    public void setEject(boolean setEject){
+        System.out.println("setEject method is called");
+        if(setEject) {
+            setDesiredState(PIVOT_STATE.DOWN, COLLECTOR_STATE.EJECT);
+            System.out.println("desired state is set to true!");
+            outputsChanged = true;
+        } else {
+            setDesiredState(PIVOT_STATE.DOWN, COLLECTOR_STATE.STOP);
+            outputsChanged = true;
+        }
+    }*/
+
 
     @Override
     public void readFromHardware() {
@@ -78,16 +98,30 @@ public class Collector extends Subsystem {
                     collectorPiston.set(false);
                     break;
             }
-            switch (desiredCollectorState) {
-                case STOP:
-                    intakeMotor.set(ControlMode.Velocity, 0);
-                    break;
-                case COLLECT:
-                    intakeMotor.set(ControlMode.Velocity, factory.getConstant(NAME, "collectTicks"));
-                    break;
-                case FLUSH:
-                    intakeMotor.set(ControlMode.Velocity, factory.getConstant(NAME, "flushTicks"));
-                    break;
+            if(negation) {
+                switch (desiredCollectorState) {
+                    case STOP:
+                        intakeMotor.set(ControlMode.Velocity, 0);
+                        break;
+                    case COLLECT:
+                        intakeMotor.set(ControlMode.Velocity, -(factory.getConstant(NAME, ("collecting"))));
+                        break;
+                    case EJECT:
+                        intakeMotor.set(ControlMode.Velocity, -(factory.getConstant(NAME, ("ejecting"))));
+                        break;
+                }
+            } else {
+                switch (desiredCollectorState) {
+                    case STOP:
+                        intakeMotor.set(ControlMode.Velocity, 0);
+                        break;
+                    case COLLECT:
+                        intakeMotor.set(ControlMode.Velocity, factory.getConstant(NAME, "collecting"));
+                        break;
+                    case EJECT:
+                        intakeMotor.set(ControlMode.Velocity, factory.getConstant(NAME, "ejecting"));
+                        break;
+                }
             }
         }
     }
@@ -118,7 +152,7 @@ public class Collector extends Subsystem {
     public enum COLLECTOR_STATE {
         STOP,
         COLLECT,
-        FLUSH
+        EJECT
     }
 }
 

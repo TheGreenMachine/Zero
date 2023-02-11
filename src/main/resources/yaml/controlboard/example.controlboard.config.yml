@@ -14,7 +14,7 @@ driver:
         rightTrigger: slowMode
     buttons:
         leftBumper: manualCollect
-        rightBumper: toggleCollectorReverse
+        rightBumper: manualEject
         start: zeroPose
 operator:
     rumble: false

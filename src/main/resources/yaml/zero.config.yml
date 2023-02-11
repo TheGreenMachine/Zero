@@ -87,15 +87,20 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255
+    elevator:
+        implemented: false
     collector:
         implemented: true
         solenoids:
             collectorPiston: -1
-        neo550s:
+        sparkmaxes:
             intakeMotor: 14
+        pidConfig:
+            slot0:
+                kF: 0.0000899
         constants:
-            collectTicks: 10
-            flushTicks: -10
+            collecting: -7500
+            ejecting: 7500
     cooler:
         implemented: true
         solenoids:
@@ -117,7 +122,7 @@ infrastructure:
     pcmIsRev: false
     pcmId: 2
     # pigeon
-    pigeonId: 13
+    pigeonId: 32
     isPigeon2: true
 controlboard: example
 constants:
