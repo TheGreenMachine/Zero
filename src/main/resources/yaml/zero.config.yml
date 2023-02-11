@@ -95,9 +95,12 @@ subsystems:
             collectorPiston: -1
         sparkmaxes:
             intakeMotor: 14
+        pidConfig:
+            slot0:
+                kF: 0.0000899
         constants:
-            collecting: -.1
-            ejecting: .1
+            collecting: -5
+            ejecting: 5
     cooler:
         implemented: true
         solenoids:
