@@ -93,7 +93,7 @@ subsystems:
         implemented: true
         solenoids:
             collectorPiston: -1
-        neo550s:
+        sparkmaxes:
             intakeMotor: 14
         constants:
             collecting: -.1
