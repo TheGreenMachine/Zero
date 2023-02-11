@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A class that models a Swerve drivetrain
@@ -265,7 +266,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      * Autobalances while in Swervedrive manual control TODO redo description
      */
     @Override
-    public void autoBalance(){
+    public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds){
         double pitch = infrastructure.getPitch();
         double roll = -infrastructure.getRoll();
         double throttle = 0;
@@ -277,15 +278,19 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
             throttle = pitch / 30;
             strafe = roll / 30;
-
-            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe,0);
-            setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
         }
-        else {
+
+        if (!Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds())) {
+            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
+                    throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond,
+                    strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond,
+                    fieldRelativeChassisSpeeds.omegaRadiansPerSecond);
+            setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
+        } else {
             heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
-                SwerveModuleState templateState = new SwerveModuleState(0,heading);
-                SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState,templateState,templateState,templateState};
-                setModuleStates(statePassIn);
+            SwerveModuleState templateState = new SwerveModuleState(0,heading);
+            SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState,templateState,templateState,templateState};
+            setModuleStates(statePassIn);
         }
     }
 

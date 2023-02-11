@@ -7,6 +7,7 @@ import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.drive.TankDrive;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
@@ -36,12 +37,12 @@ public class AutoBalanceAction implements AutoAction {
 
         isSwerve = drive instanceof SwerveDrive;
 
-        drive.autoBalance();
+        drive.autoBalance(new ChassisSpeeds());
     }
 
     @Override
     public void update() {
-        drive.autoBalance();
+        drive.autoBalance(new ChassisSpeeds());
     }
 
     @Override

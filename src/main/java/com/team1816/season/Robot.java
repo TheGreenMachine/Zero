@@ -17,6 +17,7 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.*;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -456,7 +457,12 @@ public class Robot extends TimedRobot {
         isSwerve = drive instanceof SwerveDrive;
 
         if(drive.isAutoBalancing() && !drive.isBraking()){
-            drive.autoBalance();
+            ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    0,
+                    -controlBoard.getAsDouble("strafe"),
+                    0,
+                    robotState.fieldToVehicle.getRotation());
+            drive.autoBalance(fieldRelativeChassisSpeed);
         }
         else {
             drive.setTeleopInputs(

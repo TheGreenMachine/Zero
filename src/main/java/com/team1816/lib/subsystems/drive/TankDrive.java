@@ -332,7 +332,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      * Autobalances while in Tankdrive manual control TODO redo description
      */
     @Override
-    public void autoBalance() {
+    public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds) {
         double pitch = infrastructure.getPitch();
         double roll = infrastructure.getRoll();
         double throttle = 0;
