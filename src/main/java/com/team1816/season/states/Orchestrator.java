@@ -59,9 +59,8 @@ public class Orchestrator {
      * @param led LedManager
      */
     @Inject
-    public Orchestrator(Drive.Factory df, Turret tur, LedManager led) {
+    public Orchestrator(Drive.Factory df, LedManager led) {
         drive = df.getInstance();
-        turret = tur;
         ledManager = led;
         superstructureState = STATE.FAT_BOY;
     }

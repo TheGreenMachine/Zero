@@ -260,7 +260,9 @@ public class Robot extends TimedRobot {
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("manualCollect"),
-                        collector::setCollect
+                        (pressed) -> {
+                            collector.setCollect(pressed);
+                        }
                     )
                     // Operator Gamepad
                 );
