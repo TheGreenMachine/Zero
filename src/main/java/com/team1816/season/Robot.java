@@ -224,6 +224,8 @@ public class Robot extends TimedRobot {
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
             subsystemManager.zeroSensors();
+            // zeroing ypr
+            infrastructure.resetPigeon(Constants.EmptyRotation2d);
 
             /** Register ControlBoard */
             controlBoard = Injector.get(IControlBoard.class);

@@ -29,7 +29,7 @@ subsystems:
                     drive: FLDr
                     azimuth: FLAz
                     constants:
-                        encoderOffset: 1264
+                        encoderOffset: 2435
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
@@ -75,7 +75,7 @@ subsystems:
             maxAccel: 1.27 # meters/s^ 2
             isDemoMode: 0
             autoBalanceDivider: 30
-            pitchRollMaxFlat: 2.5
+            pitchRollMaxFlat: 1.5
 infrastructure:
     canivoreBusName: rio
     # power distribution

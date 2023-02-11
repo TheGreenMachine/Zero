@@ -29,6 +29,9 @@ public class Infrastructure {
     private static boolean compressorEnabled;
     private static boolean compressorIsOn = false;
 
+    private double pitchOffset;
+    private double rollOffset;
+
     /**
      * Instantiates the infrastructure with RobotFactory
      * @param factory RobotFactory
@@ -41,6 +44,8 @@ public class Infrastructure {
         pd = factory.getPd();
         compressorEnabled = factory.isCompressorEnabled();
 
+        pitchOffset = 0;
+        rollOffset = 0;
     }
 
     /**
@@ -71,10 +76,8 @@ public class Infrastructure {
     public void resetPigeon(Rotation2d angle) {
         System.out.println("resetting Pigeon");
         pigeon.setYaw(angle.getDegrees());
-    }
-
-    public void zeroPidgeon(){
-        //TODO set this up lol
+        pitchOffset = -pigeon.getPitch();
+        rollOffset = -pigeon.getRoll();
     }
 
     /**
@@ -101,7 +104,7 @@ public class Infrastructure {
      * @see IPigeonIMU#getPitch()
      */
     public double getPitch() {
-        return pigeon.getPitch();
+        return pigeon.getPitch() + pitchOffset;
     }
 
     /**
@@ -110,7 +113,7 @@ public class Infrastructure {
      * @see IPigeonIMU#getRoll()
      */
     public double getRoll() {
-        return pigeon.getRoll();
+        return pigeon.getRoll() + rollOffset;
     }
 
     /**

@@ -63,7 +63,7 @@ public abstract class Drive
 
     protected boolean isBraking;
     protected boolean isSlowMode;
-    protected boolean isAutoBalancing = false; //TODO THIS MUST BE FALSE OR IT BREAKS STUFF
+    protected boolean isAutoBalancing = false;
 
     /** Trajectory */
     protected double trajectoryStartTime = 0;
