@@ -92,7 +92,7 @@ subsystems:
     collector:
         implemented: true
         solenoids:
-            collectorPiston: -1
+            collectorPiston: 7
         sparkmaxes:
             intakeMotor: 14
         pidConfig:
