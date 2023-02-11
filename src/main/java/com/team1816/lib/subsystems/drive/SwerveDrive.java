@@ -4,13 +4,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
+import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveHelper;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -105,7 +105,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      * @param lm  LEDManager
      * @param inf Infrastructure
      * @param rs  RobotState
-     * @see Drive#Drive(LedManager, Infrastructure, RobotState)
+     * @see Drive(LedManager, Infrastructure, RobotState)
      */
     @Inject
     public SwerveDrive(LedManager lm, Infrastructure inf, RobotState rs) {

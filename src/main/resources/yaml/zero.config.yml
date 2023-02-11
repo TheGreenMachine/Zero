@@ -5,7 +5,7 @@ subsystems:
             FLDr: 11
             FRDr: 9
             RLDr: 18
-            RRDr: 5
+            RRDr: 1
             FLAz: 10
             FRAz: 8
             RLAz: 19
@@ -53,9 +53,9 @@ subsystems:
                         invertSensorPhase: 1
             drivePID:
                 slot0:
-                    kP: .3
-                    kI: 0.0001
-                    kD: 4.0
+                    kP: .04
+                    kI: 0.00001
+                    kD: 2.0
                     kF: 0.0499
             azimuthPID:
                 slot0:
@@ -68,7 +68,7 @@ subsystems:
             maxVelTicks100ms: 12275.7 # ticks per 100ms
             openLoopRampRate: 0.8
             isSwerve: 1
-            encPPR: 14255
+            encPPR: 13464
             azimuthEncPPR: 4096
             maxRotVel: 18
             trackWidth: 21 #inches
@@ -87,6 +87,28 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255
+    elevator:
+        implemented: true
+        falcons:
+            angleMotorMain: -1
+            angleMotorFollower: -1
+            extensionMotor: -1
+        constants:
+            stowPose: 0
+            collectPose: 512
+            scorePose: 1024
+            minPose: 0
+            midPose: 512
+            maxPose: 1024
+    collector:
+        implemented: true
+        solenoids:
+            collectorPiston: -1
+        neo550s:
+            intakeMotor: -1
+        constants:
+            collectTicks: 10
+            flushTicks: -10
     camera:
         implemented: true
         constants:

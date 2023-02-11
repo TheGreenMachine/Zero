@@ -22,7 +22,7 @@ public class DriveStraightPath extends AutoPath {
     }
 
     public DriveStraightPath() {
-        this(5);
+        this(3);
     }
 
     @Override

@@ -2,16 +2,17 @@ package com.team1816.season.states;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.turret.Turret;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.FieldConfig;
-import com.team1816.season.subsystems.LedManager;
+import com.team1816.season.subsystems.Collector;
+import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.RobotBase;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -36,7 +37,10 @@ public class Orchestrator {
     private static Drive drive;
     private static LedManager ledManager;
 
-    private static Turret turret;
+    private static Collector collector;
+
+    private static Elevator elevator;
+
 
     /**
      * State
@@ -55,14 +59,48 @@ public class Orchestrator {
      * Instantiates an Orchestrator with all its subsystems
      *
      * @param df  Drive.Factory (derives drivetrain)
-     * @param tur Turret
      * @param led LedManager
+     * @param el  Elevator
+     * @param col Collector
      */
     @Inject
-    public Orchestrator(Drive.Factory df, Turret tur, LedManager led) {
+    public Orchestrator(Drive.Factory df, LedManager led, Collector col, Elevator el) {
         drive = df.getInstance();
-        turret = tur;
         ledManager = led;
+        collector = col;
+        elevator = el;
+    }
+
+    public void setOrchestratorState(STATE state){
+        superstructureState = state;
+    }
+
+    public void setCollectingCone(){
+        collector.setDesiredState(Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.COLLECT);
+        elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
+    }
+
+    public void setCollectingCube(){
+        collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.COLLECT);
+        elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
+    }
+
+    public void setScore(SCORE_LEVEL_STATE STATE){
+        if(STATE == SCORE_LEVEL_STATE.MIN) {
+            collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.FLUSH);
+            elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN);
+        } else if (STATE == SCORE_LEVEL_STATE.MID) {
+            collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.FLUSH);
+            elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID);
+        } else if (STATE == SCORE_LEVEL_STATE.MAX) {
+            collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.FLUSH);
+            elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
+        }
+    }
+
+    public void setStow(){
+        collector.setDesiredState(Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.STOP);
+        elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
     }
 
     /** TODO: Actions */
@@ -165,6 +203,14 @@ public class Orchestrator {
      * Base enum for Orchestrator states
      */
     public enum STATE {
+        COLLECT,
+        STORE,
+        STOW
+    }
 
+    public enum SCORE_LEVEL_STATE {
+        MIN,
+        MID,
+        MAX
     }
 }
