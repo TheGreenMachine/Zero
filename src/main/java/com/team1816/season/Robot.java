@@ -149,7 +149,7 @@ public class Robot extends TimedRobot {
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            subsystemManager.setSubsystems(drive, ledManager);
+            subsystemManager.setSubsystems(drive, ledManager, collector);
 
             /** Register BadLogs */
             if (Constants.kIsBadlogEnabled) {
@@ -262,6 +262,12 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("manualCollect"),
                         (pressed) -> {
                             collector.setCollect(pressed);
+                        }
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("manualEject"),
+                        (pressed) -> {
+                            collector.setEject(pressed);
                         }
                     )
                     // Operator Gamepad

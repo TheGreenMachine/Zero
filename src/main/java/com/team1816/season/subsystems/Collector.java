@@ -3,7 +3,6 @@ package com.team1816.season.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
-import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 
@@ -60,6 +59,19 @@ public class Collector extends Subsystem {
         }
     }
 
+    public void setEject(boolean setEject){
+        System.out.println("setEject method is called");
+        if(setEject) {
+            setDesiredState(PIVOT_STATE.DOWN, COLLECTOR_STATE.EJECT);
+            System.out.println("desired state is set to true!");
+            outputsChanged = true;
+        } else {
+            setDesiredState(PIVOT_STATE.DOWN, COLLECTOR_STATE.STOP);
+            outputsChanged = true;
+        }
+    }
+
+
     @Override
     public void readFromHardware() {
         intakeVel = intakeMotor.getSelectedSensorVelocity(0);
@@ -79,14 +91,13 @@ public class Collector extends Subsystem {
             }
             switch (desiredCollectorState) {
                 case STOP:
-                    intakeMotor.set(ControlMode.PercentOutput, 0);
+                    intakeMotor.set(ControlMode.Velocity, 0);
                     break;
                 case COLLECT:
-                    intakeMotor.set(ControlMode.PercentOutput, factory.getConstant(NAME, "collecting"));
-                    System.out.println("intakeMotor is set to COLLECT (percentoutput)");
+                    intakeMotor.set(ControlMode.Velocity, factory.getConstant(NAME, "collecting"));
                     break;
-                case FLUSH:
-                    intakeMotor.set(ControlMode.PercentOutput, factory.getConstant(NAME, "ejecting"));
+                case EJECT:
+                    intakeMotor.set(ControlMode.Velocity, factory.getConstant(NAME, "ejecting"));
                     break;
             }
         }
@@ -118,7 +129,7 @@ public class Collector extends Subsystem {
     public enum COLLECTOR_STATE {
         STOP,
         COLLECT,
-        FLUSH
+        EJECT
     }
 }
 
