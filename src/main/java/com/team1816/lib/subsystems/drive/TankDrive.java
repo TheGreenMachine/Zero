@@ -310,9 +310,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      */
     @Override
     public void setTeleopInputs(double forward, double strafe, double rotation) {
-        if (controlState != ControlState.AUTO_BALANCE) {
-            controlState = ControlState.AUTO_BALANCE;
-        }
         DriveSignal driveSignal = driveHelper.cheesyDrive(
             (isDemoMode ? forward * demoModeMultiplier : forward),
             (isDemoMode ? rotation * demoModeMultiplier : rotation),
