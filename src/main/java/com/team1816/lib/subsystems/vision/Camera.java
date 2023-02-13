@@ -12,14 +12,17 @@ import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.states.RobotState;
 import com.team1816.lib.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Singleton
 public class Camera extends Subsystem {
@@ -224,6 +227,75 @@ public class Camera extends Subsystem {
         }
 
         return targets;
+    }
+
+    /**
+     * Calculates the absolute pose of the drivetrain based on a single target
+     *
+     * @param target VisionPoint
+     * @return Pose2d
+     * @see VisionPoint
+     */
+    public Pose2d calculateSingleTargetTranslation(VisionPoint target) {
+        Pose2d targetPos = new Pose2d(
+                FieldConfig.fieldTargets.get(target.id).getX(),
+                FieldConfig.fieldTargets.get(target.id).getY(),
+                new Rotation2d()
+        );
+        double X = target.getX(), Y = target.getY();
+        Pose2d p = targetPos.plus(
+                new Transform2d(
+                        new Translation2d(X, Y),
+                        robotState.getLatestFieldToCamera().rotateBy(Rotation2d.fromDegrees(180))
+                )
+        ); // inverse axis angle
+        return p;
+    }
+
+    /**
+     * Calculates the absolute pose of the drivetrain based on a single target using PhotonVision's library
+     *
+     * @param target VisionPoint
+     * @return Pose2d
+     * @see org.photonvision.targeting.PhotonTrackedTarget
+     */
+    public Pose2d photonCalculateSingleTargetTranslation(PhotonTrackedTarget target) {
+        Pose2d targetPos = new Pose2d(
+                FieldConfig.fieldTargets.get(target.getFiducialId()).getX(),
+                FieldConfig.fieldTargets.get(target.getFiducialId()).getY(),
+                new Rotation2d()
+        );
+        Translation2d targetTranslation = target.getBestCameraToTarget().getTranslation().toTranslation2d();
+        Transform2d targetTransform = new Transform2d(targetTranslation, robotState.getLatestFieldToCamera());
+        return PhotonUtils.estimateFieldToCamera(targetTransform, targetPos);
+    }
+
+
+    /**
+     * Calculates the absolute pose of the drivetrain as a function of all visible targets
+     *
+     * @return Pose2d
+     */
+    public Pose2d calculatePoseFromCamera() {
+        var cameraPoints = robotState.visibleTargets;
+        List<Pose2d> poses = new ArrayList<>();
+        double sX = 0, sY = 0;
+        for (VisionPoint point : cameraPoints) {
+            var p = calculateSingleTargetTranslation(point);
+            sX += p.getX();
+            sY += p.getY();
+            poses.add(p);
+        }
+        if (cameraPoints.size() > 0) {
+            Pose2d pose = new Pose2d(
+                    sX / cameraPoints.size(),
+                    sY / cameraPoints.size(),
+                    robotState.fieldToVehicle.getRotation()
+            );
+            robotState.isPoseUpdated = true;
+            return pose;
+        }
+        return robotState.fieldToVehicle;
     }
 
     /**

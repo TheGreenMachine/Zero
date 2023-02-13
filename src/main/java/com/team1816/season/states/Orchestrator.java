@@ -2,9 +2,11 @@ package com.team1816.season.states;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.turret.Turret;
+import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
@@ -40,6 +42,7 @@ public class Orchestrator {
      */
     private static Drive drive;
     private static LedManager ledManager;
+    private static Camera camera;
 
 
     /**
@@ -70,6 +73,7 @@ public class Orchestrator {
         desiredObject = OBJECT.CONE;
         desiredState = STATE.STOP;
         collector = Injector.get(Collector.class);
+        camera = Injector.get(Camera.class);
         isCube = false;
     }
 
@@ -110,75 +114,6 @@ public class Orchestrator {
         return needsVisionUpdate; // placeHolder
     }
 
-    /**
-     * Calculates the absolute pose of the drivetrain based on a single target
-     *
-     * @param target VisionPoint
-     * @return Pose2d
-     * @see VisionPoint
-     */
-    public Pose2d calculateSingleTargetTranslation(VisionPoint target) {
-        Pose2d targetPos = new Pose2d(
-            FieldConfig.fieldTargets.get(target.id).getX(),
-            FieldConfig.fieldTargets.get(target.id).getY(),
-            new Rotation2d()
-        );
-        double X = target.getX(), Y = target.getY();
-        Pose2d p = targetPos.plus(
-            new Transform2d(
-                new Translation2d(X, Y),
-                robotState.getLatestFieldToCamera().rotateBy(Rotation2d.fromDegrees(180))
-            )
-        ); // inverse axis angle
-        return p;
-    }
-
-    /**
-     * Calculates the absolute pose of the drivetrain based on a single target using PhotonVision's library
-     *
-     * @param target VisionPoint
-     * @return Pose2d
-     * @see org.photonvision.targeting.PhotonTrackedTarget
-     */
-    public Pose2d photonCalculateSingleTargetTranslation(PhotonTrackedTarget target) {
-        Pose2d targetPos = new Pose2d(
-            FieldConfig.fieldTargets.get(target.getFiducialId()).getX(),
-            FieldConfig.fieldTargets.get(target.getFiducialId()).getY(),
-            new Rotation2d()
-        );
-        Translation2d targetTranslation = target.getBestCameraToTarget().getTranslation().toTranslation2d();
-        Transform2d targetTransform = new Transform2d(targetTranslation, robotState.getLatestFieldToCamera());
-        return PhotonUtils.estimateFieldToCamera(targetTransform, targetPos);
-    }
-
-
-    /**
-     * Calculates the absolute pose of the drivetrain as a function of all visible targets
-     *
-     * @return Pose2d
-     */
-    public Pose2d calculatePoseFromCamera() {
-        var cameraPoints = robotState.visibleTargets;
-        List<Pose2d> poses = new ArrayList<>();
-        double sX = 0, sY = 0;
-        for (VisionPoint point : cameraPoints) {
-            var p = calculateSingleTargetTranslation(point);
-            sX += p.getX();
-            sY += p.getY();
-            poses.add(p);
-        }
-        if (cameraPoints.size() > 0) {
-            Pose2d pose = new Pose2d(
-                sX / cameraPoints.size(),
-                sY / cameraPoints.size(),
-                robotState.fieldToVehicle.getRotation()
-            );
-            robotState.isPoseUpdated = true;
-            return pose;
-        }
-        return robotState.fieldToVehicle;
-    }
-
     public void setCollectCone(boolean pressed){
         isCube = false;
         if(pressed) {
@@ -210,7 +145,7 @@ public class Orchestrator {
      * Updates the pose of the drivetrain based on specified criteria
      */
     public void updatePoseWithCamera() {
-        Pose2d newRobotPose = calculatePoseFromCamera();
+        Pose2d newRobotPose = camera.calculatePoseFromCamera();
         if (
             Math.abs(
                 Math.hypot(

@@ -14,38 +14,40 @@ import javax.inject.Singleton;
 @Singleton
 public class Collector extends Subsystem {
 
-
-    //piston is for the switch from cone collecting state to
+    //piston is for the switch from cone collecting to carrying + collecting cubes
     private final ISolenoid collectorPiston;
     private final IGreenMotor intakeMotor;
-
     private double intakeVel;
 
-
-    //this is for negating the direction for cone/cube
-    private boolean negation;
-
+    // State
     private PIVOT_STATE desiredPivotState = PIVOT_STATE.DOWN;
-
     private COLLECTOR_STATE desiredCollectorState = COLLECTOR_STATE.STOP;
-
+    //this is for negating the direction for cone/cube
+    private boolean isCube;
     private boolean outputsChanged = false;
 
+    // Consts
     private static final String NAME = "collector";
+    public final double cubeCollectPow;
+    public final double cubeEjectPow;
+    public final double coneCollectVel;
+    public final double coneEjectVel;
 
     @Inject
     public Collector (Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         collectorPiston = factory.getSolenoid(NAME, "collectorSolenoid");
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
+
+        cubeCollectPow = factory.getConstant(NAME, "cubeCollectPow", 0.05); // TODO tune these
+        cubeEjectPow = factory.getConstant(NAME, "cubeEjectPow", -0.25); // TODO tune these
+        coneCollectVel = factory.getConstant(NAME, "coneCollectVel", -420); // TODO tune these
+        coneEjectVel = factory.getConstant(NAME, "coneEjectVel", 840); // TODO tune these
     }
 
     public void setDesiredState(boolean isCube, PIVOT_STATE pivotState, COLLECTOR_STATE collectorState){
-        if (isCube) {
-            negation = true;
-        } else {
-            negation = false;
-        }
+        this.isCube = isCube;
+
         if (desiredPivotState != pivotState) {
             desiredPivotState = pivotState;
             outputsChanged = true;
@@ -56,31 +58,6 @@ public class Collector extends Subsystem {
         }
     }
 
-    /*public void setCollect(boolean setCollect){
-        System.out.println("setCollect method is called");
-        if(setCollect) {
-            setDesiredState(PIVOT_STATE.DOWN, COLLECTOR_STATE.COLLECT);
-            System.out.println("desired state is set to true!");
-            outputsChanged = true;
-        } else {
-            setDesiredState(PIVOT_STATE.DOWN, COLLECTOR_STATE.STOP);
-            outputsChanged = true;
-        }
-    }
-
-    public void setEject(boolean setEject){
-        System.out.println("setEject method is called");
-        if(setEject) {
-            setDesiredState(PIVOT_STATE.DOWN, COLLECTOR_STATE.EJECT);
-            System.out.println("desired state is set to true!");
-            outputsChanged = true;
-        } else {
-            setDesiredState(PIVOT_STATE.DOWN, COLLECTOR_STATE.STOP);
-            outputsChanged = true;
-        }
-    }*/
-
-
     @Override
     public void readFromHardware() {
         intakeVel = intakeMotor.getSelectedSensorVelocity(0);
@@ -88,51 +65,33 @@ public class Collector extends Subsystem {
 
     @Override
     public void writeToHardware() {
-
         if (outputsChanged) {
             outputsChanged = false;
-            if(negation) {
-                switch (desiredPivotState) {
-                    case UP:
-                        collectorPiston.set(false);
-                        break;
-                    case DOWN:
-                        collectorPiston.set(true);
-                        break;
-                }
-                switch (desiredCollectorState) {
-                    case STOP:
-                        intakeMotor.set(ControlMode.Velocity, 0);
-                        collectorPiston.set(false);
-                        break;
-                    case COLLECT:
-                        intakeMotor.set(ControlMode.Velocity, -(factory.getConstant(NAME, ("collecting"))));
-                        break;
-                    case EJECT:
-                        intakeMotor.set(ControlMode.Velocity, -(factory.getConstant(NAME, ("ejecting"))));
-                        break;
-                }
-            } else {
-                switch (desiredPivotState) {
-                    case UP:
-                        collectorPiston.set(false);
-                        break;
-                    case DOWN:
-                        collectorPiston.set(true);
-                        break;
-                }
-                switch (desiredCollectorState) {
-                    case STOP:
-                        intakeMotor.set(ControlMode.Velocity, 0);
-                        collectorPiston.set(false);
-                        break;
-                    case COLLECT:
-                        intakeMotor.set(ControlMode.Velocity, factory.getConstant(NAME, "collecting"));
-                        break;
-                    case EJECT:
-                        intakeMotor.set(ControlMode.Velocity, factory.getConstant(NAME, "ejecting"));
-                        break;
-                }
+            switch (desiredPivotState) {
+                case UP:
+                    collectorPiston.set(false);
+                    break;
+                case DOWN:
+                    collectorPiston.set(true);
+                    break;
+            }
+            switch (desiredCollectorState) {
+                case STOP:
+                    intakeMotor.set(ControlMode.Velocity, 0);
+                    collectorPiston.set(false);
+                    break;
+                case COLLECT:
+                    intakeMotor.set(
+                        isCube ? ControlMode.PercentOutput : ControlMode.Velocity,
+                        isCube ? cubeCollectPow : coneCollectVel
+                    );
+                    break;
+                case EJECT:
+                    intakeMotor.set(
+                            isCube ? ControlMode.PercentOutput : ControlMode.Velocity,
+                            isCube ? cubeEjectPow : coneEjectVel
+                    );
+                    break;
             }
         }
     }

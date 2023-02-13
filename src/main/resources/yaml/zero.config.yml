@@ -99,8 +99,10 @@ subsystems:
             slot0:
                 kF: 0.0000899
         constants:
-            collecting: -7500
-            ejecting: 7500
+            cubeCollectPow: 0.05 # tune :)
+            cubeEjectPow: -0.25
+            coneCollectVel: -420 # note that sparkmax controllers calculate velocity based off of rpm NOT ticksPer100MS
+            coneEjectVel: 840 # so your velocity vals should be MUCH smaller
     cooler:
         implemented: true
         solenoids:
