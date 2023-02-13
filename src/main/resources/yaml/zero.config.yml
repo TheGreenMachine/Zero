@@ -79,6 +79,8 @@ subsystems:
             maxVelPathFollowing: 3.9 # meters/s (2.2)
             maxAccel: 3.17 # meters/s^ 2
             isDemoMode: 0
+            autoBalanceDivider: 40
+            pitchRollMaxFlat: 2.5
     ledmanager:
         implemented: false
         canifier: -1

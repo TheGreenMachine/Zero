@@ -19,7 +19,10 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A class that models a Swerve drivetrain
@@ -178,10 +181,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (RobotBase.isSimulation()) {
             simulateGyroOffset();
         }
-        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        infrastructure.update();
+        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
-        swerveOdometry.update(actualHeading, actualModulePositions);
-
+        swerveOdometry.update(gyroHeading, actualModulePositions);
         updateRobotState();
     }
 
@@ -258,6 +261,52 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
     }
 
+    public void setModuleStatesPercentOutput(SwerveModuleState[] desiredStates) { //TODO keep for now but delete when other works
+        if (controlState != ControlState.OPEN_LOOP) {
+            controlState = ControlState.OPEN_LOOP;
+        }
+        SwerveDriveKinematics.desaturateWheelSpeeds(
+            desiredStates,
+            (kPathFollowingMaxVelMeters)
+        );
+        desiredModuleStates = desiredStates;
+        for (int i = 0; i < 4; i++) {
+            swerveModules[i].setDesiredState(desiredStates[i], true);
+        }
+    }
+
+    /**
+     * Autobalances while in Swervedrive manual control TODO redo description
+     */
+    @Override
+    public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds){
+        double pitch = infrastructure.getPitch();
+        double roll = -infrastructure.getRoll();
+        double throttle = 0;
+        double strafe = 0;
+        var heading = Constants.EmptyRotation2d;
+
+        double maxFlatRange = Constants.pitchRollMaxFlat;
+
+        if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
+            throttle = pitch / 30;
+            strafe = roll / 30;
+        }
+
+        if (!Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds())) {
+            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
+                    throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond,
+                    strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond,
+                    fieldRelativeChassisSpeeds.omegaRadiansPerSecond);
+            setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
+        } else {
+            heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
+            SwerveModuleState templateState = new SwerveModuleState(0,heading);
+            SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState,templateState,templateState,templateState};
+            setModuleStates(statePassIn);
+        }
+    }
+
     /**
      * Updates robotState based on values from odometry and sensor readings in readFromHardware
      *
@@ -275,9 +324,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         robotState.calculatedVehicleAccel =
             new ChassisSpeeds(
                 (cs.vxMetersPerSecond - robotState.deltaVehicle.vxMetersPerSecond) /
-                    Constants.kLooperDt,
+                Constants.kLooperDt,
                 (cs.vyMetersPerSecond - robotState.deltaVehicle.vyMetersPerSecond) /
-                    Constants.kLooperDt,
+                Constants.kLooperDt,
                 -9.80
             );
         robotState.deltaVehicle = cs;
@@ -326,17 +375,31 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      */
     @Override
     public void setTeleopInputs(double forward, double strafe, double rotation) {
+        SwerveDriveSignal signal;
         if (controlState != ControlState.OPEN_LOOP) {
             controlState = ControlState.OPEN_LOOP;
         }
-        SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
-            (isDemoMode ? forward * demoModeMultiplier : forward),
-            (isDemoMode ? strafe * demoModeMultiplier : strafe),
-            (isDemoMode ? rotation * demoModeMultiplier : rotation),
-            isSlowMode,
-            true,
-            false
-        );
+
+        if(forward == 0 && strafe == 0 && rotation == 0){
+
+            Rotation2d[] azimuths = new Rotation2d[4];
+
+            for (int i = 0; i<4; i++) {
+                azimuths[i] = Rotation2d.fromDegrees(swerveModules[i].azimuthActual);
+            }
+
+            signal = new SwerveDriveSignal(new double[]{0,0,0,0}, azimuths, false);
+        }
+        else {
+            signal = swerveDriveHelper.calculateDriveSignal(
+                (isDemoMode ? forward * demoModeMultiplier : forward),
+                (isDemoMode ? strafe * demoModeMultiplier : strafe),
+                (isDemoMode ? rotation * demoModeMultiplier : rotation),
+                isSlowMode,
+                true,
+                false
+            );
+        }
 
         // To avoid overriding brake command
         if (!isBraking) {
@@ -389,9 +452,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      */
     @Override
     public void resetOdometry(Pose2d pose) {
-        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
-        swerveOdometry.resetPosition(actualHeading, actualModulePositions, pose);
-        swerveOdometry.update(actualHeading, actualModulePositions);
+        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        swerveOdometry.resetPosition(gyroHeading, actualModulePositions, pose);
+        swerveOdometry.update(gyroHeading, actualModulePositions);
         updateRobotState();
     }
 

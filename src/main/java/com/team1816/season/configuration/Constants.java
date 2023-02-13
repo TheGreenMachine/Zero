@@ -93,4 +93,8 @@ public class Constants {
         1d
     );
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
+    //AutoBalance
+    public static final double pitchRollMaxFlat = factory.getConstant("drivetrain","pitchRollMaxFlat",2);
+
+
 }

@@ -113,7 +113,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
         tankOdometry =
             new DifferentialDriveOdometry(
-                getActualHeading(),
+                getGyroHeading(),
                 leftActualDistance,
                 rightActualDistance
             );
@@ -177,9 +177,10 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         if (RobotBase.isSimulation()) {
             simulateGyroOffset();
         }
-        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        infrastructure.update();
+        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
-        tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
+        tankOdometry.update(gyroHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
     }
 
@@ -195,7 +196,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
 
-        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
         resetEncoders();
         resetOdometry(pose);
         startingPose = pose;
@@ -239,12 +240,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public void resetOdometry(Pose2d pose) {
         tankOdometry.resetPosition(
-            getActualHeading(),
+            getGyroHeading(),
             leftActualDistance,
             rightActualDistance,
             pose
         );
-        tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
+        tankOdometry.update(gyroHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
     }
 
@@ -310,8 +311,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      */
     @Override
     public void setTeleopInputs(double forward, double strafe, double rotation) {
-        if (controlState != ControlState.OPEN_LOOP) {
-            controlState = ControlState.OPEN_LOOP;
+        if (controlState != ControlState.AUTO_BALANCE) {
+            controlState = ControlState.AUTO_BALANCE;
         }
         DriveSignal driveSignal = driveHelper.cheesyDrive(
             (isDemoMode ? forward * demoModeMultiplier : forward),
@@ -345,11 +346,42 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     /**
-     * Utilizes a DriveSignal to adapt Trajectory demands for TRAJECTORY_FOLLOWING and closed loop control
-     *
-     * @param leftVel  left velocity
-     * @param rightVel right velocity
+     * Autobalances while in Tankdrive manual control TODO redo description
      */
+    @Override
+    public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds) {
+        double pitch = infrastructure.getPitch();
+        double roll = infrastructure.getRoll();
+        double throttle = 0;
+        double strafe = 0;
+        var heading = Constants.EmptyRotation2d;
+
+        double maxFlatRange = Constants.pitchRollMaxFlat;
+        double correction = (getInitialYaw() - infrastructure.getYaw()) / 1440;
+
+        if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
+            throttle = pitch/4;
+            strafe = roll/4;
+
+            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe,correction);
+
+
+            DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
+            DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters);
+            setVelocity(driveSignal);
+        } else {
+
+            heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
+            //TODO tankdrive jolt align
+        }
+
+    }
+
+        /**
+         * Utilizes a DriveSignal to adapt Trajectory demands for TRAJECTORY_FOLLOWING and closed loop control
+         * @param leftVel left velocity
+         * @param rightVel right velocity
+         */
     public void updateTrajectoryVelocities(Double leftVel, Double rightVel) {
         // Velocities are in m/sec comes from trajectory command
         var signal = new DriveSignal(
