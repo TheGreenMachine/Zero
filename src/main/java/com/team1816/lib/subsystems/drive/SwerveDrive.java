@@ -181,7 +181,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (RobotBase.isSimulation()) {
             simulateGyroOffset();
         }
-        infrastructure.update();
         gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
         swerveOdometry.update(gyroHeading, actualModulePositions);

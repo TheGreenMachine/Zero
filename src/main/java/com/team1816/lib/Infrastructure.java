@@ -130,17 +130,6 @@ public class Infrastructure {
         return pigeon.getRoll() + rollOffset;
     }
 
-    /**
-     * Returns the field-centric roll of the pigeon
-     *
-     * @return roll
-     * @see IPigeonIMU#getRoll()
-     */
-    public double getFieldCentricRoll() {
-        Rotation3d angularState = new Rotation3d(Units.degreesToRadians(getYaw()), Units.degreesToRadians(getPitch()), Units.degreesToRadians(getRoll()));
-        Rotation3d yawState = new Rotation3d(-Units.degreesToRadians(getYaw()), 0, 0);
-        return Units.radiansToDegrees(angularState.rotateBy(yawState).getZ());
-    }
 
     /**
      * Returns the power distribution associated with the Infrastructure
@@ -151,7 +140,6 @@ public class Infrastructure {
     public PowerDistribution getPd() {
         return pd;
     }
-
     /**
      * Emulates gyroscope behaviour of the pigeon in simulation environments
      *

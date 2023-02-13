@@ -177,7 +177,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         if (RobotBase.isSimulation()) {
             simulateGyroOffset();
         }
-        infrastructure.update();
         gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
         tankOdometry.update(gyroHeading, leftActualDistance, rightActualDistance);
