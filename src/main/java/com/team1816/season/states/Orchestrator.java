@@ -80,7 +80,32 @@ public class Orchestrator {
 
     /** Update Subsystem States */
 
-    /** Superseded Odometry Handling */
+    public void setCollectCone(boolean pressed) {
+        isCube = false;
+        if (pressed) {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.COLLECT);
+        } else {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.STOP);
+        }
+    }
+
+
+    public void setCollectCube ( boolean pressed){
+        isCube = true;
+        if (pressed) {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.COLLECT);
+        } else {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.STOP);
+        }
+    }
+
+    public void setEject(boolean pressed){
+        if (pressed) {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.EJECT);
+        } else {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.STOP);
+        }
+    }
 
     /**
      * Returns true if the pose of the drivetrain needs to be updated in a cached boolean system
@@ -93,84 +118,59 @@ public class Orchestrator {
         }
         if (RobotBase.isSimulation() || RobotBase.isReal()) return false;
         boolean needsVisionUpdate =
-            (
-                Math.abs(
-                    robotState.getCalculatedAccel().vxMetersPerSecond -
-                        robotState.triAxialAcceleration[0]
-                ) >
-                    Constants.kMaxAccelDiffThreshold ||
-                    Math.abs(
-                        robotState.getCalculatedAccel().vyMetersPerSecond -
-                            robotState.triAxialAcceleration[1]
-                    ) >
-                        Constants.kMaxAccelDiffThreshold ||
-                    Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
-                        Constants.kMaxAccelDiffThreshold
-            );
+                (
+                        Math.abs(
+                                robotState.getCalculatedAccel().vxMetersPerSecond -
+                                        robotState.triAxialAcceleration[0]
+                        ) >
+                                Constants.kMaxAccelDiffThreshold ||
+                                Math.abs(
+                                        robotState.getCalculatedAccel().vyMetersPerSecond -
+                                                robotState.triAxialAcceleration[1]
+                                ) >
+                                        Constants.kMaxAccelDiffThreshold ||
+                                Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
+                                        Constants.kMaxAccelDiffThreshold
+                );
         if (needsVisionUpdate) {
             robotState.isPoseUpdated = false;
         }
         return needsVisionUpdate; // placeHolder
     }
 
-    public void setCollectCone(boolean pressed) {
-        isCube = false;
-        if (pressed) {
-            collector.setDesiredState(isCube, Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.COLLECT);
-        } else {
-            collector.setDesiredState(isCube, Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.STOP);
+    /**
+     * Updates the pose of the drivetrain based on specified criteria
+     */
+    public void updatePoseWithCamera() {
+        Pose2d newRobotPose = camera.calculatePoseFromCamera();
+        if (
+                Math.abs(
+                        Math.hypot(
+                                robotState.fieldToVehicle.getX() - newRobotPose.getX(),
+                                robotState.fieldToVehicle.getY() - newRobotPose.getY()
+                        )
+                ) > minAllowablePoseError
+        ) {
+            System.out.println(newRobotPose + " = new robot pose");
+            drive.resetOdometry(newRobotPose);
+            robotState.fieldToVehicle = newRobotPose;
+            robotState.isPoseUpdated = true;
         }
     }
+
 
 
     /**
-     * Calculates the absolute pose of the drivetrain based on a single target using PhotonVision's library
-     *
-     * @param target VisionPoint
-     * @return Pose2d
-     * @see org.photonvision.targeting.PhotonTrackedTarget
+     * Base enum for Orchestrator states
      */
-    public Pose2d photonCalculateSingleTargetTranslation(PhotonTrackedTarget target) {
-        Pose2d targetPos = new Pose2d(
-            FieldConfig.fieldTargets2023.get(target.getFiducialId()).getX(),
-            FieldConfig.fieldTargets2023.get(target.getFiducialId()).getY(),
-            new Rotation2d()
-        );
-        Translation2d targetTranslation = target.getBestCameraToTarget().getTranslation().toTranslation2d();
-        Transform2d targetTransform = new Transform2d(targetTranslation, robotState.getLatestFieldToCamera());
-        return PhotonUtils.estimateFieldToCamera(targetTransform, targetPos);
+    public enum OBJECT {
+        CONE,
+        CUBE
     }
 
-        public void setCollectCube ( boolean pressed){
-            isCube = true;
-            if (pressed) {
-                collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.COLLECT);
-            } else {
-                collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.STOP);
-            }
-        }
-
-        public void setEject(boolean pressed){
-            if (pressed) {
-                collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.EJECT);
-            } else {
-                collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.STOP);
-            }
-        }
-
-
-
-        /**
-         * Base enum for Orchestrator states
-         */
-        public enum OBJECT {
-            CONE,
-            CUBE
-        }
-
-        public enum STATE {
-            COLLECTING,
-            EJECTING,
-            STOP
-        }
+    public enum STATE {
+        COLLECTING,
+        EJECTING,
+        STOP
     }
+}

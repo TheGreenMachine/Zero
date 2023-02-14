@@ -5,9 +5,11 @@
         "header": {
           "open": true
         }
-      },
+      }
+    },
+    "RoboRIO": {
       "window": {
-        "visible": false
+        "visible": true
       }
     }
   },
