@@ -17,7 +17,9 @@ import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.subsystems.LedManager;
+import com.team1816.lib.subsystems.LedManager;
+import com.team1816.season.subsystems.Collector;
+import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.wpilibj.*;
 
 import java.nio.file.Files;
@@ -64,6 +66,10 @@ public class Robot extends TimedRobot {
     private final LedManager ledManager;
     private final Camera camera;
 
+    private final Collector collector;
+
+    private final Elevator elevator;
+
     /**
      * Factory
      */
@@ -87,8 +93,6 @@ public class Robot extends TimedRobot {
      * Properties
      */
     private boolean faulted;
-    public static boolean runningAutoTarget = false;
-    public static boolean runningAutoBalance = false;
 
     /**
      * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
@@ -107,6 +111,8 @@ public class Robot extends TimedRobot {
         infrastructure = Injector.get(Infrastructure.class);
         subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
+        collector = Injector.get(Collector.class);
+        elevator = Injector.get(Elevator.class);
     }
 
     /**
@@ -149,7 +155,7 @@ public class Robot extends TimedRobot {
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            subsystemManager.setSubsystems(drive, ledManager, camera);
+            subsystemManager.setSubsystems(drive, ledManager, camera, collector);
 
             /** Register BadLogs */
             if (Constants.kIsBadlogEnabled) {
@@ -266,19 +272,12 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("autoBalance"),
                         () -> {
-                            if (!runningAutoBalance) {
-                                runningAutoBalance = true;
-                                System.out.println("Starting auto balance");
-                                AutoBalanceMode mode = new AutoBalanceMode();
-                                autoBalanceThread = new Thread(mode::run);
-                                autoBalanceThread.start();
-                                autoBalanceThread = null;
-                                System.out.println("Balanced");
-                            } else {
-                                autoBalanceThread.stop();
-                                System.out.println("Stopped! driving to trajectory canceled!");
-                                runningAutoBalance = !runningAutoBalance;
-                            }
+                            System.out.println("Starting auto balance");
+                            AutoBalanceMode mode = new AutoBalanceMode();
+                            Thread autoBalanceThread = new Thread(mode::run);
+                            autoBalanceThread.start();
+                            autoBalanceThread = null;
+                            System.out.println("Balanced");
                         }
                     ),
                     createHoldAction(
@@ -289,6 +288,24 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
                     ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("collectCone"),
+                        (pressed) -> {
+                            orchestrator.setCollectCone(pressed);
+                        }
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("collectCube"),
+                        (pressed) -> {
+                            orchestrator.setCollectCube(pressed);
+                        }
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("eject"),
+                        (pressed) -> {
+                            orchestrator.setEject(pressed);
+                        }
+                    )
                     // Operator Gamepad
                     createAction( // TODO remove, for testing purposes only
                         () -> controlBoard.getAsBool("updatePose"),

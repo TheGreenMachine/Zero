@@ -7,12 +7,16 @@ driver:
         right:
             horizontal: rotation
     buttonpad:
+        x: collectCone
+        y: collectCube
+        a: eject
         x: autoBalance
-        a: autoTarget
     axes:
         leftTrigger: brakeMode
         rightTrigger: slowMode
     buttons:
+        leftBumper: manualCollect
+        rightBumper: manualEject
         start: zeroPose
 operator:
     rumble: false

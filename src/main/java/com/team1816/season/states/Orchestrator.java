@@ -2,11 +2,15 @@ package com.team1816.season.states;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.Infrastructure;
+import com.team1816.lib.Injector;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.turret.Turret;
+import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.FieldConfig;
-import com.team1816.season.subsystems.LedManager;
+import com.team1816.lib.subsystems.LedManager;
+import com.team1816.season.subsystems.Collector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -30,18 +34,21 @@ import static com.team1816.lib.subsystems.Subsystem.robotState;
 @Singleton
 public class Orchestrator {
 
+    private static Collector collector;
+
     /**
      * Subsystems
      */
     private static Drive drive;
     private static LedManager ledManager;
-
-    private static Turret turret;
+    private static Camera camera;
 
     /**
      * State
      */
-    private STATE superstructureState;
+    private OBJECT desiredObject;
+    private STATE desiredState;
+    private boolean isCube;
     private final double maxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
         4
@@ -55,22 +62,63 @@ public class Orchestrator {
      * Instantiates an Orchestrator with all its subsystems
      *
      * @param df  Drive.Factory (derives drivetrain)
-     * @param tur Turret
      * @param led LedManager
      */
     @Inject
-    public Orchestrator(Drive.Factory df, Turret tur, LedManager led) {
+    public Orchestrator(Drive.Factory df, LedManager led) {
         drive = df.getInstance();
-        turret = tur;
         ledManager = led;
+        desiredObject = OBJECT.CONE;
+        desiredState = STATE.STOP;
+        collector = Injector.get(Collector.class);
+        camera = Injector.get(Camera.class);
+        isCube = false;
     }
 
-    /** TODO: Actions */
+    /** Actions */
 
-    /** TODO: Update Subsystem States */
+    /** Update Subsystem States */
 
     /** Superseded Odometry Handling */
 
+    /**
+     * Returns true if the pose of the drivetrain needs to be updated in a cached boolean system
+     *
+     * @return boolean
+     */
+    public boolean needsVisionUpdate() {
+        if (!robotState.isPoseUpdated) {
+            return true;
+        }
+        if (RobotBase.isSimulation() || RobotBase.isReal()) return false;
+        boolean needsVisionUpdate =
+            (
+                Math.abs(
+                    robotState.getCalculatedAccel().vxMetersPerSecond -
+                        robotState.triAxialAcceleration[0]
+                ) >
+                    Constants.kMaxAccelDiffThreshold ||
+                    Math.abs(
+                        robotState.getCalculatedAccel().vyMetersPerSecond -
+                            robotState.triAxialAcceleration[1]
+                    ) >
+                        Constants.kMaxAccelDiffThreshold ||
+                    Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
+                        Constants.kMaxAccelDiffThreshold
+            );
+        if (needsVisionUpdate) {
+            robotState.isPoseUpdated = false;
+        }
+        return needsVisionUpdate; // placeHolder
+    }
+
+    public void setCollectCone(boolean pressed){
+        isCube = false;
+        if(pressed) {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.COLLECT);
+        } else {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.STOP);
+        }
     /**
      * Calculates the absolute pose of the drivetrain based on a single target
      *
@@ -111,41 +159,29 @@ public class Orchestrator {
         Translation2d targetTranslation = target.getBestCameraToTarget().getTranslation().toTranslation2d();
         Transform2d targetTransform = new Transform2d(targetTranslation, robotState.getLatestFieldToCamera());
         return PhotonUtils.estimateFieldToCamera(targetTransform, targetPos);
+    public void setCollectCube(boolean pressed){
+        isCube = true;
+        if(pressed) {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.COLLECT);
+        } else {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.STOP);
+        }
     }
 
-
-    /**
-     * Calculates the absolute pose of the drivetrain as a function of all visible targets
-     *
-     * @return Pose2d
-     */
-    public Pose2d calculatePoseFromCamera() {
-        var cameraPoints = robotState.visibleTargets;
-        List<Pose2d> poses = new ArrayList<>();
-        double sX = 0, sY = 0;
-        for (VisionPoint point : cameraPoints) {
-            var p = calculateSingleTargetTranslation(point);
-            sX += p.getX();
-            sY += p.getY();
-            poses.add(p);
+    public void setEject(boolean pressed){
+        if(pressed) {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.EJECT);
+        } else {
+            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.STOP);
         }
-        if (cameraPoints.size() > 0) {
-            Pose2d pose = new Pose2d(
-                sX / cameraPoints.size(),
-                sY / cameraPoints.size(),
-                robotState.fieldToVehicle.getRotation()
-            );
-            robotState.isPoseUpdated = true;
-            return pose;
-        }
-        return robotState.fieldToVehicle;
     }
+
 
     /**
      * Updates the pose of the drivetrain based on specified criteria
      */
     public void updatePoseWithCamera() {
-        Pose2d newRobotPose = calculatePoseFromCamera();
+        Pose2d newRobotPose = camera.calculatePoseFromCamera();
         if (
             Math.abs(
                 Math.hypot(
@@ -164,7 +200,14 @@ public class Orchestrator {
     /**
      * Base enum for Orchestrator states
      */
-    public enum STATE {
+    public enum OBJECT {
+        CONE,
+        CUBE
+    }
 
+    public enum STATE {
+        COLLECTING,
+        EJECTING,
+        STOP
     }
 }
