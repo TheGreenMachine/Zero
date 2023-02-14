@@ -284,7 +284,6 @@ public class LedManager extends Subsystem {
         DRIVETRAIN_FLIPPED(MAX, MAX, 0), // yellow,
         MANUAL_TURRET(MAX, MAX, MAX), // white
         OFF(0, 0, 0); // off
-        DRIVETRAIN_FLIPPED(MAX, MAX, 0); // yellow,
 
 
         final int red;

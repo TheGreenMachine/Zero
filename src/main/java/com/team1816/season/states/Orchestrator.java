@@ -8,6 +8,7 @@ import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.turret.Turret;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.lib.util.visionUtil.VisionPoint;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.season.subsystems.Collector;
@@ -112,36 +113,15 @@ public class Orchestrator {
         return needsVisionUpdate; // placeHolder
     }
 
-    public void setCollectCone(boolean pressed){
+    public void setCollectCone(boolean pressed) {
         isCube = false;
-        if(pressed) {
+        if (pressed) {
             collector.setDesiredState(isCube, Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.COLLECT);
         } else {
             collector.setDesiredState(isCube, Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.STOP);
         }
-    /**
-     * Calculates the absolute pose of the drivetrain based on a single target
-     *
-     * @param target VisionPoint
-     * @return Pose2d
-     * @see VisionPoint
-     */
-    public Pose2d calculateSingleTargetTranslation(VisionPoint target) {
-        Pose2d targetPos = new Pose2d(
-            FieldConfig.fieldTargets2023.get(target.id).getX(),
-            FieldConfig.fieldTargets2023.get(target.id).getY(),
-            new Rotation2d()
-        );
-        double X = target.getX(), Y = target.getY();
-        Pose2d p = targetPos.plus(
-            new Transform2d(
-                new Translation2d(X, Y),
-                robotState.getLatestFieldToCamera().rotateBy(Rotation2d.fromDegrees(180))
-            )
-        ); // inverse axis angle
-        System.out.println("Updated Pose: " + p);
-        return p;
     }
+
 
     /**
      * Calculates the absolute pose of the drivetrain based on a single target using PhotonVision's library
@@ -159,55 +139,38 @@ public class Orchestrator {
         Translation2d targetTranslation = target.getBestCameraToTarget().getTranslation().toTranslation2d();
         Transform2d targetTransform = new Transform2d(targetTranslation, robotState.getLatestFieldToCamera());
         return PhotonUtils.estimateFieldToCamera(targetTransform, targetPos);
-    public void setCollectCube(boolean pressed){
-        isCube = true;
-        if(pressed) {
-            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.COLLECT);
-        } else {
-            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.STOP);
+    }
+
+        public void setCollectCube ( boolean pressed){
+            isCube = true;
+            if (pressed) {
+                collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.COLLECT);
+            } else {
+                collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.STOP);
+            }
+        }
+
+        public void setEject(boolean pressed){
+            if (pressed) {
+                collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.EJECT);
+            } else {
+                collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.STOP);
+            }
+        }
+
+
+
+        /**
+         * Base enum for Orchestrator states
+         */
+        public enum OBJECT {
+            CONE,
+            CUBE
+        }
+
+        public enum STATE {
+            COLLECTING,
+            EJECTING,
+            STOP
         }
     }
-
-    public void setEject(boolean pressed){
-        if(pressed) {
-            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.EJECT);
-        } else {
-            collector.setDesiredState(isCube, Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.STOP);
-        }
-    }
-
-
-    /**
-     * Updates the pose of the drivetrain based on specified criteria
-     */
-    public void updatePoseWithCamera() {
-        Pose2d newRobotPose = camera.calculatePoseFromCamera();
-        if (
-            Math.abs(
-                Math.hypot(
-                    robotState.fieldToVehicle.getX() - newRobotPose.getX(),
-                    robotState.fieldToVehicle.getY() - newRobotPose.getY()
-                )
-            ) > minAllowablePoseError
-        ) {
-            System.out.println(newRobotPose + " = new robot pose");
-            drive.resetOdometry(newRobotPose);
-            robotState.fieldToVehicle = newRobotPose;
-            robotState.isPoseUpdated = true;
-        }
-    }
-
-    /**
-     * Base enum for Orchestrator states
-     */
-    public enum OBJECT {
-        CONE,
-        CUBE
-    }
-
-    public enum STATE {
-        COLLECTING,
-        EJECTING,
-        STOP
-    }
-}

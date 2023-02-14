@@ -246,30 +246,6 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("autoTarget"),
-                        () -> {
-                            if (!runningAutoTarget) {
-                                runningAutoTarget = true;
-                                orchestrator.updatePoseWithCamera();
-                                double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
-                                if (distance < Constants.kMinTrajectoryDistance) {
-                                    System.out.println("Distance to target is " + distance + " m");
-                                    System.out.println("Too close to target! can not start trajectory!");
-                                } else {
-                                    System.out.println("Drive trajectory action started!");
-                                    TrajectoryToTargetMode mode = new TrajectoryToTargetMode();
-                                    autoTargetThread = new Thread(mode::run);
-                                    autoTargetThread.start();
-                                    System.out.println("Trajectory ended");
-                                }
-                            } else {
-                                autoTargetThread.stop();
-                                System.out.println("Stopped! driving to trajectory canceled!");
-                                runningAutoTarget = !runningAutoTarget;
-                            }
-                        }
-                    ),
-                    createAction(
                         () -> controlBoard.getAsBool("autoBalance"),
                         () -> {
                             System.out.println("Starting auto balance");
@@ -305,11 +281,6 @@ public class Robot extends TimedRobot {
                         (pressed) -> {
                             orchestrator.setEject(pressed);
                         }
-                    )
-                    // Operator Gamepad
-                    createAction( // TODO remove, for testing purposes only
-                        () -> controlBoard.getAsBool("updatePose"),
-                        orchestrator::updatePoseWithCamera
                     )
                 );
         } catch (Throwable t) {

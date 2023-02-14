@@ -23,6 +23,5 @@ public class TrajectoryToTargetMode extends AutoMode {
 
     public void done() {
         super.done();
-        Robot.runningAutoTarget = false;
     }
 }

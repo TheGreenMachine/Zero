@@ -3,6 +3,7 @@ package com.team1816.lib.subsystems.vision;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
+import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.visionUtil.GreenSimVisionSystem;
 import com.team1816.lib.util.visionUtil.GreenSimVisionTarget;
@@ -10,7 +11,7 @@ import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.subsystems.LedManager;
+import com.team1816.lib.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -109,6 +110,8 @@ public class Camera extends Subsystem {
             System.out.println("Camera Not Implemented...");
         }
     }
+
+
 
     /**
      * Periodically reads inputs and polls visible camera targets
