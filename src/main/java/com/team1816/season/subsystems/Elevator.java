@@ -12,11 +12,11 @@ import javax.inject.Singleton;
 
 @Singleton
 public class Elevator extends Subsystem {
-
-
     private static final String NAME = "elevator";
 
-    /** Components */
+    /**
+     * Components
+     */
     private final IGreenMotor angleMotorMain;
     private final IGreenMotor angleMotorFollower;
     private final IGreenMotor extensionMotor;
@@ -25,16 +25,12 @@ public class Elevator extends Subsystem {
     /**
      * Properties
      */
-
-
     private static double stowAngle;
     private static double collectAngle;
     private static double scoreAngle;
     private static double minExtension;
     private static double midExtension;
     private static double maxExtension;
-
-
 
     /**
      * States
@@ -52,7 +48,6 @@ public class Elevator extends Subsystem {
     private double hallEffectTriggerValue;
 
     private boolean tempAngleVelChanged;
-
 
     /**
      * Base parameters needed to instantiate a subsystem
