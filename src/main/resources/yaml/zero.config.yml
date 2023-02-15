@@ -90,25 +90,37 @@ subsystems:
     elevator:
         implemented: true
         falcons:
-            angleMotorMain: -1
-            angleMotorFollower: -1
+            angleMotorMain: 6
+            angleMotorFollower: 7
             extensionMotor: -1
+        pidConfig:
+            slot0:
+                kP: 0.02
+                kI: 0.00002
+                kD: 1.4
+                kF: 0
+                allowableError: 100
         constants:
-            stowPose: 0
-            collectPose: 512
-            scorePose: 1024
-            minPose: 0
-            midPose: 512
-            maxPose: 1024
+            stowAnglePosition: 0
+            collectAnglePosition: -10000
+            scoreAnglePosition: -47000
+            minExtensionPosition: 0
+            midExtensionPosition: 512
+            maxExtensionPosition: 1024
     collector:
         implemented: true
         solenoids:
-            collectorPiston: -1
-        neo550s:
-            intakeMotor: -1
+            intakeSolenoid: 7
+        sparkmaxes:
+            intakeMotor: 14
+        pidConfig:
+            slot0:
+                kF: 0.0000899
         constants:
-            collectTicks: 10
-            flushTicks: -10
+            cubeIntakePower: 0.05 # percent output voltage
+            cubeOuttakePower: -0.25 # percent output voltage
+            coneIntakeVelocity: -420 # rpm
+            coneOuttakeVelocity: 840 # rpm
     camera:
         implemented: true
         constants:

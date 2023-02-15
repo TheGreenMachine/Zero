@@ -17,5 +17,7 @@ driver:
 operator:
     rumble: false
     buttonpad:
-        x: updatePose
+        x: intakeCone
+        y: intakeCube
+        a: outtake
 demoMode: false

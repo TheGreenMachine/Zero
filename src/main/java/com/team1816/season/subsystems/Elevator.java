@@ -2,11 +2,10 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.team1816.lib.Infrastructure;
-import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
-import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,6 +20,7 @@ public class Elevator extends Subsystem {
     private final IGreenMotor angleMotorMain;
     private final IGreenMotor angleMotorFollower;
     private final IGreenMotor extensionMotor;
+    private final DigitalInput hallEffect;
 
     /**
      * Properties
@@ -34,16 +34,25 @@ public class Elevator extends Subsystem {
     private static double midExtension;
     private static double maxExtension;
 
+
+
     /**
      * States
      */
     private double actualExtensionPosition;
     private double actualAnglePosition;
+    private double actualAngleThetaDegrees;
+    private double actualExtensionMeters;
     private double actualAngleVel;
     private double actualExtensionVel;
     private ANGLE_STATE desiredAnglePosition = ANGLE_STATE.STOW;
     private EXTENSION_STATE desiredExtensionPosition = EXTENSION_STATE.MIN;
     private boolean outputsChanged;
+    private boolean hallEffectTriggered;
+    private double hallEffectTriggerValue;
+
+    private boolean tempAngleVelChanged;
+
 
     /**
      * Base parameters needed to instantiate a subsystem
@@ -59,15 +68,16 @@ public class Elevator extends Subsystem {
         this.angleMotorMain = factory.getMotor(NAME,"angleMotorMain");
         this.angleMotorFollower = factory.getFollowerMotor(NAME,"angleMotorFollower", angleMotorMain);
         this.extensionMotor = factory.getMotor(NAME,"extensionMotor");
+        this.hallEffect = new DigitalInput(0);
 
         // constants
         double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
-        stowAngle = factory.getConstant(NAME,"stowPose");
-        collectAngle = factory.getConstant(NAME, "collectPose");
-        scoreAngle = factory.getConstant(NAME, "scorePose");
-        minExtension = factory.getConstant(NAME, "minPose");
-        midExtension = factory.getConstant(NAME, "midPose");
-        maxExtension = factory.getConstant(NAME, "maxPose");
+        stowAngle = factory.getConstant(NAME,"stowAnglePosition");
+        collectAngle = factory.getConstant(NAME, "collectAnglePosition");
+        scoreAngle = factory.getConstant(NAME, "scoreAnglePosition");
+        minExtension = factory.getConstant(NAME, "minExtensionPosition");
+        midExtension = factory.getConstant(NAME, "midExtensionPosition");
+        maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
     }
 
     /**
@@ -110,11 +120,22 @@ public class Elevator extends Subsystem {
      */
     @Override
     public void readFromHardware() {
+        if(actualAngleVel != angleMotorMain.getSelectedSensorVelocity(0)){ //TODO we need a method of motor calibration
+            System.out.println(angleMotorMain.getSelectedSensorVelocity(0));
+        }
         actualAnglePosition = angleMotorMain.getSelectedSensorPosition(0);
         actualAngleVel = angleMotorMain.getSelectedSensorVelocity(0);
 
         actualExtensionPosition = extensionMotor.getSelectedSensorPosition(0);
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0);
+
+        if(hallEffectTriggered == hallEffect.get()){
+            hallEffectTriggerValue = actualAnglePosition;
+            System.out.println(hallEffectTriggerValue);
+        }
+        hallEffectTriggered = !hallEffect.get();
+
+
     }
 
     /**
@@ -191,4 +212,3 @@ public class Elevator extends Subsystem {
     }
 
 }
-

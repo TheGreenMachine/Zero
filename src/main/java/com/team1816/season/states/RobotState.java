@@ -34,8 +34,6 @@ public class RobotState {
     public boolean isPoseUpdated = true;
     public double vehicleToFloorProximityCentimeters = 0;
 
-    public double dt; // detected actual robot loop time in ms
-
     /**
      * Inertial characterization
      */
@@ -46,6 +44,8 @@ public class RobotState {
     /**
      * Orchestrator states
      */
+    public Orchestrator.STATE orchestratorState = Orchestrator.STATE.STOW;
+    public Orchestrator.SCORE_LEVEL_STATE scoreLevelState = Orchestrator.SCORE_LEVEL_STATE.MIN;
     public List<VisionPoint> visibleTargets = new ArrayList<>();
     public double drivetrainTemp = 0;
 
@@ -96,11 +96,13 @@ public class RobotState {
         deltaVehicle = new ChassisSpeeds();
         calculatedVehicleAccel = new ChassisSpeeds();
         triAxialAcceleration = new Double[]{0d, 0d, 0d};
+        orchestratorState = Orchestrator.STATE.STOW;
+        scoreLevelState = Orchestrator.SCORE_LEVEL_STATE.MIN;
         isPoseUpdated = true;
         visibleTargets.clear();
         drivetrainTemp = 0;
         vehicleToFloorProximityCentimeters = 0;
-        target = new Pose2d(5.0, Constants.fieldCenterY, new Rotation2d());
+        target = Constants.fieldCenterPose;
     }
 
     /**
