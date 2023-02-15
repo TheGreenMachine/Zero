@@ -87,7 +87,7 @@ public abstract class AutoMode {
     /**
      * Standard cleanup end-procedure
      */
-    private void done() {
+    protected void done() {
         System.out.println(this.getClass().getName() + " Done");
     }
 
@@ -154,4 +154,5 @@ public abstract class AutoMode {
         }
         return initialPose;
     }
+
 }

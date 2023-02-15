@@ -25,6 +25,7 @@ public class RobotState {
     public final Field2d field = new Field2d();
     public Pose2d fieldToVehicle = Constants.EmptyPose2d;
     public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose2d;
+    public Pose2d target = Constants.EmptyPose2d;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation2d;
     public Pose2d fieldToTurret = Constants.EmptyPose2d;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds(); // velocities of vehicle
@@ -32,6 +33,8 @@ public class RobotState {
     public Double[] triAxialAcceleration = new Double[]{0d, 0d, 0d};
     public boolean isPoseUpdated = true;
     public double vehicleToFloorProximityCentimeters = 0;
+
+    public double dt; // detected actual robot loop time in ms
 
     /**
      * Inertial characterization
@@ -97,6 +100,7 @@ public class RobotState {
         visibleTargets.clear();
         drivetrainTemp = 0;
         vehicleToFloorProximityCentimeters = 0;
+        target = new Pose2d(5.0, Constants.fieldCenterY, new Rotation2d());
     }
 
     /**

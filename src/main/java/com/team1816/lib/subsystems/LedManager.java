@@ -148,6 +148,7 @@ public class LedManager extends Subsystem {
     }
 
     /**
+     * TODO RENAME
      * Writes a specific color to the LEDs
      *
      * @param r red value [0, 255]
@@ -161,6 +162,7 @@ public class LedManager extends Subsystem {
     }
 
     /**
+     * TODO RENAME
      * Writes a specific color to the LEDs
      *
      * @param r red value [0, 255]
@@ -172,6 +174,8 @@ public class LedManager extends Subsystem {
         ledManager.setLEDs(r, g, b, 0, 8, LED_STRIP_COUNT);
         outputsChanged = false;
     }
+
+    /** TODO ADD METHOD HERE FOR FIXED SEGMENTS */
 
     /**
      * Writes led segments to the LEDs periodically based on segment control states

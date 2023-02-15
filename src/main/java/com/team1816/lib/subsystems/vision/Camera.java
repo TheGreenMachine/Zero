@@ -13,7 +13,6 @@ import com.team1816.season.states.RobotState;
 import com.team1816.lib.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import org.photonvision.PhotonCamera;
@@ -21,106 +20,97 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import java.util.ArrayList;
 
+/**
+ * Camera interface that utilizes PhotonVision for target detection and measurement
+ */
 @Singleton
 public class Camera extends Subsystem {
 
-    // Components
+    /**
+     * Components
+     */
     static LedManager led;
     private PhotonCamera cam;
     private GreenSimVisionSystem simVisionSystem;
 
-    // Constants
+    /**
+     * Constants
+     */
     private static final String NAME = "camera";
-    public final boolean camImplemented;
-    public final boolean usingCamToUpdatePose;
+    private final double CAMERA_HEIGHT_METERS = 0.7493;
 
-    private static final double CAMERA_FOCAL_LENGTH = 700; // px
-    private static final double VIDEO_WIDTH = 1280; // px
-    private static final double VIDEO_HEIGHT = 720; // px
-    private static final double CAMERA_DFOV = 100; // degrees
-    private static final double CAMERA_HFOV = 85;
-    private final double CAMERA_HEIGHT_METERS = 0.7493; // meters
-
-    private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 20);
-
-    // state
+    /**
+     * State
+     */
+    public boolean cameraEnabled;
     private PhotonTrackedTarget bestTrackedTarget;
 
+
+    /**
+     * Instantiates a camera with the base subsystem properties
+     * @param ledManager LedManager
+     * @param inf Infrastructure
+     * @param rs RobotState
+     */
     @Inject
     public Camera(LedManager ledManager, Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         led = ledManager;
-        camImplemented = this.isImplemented();
-        usingCamToUpdatePose = factory.getConstant(NAME, "usingCamToUpdatePose") > 0;
+        cameraEnabled = this.isImplemented();
 
-        // if using sim, set up fake vision system
         if (RobotBase.isSimulation()) {
-            // defining sim vision system
             simVisionSystem =
                 new GreenSimVisionSystem(
-                    "ZED-M",
+                    "ZED",
                     90,
                     60,
                     Constants.kCameraMountingAngleY,
-                    new Transform2d(
-                        new Translation2d(-.12065, .13335),
-                        Constants.EmptyRotation2d
-                    ), //TODO update this value
+                    Constants.EmptyTransform2d,
                     CAMERA_HEIGHT_METERS,
                     9000,
                     3840,
                     1080,
                     0
                 );
-            // adding april tags to our field for our simCamera to "see"
-            for (int i = 0; i <= 53; i++) {
-                if (FieldConfig.fieldTargets.get(i) == null) {
+            for (int i = 0; i <= 8; i++) {
+                if (FieldConfig.fieldTargets2023.get(i) == null) {
                     continue;
                 }
                 simVisionSystem.addSimVisionTarget(
                     new GreenSimVisionTarget(
                         new Pose2d(
-                            FieldConfig.fieldTargets.get(i).getX(),
-                            FieldConfig.fieldTargets.get(i).getY(),
-                            FieldConfig.fieldTargets.get(i).getRotation().toRotation2d()
+                            FieldConfig.fieldTargets2023.get(i).getX(),
+                            FieldConfig.fieldTargets2023.get(i).getY(),
+                            FieldConfig.fieldTargets2023.get(i).getRotation().toRotation2d()
                         ),
-                        FieldConfig.fieldTargets.get(i).getZ(),
-                        .1651, // Estimated width & height of the AprilTag
+                        FieldConfig.fieldTargets2023.get(i).getZ(),
+                        .1651,
                         .1651,
                         i
                     )
                 );
             }
         }
-
         PhotonCamera.setVersionCheckEnabled(false);
-        // only actually make a cam if cam implemented
-        // prevents "no coprocessor found" error when sim is booted up w/ out a camera
-        if (camImplemented) {
-            cam = new PhotonCamera("snakeyes");
+        if (cameraEnabled) {
+            cam = new PhotonCamera("IMX219");
         }
-    }
-
-    @Override
-    public boolean testSubsystem() {
-        if (warnIfCameraOff()) {
-            Timer.delay(2);
-            if (getDistance() < 0 || getDistance() > MAX_DIST) {
-                System.out.println("getDistance failed test!");
-                return false;
-            } else if (
-                getDeltaX() < -CAMERA_HFOV / 2d || getDeltaX() > CAMERA_HFOV / 2d
-            ) {
-                System.out.println("getDeltaX failed test!");
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
-     * stuff normally done in read to hardware performed by coprocessor (PI4).
-     * We only need to use read from hardware if we're faking out the subsystem in sim
+     * Sets the camera to be enabled
+     * @param cameraEnabled boolean
+     */
+    public void setCameraEnabled(boolean cameraEnabled) {
+        if (this.isImplemented()) {
+            this.cameraEnabled = cameraEnabled;
+        } else {
+            System.out.println("Camera Not Implemented...");
+        }
+    }
+
+    /**
+     * Periodically reads inputs and polls visible camera targets
      */
     public void readFromHardware() {
         if (RobotBase.isSimulation()) {
@@ -144,70 +134,19 @@ public class Camera extends Subsystem {
                     )
                 );
         }
+        robotState.visibleTargets = getPoints();
     }
 
+
     /**
-     * Get distance to goal
+     * Polls targets from the camera and returns the best target as a list of VisionPoints (reduces computational overhead)
+     * @return List of VisionPoint
      *
-     * @return distance ALONG THE GROUND to the target - NOT the hypotenuse
-     */
-    public double getDistance() {
-        if (warnIfCameraOff()) {
-            if (usingCamToUpdatePose) {
-                return robotState.getDistanceToGoal();
-            } else {
-                var result = cam.getLatestResult();
-                if (!result.hasTargets()) {
-                    return -1;
-                }
-
-                // note that this is coded for 3D mode on PhotonVision (b/c we're grabbing a Transform3d)
-                var bestTargetTransform = result.getBestTarget().getBestCameraToTarget();
-                return Math.hypot(bestTargetTransform.getX(), bestTargetTransform.getY());
-            }
-        }
-        return -1;
-    }
-
-    public double getDeltaX() {
-        if (warnIfCameraOff()) {
-            if (RobotBase.isSimulation()) { // simulated feedback loop
-                return simulateDeltaX();
-            }
-            var result = cam.getLatestResult();
-            if (!result.hasTargets()) {
-                return -1;
-            }
-
-            return result.getBestTarget().getYaw();
-        }
-        return -1;
-    }
-
-    /**
-     * stuff normally done in write to hardware performed by coprocessor (PI4). No need to do anything on our end
-     */
-    @Override
-    public void writeToHardware() {
-    }
-
-    @Override
-    public void stop() {
-    }
-
-    @Override
-    public void zeroSensors() {
-    }
-
-    /**
-     * We can only this if vision becomes solid enough that we can just keep in on throughout the match.
-     * Rn we are not using this
-     *
-     * @return list of all targets (apriltags or reflective tape) seen by camera
+     * @see VisionPoint
      */
     public ArrayList<VisionPoint> getPoints() {
         ArrayList<VisionPoint> targets = new ArrayList<>();
-        if (this.isImplemented()) {
+        if (isImplemented()) {
             VisionPoint p = new VisionPoint();
             var result = cam.getLatestResult();
             if (!result.hasTargets()) {
@@ -215,44 +154,77 @@ public class Camera extends Subsystem {
             }
             var bestTarget = result.getBestTarget();
             p.id = bestTarget.getFiducialId();
-//        p.cameraToTarget = bestTarget.getCameraToTarget(); // missing method in PhotonTrackedTarget
+            p.cameraToTarget = bestTarget.getBestCameraToTarget(); // missing method in PhotonTrackedTarget
             targets.add(p);
         } else {
             System.out.println("camera not returning points b/c camera not implemented");
         }
+        return targets;
+    }
+
+    /**
+     * Polls targets from the camera and returns all targets as a list of VisionPoints
+     *
+     * @return List of VisionPoints
+     */
+    public ArrayList<VisionPoint> getPointsAlternate() {
+        ArrayList<VisionPoint> targets = new ArrayList<>();
+        var result = cam.getLatestResult();
+        if (!result.hasTargets()) {
+            return targets;
+        }
+
+        double m = 0xFFFFFF; // big number
+        var principal_RANSAC = new PhotonTrackedTarget();
+
+        for (PhotonTrackedTarget target : result.targets) {
+            var p = new VisionPoint();
+            if (target.getBestCameraToTarget() != null) {
+                p.cameraToTarget = target.getBestCameraToTarget();
+                p.id = target.getFiducialId();
+                targets.add(p);
+
+                if (m > p.cameraToTarget.getTranslation().getNorm()) {
+                    m = p.cameraToTarget.getTranslation().getNorm();
+                    principal_RANSAC = target;
+                }
+            }
+        }
+
+        bestTrackedTarget = principal_RANSAC;
 
         return targets;
     }
 
     /**
-     * This may be @Deprecated. TODO double check if we actually need to use this or if the simCam deals with this for us
-     *
-     * @return deltaX based on methemetiquess
+     * Functionality: nonexistent
      */
-    public double simulateDeltaX() {
-        double opposite =
-            Constants.fieldCenterY - robotState.getFieldToTurretPos().getY();
-        double adjacent =
-            Constants.fieldCenterX - robotState.getFieldToTurretPos().getX();
-        double targetTurretAngle = Math.atan(opposite / adjacent);
-        if (adjacent < 0) {
-            targetTurretAngle += Math.PI;
+    @Override
+    public void writeToHardware() {}
+
+    /**
+     * Functionality: nonexistent
+     */
+    @Override
+    public void zeroSensors() {}
+
+    /**
+     * Tests the camera
+     * @return true if tests passed
+     */
+    @Override
+    public boolean testSubsystem() {
+        if (isImplemented()) {
+            Timer.delay(2);
         }
-        targetTurretAngle *= 180 / Math.PI;
-        double currentTurretAngle = robotState
-            .getFieldToTurretPos()
-            .getRotation()
-            .getDegrees();
-        if (currentTurretAngle < 0 && adjacent < 0) {
-            currentTurretAngle += 360;
-        }
-        return ((currentTurretAngle - targetTurretAngle)); // scaling for the feedback loop
+        return true;
     }
 
-    public boolean warnIfCameraOff() {
-        if (!camImplemented) {
-            System.out.println("cam not implemented - not performing action");
-        }
-        return camImplemented;
+    /**
+     * Functionality: nonexistent
+     */
+    @Override
+    public void stop() {
     }
+
 }

@@ -5,12 +5,12 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
+import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
-import com.team1816.lib.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -152,13 +152,16 @@ public abstract class Drive
     );
 
     public static final double kPXController = 1;
+    public static final double kDXController = 0;
     public static final double kPYController = 1;
+    public static final double kDYController = 0;
     public static final double kPThetaController = 4;
+    public static final double kDThetaController = 0;
     public static final double kMaxAngularSpeed = factory.getConstant(NAME, "maxRotVel"); // rad/sec
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared =
         2 * Math.PI;
 
-    // Constraint for the motion profilied robot angle controller
+    // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeed,
         kMaxAngularAccelerationRadiansPerSecondSquared

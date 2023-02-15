@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.util.visionUtil.VisionPoint;
-import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.lib.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -48,7 +47,7 @@ public class Orchestrator {
     );
     private final double minAllowablePoseError = factory.getConstant(
         "minAllowablePoseError",
-        0.1
+        0.05
     );
 
     /**
@@ -61,45 +60,13 @@ public class Orchestrator {
     public Orchestrator(Drive.Factory df, LedManager led) {
         drive = df.getInstance();
         ledManager = led;
-        superstructureState = STATE.FAT_BOY;
     }
 
-    /** Actions */
+    /** TODO: Actions */
 
-    /** Update Subsystem States */
+    /** TODO: Update Subsystem States */
 
     /** Superseded Odometry Handling */
-
-    /**
-     * Returns true if the pose of the drivetrain needs to be updated in a cached boolean system
-     *
-     * @return boolean
-     */
-    public boolean needsVisionUpdate() {
-        if (!robotState.isPoseUpdated) {
-            return true;
-        }
-        if (RobotBase.isSimulation() || RobotBase.isReal()) return false;
-        boolean needsVisionUpdate =
-            (
-                Math.abs(
-                    robotState.getCalculatedAccel().vxMetersPerSecond -
-                        robotState.triAxialAcceleration[0]
-                ) >
-                    Constants.kMaxAccelDiffThreshold ||
-                    Math.abs(
-                        robotState.getCalculatedAccel().vyMetersPerSecond -
-                            robotState.triAxialAcceleration[1]
-                    ) >
-                        Constants.kMaxAccelDiffThreshold ||
-                    Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
-                        Constants.kMaxAccelDiffThreshold
-            );
-        if (needsVisionUpdate) {
-            robotState.isPoseUpdated = false;
-        }
-        return needsVisionUpdate; // placeHolder
-    }
 
     /**
      * Calculates the absolute pose of the drivetrain based on a single target
@@ -110,8 +77,8 @@ public class Orchestrator {
      */
     public Pose2d calculateSingleTargetTranslation(VisionPoint target) {
         Pose2d targetPos = new Pose2d(
-            FieldConfig.fieldTargets.get(target.id).getX(),
-            FieldConfig.fieldTargets.get(target.id).getY(),
+            FieldConfig.fieldTargets2023.get(target.id).getX(),
+            FieldConfig.fieldTargets2023.get(target.id).getY(),
             new Rotation2d()
         );
         double X = target.getX(), Y = target.getY();
@@ -121,6 +88,7 @@ public class Orchestrator {
                 robotState.getLatestFieldToCamera().rotateBy(Rotation2d.fromDegrees(180))
             )
         ); // inverse axis angle
+        System.out.println("Updated Pose: " + p);
         return p;
     }
 
@@ -133,8 +101,8 @@ public class Orchestrator {
      */
     public Pose2d photonCalculateSingleTargetTranslation(PhotonTrackedTarget target) {
         Pose2d targetPos = new Pose2d(
-            FieldConfig.fieldTargets.get(target.getFiducialId()).getX(),
-            FieldConfig.fieldTargets.get(target.getFiducialId()).getY(),
+            FieldConfig.fieldTargets2023.get(target.getFiducialId()).getX(),
+            FieldConfig.fieldTargets2023.get(target.getFiducialId()).getY(),
             new Rotation2d()
         );
         Translation2d targetTranslation = target.getBestCameraToTarget().getTranslation().toTranslation2d();
@@ -198,7 +166,6 @@ public class Orchestrator {
      * Base enum for Orchestrator states
      */
     public enum STATE {
-        FAT_BOY,
-        LITTLE_MAN,
+
     }
 }

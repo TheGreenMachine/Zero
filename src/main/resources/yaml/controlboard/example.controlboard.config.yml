@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 driver:
     rumble: false
     joysticks:
@@ -42,3 +43,26 @@ operator:
         start: toggleTopClamp
         back: toggleBottomClamp
 demoMode: false
+=======
+driver:
+    rumble: false
+    joysticks:
+        left:
+            horizontal: strafe
+            vertical: throttle
+        right:
+            horizontal: rotation
+    buttonpad:
+        x: autoBalance
+        a: autoTarget
+    axes:
+        leftTrigger: brakeMode
+        rightTrigger: slowMode
+    buttons:
+        start: zeroPose
+operator:
+    rumble: false
+    buttonpad:
+        x: updatePose
+demoMode: false
+>>>>>>> 6026c61f06a73bf8e89493bf5b52352eb5bf153a
