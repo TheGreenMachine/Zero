@@ -190,6 +190,10 @@ public class Orchestrator {
         }
     }
 
+    public void setLEDs(boolean on) {
+        ledManager.writeToLed(200, 0, 0, 0, 20);
+    }
+
     /**
      * Base enum for Orchestrator states
      */

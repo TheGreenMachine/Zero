@@ -248,6 +248,10 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("ledTest"),
+                        orchestrator::setLEDs
                     )
                 );
         } catch (Throwable t) {
