@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import edu.wpi.first.gradlerio.deploy.roborio.RoboRIO
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
@@ -203,7 +202,6 @@ wpi.java.configureTestTasks(test)
 compileJava {
     //dependsOn tasks.named("spotlessApply")
 }
-=======
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
@@ -408,4 +406,3 @@ wpi.java.configureTestTasks(test)
 compileJava {
     //dependsOn tasks.named("spotlessApply")
 }
->>>>>>> 6026c61f06a73bf8e89493bf5b52352eb5bf153a
