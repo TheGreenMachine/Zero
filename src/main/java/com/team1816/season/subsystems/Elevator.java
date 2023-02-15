@@ -1,6 +1,7 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
@@ -33,6 +34,7 @@ public class Elevator extends Subsystem {
     private static double maxExtension;
     private static double maxAngularVelocity; // rad/s
     private static double maxAngularAcceleration; // rad/s^2
+    private static double maxExtendedAngularAcceleration; // rad/s^2
     private static double maxExtensionVelocity; // m/s
     private static double maxExtensionAcceleration; // m/s^2
 
@@ -70,7 +72,6 @@ public class Elevator extends Subsystem {
         this.hallEffect = new DigitalInput(0);
 
         // constants
-        double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
         stowAngle = factory.getConstant(NAME,"stowAnglePosition");
         collectAngle = factory.getConstant(NAME, "collectAnglePosition");
         scoreAngle = factory.getConstant(NAME, "scoreAnglePosition");
@@ -80,6 +81,7 @@ public class Elevator extends Subsystem {
 
         maxAngularVelocity = factory.getConstant(NAME, "maxAngularVelocity");
         maxAngularAcceleration = factory.getConstant(NAME, "maxAngularAcceleration");
+        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtendedAngularAcceleration");
         maxExtensionVelocity = factory.getConstant(NAME, "maxExtensionVelocity");
         maxExtensionAcceleration = factory.getConstant(NAME, "maxExtensionAcceleration");
     }
@@ -193,7 +195,7 @@ public class Elevator extends Subsystem {
         return false;
     }
 
-    /** enums a **/
+    /** Base enums **/
     public enum ANGLE_STATE {
         STOW(stowAngle),
         COLLECT(collectAngle),
@@ -215,4 +217,133 @@ public class Elevator extends Subsystem {
         public double getExtension() {return extension;}
     }
 
+    /**
+     * Creates a positional set point feeder for more continuous motion
+     */
+    public static class SetPointFeeder {
+        /**
+         * Feeder properties
+         */
+        double startTimestamp = 0;
+        public FeederConstraints feederConstraints;
+        public double rInitial; // m
+        public double thetaInitial; // rad where zero is the collect position
+        public double rFinal; // m
+        public double thetaFinal; // m
+
+        /**
+         * Profile properties
+         */
+        private double endAccelerationPhase;
+        private double endVelocityPhase;
+        private double endDecelerationPhase;
+
+        /**
+         * Polar properties
+         */
+        private double a; // polar coefficient
+        private double b; // polar coefficient
+        private double c; // polar coefficient
+
+        /**
+         * Initializes a setpoint feeder
+         * @param f profile constraints
+         */
+        public SetPointFeeder(FeederConstraints f) {
+            feederConstraints = f; // initializes constraints
+            // calculates relative timestamps to 0
+            double distance = (thetaFinal - thetaInitial);
+            double accelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxAngularAcceleration;
+            double decelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxExtendedAngularAcceleration;
+            double maxDist = distance - accelerationTime * accelerationTime * feederConstraints.maxAngularAcceleration / 2 - decelerationTime * decelerationTime * feederConstraints.maxExtendedAngularAcceleration / 2;
+
+            if (maxDist < 0) {
+                accelerationTime = Math.sqrt(distance / feederConstraints.maxAngularAcceleration);
+                decelerationTime = Math.sqrt(distance / feederConstraints.maxExtendedAngularAcceleration);
+                maxDist = 0;
+            }
+
+            endAccelerationPhase = accelerationTime;
+            endVelocityPhase = endAccelerationPhase + maxDist / feederConstraints.maxAngularVelocity;
+            endDecelerationPhase = endVelocityPhase + decelerationTime;
+
+            a = rFinal*Math.sin(thetaFinal) - rInitial*Math.sin(thetaInitial);
+            b = -1 * (rFinal*Math.cos(thetaFinal) - rInitial*Math.cos(thetaInitial));
+            c = -1 * rInitial*Math.sin(thetaInitial) * (rFinal*Math.cos(thetaFinal) - rInitial*Math.cos(thetaInitial));
+        }
+
+        /**
+         * Initializes a full setpoint feeder with initial and final constraints
+         * @param f profile constraints
+         * @param rInitial initial extension
+         * @param thetaInitial initial angle
+         * @param rFinal final extension
+         * @param thetaFinal final angle
+         */
+        public SetPointFeeder(FeederConstraints f, double rInitial, double thetaInitial, double rFinal, double thetaFinal) {
+            this.rInitial = rInitial;
+            this.thetaInitial = thetaInitial;
+            this.rFinal = rFinal;
+            this.thetaFinal = thetaFinal;
+
+            new SetPointFeeder(f);
+        }
+
+        /**
+         * Sets the starting timestamp of the set point feeder
+         * @param timestamp
+         */
+        public void start(double timestamp) {
+            startTimestamp = timestamp;
+        }
+
+        /**
+         * Returns the profiled angular polar component based on constraints
+         * @param timestamp current timestamp
+         * @return angle
+         */
+        public double getAngle(double timestamp) {
+            double t = timestamp - startTimestamp;
+            if (t <= endAccelerationPhase) {
+                return t * t * feederConstraints.maxAngularVelocity / 2;
+            } else if (t <= endVelocityPhase) {
+                return endAccelerationPhase * endAccelerationPhase * feederConstraints.maxAngularAcceleration / 2 + feederConstraints.maxAngularVelocity * (t - endVelocityPhase);
+            } else if (t <= endDecelerationPhase) {
+                double timeRemaining = endDecelerationPhase - t;
+                return thetaFinal - (timeRemaining * timeRemaining * feederConstraints.maxExtendedAngularAcceleration / 2);
+            } else {
+                return thetaFinal;
+            }
+        }
+
+        /**
+         * Feeds positional setpoints based on the current timestamp
+         * @param timestamp current timestamp
+         * @return setpoints
+         */
+        public double[] get(double timestamp) {
+            double angle = getAngle(timestamp);
+            double extension = c / (a * Math.cos(angle) + b * Math.sin(angle));
+            return new double[] {angle, extension};
+        }
+    }
+
+    /**
+     * Class for SetPointFeeder constraints
+     */
+    public static class FeederConstraints {
+        public double maxAngularVelocity; // rad/s
+        public double maxExtendedAngularAcceleration; // rad/s^2
+        public double maxAngularAcceleration; // rad/s^2
+        public double maxExtensionVelocity; // m/s
+        public double maxExtensionAcceleration; // m/s^2
+
+        public FeederConstraints(double maxAngularVelocity, double maxExtendedAngularAcceleration, double maxAngularAcceleration, double maxExtensionVelocity, double maxExtensionAcceleration) {
+            this.maxAngularVelocity = maxAngularVelocity;
+            this.maxExtendedAngularAcceleration = maxExtendedAngularAcceleration;
+            this.maxAngularAcceleration = maxAngularAcceleration;
+            this.maxExtensionVelocity = maxExtensionVelocity;
+            this.maxExtensionAcceleration = maxExtensionAcceleration;
+        }
+    }
 }
