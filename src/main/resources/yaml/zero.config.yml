@@ -11,7 +11,7 @@ subsystems:
             RLAz: 19
             RRAz: 2
         canCoders:
-            FLEnc: 25 #TODO check values
+            FLEnc: 25
             FREnc: 27
             RLEnc: 28
             RREnc: 26
@@ -79,14 +79,6 @@ subsystems:
             maxVelPathFollowing: 3.9 # meters/s (2.2)
             maxAccel: 3.17 # meters/s^ 2
             isDemoMode: 0
-    ledmanager:
-        implemented: false
-        canifier: -1
-        constants:
-            raveEnabled: 0
-            raveSpeed: 0.05
-            cameraLed: 1
-            maxLevel: 255
     elevator:
         implemented: true
         falcons:
@@ -121,6 +113,14 @@ subsystems:
             cubeOuttakePower: -0.25 # percent output voltage
             coneIntakeVelocity: -420 # rpm
             coneOuttakeVelocity: 840 # rpm
+    ledmanager:
+        implemented: false
+        canifier: -1
+        constants:
+            raveEnabled: 0
+            raveSpeed: 0.05
+            cameraLed: 1
+            maxLevel: 255
     camera:
         implemented: true
         constants:

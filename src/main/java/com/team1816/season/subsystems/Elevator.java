@@ -31,6 +31,11 @@ public class Elevator extends Subsystem {
     private static double minExtension;
     private static double midExtension;
     private static double maxExtension;
+    private static double maxAngularVelocity; // rad/s
+    private static double maxAngularAcceleration; // rad/s^2
+    private static double maxExtensionVelocity; // m/s
+    private static double maxExtensionAcceleration; // m/s^2
+
 
     /**
      * States
@@ -47,7 +52,6 @@ public class Elevator extends Subsystem {
     private boolean hallEffectTriggered;
     private double hallEffectTriggerValue;
 
-    private boolean tempAngleVelChanged;
 
     /**
      * Base parameters needed to instantiate a subsystem
@@ -73,6 +77,11 @@ public class Elevator extends Subsystem {
         minExtension = factory.getConstant(NAME, "minExtensionPosition");
         midExtension = factory.getConstant(NAME, "midExtensionPosition");
         maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
+
+        maxAngularVelocity = factory.getConstant(NAME, "maxAngularVelocity");
+        maxAngularAcceleration = factory.getConstant(NAME, "maxAngularAcceleration");
+        maxExtensionVelocity = factory.getConstant(NAME, "maxExtensionVelocity");
+        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtensionAcceleration");
     }
 
     /**
