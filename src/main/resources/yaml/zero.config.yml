@@ -109,7 +109,7 @@ subsystems:
             slot0:
                 kF: 0.0000899
         constants:
-            cubeIntakePower: 0.05 # percent output voltage
+            cubeIntakePower: 0.10 # percent output voltage
             cubeOuttakePower: -0.25 # percent output voltage
             coneIntakeVelocity: -420 # rpm
             coneOuttakeVelocity: 840 # rpm
