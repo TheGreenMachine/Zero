@@ -24,7 +24,7 @@ import static com.team1816.lib.subsystems.Subsystem.robotState;
 
 /**
  * Main superstructure-style class and logical operator for handling and delegating subsystem tasks. Consists of an integrated
- * drivetrain with other subsystems and utilizes closed loop state dependent control via RobotState.
+ * drivetrain with other subsystems and utilizes closed loop state dependent control via {@link RobotState}.
  *
  * @see RobotState
  */

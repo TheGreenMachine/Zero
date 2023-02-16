@@ -13,6 +13,10 @@ import javax.inject.Singleton;
 
 @Singleton
 public class Elevator extends Subsystem {
+
+    /**
+     * Name
+     */
     private static final String NAME = "elevator";
 
     /**
@@ -21,7 +25,7 @@ public class Elevator extends Subsystem {
     private final IGreenMotor angleMotorMain;
     private final IGreenMotor angleMotorFollower;
     private final IGreenMotor extensionMotor;
-    private final DigitalInput hallEffect;
+    private final DigitalInput zeroingHallEffect;
 
     /**
      * Properties
@@ -52,11 +56,11 @@ public class Elevator extends Subsystem {
     private EXTENSION_STATE desiredExtensionPosition = EXTENSION_STATE.MIN;
     private boolean outputsChanged;
     private boolean hallEffectTriggered;
-    private double hallEffectTriggerValue;
+    private double zeroingHallEffectTriggerValue;
 
 
     /**
-     * Base parameters needed to instantiate a subsystem
+     * Base constructor needed to instantiate a subsystem
      *
      * @param inf  Infrastructure
      * @param rs   RobotState
@@ -69,7 +73,7 @@ public class Elevator extends Subsystem {
         this.angleMotorMain = factory.getMotor(NAME,"angleMotorMain");
         this.angleMotorFollower = factory.getFollowerMotor(NAME,"angleMotorFollower", angleMotorMain);
         this.extensionMotor = factory.getMotor(NAME,"extensionMotor");
-        this.hallEffect = new DigitalInput(0);
+        this.zeroingHallEffect = new DigitalInput(0);
 
         double peakOutput = 0.60;
         angleMotorMain.configPeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
@@ -143,13 +147,11 @@ public class Elevator extends Subsystem {
         actualExtensionPosition = extensionMotor.getSelectedSensorPosition(0);
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0);
 
-        if(hallEffectTriggered == hallEffect.get()){
-            hallEffectTriggerValue = actualAnglePosition;
-            System.out.println(hallEffectTriggerValue);
+        if (hallEffectTriggered == zeroingHallEffect.get()) {
+            zeroingHallEffectTriggerValue = actualAnglePosition;
+            System.out.println(zeroingHallEffectTriggerValue);
         }
-        hallEffectTriggered = !hallEffect.get();
-
-
+        hallEffectTriggered = !zeroingHallEffect.get();
     }
 
     /**
@@ -193,11 +195,18 @@ public class Elevator extends Subsystem {
 
     }
 
+    /**
+     * Functionality: nonexistent
+     */
     @Override
     public void stop() {
 
     }
 
+    /**
+     * Tests the elevator, returns true if tests passed
+     * @return true if tests passed
+     */
     @Override
     public boolean testSubsystem() {
         return false;

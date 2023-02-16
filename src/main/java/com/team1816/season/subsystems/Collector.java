@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 // Oh my, where's the well formatted documentation??
 @Singleton
 public class Collector extends Subsystem {
+
     /**
      * Name
      */
@@ -42,7 +43,7 @@ public class Collector extends Subsystem {
     private boolean outputsChanged = false;
 
     /**
-     *
+     * Base constructor needed to instantiate a collector
      * @param inf Infrastructure
      * @param rs RobotState
      */
@@ -52,13 +53,19 @@ public class Collector extends Subsystem {
         intakeSolenoid = factory.getSolenoid(NAME, "intakeSolenoid");
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
 
-        cubeIntakeVelocity = factory.getConstant(NAME, "cubeIntakePower", 0.05); // TODO tune these
+        cubeIntakeVelocity = factory.getConstant(NAME, "cubeIntakePower", 0.10); // TODO tune these
         cubeOuttakeVelocity = factory.getConstant(NAME, "cubeOuttakePower", -0.25); // TODO tune these
         coneIntakeVelocity = factory.getConstant(NAME, "coneIntakeVelocity", -420); // TODO tune these
         coneOuttakeVelocity = factory.getConstant(NAME, "coneOuttakeVelocity", 840); // TODO tune these
     }
 
-    public void setDesiredState(ControlMode controlMode, PIVOT_STATE pivotState, ROLLER_STATE collectorState) {
+    /**
+     * Sets the desired state of the collector
+     * @param controlMode desired control mode
+     * @param pivotState desired collector pivot state
+     * @param rollerState desired collector roller state
+     */
+    public void setDesiredState(ControlMode controlMode, PIVOT_STATE pivotState, ROLLER_STATE rollerState) {
         if (desiredControlMode != controlMode) {
             desiredControlMode = controlMode;
             outputsChanged = true;
@@ -67,17 +74,25 @@ public class Collector extends Subsystem {
             desiredPivotState = pivotState;
             outputsChanged = true;
         }
-        if (desiredRollerState != collectorState) {
-            desiredRollerState = collectorState;
+        if (desiredRollerState != rollerState) {
+            desiredRollerState = rollerState;
             outputsChanged = true;
         }
     }
 
+    /**
+     * Reads roller velocity
+     * @see Subsystem#readFromHardware()
+     */
     @Override
     public void readFromHardware() {
         rollerVelocity = intakeMotor.getSelectedSensorVelocity(0);
     }
 
+    /**
+     * Writes outputs to collector motor and solenoid
+     * @see Subsystem#writeToHardware()
+     */
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
@@ -111,24 +126,34 @@ public class Collector extends Subsystem {
         }
     }
 
+    /**
+     * Functionality: nonexistent
+     */
     @Override
     public void zeroSensors() {
 
     }
 
+    /**
+     * Functionality: nonexistent
+     */
     @Override
     public void stop() {
 
     }
 
+    /**
+     * Tests the collector subsystem, returns true if tests passed
+     * @return true if tests passed
+     */
     @Override
     public boolean testSubsystem() {
         return false;
     }
 
-    //for cube collecting, the "motor locked" state so we don't pop the cube will have
-    //to be the same as stopping? a hold action and then when its not going it stops? we can't
-    //rotate after getting a cube anyways
+    /**
+     * Base enums for collector
+     */
     public enum PIVOT_STATE {
         UP,
         DOWN
