@@ -28,7 +28,7 @@ subsystems:
                     azimuth: FLAz
                     canCoder: FLEnc
                     constants:
-                        encoderOffset: 110 #1442 remote, 110 pid0
+                        encoderOffset: 99 #1442 remote, 110 pid0
                         invertSensorPhase: 1
                 frontRight:
                     drive: FRDr
@@ -87,15 +87,15 @@ subsystems:
             extensionMotor: -1
         pidConfig:
             slot0:
-                kP: 0.02
+                kP: 0.04
                 kI: 0.00002
-                kD: 1.4
+                kD: 2
                 kF: 0
                 allowableError: 100
         constants:
             stowAnglePosition: 0
-            collectAnglePosition: -10000
-            scoreAnglePosition: -47000
+            collectAnglePosition: -61000
+            scoreAnglePosition: 0
             minExtensionPosition: 0
             midExtensionPosition: 512
             maxExtensionPosition: 1024

@@ -316,6 +316,14 @@ public class Robot extends TimedRobot {
                     createAction( // TODO remove, for testing purposes only
                         () -> controlBoard.getAsBool("updatePose"),
                         orchestrator::updatePoseWithCamera
+                    ),
+                    createHoldAction(
+                            () -> controlBoard.getAsBool("collectElevator"),
+                            (pressed) -> elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT)
+                    ),
+                    createHoldAction(
+                            () -> controlBoard.getAsBool("scoreElevator"),
+                            (pressed) -> elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE)
                     )
                 );
         } catch (Throwable t) {

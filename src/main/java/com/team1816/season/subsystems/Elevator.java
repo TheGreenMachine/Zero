@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -70,6 +71,14 @@ public class Elevator extends Subsystem {
         this.angleMotorFollower = factory.getFollowerMotor(NAME,"angleMotorFollower", angleMotorMain);
         this.extensionMotor = factory.getMotor(NAME,"extensionMotor");
         this.hallEffect = new DigitalInput(0);
+
+        double peakOutput = 0.60;
+        angleMotorMain.configPeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
+        angleMotorMain.configPeakOutputReverse(-peakOutput, Constants.kCANTimeoutMs);
+        angleMotorMain.configClosedLoopPeakOutput(0, peakOutput, Constants.kCANTimeoutMs);
+        angleMotorFollower.configPeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
+        angleMotorFollower.configPeakOutputReverse(-peakOutput, Constants.kCANTimeoutMs);
+        angleMotorMain.configClosedLoopPeakOutput(0, peakOutput, Constants.kCANTimeoutMs);
 
         // constants
         stowAngle = factory.getConstant(NAME,"stowAnglePosition");
