@@ -358,7 +358,7 @@ public class Elevator extends Subsystem {
         /**
          * Feeds profiled positional setpoints based on the current timestamp
          * @param timestamp current timestamp
-         * @return setpoints
+         * @return setpoints {rotation, translation}
          */
         public double[] get(double timestamp) {
             double angle = getAngle(timestamp);
