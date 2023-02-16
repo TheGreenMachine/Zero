@@ -1,7 +1,6 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
@@ -234,9 +233,13 @@ public class Elevator extends Subsystem {
         /**
          * Profile properties
          */
-        private double endAccelerationPhase;
-        private double endVelocityPhase;
-        private double endDecelerationPhase;
+        private double endRotationAccelerationPhase;
+        private double endRotationVelocityPhase;
+        private double endRotationDecelerationPhase;
+
+        private double endTranslationAccelerationPhase;
+        private double endTranslationVelocityPhase;
+        private double endTranslationDecelerationPhase;
 
         /**
          * Polar properties
@@ -252,20 +255,35 @@ public class Elevator extends Subsystem {
         public SetPointFeeder(FeederConstraints f) {
             feederConstraints = f; // initializes constraints
             // calculates relative timestamps to 0
-            double distance = (thetaFinal - thetaInitial);
-            double accelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxAngularAcceleration;
-            double decelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxExtendedAngularAcceleration;
-            double maxDist = distance - accelerationTime * accelerationTime * feederConstraints.maxAngularAcceleration / 2 - decelerationTime * decelerationTime * feederConstraints.maxExtendedAngularAcceleration / 2;
+            // rotation
+            double rotationDistance = (thetaFinal - thetaInitial);
+            double rotationAccelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxAngularAcceleration;
+            double rotationDecelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxExtendedAngularAcceleration;
+            double maxRotationDist = rotationDistance - rotationAccelerationTime * rotationAccelerationTime * feederConstraints.maxAngularAcceleration / 2 - rotationDecelerationTime * rotationDecelerationTime * feederConstraints.maxExtendedAngularAcceleration / 2;
 
-            if (maxDist < 0) {
-                accelerationTime = Math.sqrt(distance / feederConstraints.maxAngularAcceleration);
-                decelerationTime = Math.sqrt(distance / feederConstraints.maxExtendedAngularAcceleration);
-                maxDist = 0;
+            if (maxRotationDist < 0) {
+                rotationAccelerationTime = Math.sqrt(rotationDistance / feederConstraints.maxAngularAcceleration);
+                rotationDecelerationTime = Math.sqrt(rotationDistance / feederConstraints.maxExtendedAngularAcceleration);
+                maxRotationDist = 0;
             }
 
-            endAccelerationPhase = accelerationTime;
-            endVelocityPhase = endAccelerationPhase + maxDist / feederConstraints.maxAngularVelocity;
-            endDecelerationPhase = endVelocityPhase + decelerationTime;
+            endRotationAccelerationPhase = rotationAccelerationTime;
+            endRotationVelocityPhase = endRotationAccelerationPhase + maxRotationDist / feederConstraints.maxAngularVelocity;
+            endRotationDecelerationPhase = endRotationVelocityPhase + rotationDecelerationTime;
+
+            // translation
+            double translationDistance = rFinal - rInitial;
+            double translationAccelTime = feederConstraints.maxExtensionVelocity / feederConstraints.maxExtensionAcceleration;
+            double maxTranslationDist = translationDistance - translationAccelTime * translationAccelTime * feederConstraints.maxExtensionAcceleration;
+
+            if (maxTranslationDist < 0) {
+                translationAccelTime = Math.sqrt(translationDistance / feederConstraints.maxExtensionAcceleration);
+                maxTranslationDist = 0;
+            }
+
+            endTranslationAccelerationPhase = translationAccelTime;
+            endTranslationVelocityPhase = endTranslationAccelerationPhase + maxTranslationDist / feederConstraints.maxExtensionVelocity;
+            endTranslationDecelerationPhase = endTranslationVelocityPhase + translationAccelTime;
 
             a = rFinal*Math.sin(thetaFinal) - rInitial*Math.sin(thetaInitial);
             b = -1 * (rFinal*Math.cos(thetaFinal) - rInitial*Math.cos(thetaInitial));
@@ -304,12 +322,13 @@ public class Elevator extends Subsystem {
          */
         public double getAngle(double timestamp) {
             double t = timestamp - startTimestamp;
-            if (t <= endAccelerationPhase) {
-                return t * t * feederConstraints.maxAngularVelocity / 2;
-            } else if (t <= endVelocityPhase) {
-                return endAccelerationPhase * endAccelerationPhase * feederConstraints.maxAngularAcceleration / 2 + feederConstraints.maxAngularVelocity * (t - endVelocityPhase);
-            } else if (t <= endDecelerationPhase) {
-                double timeRemaining = endDecelerationPhase - t;
+            if (t <= endRotationAccelerationPhase) {
+                return t * t * feederConstraints.maxAngularAcceleration / 2;
+            } else if (t <= endRotationVelocityPhase) {
+                return endRotationAccelerationPhase * endRotationAccelerationPhase * feederConstraints.maxAngularAcceleration / 2 +
+                    feederConstraints.maxAngularVelocity * (t - endRotationAccelerationPhase);
+            } else if (t <= endRotationDecelerationPhase) {
+                double timeRemaining = endRotationDecelerationPhase - t;
                 return thetaFinal - (timeRemaining * timeRemaining * feederConstraints.maxExtendedAngularAcceleration / 2);
             } else {
                 return thetaFinal;
@@ -317,13 +336,34 @@ public class Elevator extends Subsystem {
         }
 
         /**
-         * Feeds positional setpoints based on the current timestamp
+         * Returns the profiled translational polar component based on constraints
+         * @param timestamp current timestamp
+         * @return angle
+         */
+        public double getExtension(double timestamp) {
+            double t = timestamp - startTimestamp;
+            if (t <= endTranslationAccelerationPhase) {
+                return t * t * feederConstraints.maxExtensionAcceleration / 2;
+            } else if (t <= endTranslationVelocityPhase) {
+                return endTranslationAccelerationPhase * endTranslationAccelerationPhase * feederConstraints.maxExtensionAcceleration / 2 +
+                    feederConstraints.maxExtensionVelocity * (t - endTranslationAccelerationPhase);
+            } else if (t <= endTranslationDecelerationPhase) {
+                double timeRemaining = endTranslationDecelerationPhase - t;
+                return rFinal - (timeRemaining * timeRemaining * feederConstraints.maxExtensionAcceleration);
+            } else {
+                return rFinal;
+            }
+        }
+
+        /**
+         * Feeds profiled positional setpoints based on the current timestamp
          * @param timestamp current timestamp
          * @return setpoints
          */
         public double[] get(double timestamp) {
             double angle = getAngle(timestamp);
-            double extension = c / (a * Math.cos(angle) + b * Math.sin(angle));
+            double extension = getExtension(timestamp);
+            // double extension = c / (a * Math.cos(angle) + b * Math.sin(angle));
             return new double[] {angle, extension};
         }
     }
