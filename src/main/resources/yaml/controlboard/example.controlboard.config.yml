@@ -20,4 +20,7 @@ operator:
         x: intakeCone
         y: intakeCube
         a: outtake
+    dpad:
+        up: collectElevator
+        down: scoreElevator
 demoMode: false
