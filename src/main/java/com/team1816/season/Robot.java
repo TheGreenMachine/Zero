@@ -310,15 +310,16 @@ public class Robot extends TimedRobot {
                         orchestrator::setScoring
                     ),
                     createAction(
+                        //TODO extend manually for testing
                         () -> controlBoard.getAsBool("extendStage"),
                         () -> {
                             Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
                             if(scoreState == Orchestrator.SCORE_LEVEL_STATE.MIN){
                                 orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
-                                //elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
                             } else if(scoreState == Orchestrator.SCORE_LEVEL_STATE.MID){
                                 orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MAX);
-                                //elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MAX);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MAX);
                             }
                         }
                     ),

@@ -81,6 +81,7 @@ public class Orchestrator {
     }
 
     public void setDesiredScoreLevelState(SCORE_LEVEL_STATE dsls) {
+        System.out.println("setDesiredScoreLevelState happy");
         desiredScoreLevelState = dsls;
         robotState.scoreLevelState = dsls; //TODO
     }

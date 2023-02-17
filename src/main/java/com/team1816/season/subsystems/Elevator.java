@@ -2,6 +2,7 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.team1816.lib.Infrastructure;
+import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.configuration.Constants;
@@ -144,8 +145,8 @@ public class Elevator extends Subsystem {
         actualAnglePosition = angleMotorMain.getSelectedSensorPosition(0);
         actualAngleVel = angleMotorMain.getSelectedSensorVelocity(0);
 
-        actualExtensionPosition = extensionMotor.getSelectedSensorPosition(0);
-        actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0);
+        actualExtensionPosition = extensionMotor.getSelectedSensorPosition(1);
+        actualExtensionVel = extensionMotor.getSelectedSensorVelocity(1);
 
         if (hallEffectTriggered == zeroingHallEffect.get()) {
             zeroingHallEffectTriggerValue = actualAnglePosition;

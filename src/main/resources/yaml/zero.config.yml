@@ -82,8 +82,8 @@ subsystems:
     elevator:
         implemented: true
         falcons:
-            angleMotorMain: 6
-            angleMotorFollower: 7
+            angleMotorMain: -1 #6
+            angleMotorFollower: 0 #7
             extensionMotor: 15
         pidConfig:
             slot0:
@@ -102,9 +102,9 @@ subsystems:
             stowAnglePosition: 0
             collectAnglePosition: -61000
             scoreAnglePosition: 0
-            minExtensionPosition: 0
-            midExtensionPosition: 512
-            maxExtensionPosition: 1024
+            minExtensionPosition: 50000
+            midExtensionPosition: 100000
+            maxExtensionPosition: 150000
     collector:
         implemented: false
         solenoids:
