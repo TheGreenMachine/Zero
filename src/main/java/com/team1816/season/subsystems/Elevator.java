@@ -46,14 +46,15 @@ public class Elevator extends Subsystem {
     /**
      * States
      */
-    private double actualExtensionPosition;
-    private double actualAnglePosition;
+    private double actualExtensionPosition = 0;
+    private double actualAnglePosition = 0;
     private double actualAngleThetaDegrees;
     private double actualExtensionMeters;
     private double actualAngleVel;
     private double actualExtensionVel;
-    private ANGLE_STATE desiredAnglePosition = ANGLE_STATE.STOW;
-    private EXTENSION_STATE desiredExtensionPosition = EXTENSION_STATE.MIN;
+    private ANGLE_STATE desiredAngleState = ANGLE_STATE.STOW;
+    private EXTENSION_STATE desiredExtensionState = EXTENSION_STATE.MIN;
+
     private boolean outputsChanged;
     private boolean hallEffectTriggered;
     private double zeroingHallEffectTriggerValue;
@@ -128,8 +129,8 @@ public class Elevator extends Subsystem {
      * @param desiredAngleState - Desired state for the angle of the elevator
      */
     public void setDesiredAngleState(ANGLE_STATE desiredAngleState) {
-        if (desiredAnglePosition != desiredAngleState) {
-            desiredAnglePosition = desiredAngleState;
+        if (this.desiredAngleState != desiredAngleState) {
+            this.desiredAngleState = desiredAngleState;
             outputsChanged = true;
         }
     }
@@ -140,8 +141,8 @@ public class Elevator extends Subsystem {
      * @param desiredExtensionState - Desired state for the extension of the elevator
      */
     public void setDesiredExtensionState(EXTENSION_STATE desiredExtensionState) {
-        if (desiredExtensionPosition != desiredExtensionState) {
-            desiredExtensionPosition = desiredExtensionState;
+        if (this.desiredExtensionState != desiredExtensionState) {
+            this.desiredExtensionState = desiredExtensionState;
             outputsChanged = true;
         }
     }
@@ -167,6 +168,15 @@ public class Elevator extends Subsystem {
             System.out.println(zeroingHallEffectTriggerValue);
         }
         hallEffectTriggered = !zeroingHallEffect.get();
+
+        if(Math.abs(desiredAngleState.getAngle() - actualAnglePosition) < 1000){//TODO calibrate range
+            robotState.actualAngleState = desiredAngleState;
+        }
+        if(Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < 5000){//TODO calibrate range
+            robotState.actualExtensionState = desiredExtensionState;
+        }
+
+
     }
 
     /**
@@ -178,7 +188,7 @@ public class Elevator extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
-            switch (desiredExtensionPosition) {
+            switch (desiredExtensionState) {
                 case MAX:
                     extensionMotor.set(ControlMode.Position, (maxExtension));
                     break;
@@ -190,7 +200,7 @@ public class Elevator extends Subsystem {
                     break;
 
             }
-            switch (desiredAnglePosition) {
+            switch (desiredAngleState) {
                 case STOW:
                     angleMotorMain.set(ControlMode.Position, (stowAngle));
                     break;

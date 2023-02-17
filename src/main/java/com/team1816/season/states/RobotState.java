@@ -4,6 +4,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
+import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -48,6 +49,9 @@ public class RobotState {
     public Orchestrator.SCORE_LEVEL_STATE scoreLevelState = Orchestrator.SCORE_LEVEL_STATE.MIN;
     public List<VisionPoint> visibleTargets = new ArrayList<>();
     public double drivetrainTemp = 0;
+    public Elevator.EXTENSION_STATE actualExtensionState = Elevator.EXTENSION_STATE.MIN;
+    public Elevator.ANGLE_STATE actualAngleState = Elevator.ANGLE_STATE.STOW;
+
 
     /**
      * Initializes RobotState and field
