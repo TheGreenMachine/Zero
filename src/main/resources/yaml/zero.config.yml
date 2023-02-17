@@ -92,6 +92,12 @@ subsystems:
                 kD: 2
                 kF: 0
                 allowableError: 100
+            slot1:
+                kP: 10
+                kI: 0.001
+                kD: 200
+                kF: 0
+                allowableError: 100
         constants:
             stowAnglePosition: 0
             collectAnglePosition: -61000

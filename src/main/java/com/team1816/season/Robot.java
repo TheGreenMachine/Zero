@@ -300,14 +300,6 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
                     ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("intakeCone"),
-                        (pressed) -> orchestrator.setCollecting(pressed, false)
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("intakeCube"),
-                        (pressed) -> orchestrator.setCollecting(pressed, true)
-                    ),
                     // Operator Gamepad
                     createAction( // TODO remove, for testing purposes only
                         () -> controlBoard.getAsBool("updatePose"),
@@ -323,9 +315,10 @@ public class Robot extends TimedRobot {
                             Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
                             if(scoreState == Orchestrator.SCORE_LEVEL_STATE.MIN){
                                 orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
-                            }
-                            else if(scoreState == Orchestrator.SCORE_LEVEL_STATE.MID){
+                                //elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
+                            } else if(scoreState == Orchestrator.SCORE_LEVEL_STATE.MID){
                                 orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MAX);
+                                //elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MAX);
                             }
                         }
                     ),
@@ -335,11 +328,20 @@ public class Robot extends TimedRobot {
                             Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
                             if(scoreState == Orchestrator.SCORE_LEVEL_STATE.MID){
                                 orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MIN);
-                            }
-                            else if(scoreState == Orchestrator.SCORE_LEVEL_STATE.MAX){
+                                //elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
+                            } else if(scoreState == Orchestrator.SCORE_LEVEL_STATE.MAX){
                                 orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
+                                //elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
                             }
                         }
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("intakeCone"),
+                        (pressed) -> orchestrator.setCollecting(pressed, false)
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("intakeCube"),
+                        (pressed) -> orchestrator.setCollecting(pressed, true)
                     )
                 );
         } catch (Throwable t) {
