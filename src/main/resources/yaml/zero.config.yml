@@ -84,7 +84,7 @@ subsystems:
         falcons:
             angleMotorMain: 6
             angleMotorFollower: 7
-            extensionMotor: -1
+            extensionMotor: 15
         pidConfig:
             slot0:
                 kP: 0.04
@@ -100,7 +100,7 @@ subsystems:
             midExtensionPosition: 512
             maxExtensionPosition: 1024
     collector:
-        implemented: true
+        implemented: false
         solenoids:
             intakeSolenoid: 7
         sparkmaxes:

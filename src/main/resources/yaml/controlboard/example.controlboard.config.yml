@@ -16,11 +16,12 @@ driver:
         start: zeroPose
 operator:
     rumble: false
-    buttonpad:
-        x: intakeCone
-        y: intakeCube
-        a: outtake
     dpad:
-        up: collectElevator
-        down: scoreElevator
+        up: extendStage
+        down: descendStage
+    buttons:
+        rightBumper: outtake
+    axes:
+        leftTrigger: intakeCube
+        rightTrigger: intakeCone
 demoMode: false

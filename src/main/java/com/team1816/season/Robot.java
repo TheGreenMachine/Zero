@@ -308,22 +308,38 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("intakeCube"),
                         (pressed) -> orchestrator.setCollecting(pressed, true)
                     ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("outtake"),
-                        orchestrator::setScoring
-                    ),
                     // Operator Gamepad
                     createAction( // TODO remove, for testing purposes only
                         () -> controlBoard.getAsBool("updatePose"),
                         orchestrator::updatePoseWithCamera
                     ),
                     createHoldAction(
-                            () -> controlBoard.getAsBool("collectElevator"),
-                            (pressed) -> elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT)
+                        () -> controlBoard.getAsBool("outtake"),
+                        orchestrator::setScoring
                     ),
-                    createHoldAction(
-                            () -> controlBoard.getAsBool("scoreElevator"),
-                            (pressed) -> elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE)
+                    createAction(
+                        () -> controlBoard.getAsBool("extendStage"),
+                        () -> {
+                            Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
+                            if(scoreState == Orchestrator.SCORE_LEVEL_STATE.MIN){
+                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
+                            }
+                            else if(scoreState == Orchestrator.SCORE_LEVEL_STATE.MID){
+                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MAX);
+                            }
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("descendStage"),
+                        () -> {
+                            Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
+                            if(scoreState == Orchestrator.SCORE_LEVEL_STATE.MID){
+                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MIN);
+                            }
+                            else if(scoreState == Orchestrator.SCORE_LEVEL_STATE.MAX){
+                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
+                            }
+                        }
                     )
                 );
         } catch (Throwable t) {

@@ -77,12 +77,12 @@ public class Orchestrator {
 
     public void setOrchestratorState(STATE state) {
         orhcestratorState = state;
-        robotState.orchestratorState = state;
+        robotState.orchestratorState = state; //TODO
     }
 
     public void setDesiredScoreLevelState(SCORE_LEVEL_STATE dsls) {
         desiredScoreLevelState = dsls;
-        robotState.scoreLevelState = dsls;
+        robotState.scoreLevelState = dsls; //TODO
     }
 
     /** Actions */
@@ -185,7 +185,11 @@ public class Orchestrator {
         }
     }
 
+
+
     /** TODO: Update Subsystem States */
+    public void update() {
+    }
 
     /** Superseded Odometry Handling */
 
