@@ -70,19 +70,25 @@ public class Elevator extends Subsystem {
     public Elevator(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
 
-        //components
+        // components
         this.angleMotorMain = factory.getMotor(NAME,"angleMotorMain");
         this.angleMotorFollower = factory.getFollowerMotor(NAME,"angleMotorFollower", angleMotorMain);
         this.extensionMotor = factory.getMotor(NAME,"extensionMotor");
         this.zeroingHallEffect = new DigitalInput(0);
 
-        double peakOutput = 0.60;
-        angleMotorMain.configPeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
-        angleMotorMain.configPeakOutputReverse(-peakOutput, Constants.kCANTimeoutMs);
-        angleMotorMain.configClosedLoopPeakOutput(0, peakOutput, Constants.kCANTimeoutMs);
-        angleMotorFollower.configPeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
-        angleMotorFollower.configPeakOutputReverse(-peakOutput, Constants.kCANTimeoutMs);
-        angleMotorMain.configClosedLoopPeakOutput(0, peakOutput, Constants.kCANTimeoutMs);
+        double extensionPeakOutput = 0.80;
+        extensionMotor.configPeakOutputForward(extensionPeakOutput, Constants.kCANTimeoutMs);
+        extensionMotor.configPeakOutputReverse(-extensionPeakOutput, Constants.kCANTimeoutMs);
+        extensionMotor.configClosedLoopPeakOutput(1, extensionPeakOutput, Constants.kCANTimeoutMs);
+        extensionMotor.selectProfileSlot(1, 0); // uses the system slot1 configuration for extension control
+
+        double angularPeakOutput = 0.60;
+        angleMotorMain.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorMain.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorFollower.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorFollower.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
 
         // constants
         stowAngle = factory.getConstant(NAME,"stowAnglePosition");
@@ -145,8 +151,8 @@ public class Elevator extends Subsystem {
         actualAnglePosition = angleMotorMain.getSelectedSensorPosition(0);
         actualAngleVel = angleMotorMain.getSelectedSensorVelocity(0);
 
-        actualExtensionPosition = extensionMotor.getSelectedSensorPosition(1);
-        actualExtensionVel = extensionMotor.getSelectedSensorVelocity(1);
+        actualExtensionPosition = extensionMotor.getSelectedSensorPosition(0); // not slot id
+        actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
 
         if (hallEffectTriggered == zeroingHallEffect.get()) {
             zeroingHallEffectTriggerValue = actualAnglePosition;
