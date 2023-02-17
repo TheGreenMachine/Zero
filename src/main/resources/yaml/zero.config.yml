@@ -102,9 +102,11 @@ subsystems:
             stowAnglePosition: 0
             collectAnglePosition: -61000
             scoreAnglePosition: 0
-            minExtensionPosition: 50000
-            midExtensionPosition: 100000
-            maxExtensionPosition: 150000
+            minExtensionPosition: 0
+            midExtensionPosition: 150000
+            maxExtensionPosition: 330000
+            reverseExtensionLimit: -200
+            forwardExtensionLimit: 350000
     collector:
         implemented: false
         solenoids:

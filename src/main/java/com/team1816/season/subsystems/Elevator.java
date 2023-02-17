@@ -78,8 +78,13 @@ public class Elevator extends Subsystem {
         double extensionPeakOutput = 0.80;
         extensionMotor.configPeakOutputForward(extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.configPeakOutputReverse(-extensionPeakOutput, Constants.kCANTimeoutMs);
+        extensionMotor.configForwardSoftLimitEnable(true, Constants.kCANTimeoutMs);
+        extensionMotor.configReverseSoftLimitEnable(true, Constants.kCANTimeoutMs);
+        extensionMotor.configForwardSoftLimitThreshold(factory.getConstant(NAME, "forwardExtensionLimit"), Constants.kCANTimeoutMs);
+        extensionMotor.configReverseSoftLimitThreshold(factory.getConstant(NAME, "reverseExtensionLimit"), Constants.kCANTimeoutMs);
         extensionMotor.configClosedLoopPeakOutput(1, extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.selectProfileSlot(1, 0); // uses the system slot1 configuration for extension control
+
 
         double angularPeakOutput = 0.60;
         angleMotorMain.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
