@@ -44,11 +44,12 @@ public class Collector extends Subsystem {
 
     /**
      * Base constructor needed to instantiate a collector
+     *
      * @param inf Infrastructure
-     * @param rs RobotState
+     * @param rs  RobotState
      */
     @Inject
-    public Collector (Infrastructure inf, RobotState rs) {
+    public Collector(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         intakeSolenoid = factory.getSolenoid(NAME, "intakeSolenoid");
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
@@ -61,8 +62,9 @@ public class Collector extends Subsystem {
 
     /**
      * Sets the desired state of the collector
+     *
      * @param controlMode desired control mode
-     * @param pivotState desired collector pivot state
+     * @param pivotState  desired collector pivot state
      * @param rollerState desired collector roller state
      */
     public void setDesiredState(ControlMode controlMode, PIVOT_STATE pivotState, ROLLER_STATE rollerState) {
@@ -82,6 +84,7 @@ public class Collector extends Subsystem {
 
     /**
      * Reads roller velocity
+     *
      * @see Subsystem#readFromHardware()
      */
     @Override
@@ -91,6 +94,7 @@ public class Collector extends Subsystem {
 
     /**
      * Writes outputs to collector motor and solenoid
+     *
      * @see Subsystem#writeToHardware()
      */
     @Override
@@ -144,6 +148,7 @@ public class Collector extends Subsystem {
 
     /**
      * Tests the collector subsystem, returns true if tests passed
+     *
      * @return true if tests passed
      */
     @Override

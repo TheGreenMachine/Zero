@@ -90,6 +90,7 @@ public class Orchestrator {
 
     /**
      * Sets the orchestrator to collect
+     *
      * @param collecting
      */
     public void setCollecting(boolean collecting) {
@@ -102,8 +103,9 @@ public class Orchestrator {
 
     /**
      * Sets the orchestrator to collect
+     *
      * @param collecting collecting
-     * @param cube cube
+     * @param cube       cube
      */
     public void setCollecting(boolean collecting, boolean cube) {
         setCollectorCollecting(collecting, cube);
@@ -112,6 +114,7 @@ public class Orchestrator {
 
     /**
      * Sets the orchestrator to score
+     *
      * @param scoring scoring
      */
     public void setScoring(boolean scoring) {
@@ -127,8 +130,9 @@ public class Orchestrator {
 
     /**
      * Sets the desired state of the collector to collect
+     *
      * @param collecting collecting
-     * @param cube field element
+     * @param cube       field element
      */
     public void setCollectorCollecting(boolean collecting, boolean cube) {
         if (collecting) {
@@ -146,6 +150,7 @@ public class Orchestrator {
 
     /**
      * Sets the desired state of the collector to score based on the stored field element
+     *
      * @param scoring scoring
      */
     public void setCollectorScoring(boolean scoring) {
@@ -163,6 +168,7 @@ public class Orchestrator {
 
     /**
      * Sets the desired state of the elevator to collect
+     *
      * @param collecting collecting
      */
     public void setElevatorCollecting(boolean collecting) {
@@ -175,8 +181,9 @@ public class Orchestrator {
 
     /**
      * Sets the desired state of the elevator to score based on the desired level fed by robot state
+     *
      * @param scoring scoring
-     * @param level desired level
+     * @param level   desired level
      */
     public void setElevatorScoring(boolean scoring, Elevator.EXTENSION_STATE level) {
         if (scoring) {
@@ -187,8 +194,9 @@ public class Orchestrator {
     }
 
 
-
-    /** TODO: Update Subsystem States */
+    /**
+     * TODO: Update Subsystem States
+     */
     public void update() {
     }
 

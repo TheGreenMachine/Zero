@@ -2,7 +2,6 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.team1816.lib.Infrastructure;
-import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.configuration.Constants;
@@ -63,17 +62,17 @@ public class Elevator extends Subsystem {
     /**
      * Base constructor needed to instantiate a subsystem
      *
-     * @param inf  Infrastructure
-     * @param rs   RobotState
+     * @param inf Infrastructure
+     * @param rs  RobotState
      */
     @Inject
     public Elevator(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
 
         // components
-        this.angleMotorMain = factory.getMotor(NAME,"angleMotorMain");
-        this.angleMotorFollower = factory.getFollowerMotor(NAME,"angleMotorFollower", angleMotorMain);
-        this.extensionMotor = factory.getMotor(NAME,"extensionMotor");
+        this.angleMotorMain = factory.getMotor(NAME, "angleMotorMain");
+        this.angleMotorFollower = factory.getFollowerMotor(NAME, "angleMotorFollower", angleMotorMain);
+        this.extensionMotor = factory.getMotor(NAME, "extensionMotor");
         this.zeroingHallEffect = new DigitalInput(0);
 
         double extensionPeakOutput = 0.80;
@@ -91,7 +90,7 @@ public class Elevator extends Subsystem {
         angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
 
         // constants
-        stowAngle = factory.getConstant(NAME,"stowAnglePosition");
+        stowAngle = factory.getConstant(NAME, "stowAnglePosition");
         collectAngle = factory.getConstant(NAME, "collectAnglePosition");
         scoreAngle = factory.getConstant(NAME, "scoreAnglePosition");
         minExtension = factory.getConstant(NAME, "minExtensionPosition");
@@ -107,7 +106,8 @@ public class Elevator extends Subsystem {
 
     /**
      * Sets the desired angle and extension state of the elevator
-     * @param elevatorAngleState - the angle of the elevator
+     *
+     * @param elevatorAngleState     - the angle of the elevator
      * @param elevatorExtensionState - how far the elevator is extended
      * @see this#setDesiredAngleState(ANGLE_STATE)
      * @see this#setDesiredExtensionState(EXTENSION_STATE)
@@ -119,6 +119,7 @@ public class Elevator extends Subsystem {
 
     /**
      * Sets the desired angle and extension state of the elevator
+     *
      * @param desiredAngleState - Desired state for the angle of the elevator
      */
     public void setDesiredAngleState(ANGLE_STATE desiredAngleState) {
@@ -130,6 +131,7 @@ public class Elevator extends Subsystem {
 
     /**
      * Sets the desired angle and extension state of the elevator
+     *
      * @param desiredExtensionState - Desired state for the extension of the elevator
      */
     public void setDesiredExtensionState(EXTENSION_STATE desiredExtensionState) {
@@ -141,11 +143,12 @@ public class Elevator extends Subsystem {
 
     /**
      * Reads extension and angle motor positions and their corresponding velocities
+     *
      * @see Subsystem#readFromHardware()
      */
     @Override
     public void readFromHardware() {
-        if(actualAngleVel != angleMotorMain.getSelectedSensorVelocity(0)){ //TODO we need a method of motor calibration
+        if (actualAngleVel != angleMotorMain.getSelectedSensorVelocity(0)) { //TODO we need a method of motor calibration
             System.out.println(angleMotorMain.getSelectedSensorVelocity(0));
         }
         actualAnglePosition = angleMotorMain.getSelectedSensorPosition(0);
@@ -163,13 +166,14 @@ public class Elevator extends Subsystem {
 
     /**
      * Writes outputs to extension and angle motors
+     *
      * @see Subsystem#writeToHardware()
      */
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
-            switch (desiredExtensionPosition){
+            switch (desiredExtensionPosition) {
                 case MAX:
                     extensionMotor.set(ControlMode.Position, (maxExtension));
                     break;
@@ -212,6 +216,7 @@ public class Elevator extends Subsystem {
 
     /**
      * Tests the elevator, returns true if tests passed
+     *
      * @return true if tests passed
      */
     @Override
@@ -219,15 +224,23 @@ public class Elevator extends Subsystem {
         return false;
     }
 
-    /** Base enums **/
+    /**
+     * Base enums
+     **/
     public enum ANGLE_STATE {
         STOW(stowAngle),
         COLLECT(collectAngle),
         SCORE(scoreAngle);
 
         private final double angle;
-        ANGLE_STATE(double angle) {this.angle = angle;}
-        public double getAngle() {return angle;}
+
+        ANGLE_STATE(double angle) {
+            this.angle = angle;
+        }
+
+        public double getAngle() {
+            return angle;
+        }
 
     }
 
@@ -237,8 +250,14 @@ public class Elevator extends Subsystem {
         MAX(maxExtension);
 
         private final double extension;
-        EXTENSION_STATE(double extension) {this.extension = extension;}
-        public double getExtension() {return extension;}
+
+        EXTENSION_STATE(double extension) {
+            this.extension = extension;
+        }
+
+        public double getExtension() {
+            return extension;
+        }
     }
 
     /**
@@ -275,6 +294,7 @@ public class Elevator extends Subsystem {
 
         /**
          * Initializes a setpoint feeder
+         *
          * @param f profile constraints
          */
         public SetPointFeeder(FeederConstraints f) {
@@ -310,18 +330,19 @@ public class Elevator extends Subsystem {
             endTranslationVelocityPhase = endTranslationAccelerationPhase + maxTranslationDist / feederConstraints.maxExtensionVelocity;
             endTranslationDecelerationPhase = endTranslationVelocityPhase + translationAccelTime;
 
-            a = rFinal*Math.sin(thetaFinal) - rInitial*Math.sin(thetaInitial);
-            b = -1 * (rFinal*Math.cos(thetaFinal) - rInitial*Math.cos(thetaInitial));
-            c = -1 * rInitial*Math.sin(thetaInitial) * (rFinal*Math.cos(thetaFinal) - rInitial*Math.cos(thetaInitial));
+            a = rFinal * Math.sin(thetaFinal) - rInitial * Math.sin(thetaInitial);
+            b = -1 * (rFinal * Math.cos(thetaFinal) - rInitial * Math.cos(thetaInitial));
+            c = -1 * rInitial * Math.sin(thetaInitial) * (rFinal * Math.cos(thetaFinal) - rInitial * Math.cos(thetaInitial));
         }
 
         /**
          * Initializes a full setpoint feeder with initial and final constraints
-         * @param f profile constraints
-         * @param rInitial initial extension
+         *
+         * @param f            profile constraints
+         * @param rInitial     initial extension
          * @param thetaInitial initial angle
-         * @param rFinal final extension
-         * @param thetaFinal final angle
+         * @param rFinal       final extension
+         * @param thetaFinal   final angle
          */
         public SetPointFeeder(FeederConstraints f, double rInitial, double thetaInitial, double rFinal, double thetaFinal) {
             this.rInitial = rInitial;
@@ -334,6 +355,7 @@ public class Elevator extends Subsystem {
 
         /**
          * Sets the starting timestamp of the set point feeder
+         *
          * @param timestamp
          */
         public void start(double timestamp) {
@@ -342,6 +364,7 @@ public class Elevator extends Subsystem {
 
         /**
          * Returns the profiled angular polar component based on constraints
+         *
          * @param timestamp current timestamp
          * @return angle
          */
@@ -362,6 +385,7 @@ public class Elevator extends Subsystem {
 
         /**
          * Returns the profiled translational polar component based on constraints
+         *
          * @param timestamp current timestamp
          * @return angle
          */
@@ -382,6 +406,7 @@ public class Elevator extends Subsystem {
 
         /**
          * Feeds profiled positional setpoints based on the current timestamp
+         *
          * @param timestamp current timestamp
          * @return setpoints {rotation, translation}
          */
@@ -389,7 +414,7 @@ public class Elevator extends Subsystem {
             double angle = getAngle(timestamp);
             double extension = getExtension(timestamp);
             // double extension = c / (a * Math.cos(angle) + b * Math.sin(angle));
-            return new double[] {angle, extension};
+            return new double[]{angle, extension};
         }
     }
 
