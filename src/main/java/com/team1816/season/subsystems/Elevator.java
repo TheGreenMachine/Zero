@@ -36,6 +36,10 @@ public class Elevator extends Subsystem {
     private static double minExtension;
     private static double midExtension;
     private static double maxExtension;
+
+    private static double allowableAngleError;
+    private static double allowableExtensionError;
+
     private static double maxAngularVelocity; // rad/s
     private static double maxAngularAcceleration; // rad/s^2
     private static double maxExtendedAngularAcceleration; // rad/s^2
@@ -103,6 +107,9 @@ public class Elevator extends Subsystem {
         midExtension = factory.getConstant(NAME, "midExtensionPosition");
         maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
 
+        allowableAngleError = factory.getPidSlotConfig(NAME, "slot0").allowableError;
+        allowableExtensionError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
+
         maxAngularVelocity = factory.getConstant(NAME, "maxAngularVelocity");
         maxAngularAcceleration = factory.getConstant(NAME, "maxAngularAcceleration");
         maxExtensionAcceleration = factory.getConstant(NAME, "maxExtendedAngularAcceleration");
@@ -169,14 +176,12 @@ public class Elevator extends Subsystem {
         }
         hallEffectTriggered = !zeroingHallEffect.get();
 
-        if(Math.abs(desiredAngleState.getAngle() - actualAnglePosition) < 1000){//TODO calibrate range
+        if (Math.abs(desiredAngleState.getAngle() - actualAnglePosition) < allowableAngleError) {
             robotState.actualAngleState = desiredAngleState;
         }
-        if(Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < 5000){//TODO calibrate range
+        if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError) {
             robotState.actualExtensionState = desiredExtensionState;
         }
-
-
     }
 
     /**
