@@ -68,16 +68,16 @@ subsystems:
             maxVelTicks100ms: 12275.7 # ticks per 100ms
             openLoopRampRate: 0.8
             isSwerve: 1
-            encPPR: 13464
+            encPPR: 14641
             azimuthEncPPR: 4096
             maxRotVel: 18
             trackWidth: 21 #inches
             wheelbaseLength: 21.5 #inches
             wheelDiameter: 4
             kTrackScrubFactor: 1.0
-            maxVelOpenLoop: 3.9 # meters/s
-            maxVelPathFollowing: 3.9 # meters/s (2.2)
-            maxAccel: 3.17 # meters/s^ 2
+            maxVelOpenLoop: 0.9 # meters/s
+            maxVelPathFollowing: 0.9 # meters/s (2.2)
+            maxAccel: 0.17 # meters/s^ 2
             isDemoMode: 0
     elevator:
         implemented: true
@@ -152,13 +152,10 @@ controlboard: example
 constants:
     # drivetrain dimensions and movement
     maxRotVel: 14
-    trackWidth: 21 #inches
-    wheelbaseLength: 21.5 #inches
+    trackWidth: 19.75 #inches
+    wheelbaseLength: 19.75 #inches
     wheelDiameter: 4
     kTrackScrubFactor: 1.0
-    maxVelOpenLoop: 3.2 # meters/s
-    maxVelPathFollowing: 3.6 # meters/s (2.2)
-    maxAccel: 2.54 # meters/s^ 2
     minAllowablePoseError: 0.1
     maxAllowablePoseError: 5
     ## Logging ##
