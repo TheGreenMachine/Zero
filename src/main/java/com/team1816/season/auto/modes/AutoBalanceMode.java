@@ -15,7 +15,7 @@ import java.util.List;
 public class AutoBalanceMode extends AutoMode {
 
     public AutoBalanceMode(){
-        super(List.of(new TrajectoryAction(new DriveStraightPath(78))));
+        super(List.of(new TrajectoryAction(new DriveStraightPath(2))));
     }
 
     @Override
