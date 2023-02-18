@@ -28,5 +28,5 @@ operator:
     buttonpad:
         y: stowPosition
         a: collectPosition
-        b: testPosition
+        b: scorePosition
 demoMode: false

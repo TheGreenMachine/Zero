@@ -154,6 +154,14 @@ public class Elevator extends Subsystem {
         }
     }
 
+    public ANGLE_STATE getDesiredAngleState() {
+        return this.desiredAngleState;
+    }
+
+    public EXTENSION_STATE getDesiredExtensionState() {
+        return this.desiredExtensionState;
+    }
+
     /**
      * Reads extension and angle motor positions and their corresponding velocities
      *

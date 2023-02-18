@@ -91,20 +91,20 @@ subsystems:
                 kI: 0.00002
                 kD: 1.4
                 kF: 0
-                allowableError: 100
+                allowableError: 1000
             slot1:
                 kP: 0.15
                 kI: 0.001
                 kD: 2.25
                 kF: 0
-                allowableError: 1000
+                allowableError: 4000
         constants:
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
             forwardAngleLimit: 10000 # Elevator horizontal orientation
             reverseAngleLimit: -100000 # Elevator vertical orientation
             stowAnglePosition: 0
-            collectAnglePosition: -85000
+            collectAnglePosition: -105000
             scoreAnglePosition: -48000
             minExtensionPosition: 20000
             midExtensionPosition: 141000

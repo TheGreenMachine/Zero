@@ -312,12 +312,13 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("extendStage"),
                         () -> {
-                            Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
-                            if (scoreState == Orchestrator.SCORE_LEVEL_STATE.MIN) {
-                                //orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
+//                            Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
+                            Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
+                            if (extensionState == Elevator.EXTENSION_STATE.MIN) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
                                 elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
-                            } else if (scoreState == Orchestrator.SCORE_LEVEL_STATE.MID) {
-                                //orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MAX);
+                            } else if (extensionState == Elevator.EXTENSION_STATE.MID) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MAX);
                                 elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MAX);
                             }
                         }
@@ -325,12 +326,13 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("descendStage"),
                         () -> {
-                            Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
-                            if (scoreState == Orchestrator.SCORE_LEVEL_STATE.MID) {
-                                //orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MIN);
+//                            Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
+                            Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
+                            if (extensionState == Elevator.EXTENSION_STATE.MID) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MIN);
                                 elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
-                            } else if (scoreState == Orchestrator.SCORE_LEVEL_STATE.MAX) {
-                                //orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
+                            } else if (extensionState == Elevator.EXTENSION_STATE.MAX) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
                                 elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
                             }
                         }
@@ -352,11 +354,13 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("collectPosition"),
                         () -> {
-                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+                            if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
+                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+                            }
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("testPosition"),
+                        () -> controlBoard.getAsBool("scorePosition"),
                         () -> {
                             elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
                         }
