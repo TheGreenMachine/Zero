@@ -287,9 +287,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         double maxFlatRange = Constants.pitchRollMaxFlat;
 
+        double autoBalanceDivider = Constants.autoBalanceDivider;
+
         if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
-            throttle = pitch / 30;
-            strafe = roll / 30;
+            throttle = pitch / autoBalanceDivider;
+            strafe = roll / autoBalanceDivider;
         }
 
         if (!Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds())) {
