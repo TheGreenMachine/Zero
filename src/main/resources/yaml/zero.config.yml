@@ -105,8 +105,8 @@ subsystems:
             reverseAngleLimit: -100000 # Elevator vertical orientation
             stowAnglePosition: 0
             collectAnglePosition: -101000
-            scoreAnglePosition: -48000
-            scoreDipAnglePosition: -420000
+            scoreAnglePosition: -37000
+            scoreDipAnglePosition: -50000
             minExtensionPosition: 20000
             midExtensionPosition: 141000
             maxExtensionPosition: 300000

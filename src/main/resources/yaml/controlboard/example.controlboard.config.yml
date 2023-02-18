@@ -20,7 +20,7 @@ operator:
         up: extendStage
         down: descendStage
     buttons:
-        leftBumper: outtake
+        leftBumper: bobDown
         rightBumper: outtake
     axes:
         leftTrigger: intakeCube

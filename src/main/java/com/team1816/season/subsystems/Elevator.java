@@ -221,6 +221,9 @@ public class Elevator extends Subsystem {
                 case SCORE:
                     angleMotorMain.set(ControlMode.Position, (scoreAngle));
                     break;
+                case SCORE_DIP:
+                    angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
+                    break;
             }
 
         }
