@@ -161,7 +161,7 @@ public class Elevator extends Subsystem {
      */
     @Override
     public void readFromHardware() {
-        if (actualAngleVel != angleMotorMain.getSelectedSensorVelocity(0)) { //TODO we need a method of motor calibration
+        if (actualAngleVel != angleMotorMain.getSelectedSensorVelocity(0)) {
             System.out.println(angleMotorMain.getSelectedSensorVelocity(0));
         }
         actualAnglePosition = angleMotorMain.getSelectedSensorPosition(0);
@@ -177,10 +177,10 @@ public class Elevator extends Subsystem {
         hallEffectTriggered = !zeroingHallEffect.get();
 
         if (Math.abs(desiredAngleState.getAngle() - actualAnglePosition) < allowableAngleError) {
-            robotState.actualAngleState = desiredAngleState;
+            robotState.actualElevatorAngleState = desiredAngleState;
         }
         if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError) {
-            robotState.actualExtensionState = desiredExtensionState;
+            robotState.actualElevatorExtensionState = desiredExtensionState;
         }
     }
 

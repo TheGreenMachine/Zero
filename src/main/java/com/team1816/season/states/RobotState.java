@@ -4,6 +4,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
+import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -34,6 +35,7 @@ public class RobotState {
     public Double[] triAxialAcceleration = new Double[]{0d, 0d, 0d};
     public boolean isPoseUpdated = true;
     public double vehicleToFloorProximityCentimeters = 0;
+    public double drivetrainTemp = 0;
 
     /**
      * Inertial characterization
@@ -47,11 +49,11 @@ public class RobotState {
      */
     public Orchestrator.STATE orchestratorState = Orchestrator.STATE.STOW;
     public Orchestrator.SCORE_LEVEL_STATE scoreLevelState = Orchestrator.SCORE_LEVEL_STATE.MIN;
+    public Elevator.EXTENSION_STATE actualElevatorExtensionState = Elevator.EXTENSION_STATE.MIN;
+    public Elevator.ANGLE_STATE actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
+    public Collector.ROLLER_STATE actualCollectorRollerState = Collector.ROLLER_STATE.STOP;
+    public Collector.PIVOT_STATE actualCollectorPivotState = Collector.PIVOT_STATE.UP;
     public List<VisionPoint> visibleTargets = new ArrayList<>();
-    public double drivetrainTemp = 0;
-    public Elevator.EXTENSION_STATE actualExtensionState = Elevator.EXTENSION_STATE.MIN;
-    public Elevator.ANGLE_STATE actualAngleState = Elevator.ANGLE_STATE.STOW;
-
 
     /**
      * Initializes RobotState and field
@@ -102,6 +104,10 @@ public class RobotState {
         triAxialAcceleration = new Double[]{0d, 0d, 0d};
         orchestratorState = Orchestrator.STATE.STOW;
         scoreLevelState = Orchestrator.SCORE_LEVEL_STATE.MIN;
+        actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
+        actualElevatorExtensionState = Elevator.EXTENSION_STATE.MIN;
+        actualCollectorRollerState = Collector.ROLLER_STATE.STOP;
+        actualCollectorPivotState = Collector.PIVOT_STATE.UP;
         isPoseUpdated = true;
         visibleTargets.clear();
         drivetrainTemp = 0;

@@ -28,8 +28,8 @@ public class Collector extends Subsystem {
     /**
      * Properties
      */
-    public final double cubeIntakeVelocity;
-    public final double cubeOuttakeVelocity;
+    public final double cubeIntakePower;
+    public final double cubeOuttakePower;
     public final double coneIntakeVelocity;
     public final double coneOuttakeVelocity;
 
@@ -40,6 +40,7 @@ public class Collector extends Subsystem {
     private PIVOT_STATE desiredPivotState = PIVOT_STATE.DOWN;
     private ROLLER_STATE desiredRollerState = ROLLER_STATE.STOP;
     private double rollerVelocity = 0;
+    private boolean solenoidOutput = false;
     private boolean outputsChanged = false;
 
     /**
@@ -54,8 +55,8 @@ public class Collector extends Subsystem {
         intakeSolenoid = factory.getSolenoid(NAME, "intakeSolenoid");
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
 
-        cubeIntakeVelocity = factory.getConstant(NAME, "cubeIntakePower", 0.10); // TODO tune these
-        cubeOuttakeVelocity = factory.getConstant(NAME, "cubeOuttakePower", -0.25); // TODO tune these
+        cubeIntakePower = factory.getConstant(NAME, "cubeIntakePower", 0.10); // TODO tune these
+        cubeOuttakePower = factory.getConstant(NAME, "cubeOuttakePower", -0.25); // TODO tune these
         coneIntakeVelocity = factory.getConstant(NAME, "coneIntakeVelocity", -420); // TODO tune these
         coneOuttakeVelocity = factory.getConstant(NAME, "coneOuttakeVelocity", 840); // TODO tune these
     }
@@ -90,6 +91,31 @@ public class Collector extends Subsystem {
     @Override
     public void readFromHardware() {
         rollerVelocity = intakeMotor.getSelectedSensorVelocity(0);
+        solenoidOutput = intakeSolenoid.get();
+
+        if (desiredControlMode == ControlMode.PercentOutput) {
+            if (rollerVelocity > 0) {
+                robotState.actualCollectorRollerState = ROLLER_STATE.INTAKE;
+            } else if (rollerVelocity < 0) {
+                robotState.actualCollectorRollerState = ROLLER_STATE.OUTTAKE;
+            } else {
+                robotState.actualCollectorRollerState = ROLLER_STATE.STOP;
+            }
+        } else if (desiredControlMode == ControlMode.Velocity) {
+            if (rollerVelocity > 0) {
+                robotState.actualCollectorRollerState = ROLLER_STATE.OUTTAKE;
+            } else if (rollerVelocity < 0) {
+                robotState.actualCollectorRollerState = ROLLER_STATE.INTAKE;
+            } else {
+                robotState.actualCollectorRollerState = ROLLER_STATE.STOP;
+            }
+        }
+
+        if (solenoidOutput) {
+            robotState.actualCollectorPivotState = PIVOT_STATE.DOWN;
+        } else {
+            robotState.actualCollectorPivotState = PIVOT_STATE.UP;
+        }
     }
 
     /**
@@ -117,13 +143,13 @@ public class Collector extends Subsystem {
                 case INTAKE:
                     intakeMotor.set(
                         desiredControlMode,
-                        (desiredControlMode == ControlMode.PercentOutput) ? cubeIntakeVelocity : coneIntakeVelocity
+                        (desiredControlMode == ControlMode.PercentOutput) ? cubeIntakePower : coneIntakeVelocity
                     );
                     break;
                 case OUTTAKE:
                     intakeMotor.set(
                         desiredControlMode,
-                        (desiredControlMode == ControlMode.Velocity) ? cubeOuttakeVelocity : coneOuttakeVelocity
+                        (desiredControlMode == ControlMode.Velocity) ? cubeOuttakePower : coneOuttakeVelocity
                     );
                     break;
             }

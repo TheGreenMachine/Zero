@@ -77,13 +77,10 @@ public class Orchestrator {
 
     public void setOrchestratorState(STATE state) {
         orhcestratorState = state;
-        robotState.orchestratorState = state; //TODO
     }
 
     public void setDesiredScoreLevelState(SCORE_LEVEL_STATE dsls) {
-        System.out.println("setDesiredScoreLevelState happy");
         desiredScoreLevelState = dsls;
-        robotState.scoreLevelState = dsls; //TODO
     }
 
     /** Actions */
@@ -98,7 +95,7 @@ public class Orchestrator {
             setOrchestratorState(STATE.COLLECT);
         }
         setCollectorCollecting(collecting, fieldElement == ELEMENT.CUBE);
-        // setElevatorCollecting(collecting);
+        setElevatorCollecting(collecting);
     }
 
     /**
@@ -109,7 +106,7 @@ public class Orchestrator {
      */
     public void setCollecting(boolean collecting, boolean cube) {
         setCollectorCollecting(collecting, cube);
-        // setElevatorCollecting(collecting);
+        //setElevatorCollecting(collecting);
     }
 
     /**
@@ -119,13 +116,13 @@ public class Orchestrator {
      */
     public void setScoring(boolean scoring) {
         setCollectorScoring(scoring);
-//        if (desiredScoreLevelState == SCORE_LEVEL_STATE.MIN) {
-//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MIN);
-//        } else if (desiredScoreLevelState == SCORE_LEVEL_STATE.MID) {
-//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MID);
-//        } else {
-//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MAX);
-//        }
+        if (desiredScoreLevelState == SCORE_LEVEL_STATE.MIN) {
+            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MIN);
+        } else if (desiredScoreLevelState == SCORE_LEVEL_STATE.MID) {
+            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MID);
+        } else {
+            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MAX);
+        }
     }
 
     /**
@@ -195,9 +192,27 @@ public class Orchestrator {
 
 
     /**
-     * TODO: Update Subsystem States
+     * Updates orchestrator states based on subsystem states
      */
     public void update() {
+        if (orhcestratorState == STATE.SCORE) {
+            if (desiredScoreLevelState == SCORE_LEVEL_STATE.MIN && robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.COLLECT && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MIN) {
+                robotState.scoreLevelState = desiredScoreLevelState;
+            } else if (desiredScoreLevelState == SCORE_LEVEL_STATE.MID && robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.SCORE && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MID) {
+                robotState.scoreLevelState = desiredScoreLevelState;
+            } else if (desiredScoreLevelState == SCORE_LEVEL_STATE.MAX && robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.SCORE && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MAX) {
+                robotState.scoreLevelState = desiredScoreLevelState;
+            }
+            robotState.orchestratorState = orhcestratorState;
+        } else if (orhcestratorState == STATE.COLLECT) {
+            if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.COLLECT && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MIN) {
+                robotState.orchestratorState = STATE.COLLECT;
+            }
+        } else {
+            if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.STOW && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MIN) {
+                robotState.orchestratorState = STATE.STOW;
+            }
+        }
     }
 
     /** Superseded Odometry Handling */
