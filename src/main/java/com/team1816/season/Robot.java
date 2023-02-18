@@ -84,6 +84,7 @@ public class Robot extends TimedRobot {
      * Timing
      */
     private double loopStart;
+    public static double dt;
     public static double autoStart;
     public static double teleopStart;
 
@@ -141,6 +142,7 @@ public class Robot extends TimedRobot {
      * @see Looper#getLastLoop()
      */
     public Double getLastEnabledLoop() {
+        dt = enabledLoop.getLastLoop();
         return enabledLoop.getLastLoop();
     }
 
@@ -302,6 +304,76 @@ public class Robot extends TimedRobot {
                     createAction( // TODO remove, for testing purposes only
                         () -> controlBoard.getAsBool("updatePose"),
                         orchestrator::updatePoseWithCamera
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("outtake"),
+                        orchestrator::setScoring
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("bobDown"),
+                        (pressed) -> {
+                            if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
+                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
+                            } else if (!pressed && elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP) {
+                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+                            }
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("extendStage"),
+                        () -> {
+//                            Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
+                            Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
+                            if (extensionState == Elevator.EXTENSION_STATE.MIN) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
+                            } else if (extensionState == Elevator.EXTENSION_STATE.MID) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MAX);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MAX);
+                            }
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("descendStage"),
+                        () -> {
+//                            Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
+                            Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
+                            if (extensionState == Elevator.EXTENSION_STATE.MID) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MIN);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
+                            } else if (extensionState == Elevator.EXTENSION_STATE.MAX) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
+                            }
+                        }
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("intakeCone"),
+                        (pressed) -> orchestrator.setCollecting(pressed, false)
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("intakeCube"),
+                        (pressed) -> orchestrator.setCollecting(pressed, true)
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("stowPosition"),
+                        () -> {
+                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.STOW);
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("collectPosition"),
+                        () -> {
+                            if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
+                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+                            }
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("scorePosition"),
+                        () -> {
+                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+                        }
                     )
                 );
         } catch (Throwable t) {
@@ -416,7 +488,6 @@ public class Robot extends TimedRobot {
             subsystemManager.outputToSmartDashboard(); // update shuffleboard for subsystem values
             robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
-            robotState.dt = getLastEnabledLoop();
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());

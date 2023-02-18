@@ -3,7 +3,6 @@ package com.team1816.lib.subsystems;
 import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.ledManager.ILEDManager;
-import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;

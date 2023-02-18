@@ -5,7 +5,8 @@ package com.team1816.lib.hardware.components.sensor;
  */
 public class GhostProximitySensor implements IProximitySensor {
 
-    public GhostProximitySensor() {}
+    public GhostProximitySensor() {
+    }
 
     @Override
     public String getName() {

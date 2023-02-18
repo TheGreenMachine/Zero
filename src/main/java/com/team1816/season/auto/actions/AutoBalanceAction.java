@@ -30,7 +30,7 @@ public class AutoBalanceAction implements AutoAction {
     private DifferentialDriveKinematics tankKinematics;
 
     private static boolean isSwerve = false;
-    private double maxVelocity;
+    private final double maxVelocity;
 
     public AutoBalanceAction(double maxVelocity) {
         this.maxVelocity = maxVelocity;

@@ -16,6 +16,17 @@ driver:
         start: zeroPose
 operator:
     rumble: false
+    dpad:
+        up: extendStage
+        down: descendStage
+    buttons:
+        leftBumper: bobDown
+        rightBumper: outtake
+    axes:
+        leftTrigger: intakeCube
+        rightTrigger: intakeCone
     buttonpad:
-        x: updatePose
+        y: stowPosition
+        a: collectPosition
+        b: scorePosition
 demoMode: false

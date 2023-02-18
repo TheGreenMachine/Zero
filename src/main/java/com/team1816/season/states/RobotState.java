@@ -4,6 +4,8 @@ import com.google.inject.Singleton;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
+import com.team1816.season.subsystems.Collector;
+import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -33,8 +35,7 @@ public class RobotState {
     public Double[] triAxialAcceleration = new Double[]{0d, 0d, 0d};
     public boolean isPoseUpdated = true;
     public double vehicleToFloorProximityCentimeters = 0;
-
-    public double dt; // detected actual robot loop time in ms
+    public double drivetrainTemp = 0;
 
     /**
      * Inertial characterization
@@ -46,8 +47,13 @@ public class RobotState {
     /**
      * Orchestrator states
      */
+    public Orchestrator.STATE orchestratorState = Orchestrator.STATE.STOW;
+    public Orchestrator.SCORE_LEVEL_STATE scoreLevelState = Orchestrator.SCORE_LEVEL_STATE.MIN;
+    public Elevator.EXTENSION_STATE actualElevatorExtensionState = Elevator.EXTENSION_STATE.MIN;
+    public Elevator.ANGLE_STATE actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
+    public Collector.ROLLER_STATE actualCollectorRollerState = Collector.ROLLER_STATE.STOP;
+    public Collector.PIVOT_STATE actualCollectorPivotState = Collector.PIVOT_STATE.UP;
     public List<VisionPoint> visibleTargets = new ArrayList<>();
-    public double drivetrainTemp = 0;
 
     /**
      * Initializes RobotState and field
@@ -96,11 +102,17 @@ public class RobotState {
         deltaVehicle = new ChassisSpeeds();
         calculatedVehicleAccel = new ChassisSpeeds();
         triAxialAcceleration = new Double[]{0d, 0d, 0d};
+        orchestratorState = Orchestrator.STATE.STOW;
+        scoreLevelState = Orchestrator.SCORE_LEVEL_STATE.MIN;
+        actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
+        actualElevatorExtensionState = Elevator.EXTENSION_STATE.MIN;
+        actualCollectorRollerState = Collector.ROLLER_STATE.STOP;
+        actualCollectorPivotState = Collector.PIVOT_STATE.UP;
         isPoseUpdated = true;
         visibleTargets.clear();
         drivetrainTemp = 0;
         vehicleToFloorProximityCentimeters = 0;
-        target = new Pose2d(5.0, Constants.fieldCenterY, new Rotation2d());
+        target = Constants.fieldCenterPose;
     }
 
     /**

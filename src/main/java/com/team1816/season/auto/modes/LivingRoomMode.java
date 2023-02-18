@@ -11,7 +11,7 @@ import java.util.List;
 
 public class LivingRoomMode extends AutoMode {
 
-    private boolean reflected = false;
+    private final boolean reflected = false;
 
     public LivingRoomMode() {
         super(List.of(new TrajectoryAction(new LivingRoomPath())));
