@@ -33,6 +33,7 @@ public class Elevator extends Subsystem {
     private static double stowAngle;
     private static double collectAngle;
     private static double scoreAngle;
+    private static double scoreDipAngle;
     private static double minExtension;
     private static double midExtension;
     private static double maxExtension;
@@ -103,6 +104,7 @@ public class Elevator extends Subsystem {
         stowAngle = factory.getConstant(NAME, "stowAnglePosition");
         collectAngle = factory.getConstant(NAME, "collectAnglePosition");
         scoreAngle = factory.getConstant(NAME, "scoreAnglePosition");
+        scoreDipAngle = factory.getConstant(NAME, "scoreDipAnglePosition");
         minExtension = factory.getConstant(NAME, "minExtensionPosition");
         midExtension = factory.getConstant(NAME, "midExtensionPosition");
         maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
@@ -180,10 +182,10 @@ public class Elevator extends Subsystem {
         }
         hallEffectTriggered = !zeroingHallEffect.get();
 
-        if (Math.abs(desiredAngleState.getAngle() - actualAnglePosition) < allowableAngleError) {
+        if (Math.abs(desiredAngleState.getAngle() - actualAnglePosition) < allowableAngleError * 2) {
             robotState.actualElevatorAngleState = desiredAngleState;
         }
-        if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError) {
+        if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError * 4) {
             robotState.actualElevatorExtensionState = desiredExtensionState;
         }
     }
@@ -254,7 +256,8 @@ public class Elevator extends Subsystem {
     public enum ANGLE_STATE {
         STOW(stowAngle),
         COLLECT(collectAngle),
-        SCORE(scoreAngle);
+        SCORE(scoreAngle),
+        SCORE_DIP(scoreDipAngle);
 
         private final double angle;
 

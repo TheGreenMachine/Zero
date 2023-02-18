@@ -86,26 +86,27 @@ subsystems:
             angleMotorFollower: 7
             extensionMotor: 15
         pidConfig:
-            slot0:
+            slot0: # rotation
                 kP: 0.02
                 kI: 0.00002
                 kD: 1.4
                 kF: 0
                 allowableError: 1000
-            slot1:
+            slot1: # extension
                 kP: 0.15
                 kI: 0.001
                 kD: 2.25
                 kF: 0
-                allowableError: 4000
+                allowableError: 1000
         constants:
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
             forwardAngleLimit: 10000 # Elevator horizontal orientation
             reverseAngleLimit: -100000 # Elevator vertical orientation
             stowAnglePosition: 0
-            collectAnglePosition: -105000
+            collectAnglePosition: -101000
             scoreAnglePosition: -48000
+            scoreDipAnglePosition: -420000
             minExtensionPosition: 20000
             midExtensionPosition: 141000
             maxExtensionPosition: 300000
