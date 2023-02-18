@@ -116,13 +116,13 @@ public class Orchestrator {
      */
     public void setScoring(boolean scoring) {
         setCollectorScoring(scoring);
-        if (desiredScoreLevelState == SCORE_LEVEL_STATE.MIN) {
-            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MIN);
-        } else if (desiredScoreLevelState == SCORE_LEVEL_STATE.MID) {
-            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MID);
-        } else {
-            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MAX);
-        }
+//        if (desiredScoreLevelState == SCORE_LEVEL_STATE.MIN) {
+//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MIN);
+//        } else if (desiredScoreLevelState == SCORE_LEVEL_STATE.MID) {
+//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MID);
+//        } else {
+//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MAX);
+//        }
     }
 
     /**

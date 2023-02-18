@@ -110,7 +110,7 @@ subsystems:
             midExtensionPosition: 141000
             maxExtensionPosition: 300000
     collector:
-        implemented: false
+        implemented: true
         solenoids:
             intakeSolenoid: 7
         sparkmaxes:
@@ -141,7 +141,7 @@ infrastructure:
     pdId: 1
     pdIsRev: true
     # pneumatics control
-    compressorEnabled: false
+    compressorEnabled: true
     pcmIsRev: false
     pcmId: 2
     # pigeon
