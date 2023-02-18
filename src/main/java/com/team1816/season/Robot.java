@@ -314,10 +314,10 @@ public class Robot extends TimedRobot {
                         () -> {
                             Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
                             if (scoreState == Orchestrator.SCORE_LEVEL_STATE.MIN) {
-                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
+                                //orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
                                 elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
                             } else if (scoreState == Orchestrator.SCORE_LEVEL_STATE.MID) {
-                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MAX);
+                                //orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MAX);
                                 elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MAX);
                             }
                         }
@@ -327,10 +327,10 @@ public class Robot extends TimedRobot {
                         () -> {
                             Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
                             if (scoreState == Orchestrator.SCORE_LEVEL_STATE.MID) {
-                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MIN);
+                                //orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MIN);
                                 elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
                             } else if (scoreState == Orchestrator.SCORE_LEVEL_STATE.MAX) {
-                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
+                                //orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
                                 elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
                             }
                         }

@@ -172,7 +172,6 @@ public class Elevator extends Subsystem {
 
         if (hallEffectTriggered == zeroingHallEffect.get()) {
             zeroingHallEffectTriggerValue = actualAnglePosition;
-            System.out.println(zeroingHallEffectTriggerValue);
         }
         hallEffectTriggered = !zeroingHallEffect.get();
 
