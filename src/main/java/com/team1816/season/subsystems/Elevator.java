@@ -161,9 +161,6 @@ public class Elevator extends Subsystem {
      */
     @Override
     public void readFromHardware() {
-        if (actualAngleVel != angleMotorMain.getSelectedSensorVelocity(0)) {
-            System.out.println(angleMotorMain.getSelectedSensorVelocity(0));
-        }
         actualAnglePosition = angleMotorMain.getSelectedSensorPosition(0);
         actualAngleVel = angleMotorMain.getSelectedSensorVelocity(0);
 

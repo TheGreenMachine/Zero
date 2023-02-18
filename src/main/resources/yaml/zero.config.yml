@@ -93,11 +93,11 @@ subsystems:
                 kF: 0
                 allowableError: 100
             slot1:
-                kP: 5
+                kP: 0.15
                 kI: 0.001
-                kD: 100
+                kD: 2.25
                 kF: 0
-                allowableError: 100
+                allowableError: 1000
         constants:
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
