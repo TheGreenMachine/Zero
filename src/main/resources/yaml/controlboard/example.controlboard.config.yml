@@ -20,8 +20,13 @@ operator:
         up: extendStage
         down: descendStage
     buttons:
+        leftBumper: outtake
         rightBumper: outtake
     axes:
         leftTrigger: intakeCube
         rightTrigger: intakeCone
+    buttonpad:
+        y: stowPosition
+        a: collectPosition
+        b: testPosition
 demoMode: false

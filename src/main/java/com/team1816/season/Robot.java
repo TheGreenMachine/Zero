@@ -310,7 +310,6 @@ public class Robot extends TimedRobot {
                         orchestrator::setScoring
                     ),
                     createAction(
-                        //TODO extend manually for testing
                         () -> controlBoard.getAsBool("extendStage"),
                         () -> {
                             Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
@@ -329,10 +328,10 @@ public class Robot extends TimedRobot {
                             Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
                             if (scoreState == Orchestrator.SCORE_LEVEL_STATE.MID) {
                                 orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MIN);
-                                //elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
                             } else if (scoreState == Orchestrator.SCORE_LEVEL_STATE.MAX) {
                                 orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
-                                //elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
                             }
                         }
                     ),
@@ -343,6 +342,24 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("intakeCube"),
                         (pressed) -> orchestrator.setCollecting(pressed, true)
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("stowPosition"),
+                        () -> {
+                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.STOW);
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("collectPosition"),
+                        () -> {
+                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("testPosition"),
+                        () -> {
+                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+                        }
                     )
                 );
         } catch (Throwable t) {
