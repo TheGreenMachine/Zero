@@ -149,7 +149,7 @@ public class Collector extends Subsystem {
                 case OUTTAKE:
                     intakeMotor.set(
                         desiredControlMode,
-                        (desiredControlMode == ControlMode.Velocity) ? cubeOuttakePower : coneOuttakeVelocity
+                        (desiredControlMode == ControlMode.Velocity) ? coneOuttakeVelocity : cubeOuttakePower
                     );
                     break;
             }

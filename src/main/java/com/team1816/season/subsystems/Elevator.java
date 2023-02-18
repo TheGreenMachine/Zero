@@ -156,6 +156,10 @@ public class Elevator extends Subsystem {
         }
     }
 
+    public void lowerCollectPos(){
+        collectAngle -= 5000;
+    }
+
     public ANGLE_STATE getDesiredAngleState() {
         return this.desiredAngleState;
     }

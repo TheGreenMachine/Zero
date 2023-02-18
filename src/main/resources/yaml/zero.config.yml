@@ -104,9 +104,9 @@ subsystems:
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
             forwardAngleLimit: 10000 # Elevator horizontal orientation
-            reverseAngleLimit: -100000 # Elevator vertical orientation
+            reverseAngleLimit: -130000 # Elevator vertical orientation
             stowAnglePosition: 0
-            collectAnglePosition: -100000
+            collectAnglePosition: -90000
             scoreAnglePosition: -37000
             scoreDipAnglePosition: -50000
             minExtensionPosition: 20000

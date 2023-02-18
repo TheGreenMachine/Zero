@@ -373,6 +373,10 @@ public class Robot extends TimedRobot {
                         () -> {
                             elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
                         }
+                    ),
+                    createAction(
+                            () -> controlBoard.getAsBool("lowerCollectPos"),
+                            elevator::lowerCollectPos
                     )
                 );
         } catch (Throwable t) {
