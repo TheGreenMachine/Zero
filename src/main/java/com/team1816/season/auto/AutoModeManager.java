@@ -3,6 +3,7 @@ package com.team1816.season.auto;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.auto.modes.DoNothingMode;
+import com.team1816.season.auto.modes.AutoBalanceMode;
 import com.team1816.season.auto.modes.DriveStraightMode;
 import com.team1816.season.auto.modes.LivingRoomMode;
 import com.team1816.season.auto.modes.TuneDrivetrainMode;

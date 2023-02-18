@@ -280,7 +280,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds){
         double pitch = infrastructure.getPitch();
-        double roll = -infrastructure.getRoll();
+        double roll = infrastructure.getRoll();
         double throttle = 0;
         double strafe = 0;
         var heading = Constants.EmptyRotation2d;
@@ -294,7 +294,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             strafe = roll / autoBalanceDivider;
         }
 
-        if (!Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds())) {
+        if (!Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds()) && !isBraking) {
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
                     throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond,
                     strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond,

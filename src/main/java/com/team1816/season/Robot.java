@@ -578,7 +578,7 @@ public class Robot extends TimedRobot {
 
         isSwerve = drive instanceof SwerveDrive;
 
-        if(drive.isAutoBalancing() && !drive.isBraking()){
+        if(drive.isAutoBalancing()){
             ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
                     0,
                     -controlBoard.getAsDouble("strafe"),
