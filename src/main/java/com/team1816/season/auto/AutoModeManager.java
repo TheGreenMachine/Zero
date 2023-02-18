@@ -154,7 +154,7 @@ public class AutoModeManager {
         LIVING_ROOM,
         DRIVE_STRAIGHT,
         // 2023
-
+        AUTO_BALANCE
     }
 
     /**
@@ -166,19 +166,17 @@ public class AutoModeManager {
      */
     private AutoMode generateAutoMode(DesiredAuto mode) {
         switch (mode) {
-            case DO_NOTHING -> {
+            case DO_NOTHING:
                 return new DoNothingMode();
-            }
-            case TUNE_DRIVETRAIN -> {
+            case TUNE_DRIVETRAIN:
                 return new TuneDrivetrainMode();
-            }
-            case LIVING_ROOM -> {
-                return new LivingRoomMode(getSelectedColor());
-            }
-            default -> {
+            case LIVING_ROOM:
+                return (new LivingRoomMode());
+            case AUTO_BALANCE:
+                return (new AutoBalanceMode());
+            default:
                 System.out.println("Defaulting to drive straight mode");
                 return new DriveStraightMode();
-            }
         }
     }
 }

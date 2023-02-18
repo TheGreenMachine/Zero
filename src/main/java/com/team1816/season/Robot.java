@@ -12,12 +12,15 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.lib.subsystems.vision.Camera;
+import com.team1816.lib.subsystems.drive.*;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.modes.AutoBalanceMode;
 import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
+import com.team1816.season.subsystems.*;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.wpilibj.*;
@@ -78,7 +81,6 @@ public class Robot extends TimedRobot {
      */
     private final AutoModeManager autoModeManager;
     private Thread autoTargetThread;
-    private Thread autoBalanceThread;
 
     /**
      * Timing
@@ -92,6 +94,13 @@ public class Robot extends TimedRobot {
      * Properties
      */
     private boolean faulted;
+    private Drive.ControlState prevState;
+    private boolean isAutoBalancing;
+    private double autoBalanceDivider;
+    private static boolean isSwerve = false;
+
+
+
     public static boolean runningAutoTarget = false;
     public static boolean runningAutoBalance = false;
 
@@ -114,6 +123,8 @@ public class Robot extends TimedRobot {
         infrastructure = Injector.get(Infrastructure.class);
         subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
+        autoBalanceDivider = factory.getConstant(Drive.NAME, "autoBalanceDivider");
+
     }
 
     /**
@@ -236,6 +247,8 @@ public class Robot extends TimedRobot {
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
             subsystemManager.zeroSensors();
+            // zeroing ypr
+            infrastructure.resetPigeon(Constants.EmptyRotation2d);
 
             /** Register ControlBoard */
             controlBoard = Injector.get(IControlBoard.class);
@@ -274,24 +287,6 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    createAction(
-                        () -> controlBoard.getAsBool("autoBalance"),
-                        () -> {
-                            if (!runningAutoBalance) {
-                                runningAutoBalance = true;
-                                System.out.println("Starting auto balance");
-                                AutoBalanceMode mode = new AutoBalanceMode();
-                                autoBalanceThread = new Thread(mode::run);
-                                autoBalanceThread.start();
-                                autoBalanceThread = null;
-                                System.out.println("Balanced");
-                            } else {
-                                autoBalanceThread.stop();
-                                System.out.println("Stopped! driving to trajectory canceled!");
-                                runningAutoBalance = !runningAutoBalance;
-                            }
-                        }
-                    ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("brakeMode"),
                         drive::setBraking
@@ -299,6 +294,10 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("autoBalance"),
+                        drive::setAutoBalanceManual
                     ),
                     // Operator Gamepad
                     createAction( // TODO remove, for testing purposes only
@@ -577,11 +576,23 @@ public class Robot extends TimedRobot {
     public void manualControl() {
         actionManager.update();
 
-        drive.setTeleopInputs(
-            -controlBoard.getAsDouble("throttle"),
-            -controlBoard.getAsDouble("strafe"),
-            controlBoard.getAsDouble("rotation")
-        );
+        isSwerve = drive instanceof SwerveDrive;
+
+        if(drive.isAutoBalancing() && !drive.isBraking()){
+            ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    0,
+                    -controlBoard.getAsDouble("strafe"),
+                    0,
+                    robotState.fieldToVehicle.getRotation());
+            drive.autoBalance(fieldRelativeChassisSpeed);
+        }
+        else {
+            drive.setTeleopInputs(
+                -controlBoard.getAsDouble("throttle"),
+                -controlBoard.getAsDouble("strafe"),
+                controlBoard.getAsDouble("rotation")
+            );
+        }
     }
 
     /**
