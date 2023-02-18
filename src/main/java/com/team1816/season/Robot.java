@@ -14,12 +14,10 @@ import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.lib.subsystems.drive.*;
 import com.team1816.season.auto.AutoModeManager;
-import com.team1816.season.auto.modes.AutoBalanceMode;
 import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
@@ -375,8 +373,8 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                            () -> controlBoard.getAsBool("lowerCollectPos"),
-                            elevator::lowerCollectPos
+                            () -> controlBoard.getAsBool("lowerElevatorAngles"),
+                            elevator::lowerRotationPoses
                     )
                 );
         } catch (Throwable t) {

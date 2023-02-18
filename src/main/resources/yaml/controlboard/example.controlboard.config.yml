@@ -23,7 +23,7 @@ operator:
     buttons:
         leftBumper: bobDown
         rightBumper: outtake
-        start: lowerCollectPos
+        start: lowerElevatorAngles
     axes:
         leftTrigger: intakeCube
         rightTrigger: intakeCone
