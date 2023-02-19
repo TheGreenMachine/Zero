@@ -22,7 +22,9 @@ public class ControlUtils implements Controller.Factory {
     public Controller getControllerInstance(int port) {
         var hid = new Joystick(port);
         var axisCount = hid.getAxisCount();
-        if (axisCount <= 3 && RobotBase.isSimulation()) {
+        if (axisCount == 0 && port == 2) {
+            return new ButtonboardController(port);
+        } else if (axisCount <= 3 && RobotBase.isSimulation()) {
             System.out.println("    Using Wasd Controller for port: " + port);
             return new WasdController(port);
         } else if (axisCount == 4) {

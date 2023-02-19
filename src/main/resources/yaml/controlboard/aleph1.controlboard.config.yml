@@ -1,0 +1,43 @@
+driver:
+    rumble: false
+    joysticks:
+        left:
+            horizontal: strafe
+            vertical: throttle
+        right:
+            horizontal: rotation
+    axes:
+        leftTrigger: brakeMode
+        rightTrigger: slowMode
+    buttonpad:
+        a: autoTarget
+    buttons:
+        leftBumper: autoBalance
+        start: zeroPose
+operator:
+    rumble: false
+    dpad:
+        up: extendStage
+        down: descendStage
+    buttons:
+        leftBumper: bobDown
+        rightBumper: outtake
+        start: lowerElevatorAngles
+    axes:
+        leftTrigger: intakeCube
+        rightTrigger: intakeCone
+    buttonpad:
+        y: stowPosition
+        a: collectPosition
+        b: scorePosition
+buttonboard:
+    upLeft: grid1
+    up: grid2
+    upRight: grid3
+    left: node1
+    center: node2
+    right: node3
+    downLeft: level1
+    down: level2
+    downRight: level3
+demoMode: false

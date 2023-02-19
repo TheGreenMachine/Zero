@@ -182,11 +182,11 @@ public class AutoModeManager {
             case TUNE_DRIVETRAIN:
                 return new TuneDrivetrainMode();
             case LIVING_ROOM:
-                return (new LivingRoomMode());
+                return (new LivingRoomMode(desiredColor));
             case AUTO_BALANCE:
                 return (new AutoBalanceMode());
             case PLACE_CONE_DRIVE_TO_BALANCE_BALANCE:
-                return (new DriveToBalance_BalanceMode());
+                return (new DriveToBalance_BalanceMode(desiredColor));
             default:
                 System.out.println("Defaulting to drive straight mode");
                 return new DriveStraightMode();
