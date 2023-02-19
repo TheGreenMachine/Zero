@@ -6,9 +6,11 @@ import com.team1816.lib.auto.modes.DoNothingMode;
 import com.team1816.season.auto.modes.DriveStraightMode;
 import com.team1816.season.auto.modes.LivingRoomMode;
 import com.team1816.season.auto.modes.TuneDrivetrainMode;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
@@ -20,6 +22,7 @@ public class AutoModeManager {
     /**
      * Properties: Selection
      */
+    public static com.team1816.season.states.RobotState robotState;
     private final SendableChooser<DesiredAuto> autoModeChooser;
     private final SendableChooser<Color> sideChooser;
     private DesiredAuto desiredAuto;
@@ -30,11 +33,15 @@ public class AutoModeManager {
      */
     private AutoMode autoMode;
     private static Thread autoModeThread;
+    private RobotState robotState1;
 
     /**
      * Instantiates and AutoModeManager with a default option and selective computation
+     * @param rs RobotState
      */
-    public AutoModeManager() {
+    @Inject
+    public AutoModeManager(com.team1816.season.states.RobotState rs) {
+        robotState = rs;
         autoModeChooser = new SendableChooser<>(); // Shuffleboard dropdown menu to choose desired auto mode
         sideChooser = new SendableChooser<>(); // Shuffleboard dropdown menu to choose desired side / bumper color
 
@@ -64,6 +71,7 @@ public class AutoModeManager {
         autoModeThread = new Thread(autoMode::run);
         desiredAuto = DesiredAuto.DRIVE_STRAIGHT;
         desiredColor = Color.RED;
+        robotState.allianceColor = desiredColor;
     }
 
     /**
@@ -91,6 +99,7 @@ public class AutoModeManager {
         }
         desiredAuto = selectedAuto;
         desiredColor = selectedColor;
+        robotState.allianceColor = desiredColor;
 
         return autoChanged;
     }

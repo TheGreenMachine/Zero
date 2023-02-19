@@ -62,6 +62,12 @@ public class Constants {
         -.12065,
         .13335
     );
+    public static final double chargeStationThresholdXMinBlue = 2.3;
+    public static final double chargeStationThresholdXMaxBlue = 5.3;
+    public static final double chargeStationThresholdXMinRed = 11.0;
+    public static final double chargeStationThresholdXMaxRed = 14.0;
+    public static final double chargeStationThresholdYMin = 1.1;
+    public static final double chargeStationThresholdYMax = 4.5;
 
     /**
      * Drivetrain characterization

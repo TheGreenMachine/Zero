@@ -1,8 +1,10 @@
 package com.team1816.season.auto.actions;
 
 import com.team1816.lib.Injector;
+import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.paths.AutoPath;
 import com.team1816.lib.auto.paths.PathUtil;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,9 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TrajectoryToTargetPath extends AutoPath {
-    //run a trajectory using drive startTrajectory and update to run a trajectory from current robot state pose to (1, 1, 0) target
 
-    private static RobotState robotState;
+    public static RobotState robotState;
     private static Pose2d target;
 
     public TrajectoryToTargetPath(Pose2d pose) {
@@ -32,7 +33,89 @@ public class TrajectoryToTargetPath extends AutoPath {
     @Override
     protected List<Pose2d> getWaypoints() {
         List<Pose2d> waypoints = new ArrayList<>();
-        waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
+        if (
+            (target.getY() > Constants.chargeStationThresholdYMin && target.getY() < Constants.chargeStationThresholdYMax) &&
+                (robotState.fieldToVehicle.getY() > Constants.chargeStationThresholdYMin && robotState.fieldToVehicle.getY() < Constants.chargeStationThresholdYMax)
+        ) { // add two waypoints around the charging station so the path is as safe as possible
+            if (robotState.allianceColor == Color.RED) { // red side
+                if (robotState.fieldToVehicle.getX() < Constants.chargeStationThresholdXMinRed) { // rectangular minimization
+                    // average the y values and determine which vertices to choose
+                    double avg = (robotState.fieldToVehicle.getY() + target.getY()) / 2;
+                    if (avg > (Constants.chargeStationThresholdYMin + Constants.chargeStationThresholdYMax) / 2) { // upper case
+                        var angle = new Rotation2d(Constants.chargeStationThresholdXMinRed - robotState.fieldToVehicle.getX(), Constants.chargeStationThresholdYMax - robotState.fieldToVehicle.getY());
+                        waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), angle)); // straighter segment to the first edge
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMax), target.getRotation())); // upper bounding box
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMax), target.getRotation())); // upper bounding box
+                    } else { // lower case
+                        var angle = new Rotation2d(Constants.chargeStationThresholdXMinRed - robotState.fieldToVehicle.getX(), Constants.chargeStationThresholdYMin - robotState.fieldToVehicle.getY());
+                        waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), angle)); // straighter segment to the first edge
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMin), target.getRotation())); // lower bounding box
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMin), target.getRotation())); // lower bounding box
+                    }
+                } else { // on the charge station or beyond
+                    waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation())); // straight line
+                }
+            } else { // blue side
+                if (robotState.fieldToVehicle.getX() > Constants.chargeStationThresholdXMaxBlue) { // rectangular minimization
+                    double avg = (robotState.fieldToVehicle.getY() + target.getY()) / 2;
+                    if (avg > (Constants.chargeStationThresholdYMin + Constants.chargeStationThresholdYMax) / 2) { // upper case
+                        var angle = new Rotation2d(Constants.chargeStationThresholdXMaxBlue - robotState.fieldToVehicle.getX(), Constants.chargeStationThresholdYMax - robotState.fieldToVehicle.getY());
+                        waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), angle)); // straighter segment to the first edge
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMax), target.getRotation())); // upper bounding box
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax), target.getRotation())); // upper bounding box
+                    } else { // lower case
+                        var angle = new Rotation2d(Constants.chargeStationThresholdXMaxBlue - robotState.fieldToVehicle.getX(), Constants.chargeStationThresholdYMin - robotState.fieldToVehicle.getY());
+                        waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), angle)); // straighter segment to the first edge
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin), target.getRotation())); // lower bounding box
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin), target.getRotation())); // lower bounding box
+                    }
+                } else { // on the charge station or beyond
+                    waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation())); // straight line
+                }
+            }
+        } else if (target.getY() > Constants.chargeStationThresholdYMin && target.getY() < Constants.chargeStationThresholdYMax) { // target is in the middle but robot is not, so add waypoint closer to the scoring nodes
+            waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
+            if (robotState.fieldToVehicle.getY() > Constants.chargeStationThresholdYMax) { // upper bounding box
+                if (robotState.allianceColor == Color.RED) {
+                    var angle = new Rotation2d(target.getX() - Constants.chargeStationThresholdXMaxRed, target.getY() - Constants.chargeStationThresholdYMax);
+                    waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMax), target.getRotation()));
+                } else {
+                    var angle = new Rotation2d(target.getX() - Constants.chargeStationThresholdXMinBlue, target.getY() - Constants.chargeStationThresholdYMax);
+                    waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax), target.getRotation()));
+                }
+            } else { // lower bounding box
+                if (robotState.allianceColor == Color.RED) {
+                    var angle = new Rotation2d(target.getX() - Constants.chargeStationThresholdXMaxRed, target.getY() - Constants.chargeStationThresholdYMin);
+                    waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMin), target.getRotation()));
+                } else {
+                    var angle = new Rotation2d(target.getX() - Constants.chargeStationThresholdXMinBlue, target.getY() - Constants.chargeStationThresholdYMin);
+                    waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin), target.getRotation()));
+                }            }
+        } else if (robotState.fieldToVehicle.getY() > Constants.chargeStationThresholdYMin && robotState.fieldToVehicle.getY() < Constants.chargeStationThresholdYMax) { // target is not in the middle but robot is, so add waypoint farther from the scoring nodes // TODO FIX
+            if (target.getY() > Constants.chargeStationThresholdYMax) { // upper bounding box
+                if (robotState.allianceColor == Color.RED) {
+                    var angle = new Rotation2d(Constants.chargeStationThresholdXMinRed - robotState.fieldToVehicle.getX(), Constants.chargeStationThresholdYMax - robotState.fieldToVehicle.getY());
+                    waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), angle)); // straighter segment to the first edge
+                    waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMax), target.getRotation())); // upper bounding box
+                } else {
+                    var angle = new Rotation2d(Constants.chargeStationThresholdXMaxBlue - robotState.fieldToVehicle.getX(), Constants.chargeStationThresholdYMax - robotState.fieldToVehicle.getY());
+                    waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), angle)); // straighter segment to the first edge
+                    waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMax), target.getRotation())); // upper bounding box
+                }
+            } else { // lower bounding box
+                if (robotState.allianceColor == Color.RED) {
+                    var angle = new Rotation2d(Constants.chargeStationThresholdXMinRed - robotState.fieldToVehicle.getX(), Constants.chargeStationThresholdYMin - robotState.fieldToVehicle.getY());
+                    waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), angle)); // straighter segment to the first edge
+                    waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMin), target.getRotation())); // upper bounding box
+                } else {
+                    var angle = new Rotation2d(Constants.chargeStationThresholdXMaxBlue - robotState.fieldToVehicle.getX(), Constants.chargeStationThresholdYMin - robotState.fieldToVehicle.getY());
+                    waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), angle)); // straighter segment to the first edge
+                    waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin), target.getRotation())); // upper bounding box
+                }
+            }
+        } else {
+            waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
+        }
         waypoints.add(target);
         return waypoints;
     }
@@ -41,7 +124,9 @@ public class TrajectoryToTargetPath extends AutoPath {
     protected List<Rotation2d> getWaypointHeadings() {
         List<Rotation2d> headings = new ArrayList<>();
         headings.add(robotState.fieldToVehicle.getRotation());
-        headings.add(target.getRotation());
+        for (int i = 1; i < getWaypoints().size(); i++){
+            headings.add(target.getRotation());
+        }
         return headings;
     }
 

@@ -1,6 +1,7 @@
 package com.team1816.season.states;
 
 import com.google.inject.Singleton;
+import com.team1816.lib.auto.Color;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
@@ -25,6 +26,7 @@ public class RobotState {
      * Odometry and field characterization
      */
     public final Field2d field = new Field2d();
+    public Color allianceColor = Color.RED;
     public Pose2d fieldToVehicle = Constants.EmptyPose2d;
     public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose2d;
     public Pose2d target = Constants.EmptyPose2d;
@@ -112,7 +114,7 @@ public class RobotState {
         visibleTargets.clear();
         drivetrainTemp = 0;
         vehicleToFloorProximityCentimeters = 0;
-        target = Constants.fieldCenterPose;
+        target = new Pose2d(new Translation2d(15, 3), new Rotation2d());
     }
 
     /**
