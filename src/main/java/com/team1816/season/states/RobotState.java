@@ -114,7 +114,7 @@ public class RobotState {
         visibleTargets.clear();
         drivetrainTemp = 0;
         vehicleToFloorProximityCentimeters = 0;
-        target = new Pose2d(new Translation2d(15, 3), new Rotation2d());
+        target = new Pose2d(new Translation2d(15, 1), new Rotation2d());
     }
 
     /**
