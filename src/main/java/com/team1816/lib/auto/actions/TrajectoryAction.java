@@ -106,8 +106,8 @@ public class TrajectoryAction implements AutoAction {
                     trajectory,
                     drive::getPose,
                     swerveKinematics,
-                    new PIDController(kPXController, 0, 0),
-                    new PIDController(kPYController, 0, 0),
+                    new PIDController(kPXController, 0, kDXController),
+                    new PIDController(kPYController, 0, kDYController),
                     thetaController,
                     ((SwerveDrive) drive)::getTrajectoryHeadings,
                     ((SwerveDrive) drive)::setModuleStates

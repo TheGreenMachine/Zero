@@ -5,12 +5,12 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
+import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -47,6 +47,7 @@ public abstract class Drive
      * Properties
      */
     public static final String NAME = "drivetrain";
+    private double initialYaw;
 
     /**
      * Demo Mode
@@ -73,6 +74,7 @@ public abstract class Drive
 
     protected boolean isBraking;
     protected boolean isSlowMode;
+    protected boolean isAutoBalancing = false;
 
     /**
      * Trajectory
@@ -152,13 +154,16 @@ public abstract class Drive
     );
 
     public static final double kPXController = 1;
+    public static final double kDXController = 0;
     public static final double kPYController = 1;
+    public static final double kDYController = 0;
     public static final double kPThetaController = 4;
+    public static final double kDThetaController = 0;
     public static final double kMaxAngularSpeed = factory.getConstant(NAME, "maxRotVel"); // rad/sec
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared =
         2 * Math.PI;
 
-    // Constraint for the motion profilied robot angle controller
+    // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeed,
         kMaxAngularAccelerationRadiansPerSecondSquared
@@ -291,7 +296,6 @@ public abstract class Drive
 
     /**
      * Configure motors for open loop control and sends a DriveSignal command based on inputs
-     *
      * @param signal DriveSignal
      * @see com.team1816.lib.util.team254.SwerveDriveSignal
      * @see DriveSignal
@@ -318,6 +322,21 @@ public abstract class Drive
     }
 
     /**
+     * Sets the initial yaw
+     */
+    public void setInitialYaw(){
+        initialYaw = robotState.fieldToVehicle.getRotation().getDegrees();
+    }
+
+    /**
+     * Returns the initial yaw
+     */
+    public double getInitialYaw(){
+        return initialYaw;
+    }
+
+
+    /**
      * Sets the drivetrain to be in slow mode which will modify the drive signals and the motor demands
      *
      * @param slowMode (boolean) isSlowMode
@@ -325,6 +344,27 @@ public abstract class Drive
     public void setSlowMode(boolean slowMode) {
         isSlowMode = slowMode;
     }
+
+    /**
+     * Sets the Autobalancing signal boolean and the initial yaw TODO redo description
+     * @param balancing (boolean) isAutoBalancing
+     */
+    public void setAutoBalanceManual(boolean balancing){
+        setInitialYaw();
+        isAutoBalancing = balancing;
+    }
+
+    /**
+     * Returns the current autobalancing state
+     * @return (boolean) isAutobalancing
+     */
+    public boolean isAutoBalancing(){
+        return isAutoBalancing;
+    }
+    /**
+     * Autobalances in teleop TODO redo description
+     */
+    public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds){}
 
     /**
      * Returns the actual heading of the drivetrain based on Odometry and gyroscopic measurements

@@ -160,8 +160,8 @@ public class MotorFactory {
         CANCoder canCoder = new CANCoder(canCoderID);
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
             canCoder.configFactoryDefault(kTimeoutMs);
-            canCoder.configAllSettings(configureCanCoder(invertCanCoder), kTimeoutMsLONG);
         }
+        canCoder.configAllSettings(configureCanCoder(invertCanCoder), kTimeoutMsLONG);
         return canCoder;
     }
 

@@ -1,18 +1,18 @@
 package com.team1816.season.states;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.drive.Drive;
-import com.team1816.lib.subsystems.turret.Turret;
 import com.team1816.lib.util.visionUtil.VisionPoint;
-import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
-import com.team1816.season.subsystems.LedManager;
+import com.team1816.season.subsystems.Collector;
+import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.RobotBase;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -24,7 +24,7 @@ import static com.team1816.lib.subsystems.Subsystem.robotState;
 
 /**
  * Main superstructure-style class and logical operator for handling and delegating subsystem tasks. Consists of an integrated
- * drivetrain with other subsystems and utilizes closed loop state dependent control via RobotState.
+ * drivetrain with other subsystems and utilizes closed loop state dependent control via {@link RobotState}.
  *
  * @see RobotState
  */
@@ -35,74 +35,187 @@ public class Orchestrator {
      * Subsystems
      */
     private static Drive drive;
-    private static Turret turret;
     private static LedManager ledManager;
+
+    private static Collector collector;
+
+    private static Elevator elevator;
 
 
     /**
      * State
      */
-    private STATE superstructureState;
+    private STATE orhcestratorState;
+    private SCORE_LEVEL_STATE desiredScoreLevelState;
+    private ELEMENT fieldElement;
     private final double maxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
         4
     );
     private final double minAllowablePoseError = factory.getConstant(
         "minAllowablePoseError",
-        0.1
+        0.05
     );
 
     /**
      * Instantiates an Orchestrator with all its subsystems
      *
      * @param df  Drive.Factory (derives drivetrain)
-     * @param tur Turret
      * @param led LedManager
+     * @param el  Elevator
+     * @param col Collector
      */
     @Inject
-    public Orchestrator(Drive.Factory df, Turret tur, LedManager led) {
+    public Orchestrator(Drive.Factory df, LedManager led, Collector col, Elevator el) {
         drive = df.getInstance();
-        turret = tur;
         ledManager = led;
-        superstructureState = STATE.FAT_BOY;
+        collector = col;
+        elevator = el;
+
+        fieldElement = ELEMENT.NULL;
+    }
+
+    public void setOrchestratorState(STATE state) {
+        orhcestratorState = state;
+    }
+
+    public void setDesiredScoreLevelState(SCORE_LEVEL_STATE dsls) {
+        desiredScoreLevelState = dsls;
     }
 
     /** Actions */
 
-    /** Update Subsystem States */
-
-    /** Superseded Odometry Handling */
+    /**
+     * Sets the orchestrator to collect
+     *
+     * @param collecting
+     */
+    public void setCollecting(boolean collecting) {
+        if (collecting) {
+            setOrchestratorState(STATE.COLLECT);
+        }
+        setCollectorCollecting(collecting, fieldElement == ELEMENT.CUBE);
+        setElevatorCollecting(collecting);
+    }
 
     /**
-     * Returns true if the pose of the drivetrain needs to be updated in a cached boolean system
+     * Sets the orchestrator to collect
      *
-     * @return boolean
+     * @param collecting collecting
+     * @param cube       cube
      */
-    public boolean needsVisionUpdate() {
-        if (!robotState.isPoseUpdated) {
-            return true;
-        }
-        if (RobotBase.isSimulation() || RobotBase.isReal()) return false;
-        boolean needsVisionUpdate =
-            (
-                Math.abs(
-                    robotState.getCalculatedAccel().vxMetersPerSecond -
-                        robotState.triAxialAcceleration[0]
-                ) >
-                    Constants.kMaxAccelDiffThreshold ||
-                    Math.abs(
-                        robotState.getCalculatedAccel().vyMetersPerSecond -
-                            robotState.triAxialAcceleration[1]
-                    ) >
-                        Constants.kMaxAccelDiffThreshold ||
-                    Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
-                        Constants.kMaxAccelDiffThreshold
-            );
-        if (needsVisionUpdate) {
-            robotState.isPoseUpdated = false;
-        }
-        return needsVisionUpdate; // placeHolder
+    public void setCollecting(boolean collecting, boolean cube) {
+        setCollectorCollecting(collecting, cube);
+        //setElevatorCollecting(collecting);
     }
+
+    /**
+     * Sets the orchestrator to score
+     *
+     * @param scoring scoring
+     */
+    public void setScoring(boolean scoring) {
+        setCollectorScoring(scoring);
+//        if (desiredScoreLevelState == SCORE_LEVEL_STATE.MIN) {
+//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MIN);
+//        } else if (desiredScoreLevelState == SCORE_LEVEL_STATE.MID) {
+//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MID);
+//        } else {
+//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MAX);
+//        }
+    }
+
+    /**
+     * Sets the desired state of the collector to collect
+     *
+     * @param collecting collecting
+     * @param cube       field element
+     */
+    public void setCollectorCollecting(boolean collecting, boolean cube) {
+        if (collecting) {
+            if (cube) {
+                fieldElement = ELEMENT.CUBE;
+                collector.setDesiredState(ControlMode.PercentOutput, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.INTAKE);
+            } else {
+                fieldElement = ELEMENT.CONE;
+                collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.DOWN, Collector.ROLLER_STATE.INTAKE);
+            }
+        } else {
+            collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.STOP);
+        }
+    }
+
+    /**
+     * Sets the desired state of the collector to score based on the stored field element
+     *
+     * @param scoring scoring
+     */
+    public void setCollectorScoring(boolean scoring) {
+        if (scoring) {
+            if (fieldElement == ELEMENT.CONE) {
+                collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.OUTTAKE);
+            } else {
+                collector.setDesiredState(ControlMode.PercentOutput, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.OUTTAKE);
+            }
+        } else {
+            collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.STOP);
+        }
+        fieldElement = ELEMENT.NULL;
+    }
+
+    /**
+     * Sets the desired state of the elevator to collect
+     *
+     * @param collecting collecting
+     */
+    public void setElevatorCollecting(boolean collecting) {
+        if (collecting) {
+            elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
+        } else {
+            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
+        }
+    }
+
+    /**
+     * Sets the desired state of the elevator to score based on the desired level fed by robot state
+     *
+     * @param scoring scoring
+     * @param level   desired level
+     */
+    public void setElevatorScoring(boolean scoring, Elevator.EXTENSION_STATE level) {
+        if (scoring) {
+            elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, level);
+        } else {
+            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
+        }
+    }
+
+
+    /**
+     * Updates orchestrator states based on subsystem states
+     */
+    public void update() {
+        if (orhcestratorState == STATE.SCORE) {
+            if (desiredScoreLevelState == SCORE_LEVEL_STATE.MIN && robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.COLLECT && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MIN) {
+                robotState.scoreLevelState = desiredScoreLevelState;
+            } else if (desiredScoreLevelState == SCORE_LEVEL_STATE.MID && robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.SCORE && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MID) {
+                robotState.scoreLevelState = desiredScoreLevelState;
+            } else if (desiredScoreLevelState == SCORE_LEVEL_STATE.MAX && robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.SCORE && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MAX) {
+                robotState.scoreLevelState = desiredScoreLevelState;
+            }
+            robotState.orchestratorState = orhcestratorState;
+        } else if (orhcestratorState == STATE.COLLECT) {
+            if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.COLLECT && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MIN) {
+                robotState.orchestratorState = STATE.COLLECT;
+            }
+        } else {
+            if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.STOW && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MIN) {
+                robotState.orchestratorState = STATE.STOW;
+            }
+        }
+    }
+
+    /** Superseded Odometry Handling */
 
     /**
      * Calculates the absolute pose of the drivetrain based on a single target
@@ -113,8 +226,8 @@ public class Orchestrator {
      */
     public Pose2d calculateSingleTargetTranslation(VisionPoint target) {
         Pose2d targetPos = new Pose2d(
-            FieldConfig.fieldTargets.get(target.id).getX(),
-            FieldConfig.fieldTargets.get(target.id).getY(),
+            FieldConfig.fieldTargets2023.get(target.id).getX(),
+            FieldConfig.fieldTargets2023.get(target.id).getY(),
             new Rotation2d()
         );
         double X = target.getX(), Y = target.getY();
@@ -124,6 +237,7 @@ public class Orchestrator {
                 robotState.getLatestFieldToCamera().rotateBy(Rotation2d.fromDegrees(180))
             )
         ); // inverse axis angle
+        System.out.println("Updated Pose: " + p);
         return p;
     }
 
@@ -136,8 +250,8 @@ public class Orchestrator {
      */
     public Pose2d photonCalculateSingleTargetTranslation(PhotonTrackedTarget target) {
         Pose2d targetPos = new Pose2d(
-            FieldConfig.fieldTargets.get(target.getFiducialId()).getX(),
-            FieldConfig.fieldTargets.get(target.getFiducialId()).getY(),
+            FieldConfig.fieldTargets2023.get(target.getFiducialId()).getX(),
+            FieldConfig.fieldTargets2023.get(target.getFiducialId()).getY(),
             new Rotation2d()
         );
         Translation2d targetTranslation = target.getBestCameraToTarget().getTranslation().toTranslation2d();
@@ -196,8 +310,26 @@ public class Orchestrator {
     /**
      * Base enum for Orchestrator states
      */
+    public enum ELEMENT {
+        NULL,
+        CONE,
+        CUBE
+    }
+
     public enum STATE {
-        FAT_BOY,
-        LITTLE_MAN,
+        COLLECT,
+        SCORE,
+        STOW
+    }
+
+    public enum SCORE_LEVEL_STATE {
+        MIN,
+        MID,
+        MAX
+    }
+
+    public enum CONTROL_MODE {
+        ALEPH_0,
+        ALEPH_1
     }
 }

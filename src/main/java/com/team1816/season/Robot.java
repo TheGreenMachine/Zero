@@ -7,15 +7,20 @@ import com.team1816.lib.controlboard.ActionManager;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
+import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
+import com.team1816.lib.subsystems.vision.Camera;
+import com.team1816.lib.subsystems.drive.*;
 import com.team1816.season.auto.AutoModeManager;
-import com.team1816.season.auto.modes.AutoBalanceMode;
+import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.subsystems.LedManager;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import com.team1816.season.subsystems.Collector;
+import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.wpilibj.*;
 
 import java.nio.file.Files;
@@ -60,6 +65,9 @@ public class Robot extends TimedRobot {
     private final Drive drive;
 
     private final LedManager ledManager;
+    private final Camera camera;
+    private final Elevator elevator;
+    private final Collector collector;
 
     /**
      * Factory
@@ -70,11 +78,13 @@ public class Robot extends TimedRobot {
      * Autonomous
      */
     private final AutoModeManager autoModeManager;
+    private Thread autoTargetThread;
 
     /**
      * Timing
      */
     private double loopStart;
+    public static double dt;
     public static double autoStart;
     public static double teleopStart;
 
@@ -82,6 +92,15 @@ public class Robot extends TimedRobot {
      * Properties
      */
     private boolean faulted;
+    private Drive.ControlState prevState;
+    private boolean isAutoBalancing;
+    private double autoBalanceDivider;
+    private static boolean isSwerve = false;
+
+
+
+    public static boolean runningAutoTarget = false;
+    public static boolean runningAutoBalance = false;
 
     /**
      * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
@@ -93,12 +112,17 @@ public class Robot extends TimedRobot {
         enabledLoop = new Looper(this);
         disabledLoop = new Looper(this);
         drive = (Injector.get(Drive.Factory.class)).getInstance();
+        elevator = Injector.get(Elevator.class);
+        collector = Injector.get(Collector.class);
         ledManager = Injector.get(LedManager.class);
+        camera = Injector.get(Camera.class);
         robotState = Injector.get(RobotState.class);
         orchestrator = Injector.get(Orchestrator.class);
         infrastructure = Injector.get(Infrastructure.class);
         subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
+        autoBalanceDivider = factory.getConstant(Drive.NAME, "autoBalanceDivider");
+
     }
 
     /**
@@ -127,6 +151,7 @@ public class Robot extends TimedRobot {
      * @see Looper#getLastLoop()
      */
     public Double getLastEnabledLoop() {
+        dt = enabledLoop.getLastLoop();
         return enabledLoop.getLastLoop();
     }
 
@@ -141,7 +166,10 @@ public class Robot extends TimedRobot {
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            subsystemManager.setSubsystems(drive, ledManager);
+            // Remember to register our elevator and collector subsystems below!! The subsystem manager deals with calling
+            // read/writetohardware on a loop, but it can only call read/write if it recognizes said subsystem. To recognize
+            // your subsystem, just add it alongside the drive, ledManager, and camera parameters :)
+            subsystemManager.setSubsystems(drive, ledManager, camera, elevator, collector);
 
             /** Register BadLogs */
             if (Constants.kIsBadlogEnabled) {
@@ -217,6 +245,8 @@ public class Robot extends TimedRobot {
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
             subsystemManager.zeroSensors();
+            // zeroing ypr
+            infrastructure.resetPigeon(Constants.EmptyRotation2d);
 
             /** Register ControlBoard */
             controlBoard = Injector.get(IControlBoard.class);
@@ -232,14 +262,27 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("autoBalance"),
+                        () -> controlBoard.getAsBool("autoTarget"),
                         () -> {
-                            System.out.println("Starting auto balance");
-                            AutoBalanceMode mode = new AutoBalanceMode();
-                            Thread autoBalanceThread = new Thread(mode::run);
-                            autoBalanceThread.start();
-                            autoBalanceThread = null;
-                            System.out.println("Balanced");
+                            if (!runningAutoTarget) {
+                                runningAutoTarget = true;
+                                orchestrator.updatePoseWithCamera();
+                                double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
+                                if (distance < Constants.kMinTrajectoryDistance) {
+                                    System.out.println("Distance to target is " + distance + " m");
+                                    System.out.println("Too close to target! can not start trajectory!");
+                                } else {
+                                    System.out.println("Drive trajectory action started!");
+                                    TrajectoryToTargetMode mode = new TrajectoryToTargetMode();
+                                    autoTargetThread = new Thread(mode::run);
+                                    autoTargetThread.start();
+                                    System.out.println("Trajectory ended");
+                                }
+                            } else {
+                                autoTargetThread.stop();
+                                System.out.println("Stopped! driving to trajectory canceled!");
+                                runningAutoTarget = !runningAutoTarget;
+                            }
                         }
                     ),
                     createHoldAction(
@@ -249,8 +292,90 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
-                    )
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("autoBalance"),
+                        drive::setAutoBalanceManual
+                    ),
                     // Operator Gamepad
+                    createAction( // TODO remove, for testing purposes only
+                        () -> controlBoard.getAsBool("updatePose"),
+                        orchestrator::updatePoseWithCamera
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("outtake"),
+                        orchestrator::setScoring
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("bobDown"),
+                        (pressed) -> {
+                            if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
+                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
+                            } else if (!pressed && elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP) {
+                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+                            }
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("extendStage"),
+                        () -> {
+//                            Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
+                            Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
+                            if (extensionState == Elevator.EXTENSION_STATE.MIN) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
+                            } else if (extensionState == Elevator.EXTENSION_STATE.MID) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MAX);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MAX);
+                            }
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("descendStage"),
+                        () -> {
+//                            Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
+                            Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
+                            if (extensionState == Elevator.EXTENSION_STATE.MID) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MIN);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
+                            } else if (extensionState == Elevator.EXTENSION_STATE.MAX) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
+                            }
+                        }
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("intakeCone"),
+                        (pressed) -> orchestrator.setCollecting(pressed, false)
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("intakeCube"),
+                        (pressed) -> orchestrator.setCollecting(pressed, true)
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("stowPosition"),
+                        () -> {
+                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.STOW);
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("collectPosition"),
+                        () -> {
+                            if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
+                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+                            }
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("scorePosition"),
+                        () -> {
+                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+                        }
+                    ),
+                    createAction(
+                            () -> controlBoard.getAsBool("lowerElevatorAngles"),
+                            elevator::lowerRotationPoses
+                    )
                 );
         } catch (Throwable t) {
             faulted = true;
@@ -453,11 +578,23 @@ public class Robot extends TimedRobot {
     public void manualControl() {
         actionManager.update();
 
-        drive.setTeleopInputs(
-            -controlBoard.getAsDouble("throttle"),
-            -controlBoard.getAsDouble("strafe"),
-            controlBoard.getAsDouble("rotation")
-        );
+        isSwerve = drive instanceof SwerveDrive;
+
+        if(drive.isAutoBalancing()){
+            ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    0,
+                    -controlBoard.getAsDouble("strafe"),
+                    0,
+                    robotState.fieldToVehicle.getRotation());
+            drive.autoBalance(fieldRelativeChassisSpeed);
+        }
+        else {
+            drive.setTeleopInputs(
+                -controlBoard.getAsDouble("throttle"),
+                -controlBoard.getAsDouble("strafe"),
+                controlBoard.getAsDouble("rotation")
+            );
+        }
     }
 
     /**

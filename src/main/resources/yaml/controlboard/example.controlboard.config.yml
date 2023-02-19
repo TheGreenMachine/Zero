@@ -8,38 +8,29 @@ driver:
             horizontal: rotation
     buttonpad:
         x: toggleManualShoot
-        y: unlockClimber
+        a: autoTarget
     axes:
         leftTrigger: brakeMode
         rightTrigger: slowMode
     buttons:
-        leftBumper: toggleCollector
-        rightBumper: toggleCollectorReverse
+        leftBumper: autoBalance
         start: zeroPose
 operator:
     rumble: false
-    joysticks:
-        left:
-            horizontal: manualTurretXVal
-            vertical: manualTurretYVal
-        right:
-            vertical: manualClimberArm
     dpad:
-        up: raiseBucket
-        down: lowerBucket
-        left: turretJogLeft
-        right: turretJogRight
-    buttonpad:
-        x: toggleCamera
-        y: autoClimb
-        a: toggleTurretMode
-        b: eject
-    axes:
-        leftTrigger: yeetShot
-        rightTrigger: shoot
+        up: extendStage
+        down: descendStage
     buttons:
-        start: toggleTopClamp
-        back: toggleBottomClamp
+        leftBumper: bobDown
+        rightBumper: outtake
+        start: lowerElevatorAngles
+    axes:
+        leftTrigger: intakeCube
+        rightTrigger: intakeCone
+    buttonpad:
+        y: stowPosition
+        a: collectPosition
+        b: scorePosition
 buttonboard:
     upLeft: empty
     up: empty
@@ -51,4 +42,3 @@ buttonboard:
     down: empty
     downRight: empty
 demoMode: false
-
