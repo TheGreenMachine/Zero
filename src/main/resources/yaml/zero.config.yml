@@ -79,6 +79,8 @@ subsystems:
             maxVelPathFollowing: 2.2 # meters/s (2.2)
             maxAccel: 1.5 # meters/s^ 2
             isDemoMode: 0
+            autoBalanceDivider: 40
+            pitchRollMaxFlat: 2.5
     elevator:
         implemented: true
         falcons:
@@ -102,9 +104,9 @@ subsystems:
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
             forwardAngleLimit: 10000 # Elevator horizontal orientation
-            reverseAngleLimit: -100000 # Elevator vertical orientation
+            reverseAngleLimit: -130000 # Elevator vertical orientation
             stowAnglePosition: 0
-            collectAnglePosition: -101000
+            collectAnglePosition: -90000
             scoreAnglePosition: -37000
             scoreDipAnglePosition: -50000
             minExtensionPosition: 20000

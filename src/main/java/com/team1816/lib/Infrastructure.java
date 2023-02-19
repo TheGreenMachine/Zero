@@ -31,6 +31,9 @@ public class Infrastructure {
     private static boolean compressorEnabled;
     private static boolean compressorIsOn = false;
 
+    private double pitchOffset;
+    private double rollOffset;
+
     /**
      * Instantiates the infrastructure with RobotFactory
      *
@@ -49,6 +52,8 @@ public class Infrastructure {
         var rearLeft = factory.getProximitySensor("RLProximitySensor");
         var rearRight = factory.getProximitySensor("RRProximitySensor");
         proximitySensors = List.of(frontLeft, frontRight, rearLeft, rearRight);
+        pitchOffset = 0;
+        rollOffset = 0;
     }
 
     /**
@@ -81,6 +86,8 @@ public class Infrastructure {
     public void resetPigeon(Rotation2d angle) {
         System.out.println("resetting Pigeon");
         pigeon.setYaw(angle.getDegrees());
+        pitchOffset = -pigeon.getPitch();
+        rollOffset = -pigeon.getRoll();
     }
 
     /**
@@ -110,7 +117,7 @@ public class Infrastructure {
      * @see IPigeonIMU#getPitch()
      */
     public double getPitch() {
-        return pigeon.getPitch();
+        return pigeon.getPitch() + pitchOffset;
     }
 
     /**
@@ -120,32 +127,9 @@ public class Infrastructure {
      * @see IPigeonIMU#getRoll()
      */
     public double getRoll() {
-        return pigeon.getRoll();
+        return pigeon.getRoll() + rollOffset;
     }
 
-    /**
-     * Returns the field-centric pitch of the pigeon
-     *
-     * @return pitch
-     * @see IPigeonIMU#getPitch()
-     */
-    public double getFieldCentricPitch() {
-        Rotation3d angularState = new Rotation3d(Units.degreesToRadians(getYaw()), Units.degreesToRadians(getPitch()), Units.degreesToRadians(getRoll()));
-        Rotation3d yawState = new Rotation3d(-Units.degreesToRadians(getYaw()), 0, 0);
-        return Units.radiansToDegrees(angularState.rotateBy(yawState).getY());
-    }
-
-    /**
-     * Returns the field-centric roll of the pigeon
-     *
-     * @return roll
-     * @see IPigeonIMU#getRoll()
-     */
-    public double getFieldCentricRoll() {
-        Rotation3d angularState = new Rotation3d(Units.degreesToRadians(getYaw()), Units.degreesToRadians(getPitch()), Units.degreesToRadians(getRoll()));
-        Rotation3d yawState = new Rotation3d(-Units.degreesToRadians(getYaw()), 0, 0);
-        return Units.radiansToDegrees(angularState.rotateBy(yawState).getZ());
-    }
 
     /**
      * Returns the power distribution associated with the Infrastructure
@@ -156,7 +140,6 @@ public class Infrastructure {
     public PowerDistribution getPd() {
         return pd;
     }
-
     /**
      * Emulates gyroscope behaviour of the pigeon in simulation environments
      *
