@@ -3,6 +3,7 @@ package com.team1816.season;
 import badlog.lib.BadLog;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
+import com.team1816.lib.auto.Color;
 import com.team1816.lib.controlboard.ActionManager;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
@@ -12,10 +13,10 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.lib.subsystems.vision.Camera;
-import com.team1816.lib.subsystems.drive.*;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
+import com.team1816.season.configuration.DrivetrainTargets;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -92,12 +93,9 @@ public class Robot extends TimedRobot {
      * Properties
      */
     private boolean faulted;
-    private Drive.ControlState prevState;
-    private boolean isAutoBalancing;
-    private double autoBalanceDivider;
-    private static boolean isSwerve = false;
-
-
+    private int grid = 0;
+    private int node = 0;
+    private int level = 0;
 
     public static boolean runningAutoTarget = false;
     public static boolean runningAutoBalance = false;
@@ -121,8 +119,6 @@ public class Robot extends TimedRobot {
         infrastructure = Injector.get(Infrastructure.class);
         subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
-        autoBalanceDivider = factory.getConstant(Drive.NAME, "autoBalanceDivider");
-
     }
 
     /**
@@ -264,6 +260,11 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("autoTarget"),
                         () -> {
+                            if (robotState.allianceColor == Color.BLUE) {
+                                robotState.target = DrivetrainTargets.blueTargets.get(grid * 3 + node);
+                            } else {
+                                robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
+                            }
                             if (!runningAutoTarget) {
                                 runningAutoTarget = true;
                                 orchestrator.updatePoseWithCamera();
@@ -296,6 +297,18 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("autoBalance"),
                         drive::setAutoBalanceManual
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("score"),
+                        () -> {
+                            if (level == 0) {
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
+                            } else if (level == 1) {
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID);
+                            } else {
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
+                            }
+                        }
                     ),
                     // Operator Gamepad
                     createAction( // TODO remove, for testing purposes only
@@ -373,8 +386,32 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                            () -> controlBoard.getAsBool("lowerElevatorAngles"),
-                            elevator::lowerRotationPoses
+                        () -> controlBoard.getAsBool("lowerElevatorAngles"),
+                        elevator::lowerRotationPoses
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("grid1"),
+                        () -> grid = 0
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("grid2"),
+                        () -> grid = 1
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("grid3"),
+                        () -> grid = 2
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("node1"),
+                        () -> node = 0
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("node2"),
+                        () -> node = 1
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("node3"),
+                        () -> node = 2
                     )
                 );
         } catch (Throwable t) {
@@ -577,8 +614,6 @@ public class Robot extends TimedRobot {
      */
     public void manualControl() {
         actionManager.update();
-
-        isSwerve = drive instanceof SwerveDrive;
 
         if(drive.isAutoBalancing()){
             ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(

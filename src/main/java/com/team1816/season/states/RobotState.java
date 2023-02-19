@@ -29,7 +29,7 @@ public class RobotState {
     public Color allianceColor = Color.BLUE;
     public Pose2d fieldToVehicle = Constants.EmptyPose2d;
     public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose2d;
-    public Pose2d target = Constants.EmptyPose2d;
+    public Pose2d target = Constants.fieldCenterPose;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation2d;
     public Pose2d fieldToTurret = Constants.EmptyPose2d;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds(); // velocities of vehicle
@@ -114,7 +114,6 @@ public class RobotState {
         visibleTargets.clear();
         drivetrainTemp = 0;
         vehicleToFloorProximityCentimeters = 0;
-        target = new Pose2d(new Translation2d(15, 1), new Rotation2d());
     }
 
     /**
