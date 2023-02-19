@@ -19,8 +19,6 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -108,7 +106,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      * @param lm  LEDManager
      * @param inf Infrastructure
      * @param rs  RobotState
-     * @see Drive(LedManager, Infrastructure, RobotState)
+     * @see Drive#Drive(LedManager, Infrastructure, RobotState)
      */
     @Inject
     public SwerveDrive(LedManager lm, Infrastructure inf, RobotState rs) {
@@ -181,9 +179,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (RobotBase.isSimulation()) {
             simulateGyroOffset();
         }
-        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
-        swerveOdometry.update(gyroHeading, actualModulePositions);
+        swerveOdometry.update(actualHeading, actualModulePositions);
         updateRobotState();
     }
 
@@ -453,9 +451,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      */
     @Override
     public void resetOdometry(Pose2d pose) {
-        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
-        swerveOdometry.resetPosition(gyroHeading, actualModulePositions, pose);
-        swerveOdometry.update(gyroHeading, actualModulePositions);
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        swerveOdometry.resetPosition(actualHeading, actualModulePositions, pose);
+        swerveOdometry.update(actualHeading, actualModulePositions);
         updateRobotState();
     }
 

@@ -113,7 +113,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
         tankOdometry =
             new DifferentialDriveOdometry(
-                getGyroHeading(),
+                getActualHeading(),
                 leftActualDistance,
                 rightActualDistance
             );
@@ -177,9 +177,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         if (RobotBase.isSimulation()) {
             simulateGyroOffset();
         }
-        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
-        tankOdometry.update(gyroHeading, leftActualDistance, rightActualDistance);
+        tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
     }
 
@@ -195,7 +195,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
 
-        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
         resetEncoders();
         resetOdometry(pose);
         startingPose = pose;
@@ -239,12 +239,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public void resetOdometry(Pose2d pose) {
         tankOdometry.resetPosition(
-            getGyroHeading(),
+            getActualHeading(),
             leftActualDistance,
             rightActualDistance,
             pose
         );
-        tankOdometry.update(gyroHeading, leftActualDistance, rightActualDistance);
+        tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
     }
 
