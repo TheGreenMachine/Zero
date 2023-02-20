@@ -62,9 +62,9 @@ public class Constants {
         -.12065,
         .13335
     );
-    public static final double chargeStationThresholdXMinBlue = 2.3;
-    public static final double chargeStationThresholdXMaxBlue = 5.3;
-    public static final double chargeStationThresholdXMinRed = 11.0;
+    public static final double chargeStationThresholdXMinBlue = 2.6;
+    public static final double chargeStationThresholdXMaxBlue = 5.0;
+    public static final double chargeStationThresholdXMinRed = 11.5;
     public static final double chargeStationThresholdXMaxRed = 14.0;
     public static final double chargeStationThresholdYMin = 1.1;
     public static final double chargeStationThresholdYMax = 4.5;
@@ -79,7 +79,7 @@ public class Constants {
     public static double kMaxProximityThresholdCentimeters = 25; // cm
 
     /**
-     * Camera characterization
+     .     * Camera characterization
      */
     public static final double kCameraMountingAngleY = 20; // degrees
     public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters

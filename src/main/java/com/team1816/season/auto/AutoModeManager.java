@@ -95,14 +95,14 @@ public class AutoModeManager {
             if (colorChanged) {
                 System.out.println("Robot color changed from: " + desiredColor + ", to: " + selectedColor);
             }
-            autoMode = generateAutoMode(selectedAuto);
+            autoMode = generateAutoMode(selectedAuto, selectedColor);
             autoModeThread = new Thread(autoMode::run);
         }
         desiredAuto = selectedAuto;
         desiredColor = selectedColor;
         robotState.allianceColor = desiredColor;
 
-        return autoChanged;
+        return autoChanged || colorChanged;
     }
 
     /**
@@ -175,14 +175,14 @@ public class AutoModeManager {
      * @return AutoMode
      * @see AutoMode
      */
-    private AutoMode generateAutoMode(DesiredAuto mode) {
+    private AutoMode generateAutoMode(DesiredAuto mode, Color color) {
         switch (mode) {
             case DO_NOTHING:
                 return new DoNothingMode();
             case TUNE_DRIVETRAIN:
                 return new TuneDrivetrainMode();
             case LIVING_ROOM:
-                return (new LivingRoomMode(desiredColor));
+                return (new LivingRoomMode(color));
             case AUTO_BALANCE:
                 return (new AutoBalanceMode());
             case PLACE_CONE_DRIVE_TO_BALANCE_BALANCE:
