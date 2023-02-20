@@ -47,6 +47,7 @@ public abstract class Drive
      * Properties
      */
     public static final String NAME = "drivetrain";
+    private double initialYaw;
 
     /**
      * Demo Mode
@@ -66,13 +67,14 @@ public abstract class Drive
      * Localized state
      */
     protected ControlState controlState = ControlState.OPEN_LOOP;
-    protected Rotation2d actualHeading = Constants.EmptyRotation2d;
+    protected Rotation2d gyroHeading = Constants.EmptyRotation2d;
     protected Rotation2d desiredHeading = new Rotation2d(); // only updated in trajectory following
     protected Pose2d desiredPose = new Pose2d(); // only updated in trajectory following
     protected ChassisSpeeds chassisSpeed = new ChassisSpeeds();
 
     protected boolean isBraking;
     protected boolean isSlowMode;
+    protected boolean isAutoBalancing = false;
 
     /**
      * Trajectory
@@ -294,7 +296,6 @@ public abstract class Drive
 
     /**
      * Configure motors for open loop control and sends a DriveSignal command based on inputs
-     *
      * @param signal DriveSignal
      * @see com.team1816.lib.util.team254.SwerveDriveSignal
      * @see DriveSignal
@@ -321,6 +322,21 @@ public abstract class Drive
     }
 
     /**
+     * Sets the initial yaw
+     */
+    public void setInitialYaw(){
+        initialYaw = robotState.fieldToVehicle.getRotation().getDegrees();
+    }
+
+    /**
+     * Returns the initial yaw
+     */
+    public double getInitialYaw(){
+        return initialYaw;
+    }
+
+
+    /**
      * Sets the drivetrain to be in slow mode which will modify the drive signals and the motor demands
      *
      * @param slowMode (boolean) isSlowMode
@@ -330,12 +346,33 @@ public abstract class Drive
     }
 
     /**
+     * Sets the Autobalancing signal boolean and the initial yaw TODO redo description
+     * @param balancing (boolean) isAutoBalancing
+     */
+    public void setAutoBalanceManual(boolean balancing){
+        setInitialYaw();
+        isAutoBalancing = balancing;
+    }
+
+    /**
+     * Returns the current autobalancing state
+     * @return (boolean) isAutobalancing
+     */
+    public boolean isAutoBalancing(){
+        return isAutoBalancing;
+    }
+    /**
+     * Autobalances in teleop TODO redo description
+     */
+    public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds){}
+
+    /**
      * Returns the actual heading of the drivetrain based on Odometry and gyroscopic measurements
      *
      * @return (Rotation2d) actualHeading
      */
-    public synchronized Rotation2d getActualHeading() {
-        return actualHeading;
+    public synchronized Rotation2d getGyroHeading() {
+        return gyroHeading;
     }
 
     /**
@@ -372,7 +409,7 @@ public abstract class Drive
      */
     @Override
     public double getActualHeadingDegrees() {
-        return actualHeading.getDegrees();
+        return gyroHeading.getDegrees();
     }
 
     /**

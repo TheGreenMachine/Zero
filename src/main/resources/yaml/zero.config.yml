@@ -11,7 +11,7 @@ subsystems:
             RLAz: 19
             RRAz: 2
         canCoders:
-            FLEnc: 25 #TODO check values
+            FLEnc: 25
             FREnc: 27
             RLEnc: 28
             RREnc: 26
@@ -28,7 +28,7 @@ subsystems:
                     azimuth: FLAz
                     canCoder: FLEnc
                     constants:
-                        encoderOffset: 110 #1442 remote, 110 pid0
+                        encoderOffset: 99 #1442 remote, 110 pid0
                         invertSensorPhase: 1
                 frontRight:
                     drive: FRDr
@@ -68,17 +68,64 @@ subsystems:
             maxVelTicks100ms: 12275.7 # ticks per 100ms
             openLoopRampRate: 0.8
             isSwerve: 1
-            encPPR: 13464
+            encPPR: 14641
             azimuthEncPPR: 4096
             maxRotVel: 18
             trackWidth: 21 #inches
             wheelbaseLength: 21.5 #inches
             wheelDiameter: 4
             kTrackScrubFactor: 1.0
-            maxVelOpenLoop: 3.9 # meters/s
-            maxVelPathFollowing: 3.9 # meters/s (2.2)
-            maxAccel: 3.17 # meters/s^ 2
+            maxVelOpenLoop: 2.2 # meters/s
+            maxVelPathFollowing: 2.2 # meters/s (2.2)
+            maxAccel: 1.5 # meters/s^ 2
             isDemoMode: 0
+            autoBalanceDivider: 40
+            pitchRollMaxFlat: 2.5
+    elevator:
+        implemented: true
+        falcons:
+            angleMotorMain: 6
+            angleMotorFollower: 7
+            extensionMotor: 15
+        pidConfig:
+            slot0: # rotation
+                kP: 0.02
+                kI: 0.00002
+                kD: 1.4
+                kF: 0
+                allowableError: 1000
+            slot1: # extension
+                kP: 0.15
+                kI: 0.001
+                kD: 2.25
+                kF: 0
+                allowableError: 1000
+        constants:
+            forwardExtensionLimit: 320000 # Out
+            reverseExtensionLimit: 0 # In
+            forwardAngleLimit: 10000 # Elevator horizontal orientation
+            reverseAngleLimit: -130000 # Elevator vertical orientation
+            stowAnglePosition: 0
+            collectAnglePosition: -90000
+            scoreAnglePosition: -37000
+            scoreDipAnglePosition: -50000
+            minExtensionPosition: 20000
+            midExtensionPosition: 141000
+            maxExtensionPosition: 300000
+    collector:
+        implemented: true
+        solenoids:
+            intakeSolenoid: 7
+        sparkmaxes:
+            intakeMotor: 14
+        pidConfig:
+            slot0:
+                kF: 0.0000899
+        constants:
+            cubeIntakePower: -0.10 # percent output voltage
+            cubeOuttakePower: 0.25 # percent output voltage
+            coneIntakeVelocity: 420 # rpm
+            coneOuttakeVelocity: -840 # rpm
     ledmanager:
         implemented: false
         canifier: -1
@@ -87,28 +134,6 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255
-    elevator:
-        implemented: true
-        falcons:
-            angleMotorMain: -1
-            angleMotorFollower: -1
-            extensionMotor: -1
-        constants:
-            stowPose: 0
-            collectPose: 512
-            scorePose: 1024
-            minPose: 0
-            midPose: 512
-            maxPose: 1024
-    collector:
-        implemented: true
-        solenoids:
-            collectorPiston: -1
-        neo550s:
-            intakeMotor: -1
-        constants:
-            collectTicks: 10
-            flushTicks: -10
     camera:
         implemented: true
         constants:
@@ -119,7 +144,7 @@ infrastructure:
     pdId: 1
     pdIsRev: true
     # pneumatics control
-    compressorEnabled: false
+    compressorEnabled: true
     pcmIsRev: false
     pcmId: 2
     # pigeon
@@ -129,13 +154,10 @@ controlboard: example
 constants:
     # drivetrain dimensions and movement
     maxRotVel: 14
-    trackWidth: 21 #inches
-    wheelbaseLength: 21.5 #inches
+    trackWidth: 19.75 #inches
+    wheelbaseLength: 19.75 #inches
     wheelDiameter: 4
     kTrackScrubFactor: 1.0
-    maxVelOpenLoop: 3.2 # meters/s
-    maxVelPathFollowing: 3.6 # meters/s (2.2)
-    maxAccel: 2.54 # meters/s^ 2
     minAllowablePoseError: 0.1
     maxAllowablePoseError: 5
     ## Logging ##

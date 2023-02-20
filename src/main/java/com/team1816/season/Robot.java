@@ -12,12 +12,13 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.lib.subsystems.vision.Camera;
+import com.team1816.lib.subsystems.drive.*;
 import com.team1816.season.auto.AutoModeManager;
-import com.team1816.season.auto.modes.AutoBalanceMode;
 import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.wpilibj.*;
@@ -78,12 +79,12 @@ public class Robot extends TimedRobot {
      */
     private final AutoModeManager autoModeManager;
     private Thread autoTargetThread;
-    private Thread autoBalanceThread;
 
     /**
      * Timing
      */
     private double loopStart;
+    public static double dt;
     public static double autoStart;
     public static double teleopStart;
 
@@ -91,6 +92,13 @@ public class Robot extends TimedRobot {
      * Properties
      */
     private boolean faulted;
+    private Drive.ControlState prevState;
+    private boolean isAutoBalancing;
+    private double autoBalanceDivider;
+    private static boolean isSwerve = false;
+
+
+
     public static boolean runningAutoTarget = false;
     public static boolean runningAutoBalance = false;
 
@@ -113,6 +121,8 @@ public class Robot extends TimedRobot {
         infrastructure = Injector.get(Infrastructure.class);
         subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
+        autoBalanceDivider = factory.getConstant(Drive.NAME, "autoBalanceDivider");
+
     }
 
     /**
@@ -141,6 +151,7 @@ public class Robot extends TimedRobot {
      * @see Looper#getLastLoop()
      */
     public Double getLastEnabledLoop() {
+        dt = enabledLoop.getLastLoop();
         return enabledLoop.getLastLoop();
     }
 
@@ -234,6 +245,8 @@ public class Robot extends TimedRobot {
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
             subsystemManager.zeroSensors();
+            // zeroing ypr
+            infrastructure.resetPigeon(Constants.EmptyRotation2d);
 
             /** Register ControlBoard */
             controlBoard = Injector.get(IControlBoard.class);
@@ -272,24 +285,6 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    createAction(
-                        () -> controlBoard.getAsBool("autoBalance"),
-                        () -> {
-                            if (!runningAutoBalance) {
-                                runningAutoBalance = true;
-                                System.out.println("Starting auto balance");
-                                AutoBalanceMode mode = new AutoBalanceMode();
-                                autoBalanceThread = new Thread(mode::run);
-                                autoBalanceThread.start();
-                                autoBalanceThread = null;
-                                System.out.println("Balanced");
-                            } else {
-                                autoBalanceThread.stop();
-                                System.out.println("Stopped! driving to trajectory canceled!");
-                                runningAutoBalance = !runningAutoBalance;
-                            }
-                        }
-                    ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("brakeMode"),
                         drive::setBraking
@@ -298,10 +293,88 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
                     ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("autoBalance"),
+                        drive::setAutoBalanceManual
+                    ),
                     // Operator Gamepad
                     createAction( // TODO remove, for testing purposes only
                         () -> controlBoard.getAsBool("updatePose"),
                         orchestrator::updatePoseWithCamera
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("outtake"),
+                        orchestrator::setScoring
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("bobDown"),
+                        (pressed) -> {
+                            if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
+                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
+                            } else if (!pressed && elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP) {
+                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+                            }
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("extendStage"),
+                        () -> {
+//                            Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
+                            Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
+                            if (extensionState == Elevator.EXTENSION_STATE.MIN) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
+                            } else if (extensionState == Elevator.EXTENSION_STATE.MID) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MAX);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MAX);
+                            }
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("descendStage"),
+                        () -> {
+//                            Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
+                            Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
+                            if (extensionState == Elevator.EXTENSION_STATE.MID) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MIN);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
+                            } else if (extensionState == Elevator.EXTENSION_STATE.MAX) {
+//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
+                            }
+                        }
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("intakeCone"),
+                        (pressed) -> orchestrator.setCollecting(pressed, false)
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("intakeCube"),
+                        (pressed) -> orchestrator.setCollecting(pressed, true)
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("stowPosition"),
+                        () -> {
+                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.STOW);
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("collectPosition"),
+                        () -> {
+                            if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
+                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+                            }
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("scorePosition"),
+                        () -> {
+                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+                        }
+                    ),
+                    createAction(
+                            () -> controlBoard.getAsBool("lowerElevatorAngles"),
+                            elevator::lowerRotationPoses
                     )
                 );
         } catch (Throwable t) {
@@ -416,7 +489,6 @@ public class Robot extends TimedRobot {
             subsystemManager.outputToSmartDashboard(); // update shuffleboard for subsystem values
             robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
-            robotState.dt = getLastEnabledLoop();
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());
@@ -506,11 +578,23 @@ public class Robot extends TimedRobot {
     public void manualControl() {
         actionManager.update();
 
-        drive.setTeleopInputs(
-            -controlBoard.getAsDouble("throttle"),
-            -controlBoard.getAsDouble("strafe"),
-            controlBoard.getAsDouble("rotation")
-        );
+        isSwerve = drive instanceof SwerveDrive;
+
+        if(drive.isAutoBalancing()){
+            ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    0,
+                    -controlBoard.getAsDouble("strafe"),
+                    0,
+                    robotState.fieldToVehicle.getRotation());
+            drive.autoBalance(fieldRelativeChassisSpeed);
+        }
+        else {
+            drive.setTeleopInputs(
+                -controlBoard.getAsDouble("throttle"),
+                -controlBoard.getAsDouble("strafe"),
+                controlBoard.getAsDouble("rotation")
+            );
+        }
     }
 
     /**
