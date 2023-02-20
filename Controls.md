@@ -17,18 +17,18 @@ The below controls are based on the file titled **example.controlboard.config.ym
     Start Button:   Zero to known Pose
 ## Operator
 ### Xbox Controller:
-    Dpad Up:       Extend Arm Stage
-    Dpad Down:     Descend Arm Stage
+    Dpad Up:        Extend Arm Stage
+    Dpad Down:      Descend Arm Stage
 
-    Left Trigger:  Intake Cube
-    Right Trigger: Intake Cone
+    Left Trigger:   Intake Cube
+    Right Trigger:  Intake Cone
 
-    Left Bumper:   Lower Arm
-    Right Bumper:  Outtake
+    Left Bumper:    Lower Arm
+    Right Bumper:   Outtake
 
-    A Button:      Set Arm to Collect
-    B Button:      Set Arm to Score
-    Y Button:      Stow Arm
+    A Button:       Set Arm to Collect
+    B Button:       Set Arm to Score
+    Y Button:       Stow Arm
 <!-- ### Button Board: -->
 
 ---
