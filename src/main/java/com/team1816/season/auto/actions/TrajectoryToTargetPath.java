@@ -107,6 +107,9 @@ public class TrajectoryToTargetPath extends AutoPath {
                         var angle = new Rotation2d(Constants.chargeStationThresholdXMinRed - robotState.fieldToVehicle.getX(), Constants.chargeStationThresholdYMax - robotState.fieldToVehicle.getY());
                         waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), angle)); // straighter segment to the first edge
                         waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMax), target.getRotation())); // upper bounding box
+                    } else if (robotState.fieldToVehicle.getX() < Constants.chargeStationThresholdXMaxRed) {
+                        waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation())); // initial
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxRed, robotState.fieldToVehicle.getY()), target.getRotation())); // get off charging station
                     } else {
                         waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
                     }
@@ -115,6 +118,9 @@ public class TrajectoryToTargetPath extends AutoPath {
                         var angle = new Rotation2d(Constants.chargeStationThresholdXMaxBlue - robotState.fieldToVehicle.getX(), Constants.chargeStationThresholdYMax - robotState.fieldToVehicle.getY());
                         waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), angle)); // straighter segment to the first edge
                         waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMax), target.getRotation())); // upper bounding box
+                    } else if (robotState.fieldToVehicle.getX() > Constants.chargeStationThresholdXMinBlue) {
+                        waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation())); // initial
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinBlue, robotState.fieldToVehicle.getY()), target.getRotation())); // get off charging station
                     } else {
                         waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
                     }
@@ -125,6 +131,9 @@ public class TrajectoryToTargetPath extends AutoPath {
                         var angle = new Rotation2d(Constants.chargeStationThresholdXMinRed - robotState.fieldToVehicle.getX(), Constants.chargeStationThresholdYMin - robotState.fieldToVehicle.getY());
                         waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), angle)); // straighter segment to the first edge
                         waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMin), target.getRotation())); // upper bounding box
+                    } else if (robotState.fieldToVehicle.getX() < Constants.chargeStationThresholdXMaxRed) {
+                        waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation())); // initial
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxRed, robotState.fieldToVehicle.getY()), target.getRotation())); // get off charging station
                     } else {
                         waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
                     }
@@ -133,6 +142,9 @@ public class TrajectoryToTargetPath extends AutoPath {
                         var angle = new Rotation2d(Constants.chargeStationThresholdXMaxBlue - robotState.fieldToVehicle.getX(), Constants.chargeStationThresholdYMin - robotState.fieldToVehicle.getY());
                         waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), angle)); // straighter segment to the first edge
                         waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin), target.getRotation())); // upper bounding box
+                    } else if (robotState.fieldToVehicle.getX() > Constants.chargeStationThresholdXMinBlue) {
+                        waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation())); // initial
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinBlue, robotState.fieldToVehicle.getY()), target.getRotation())); // get off charging station
                     } else {
                         waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
                     }
