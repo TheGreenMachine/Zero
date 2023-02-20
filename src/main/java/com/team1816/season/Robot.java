@@ -14,6 +14,7 @@ import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.season.auto.AutoModeManager;
+import com.team1816.season.auto.modes.AutoScoreMode;
 import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.DrivetrainTargets;
@@ -23,6 +24,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.wpilibj.*;
+import org.checkerframework.checker.units.qual.A;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -80,6 +82,7 @@ public class Robot extends TimedRobot {
      */
     private final AutoModeManager autoModeManager;
     private Thread autoTargetThread;
+    private Thread autoScoreThread;
 
     /**
      * Timing
@@ -98,6 +101,7 @@ public class Robot extends TimedRobot {
     private int level = 0;
 
     public static boolean runningAutoTarget = false;
+    public static boolean runningAutoScore = false;
     public static boolean runningAutoBalance = false;
 
     /**
@@ -286,6 +290,30 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
+                    createAction(
+                        () -> controlBoard.getAsBool("autoScore"),
+                        () -> {
+                            if (!runningAutoScore) {
+                                runningAutoScore = true;
+                                System.out.println("Automatic score sequence started!");
+                                AutoScoreMode mode;
+                                if (level == 2) {
+                                    mode = new AutoScoreMode(Orchestrator.SCORE_LEVEL_STATE.MAX);
+                                } else if (level == 1) {
+                                    mode = new AutoScoreMode(Orchestrator.SCORE_LEVEL_STATE.MID);
+                                } else {
+                                    mode = new AutoScoreMode(Orchestrator.SCORE_LEVEL_STATE.MIN);
+                                }
+                                autoScoreThread = new Thread(mode::run);
+                                autoScoreThread.start();
+                                System.out.println("Automatic score sequence complete");
+                            } else {
+                                autoScoreThread.stop();
+                                System.out.println("Stopped! automatic score sequence canceled!");
+                                runningAutoScore = !runningAutoScore;
+                            }
+                        }
+                    ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("brakeMode"),
                         drive::setBraking
@@ -412,6 +440,18 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("node3"),
                         () -> node = 2
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("level1"),
+                        () -> level = 0
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("level2"),
+                        () -> level = 1
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("level3"),
+                        () -> level = 2
                     )
                 );
         } catch (Throwable t) {

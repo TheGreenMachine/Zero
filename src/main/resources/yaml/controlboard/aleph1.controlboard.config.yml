@@ -11,7 +11,7 @@ driver:
         rightTrigger: slowMode
     buttonpad:
         a: autoTarget
-        b: score
+        b: autoScore
     buttons:
         leftBumper: autoBalance
         start: zeroPose
