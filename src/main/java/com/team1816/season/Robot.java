@@ -355,7 +355,7 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("stowPosition"),
                         () -> {
-                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.STOW);
+                            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
                         }
                     ),
                     createAction(

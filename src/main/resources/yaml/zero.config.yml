@@ -28,28 +28,28 @@ subsystems:
                     azimuth: FLAz
                     canCoder: FLEnc
                     constants:
-                        encoderOffset: 99 #1442 remote, 110 pid0
+                        encoderOffset: 99 # ticks pid0
                         invertSensorPhase: 1
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
                     canCoder: FREnc
                     constants:
-                        encoderOffset: 1589 # 683 remote, 1589 pid0
+                        encoderOffset: 1589 # ticks pid0
                         invertSensorPhase: 1
                 backLeft:
                     drive: RLDr
                     azimuth: RLAz
                     canCoder: RLEnc
                     constants:
-                        encoderOffset: 556 #1149 remote, 556 pid0
+                        encoderOffset: 556 # ticks pid0
                         invertSensorPhase: 1
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     canCoder: RREnc
                     constants:
-                        encoderOffset: 2854 #1150 remote, 2854 id0
+                        encoderOffset: 2854 # ticks pid0
                         invertSensorPhase: 1
             drivePID:
                 slot0:
@@ -66,21 +66,21 @@ subsystems:
                     allowableError: 5
         constants:
             maxVelTicks100ms: 12275.7 # ticks per 100ms
-            openLoopRampRate: 0.8
-            isSwerve: 1
-            encPPR: 14641
-            azimuthEncPPR: 4096
-            maxRotVel: 18
-            trackWidth: 21 #inches
-            wheelbaseLength: 21.5 #inches
-            wheelDiameter: 4
+            openLoopRampRate: 0.8 # percentage per minute?
+            isSwerve: 1 # boolean
+            encPPR: 14641 # ticks
+            azimuthEncPPR: 4096 # ticks
+            maxRotVel: 14 # radians per second
+            trackWidth: 21 # inches
+            wheelbaseLength: 21.5 # inches
+            wheelDiameter: 4 # inches
             kTrackScrubFactor: 1.0
             maxVelOpenLoop: 2.2 # meters/s
             maxVelPathFollowing: 2.2 # meters/s (2.2)
             maxAccel: 1.5 # meters/s^ 2
-            isDemoMode: 0
-            autoBalanceDivider: 40
-            pitchRollMaxFlat: 2.5
+            isDemoMode: 0 # boolean
+            autoBalanceDivider: 40 # random constant
+            autoBalanceThreshold: 2.5 # degrees
     elevator:
         implemented: true
         falcons:
@@ -101,17 +101,25 @@ subsystems:
                 kF: 0
                 allowableError: 1000
         constants:
+            # limits
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
             forwardAngleLimit: 10000 # Elevator horizontal orientation
             reverseAngleLimit: -130000 # Elevator vertical orientation
-            stowAnglePosition: 0
-            collectAnglePosition: -90000
-            scoreAnglePosition: -37000
-            scoreDipAnglePosition: -50000
-            minExtensionPosition: 20000
-            midExtensionPosition: 141000
-            maxExtensionPosition: 300000
+            # positions
+            stowAnglePosition: 0 # ticks
+            collectAnglePosition: -90000 # ticks
+            scoreAnglePosition: -37000 # ticks
+            scoreDipAnglePosition: -50000 # ticks
+            minExtensionPosition: 20000 # ticks
+            midExtensionPosition: 141000 # ticks
+            maxExtensionPosition: 300000 # ticks
+            # constraints
+            maxAngularVelocity: 45000 # ticks per second
+            maxAngularAcceleration: 45000 # ticks per second per second
+            maxExtendedAngularAcceleration: 15000 # ticks per second per second
+            maxExtensionVelocity: 175000 # ticks per second
+            maxExtensionAcceleration: 150000 # ticks per second per second
     collector:
         implemented: true
         solenoids:
@@ -133,7 +141,7 @@ subsystems:
             raveEnabled: 0
             raveSpeed: 0.05
             cameraLed: 1
-            maxLevel: 255
+            maxLevel: 255 # 0-255
     camera:
         implemented: true
         constants:
@@ -154,19 +162,19 @@ controlboard: example
 constants:
     # drivetrain dimensions and movement
     maxRotVel: 14
-    trackWidth: 19.75 #inches
-    wheelbaseLength: 19.75 #inches
-    wheelDiameter: 4
-    kTrackScrubFactor: 1.0
-    minAllowablePoseError: 0.1
-    maxAllowablePoseError: 5
+    trackWidth: 19.75 # inches
+    wheelbaseLength: 19.75 # inches
+    wheelDiameter: 4 # inches
+    kTrackScrubFactor: 1.0 # constant
+    minAllowablePoseError: 0.1 # meters
+    maxAllowablePoseError: 5 # meters
     ## Logging ##
     logTeleOp: 1 # 0 or 1
     logAuto: 1 # 0 or 1
     badLogEnabled: 1 # 0 or 1
     configStatusFrames: 0 # 0 or 1
     ## General ##
-    EnableBucketTuning: 1
+    EnableBucketTuning: 1 # 0 or 1
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .025 # seconds
     resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret

@@ -7,6 +7,7 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -46,6 +47,7 @@ public class Elevator extends Subsystem {
     private static double maxExtendedAngularAcceleration; // rad/s^2
     private static double maxExtensionVelocity; // m/s
     private static double maxExtensionAcceleration; // m/s^2
+    private static boolean usingSetpointFeeder = true;
 
 
     /**
@@ -59,6 +61,8 @@ public class Elevator extends Subsystem {
     private double actualExtensionVel;
     private ANGLE_STATE desiredAngleState = ANGLE_STATE.STOW;
     private EXTENSION_STATE desiredExtensionState = EXTENSION_STATE.MIN;
+    private SetPointFeeder setPointFeeder;
+    private boolean feederStarted = false;
 
     private boolean outputsChanged;
     private boolean hallEffectTriggered;
@@ -130,6 +134,24 @@ public class Elevator extends Subsystem {
     public void setDesiredState(ANGLE_STATE elevatorAngleState, EXTENSION_STATE elevatorExtensionState) {
         setDesiredAngleState(elevatorAngleState);
         setDesiredExtensionState(elevatorExtensionState);
+        FeederConstraints feederConstraints = new FeederConstraints(
+            maxAngularVelocity,
+            (maxExtendedAngularAcceleration - maxAngularAcceleration) / (maxExtension - minExtension) *
+                desiredExtensionState.extension,
+            (maxExtendedAngularAcceleration - maxAngularAcceleration) / (maxExtension - minExtension) *
+                actualExtensionPosition,
+            maxExtensionVelocity,
+            maxExtensionAcceleration
+        );
+        setPointFeeder = new SetPointFeeder(
+            feederConstraints,
+            actualExtensionPosition,
+            actualAnglePosition,
+            elevatorExtensionState.extension,
+            elevatorAngleState.angle
+        );
+        setPointFeeder.start(Timer.getFPGATimestamp());
+        feederStarted = true;
     }
 
     /**
@@ -205,33 +227,43 @@ public class Elevator extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
-            switch (desiredExtensionState) {
-                case MAX:
-                    extensionMotor.set(ControlMode.Position, (maxExtension));
-                    break;
-                case MID:
-                    extensionMotor.set(ControlMode.Position, (midExtension));
-                    break;
-                case MIN:
-                    extensionMotor.set(ControlMode.Position, (minExtension));
-                    break;
+            if (usingSetpointFeeder) {
+                if (feederStarted) {
+                    double[] positions = setPointFeeder.get(Timer.getFPGATimestamp());
+                    angleMotorMain.set(ControlMode.Position, positions[0]);
+                    extensionMotor.set(ControlMode.Position, positions[1]);
+                    if (setPointFeeder.ended()) {
+                        feederStarted = false;
+                    }
+                }
+            } else {
+                switch (desiredExtensionState) {
+                    case MAX:
+                        extensionMotor.set(ControlMode.Position, (maxExtension));
+                        break;
+                    case MID:
+                        extensionMotor.set(ControlMode.Position, (midExtension));
+                        break;
+                    case MIN:
+                        extensionMotor.set(ControlMode.Position, (minExtension));
+                        break;
 
+                }
+                switch (desiredAngleState) {
+                    case STOW:
+                        angleMotorMain.set(ControlMode.Position, (stowAngle));
+                        break;
+                    case COLLECT:
+                        angleMotorMain.set(ControlMode.Position, (collectAngle));
+                        break;
+                    case SCORE:
+                        angleMotorMain.set(ControlMode.Position, (scoreAngle));
+                        break;
+                    case SCORE_DIP:
+                        angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
+                        break;
+                }
             }
-            switch (desiredAngleState) {
-                case STOW:
-                    angleMotorMain.set(ControlMode.Position, (stowAngle));
-                    break;
-                case COLLECT:
-                    angleMotorMain.set(ControlMode.Position, (collectAngle));
-                    break;
-                case SCORE:
-                    angleMotorMain.set(ControlMode.Position, (scoreAngle));
-                    break;
-                case SCORE_DIP:
-                    angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
-                    break;
-            }
-
         }
     }
 
@@ -320,6 +352,9 @@ public class Elevator extends Subsystem {
         private double endTranslationAccelerationPhase;
         private double endTranslationVelocityPhase;
         private double endTranslationDecelerationPhase;
+
+        private boolean rotationEnded;
+        private boolean translationEnded;
 
         /**
          * Polar properties
@@ -415,6 +450,7 @@ public class Elevator extends Subsystem {
                 double timeRemaining = endRotationDecelerationPhase - t;
                 return thetaFinal - (timeRemaining * timeRemaining * feederConstraints.maxExtendedAngularAcceleration / 2);
             } else {
+                rotationEnded = true;
                 return thetaFinal;
             }
         }
@@ -436,6 +472,7 @@ public class Elevator extends Subsystem {
                 double timeRemaining = endTranslationDecelerationPhase - t;
                 return rFinal - (timeRemaining * timeRemaining * feederConstraints.maxExtensionAcceleration);
             } else {
+                translationEnded = true;
                 return rFinal;
             }
         }
@@ -451,6 +488,14 @@ public class Elevator extends Subsystem {
             double extension = getExtension(timestamp);
             // double extension = c / (a * Math.cos(angle) + b * Math.sin(angle));
             return new double[]{angle, extension};
+        }
+
+        /**
+         * Returns true if the feeder is complete
+         * @return true if the feeder is complete
+         */
+        public boolean ended() {
+            return rotationEnded && translationEnded;
         }
     }
 

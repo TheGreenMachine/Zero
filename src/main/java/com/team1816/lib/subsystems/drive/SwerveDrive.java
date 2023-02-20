@@ -19,8 +19,6 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -285,7 +283,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         double strafe = 0;
         var heading = Constants.EmptyRotation2d;
 
-        double maxFlatRange = Constants.pitchRollMaxFlat;
+        double maxFlatRange = Constants.autoBalanceThreshold;
 
         double autoBalanceDivider = Constants.autoBalanceDivider;
 

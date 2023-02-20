@@ -72,6 +72,9 @@ public class Constants {
     public static double kMinTrajectoryDistance = 0.05; // m
     public static double kMaxProximityThresholdCentimeters = 25; // cm
 
+    public static final double autoBalanceThreshold = factory.getConstant("drivetrain","autoBalanceThreshold",2);
+    public static final double autoBalanceDivider = factory.getConstant("drivetrain", "autoBalanceDivider", 30);
+
     /**
      * Camera characterization
      */
@@ -93,9 +96,4 @@ public class Constants {
         1d
     );
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
-    //AutoBalance
-    public static final double pitchRollMaxFlat = factory.getConstant("drivetrain","pitchRollMaxFlat",2);
-    public static final double autoBalanceDivider = factory.getConstant("drivetrain", "autoBalanceDivider", 30);
-
-
 }
