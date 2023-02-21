@@ -13,9 +13,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Timer;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,22 +112,6 @@ public class Orchestrator {
     }
 
     /**
-     * Sets the orchestrator to score
-     *
-     * @param scoring scoring
-     */
-    public void setScoring(boolean scoring) {
-        setCollectorScoring(scoring);
-//        if (desiredScoreLevelState == SCORE_LEVEL_STATE.MIN) {
-//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MIN);
-//        } else if (desiredScoreLevelState == SCORE_LEVEL_STATE.MID) {
-//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MID);
-//        } else {
-//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MAX);
-//        }
-    }
-
-    /**
      * Sets the desired state of the collector to collect
      *
      * @param collecting collecting
@@ -187,6 +173,17 @@ public class Orchestrator {
             elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, level);
         } else {
             elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
+        }
+    }
+
+    public void autoScore(){
+        if(elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE){
+            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
+            Timer.delay(0.25);
+            setCollectorScoring(true);
+            Timer.delay(0.25);
+            setCollectorScoring(false);
+            setElevatorScoring(false, Elevator.EXTENSION_STATE.MIN);
         }
     }
 
