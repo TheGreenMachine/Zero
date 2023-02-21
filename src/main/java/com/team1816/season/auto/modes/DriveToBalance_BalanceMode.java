@@ -38,7 +38,7 @@ public class DriveToBalance_BalanceMode extends AutoMode {
                 new CollectAction(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.STOP),
                 new ElevatorAction(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN),
                 new WaitAction(.5),
-//                trajectoryActions.get(0),
+                trajectoryActions.get(0),
                 new AutoBalanceAction()
             )
         );
