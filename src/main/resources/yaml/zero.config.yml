@@ -101,6 +101,7 @@ subsystems:
                 kF: 0
                 allowableError: 1000
         constants:
+            maxVelTicks100ms: 5000
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
             forwardAngleLimit: 10000 # Elevator horizontal orientation
@@ -150,7 +151,7 @@ infrastructure:
     # pigeon
     pigeonId: 32
     isPigeon2: true
-controlboard: example
+controlboard: aleph1
 constants:
     # drivetrain dimensions and movement
     maxRotVel: 14

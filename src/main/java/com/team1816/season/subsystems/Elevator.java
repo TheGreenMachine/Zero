@@ -112,11 +112,11 @@ public class Elevator extends Subsystem {
         allowableAngleError = factory.getPidSlotConfig(NAME, "slot0").allowableError;
         allowableExtensionError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
 
-        maxAngularVelocity = factory.getConstant(NAME, "maxAngularVelocity");
-        maxAngularAcceleration = factory.getConstant(NAME, "maxAngularAcceleration");
-        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtendedAngularAcceleration");
-        maxExtensionVelocity = factory.getConstant(NAME, "maxExtensionVelocity");
-        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtensionAcceleration");
+//        maxAngularVelocity = factory.getConstant(NAME, "maxAngularVelocity");
+//        maxAngularAcceleration = factory.getConstant(NAME, "maxAngularAcceleration");
+//        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtendedAngularAcceleration");
+//        maxExtensionVelocity = factory.getConstant(NAME, "maxExtensionVelocity");
+//        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtensionAcceleration");
     }
 
     /**

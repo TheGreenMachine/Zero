@@ -183,11 +183,13 @@
         "open": true
       }
     },
+    "combined": true,
     "photonvision": {
       "open": true,
       "zed": {
         "open": true
       }
-    }
+    },
+    "special": true
   }
 }

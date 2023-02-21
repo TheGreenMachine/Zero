@@ -77,9 +77,10 @@ public class Constants {
     public static double kMaxBalancingVelocity = 0.2; // m/s
     public static double kMinTrajectoryDistance = 0.05; // m
     public static double kMaxProximityThresholdCentimeters = 25; // cm
+    public static double preTargetDistance = 0.4; // m
 
     /**
-     .     * Camera characterization
+     * Camera characterization
      */
     public static final double kCameraMountingAngleY = 20; // degrees
     public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters

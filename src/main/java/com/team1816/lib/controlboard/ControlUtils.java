@@ -22,18 +22,20 @@ public class ControlUtils implements Controller.Factory {
     public Controller getControllerInstance(int port) {
         var hid = new Joystick(port);
         var axisCount = hid.getAxisCount();
-        if (port == ControlBoard.kButtonBoardPort) { // reserved button board port
-            System.out.println("    Using ButtonBoard Controller for port: " + port);
-            return new ButtonboardController(port);
-        } else if (axisCount <= 3 && RobotBase.isSimulation()) {
+        if (axisCount <= 3 && RobotBase.isSimulation()) {
             System.out.println("    Using Wasd Controller for port: " + port);
             return new WasdController(port);
         } else if (axisCount == 4) {
             System.out.println("    Using Logitech Controller for port: " + port);
             return new LogitechController(port);
         } else {
-            System.out.println("    Using XboxController Controller for port: " + port);
-            return new XboxController(port);
+            if (port == ControlBoard.kButtonBoardPort) { // reserved button board port
+                System.out.println("    Using ButtonBoard Controller for port: " + port);
+                return new ButtonboardController(port);
+            } else {
+                System.out.println("    Using XboxController Controller for port: " + port);
+                return new XboxController(port);
+            }
         }
     }
 

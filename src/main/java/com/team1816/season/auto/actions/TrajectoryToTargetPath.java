@@ -161,8 +161,14 @@ public class TrajectoryToTargetPath extends AutoPath {
     protected List<Rotation2d> getWaypointHeadings() {
         List<Rotation2d> headings = new ArrayList<>();
         headings.add(robotState.fieldToVehicle.getRotation());
-        for (int i = 1; i < getWaypoints().size(); i++){
-            headings.add(target.getRotation());
+        if (robotState.allianceColor == Color.BLUE && robotState.fieldToVehicle.getRotation().getDegrees() < 0) {
+            for (int i = 1; i < getWaypoints().size(); i++) {
+                headings.add(target.getRotation().times(-1)); // optimizes blue side wraparound
+            }
+        } else {
+            for (int i = 1; i < getWaypoints().size(); i++) {
+                headings.add(target.getRotation());
+            }
         }
         return headings;
     }
