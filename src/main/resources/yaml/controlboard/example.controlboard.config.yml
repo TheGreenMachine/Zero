@@ -7,7 +7,6 @@ driver:
         right:
             horizontal: rotation
     buttonpad:
-        x: toggleManualShoot
         a: autoTarget
     axes:
         leftTrigger: brakeMode
