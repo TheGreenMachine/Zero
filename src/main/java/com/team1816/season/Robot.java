@@ -244,9 +244,9 @@ public class Robot extends TimedRobot {
             }
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
-            subsystemManager.zeroSensors();
             // zeroing ypr
             infrastructure.resetPigeon(Constants.EmptyRotation2d);
+            subsystemManager.zeroSensors();
 
             /** Register ControlBoard */
             controlBoard = Injector.get(IControlBoard.class);
@@ -298,10 +298,6 @@ public class Robot extends TimedRobot {
                         drive::setAutoBalanceManual
                     ),
                     // Operator Gamepad
-//                    createAction( // TODO remove, for testing purposes only
-//                        () -> controlBoard.getAsBool("updatePose"),
-//                        orchestrator::updatePoseWithCamera
-//                    ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("outtake"),
                         orchestrator::setCollectorScoring
