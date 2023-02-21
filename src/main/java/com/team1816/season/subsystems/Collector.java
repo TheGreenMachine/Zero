@@ -146,6 +146,7 @@ public class Collector extends Subsystem {
      * Base enum for collector
      */
 
+    // should do exactly what it used to - just condensed the states into 5 instead of 3 separate for each enum
     public enum STATE {
         STOP,
         COL_CUBE,
