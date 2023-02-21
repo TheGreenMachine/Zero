@@ -8,11 +8,13 @@ driver:
             horizontal: rotation
     buttonpad:
         a: autoTarget
+        b: autoBalance
     axes:
         leftTrigger: brakeMode
         rightTrigger: slowMode
     buttons:
-        leftBumper: autoBalance
+        leftBumper: intakeCube
+        rightBumper: intakeCone
         start: zeroPose
 operator:
     rumble: false
@@ -24,8 +26,8 @@ operator:
         rightBumper: outtake
         start: lowerElevatorAngles
     axes:
-        leftTrigger: intakeCube
-        rightTrigger: intakeCone
+        leftTrigger: armStow
+        rightTrigger: armCollect
     buttonpad:
         y: stowPosition
         a: collectPosition
