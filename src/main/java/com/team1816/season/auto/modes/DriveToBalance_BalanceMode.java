@@ -10,6 +10,7 @@ import com.team1816.lib.subsystems.turret.Turret;
 import com.team1816.season.auto.actions.AutoBalanceAction;
 import com.team1816.season.auto.actions.CollectAction;
 import com.team1816.season.auto.actions.ElevatorAction;
+import com.team1816.season.auto.actions.ScoreAction;
 import com.team1816.season.auto.paths.DriveToBalance_Balance;
 import com.team1816.season.auto.paths.LivingRoomPath;
 import com.team1816.season.subsystems.Collector;
@@ -29,14 +30,7 @@ public class DriveToBalance_BalanceMode extends AutoMode {
         runAction(
             new SeriesAction(
                 new WaitAction(.5),
-                new ElevatorAction(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX),
-                new WaitAction(2),
-                new ElevatorAction(Elevator.ANGLE_STATE.SCORE_DIP, Elevator.EXTENSION_STATE.MAX),
-                new WaitAction(.25),
-                new CollectAction(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.OUTTAKE),
-                new WaitAction(.5),
-                new CollectAction(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.STOP),
-                new ElevatorAction(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN),
+                new ScoreAction(false, Elevator.EXTENSION_STATE.MAX),
                 new WaitAction(.5),
                 trajectoryActions.get(0),
                 new AutoBalanceAction()

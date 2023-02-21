@@ -51,8 +51,8 @@ public class RobotState {
     public Orchestrator.SCORE_LEVEL_STATE scoreLevelState = Orchestrator.SCORE_LEVEL_STATE.MIN;
     public Elevator.EXTENSION_STATE actualElevatorExtensionState = Elevator.EXTENSION_STATE.MIN;
     public Elevator.ANGLE_STATE actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
-    public Collector.ROLLER_STATE actualCollectorRollerState = Collector.ROLLER_STATE.STOP;
-    public Collector.PIVOT_STATE actualCollectorPivotState = Collector.PIVOT_STATE.UP;
+
+    public Collector.STATE actualCollectorState = Collector.STATE.STOP;
     public List<VisionPoint> visibleTargets = new ArrayList<>();
 
     /**
@@ -106,8 +106,7 @@ public class RobotState {
         scoreLevelState = Orchestrator.SCORE_LEVEL_STATE.MIN;
         actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
         actualElevatorExtensionState = Elevator.EXTENSION_STATE.MIN;
-        actualCollectorRollerState = Collector.ROLLER_STATE.STOP;
-        actualCollectorPivotState = Collector.PIVOT_STATE.UP;
+        actualCollectorState = Collector.STATE.STOP;
         isPoseUpdated = true;
         visibleTargets.clear();
         drivetrainTemp = 0;

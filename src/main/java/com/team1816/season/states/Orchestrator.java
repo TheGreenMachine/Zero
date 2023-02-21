@@ -135,13 +135,13 @@ public class Orchestrator {
         if (collecting) {
             if (cube) {
                 fieldElement = ELEMENT.CUBE;
-                collector.setDesiredState(ControlMode.PercentOutput, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.INTAKE);
+                collector.setDesiredState(Collector.STATE.COL_CUBE);
             } else {
                 fieldElement = ELEMENT.CONE;
-                collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.DOWN, Collector.ROLLER_STATE.INTAKE);
+                collector.setDesiredState(Collector.STATE.COL_CONE);
             }
         } else {
-            collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.STOP);
+            collector.setDesiredState(Collector.STATE.STOP);
         }
     }
 
@@ -153,12 +153,12 @@ public class Orchestrator {
     public void setCollectorScoring(boolean scoring) {
         if (scoring) {
             if (fieldElement == ELEMENT.CONE) {
-                collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.OUTTAKE);
+                collector.setDesiredState(Collector.STATE.FLUSH_CONE);
             } else {
-                collector.setDesiredState(ControlMode.PercentOutput, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.OUTTAKE);
+                collector.setDesiredState(Collector.STATE.FLUSH_CUBE);
             }
         } else {
-            collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.STOP);
+            collector.setDesiredState(Collector.STATE.STOP);
         }
         fieldElement = ELEMENT.NULL;
     }
