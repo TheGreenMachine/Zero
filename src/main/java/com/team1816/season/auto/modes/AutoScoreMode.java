@@ -59,6 +59,7 @@ public class AutoScoreMode extends AutoMode {
                     new WaitAction(.5),
                     new CollectAction(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.STOP),
                     new ElevatorAction(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN),
+                    new WaitAction(.5),
                     new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN)
                 )
             );
