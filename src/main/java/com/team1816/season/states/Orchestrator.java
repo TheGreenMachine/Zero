@@ -1,6 +1,5 @@
 package com.team1816.season.states;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.LedManager;
@@ -17,7 +16,6 @@ import edu.wpi.first.wpilibj.Timer;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -176,9 +174,9 @@ public class Orchestrator {
         }
     }
 
-    public void autoScore(){
+    public void autoScore() {
         System.out.println("Executing Auto Score Sequence!");
-        if(elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE){
+        if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
             elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
             elevator.writeToHardware();
             Timer.delay(0.10);

@@ -20,10 +20,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * A class that models a Swerve drivetrain
@@ -265,7 +262,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      * Autobalances while in Swervedrive manual control TODO redo description
      */
     @Override
-    public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds){
+    public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds) {
         double pitch = -infrastructure.getPitch();
         double roll = infrastructure.getRoll();
         double throttle = 0;
@@ -283,14 +280,14 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 //        !Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds())
         if (!isBraking) {
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
-                    throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond,
-                    strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond,
-                    fieldRelativeChassisSpeeds.omegaRadiansPerSecond);
+                throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond,
+                strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond,
+                fieldRelativeChassisSpeeds.omegaRadiansPerSecond);
             setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
         } else {
             heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
-            SwerveModuleState templateState = new SwerveModuleState(0,heading);
-            SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState,templateState,templateState,templateState};
+            SwerveModuleState templateState = new SwerveModuleState(0, heading);
+            SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
             setModuleStates(statePassIn);
         }
     }
@@ -314,7 +311,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 (cs.vxMetersPerSecond - robotState.deltaVehicle.vxMetersPerSecond) /
                     Robot.dt,
                 (cs.vyMetersPerSecond - robotState.deltaVehicle.vyMetersPerSecond) /
-                Robot.dt,
+                    Robot.dt,
                 -9.80
             );
         robotState.deltaVehicle = cs;
@@ -368,17 +365,16 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             controlState = ControlState.OPEN_LOOP;
         }
 
-        if(forward == 0 && strafe == 0 && rotation == 0){
+        if (forward == 0 && strafe == 0 && rotation == 0) {
 
             Rotation2d[] azimuths = new Rotation2d[4];
 
-            for (int i = 0; i<4; i++) {
+            for (int i = 0; i < 4; i++) {
                 azimuths[i] = Rotation2d.fromDegrees(swerveModules[i].azimuthActual);
             }
 
-            signal = new SwerveDriveSignal(new double[]{0,0,0,0}, azimuths, false);
-        }
-        else {
+            signal = new SwerveDriveSignal(new double[]{0, 0, 0, 0}, azimuths, false);
+        } else {
             signal = swerveDriveHelper.calculateDriveSignal(
                 (isDemoMode ? forward * demoModeMultiplier : forward),
                 (isDemoMode ? strafe * demoModeMultiplier : strafe),

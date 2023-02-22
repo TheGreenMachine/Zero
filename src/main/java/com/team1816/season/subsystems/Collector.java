@@ -59,8 +59,8 @@ public class Collector extends Subsystem {
         coneOuttakeVelocity = factory.getConstant(NAME, "coneOuttakeVelocity", 840); // TODO tune these
     }
 
-    public void setDesiredState(STATE desiredState){
-        if(this.desiredState != desiredState){
+    public void setDesiredState(STATE desiredState) {
+        if (this.desiredState != desiredState) {
             this.desiredState = desiredState;
             outputsChanged = true;
         }
@@ -77,7 +77,7 @@ public class Collector extends Subsystem {
         solenoidOutput = intakeSolenoid.get();
 
         // no checking performed
-        if(robotState.actualCollectorState != desiredState){
+        if (robotState.actualCollectorState != desiredState) {
             robotState.actualCollectorState = desiredState;
         }
     }
@@ -91,7 +91,7 @@ public class Collector extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
-            switch (desiredState){
+            switch (desiredState) {
                 case STOP -> {
                     intakeSolenoid.set(false); // TODO check if down = true or false for each of these
                     intakeMotor.set(ControlMode.Velocity, 0);

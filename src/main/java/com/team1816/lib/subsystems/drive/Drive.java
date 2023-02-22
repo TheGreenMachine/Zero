@@ -296,6 +296,7 @@ public abstract class Drive
 
     /**
      * Configure motors for open loop control and sends a DriveSignal command based on inputs
+     *
      * @param signal DriveSignal
      * @see com.team1816.lib.util.team254.SwerveDriveSignal
      * @see DriveSignal
@@ -324,14 +325,14 @@ public abstract class Drive
     /**
      * Sets the initial yaw
      */
-    public void setInitialYaw(){
+    public void setInitialYaw() {
         initialYaw = robotState.fieldToVehicle.getRotation().getDegrees();
     }
 
     /**
      * Returns the initial yaw
      */
-    public double getInitialYaw(){
+    public double getInitialYaw() {
         return initialYaw;
     }
 
@@ -347,24 +348,28 @@ public abstract class Drive
 
     /**
      * Sets the Autobalancing signal boolean and the initial yaw TODO redo description
+     *
      * @param balancing (boolean) isAutoBalancing
      */
-    public void setAutoBalanceManual(boolean balancing){
+    public void setAutoBalanceManual(boolean balancing) {
         setInitialYaw();
         isAutoBalancing = balancing;
     }
 
     /**
      * Returns the current autobalancing state
+     *
      * @return (boolean) isAutobalancing
      */
-    public boolean isAutoBalancing(){
+    public boolean isAutoBalancing() {
         return isAutoBalancing;
     }
+
     /**
      * Autobalances in teleop TODO redo description
      */
-    public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds){}
+    public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds) {
+    }
 
     /**
      * Returns the actual heading of the drivetrain based on Odometry and gyroscopic measurements

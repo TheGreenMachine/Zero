@@ -14,7 +14,7 @@ import java.util.List;
 
 public class PlaceConeAutoBalance_BalanceMode extends AutoMode {
 
-    public PlaceConeAutoBalance_BalanceMode(){
+    public PlaceConeAutoBalance_BalanceMode() {
         super(List.of(new TrajectoryAction(new DriveToBalance_Balance())));
     }
 

@@ -17,7 +17,6 @@ public class DriveToBalance_Balance extends AutoPath {
     }
 
 
-
     @Override
     protected List<Pose2d> getWaypoints() {
         return List.of(

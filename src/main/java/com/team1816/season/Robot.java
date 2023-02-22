@@ -11,16 +11,15 @@ import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
+import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.vision.Camera;
-import com.team1816.lib.subsystems.drive.*;
 import com.team1816.season.auto.AutoModeManager;
-import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.*;
 
 import java.nio.file.Files;
@@ -96,7 +95,6 @@ public class Robot extends TimedRobot {
     private boolean isAutoBalancing;
     private double autoBalanceDivider;
     private static boolean isSwerve = false;
-
 
 
     public static boolean runningAutoTarget = false;
@@ -377,20 +375,20 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                            () -> controlBoard.getAsBool("autoScoreMin"),
-                            () -> orchestrator.setElevatorScoring(true, Elevator.EXTENSION_STATE.MIN)
+                        () -> controlBoard.getAsBool("autoScoreMin"),
+                        () -> orchestrator.setElevatorScoring(true, Elevator.EXTENSION_STATE.MIN)
                     ),
                     createAction(
-                            () -> controlBoard.getAsBool("autoScoreMid"),
-                            () -> orchestrator.setElevatorScoring(true, Elevator.EXTENSION_STATE.MID)
+                        () -> controlBoard.getAsBool("autoScoreMid"),
+                        () -> orchestrator.setElevatorScoring(true, Elevator.EXTENSION_STATE.MID)
                     ),
                     createAction(
-                            () -> controlBoard.getAsBool("autoScoreMax"),
-                            () -> orchestrator.setElevatorScoring(true, Elevator.EXTENSION_STATE.MAX)
+                        () -> controlBoard.getAsBool("autoScoreMax"),
+                        () -> orchestrator.setElevatorScoring(true, Elevator.EXTENSION_STATE.MAX)
                     ),
                     createAction(
-                            () -> controlBoard.getAsBool("autoScoreRetract"),
-                            orchestrator::autoScore
+                        () -> controlBoard.getAsBool("autoScoreRetract"),
+                        orchestrator::autoScore
                     )
                 );
         } catch (Throwable t) {
@@ -597,15 +595,14 @@ public class Robot extends TimedRobot {
 
         isSwerve = drive instanceof SwerveDrive;
 
-        if(drive.isAutoBalancing()){
+        if (drive.isAutoBalancing()) {
             ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
-                    0,
-                    -controlBoard.getAsDouble("strafe"),
-                    0,
-                    robotState.fieldToVehicle.getRotation());
+                0,
+                -controlBoard.getAsDouble("strafe"),
+                0,
+                robotState.fieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
-        }
-        else {
+        } else {
             drive.setTeleopInputs(
                 -controlBoard.getAsDouble("throttle"),
                 -controlBoard.getAsDouble("strafe"),
