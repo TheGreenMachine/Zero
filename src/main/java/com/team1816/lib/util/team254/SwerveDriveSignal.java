@@ -98,16 +98,16 @@ public class SwerveDriveSignal extends DriveSignal {
         return mWheelSpeeds;
     }
 
-    public SwerveDriveSignal toVelocity() {
-        return new SwerveDriveSignal(
-            Arrays
-                .stream(this.mWheelSpeeds)
-                .map(x -> x * inchesPerSecondToTicksPer100ms(kOpenLoopMaxVelMeters))
-                .toArray(),
-            this.mWheelAzimuths,
-            this.mBrakeMode
-        );
-    }
+//    public SwerveDriveSignal toVelocity() {
+//        return new SwerveDriveSignal(
+//            Arrays
+//                .stream(this.mWheelSpeeds)
+//                .map(x -> x * inchesPerSecondToTicksPer100ms(kOpenLoopMaxVelMeters))
+//                .toArray(),
+//            this.mWheelAzimuths,
+//            this.mBrakeMode
+//        );
+//    }
 
     /**
      * Returns the wheel azimuth rotations

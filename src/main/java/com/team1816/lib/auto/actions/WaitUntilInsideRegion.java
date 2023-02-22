@@ -80,8 +80,8 @@ public class WaitUntilInsideRegion implements AutoAction {
     @Override
     public boolean isFinished() {
         Pose2d position = mRobotState.fieldToVehicle;
-        var x = Units.metersToInches(position.getX());
-        var y = Units.metersToInches(position.getY());
+        var x = (position.getX());
+        var y = (position.getY());
         return (
             x > mBottomLeft.getX() &&
                 x < mTopRight.getX() &&

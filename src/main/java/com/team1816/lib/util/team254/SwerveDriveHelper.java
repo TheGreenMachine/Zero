@@ -13,7 +13,6 @@ import static com.team1816.lib.subsystems.drive.Drive.kOpenLoopMaxVelMeters;
 public class SwerveDriveHelper implements DriveHelper {
 
     private static final double kTranslationPower = 1.50; // 1.75 + 0.4375
-    private static final double kMaxSpeed = (kOpenLoopMaxVelMeters);
     private static final double kMaxRotation = kMaxAngularSpeed;
 
     private static final double kHighPowerRotationScalar = 0.8;
@@ -125,7 +124,7 @@ public class SwerveDriveHelper implements DriveHelper {
                     Math.signum(rotationInput);
         }
 
-        translationalInput = translationalInput.times(kMaxSpeed);
+        translationalInput = translationalInput.times(kOpenLoopMaxVelMeters);
         rotationInput *= kMaxRotation;
 
         if (low_power) {

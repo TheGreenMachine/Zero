@@ -378,6 +378,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
             signal = new SwerveDriveSignal(new double[]{0,0,0,0}, azimuths, false);
         }
+
         else {
             signal = swerveDriveHelper.calculateDriveSignal(
                 (isDemoMode ? forward * demoModeMultiplier : forward),
