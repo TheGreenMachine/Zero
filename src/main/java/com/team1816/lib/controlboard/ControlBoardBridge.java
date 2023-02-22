@@ -35,6 +35,8 @@ public class ControlBoardBridge {
     private HashMap<String, Integer> operatorDpadMap = new HashMap<>();
     private boolean operatorRumble = false;
 
+    private HashMap<String, Controller.Button> buttonBoardMap = new HashMap<>();
+
     /**
      * Instantiates the ControlBoardBridge which maps controllable axes and buttons
      */
@@ -272,6 +274,44 @@ public class ControlBoardBridge {
                     );
                 }
             }
+            if (config.buttonboard != null) {
+                buttonBoardMap.put(
+                    config.buttonboard.getOrDefault("upLeft", "empty"),
+                    Controller.Button.UP_LEFT
+                );
+                buttonBoardMap.put(
+                    config.buttonboard.getOrDefault("up", "empty"),
+                    Controller.Button.UP
+                );
+                buttonBoardMap.put(
+                    config.buttonboard.getOrDefault("upRight", "empty"),
+                    Controller.Button.UP_RIGHT
+                );
+                buttonBoardMap.put(
+                    config.buttonboard.getOrDefault("left", "empty"),
+                    Controller.Button.LEFT
+                );
+                buttonBoardMap.put(
+                    config.buttonboard.getOrDefault("center", "empty"),
+                    Controller.Button.CENTER
+                );
+                buttonBoardMap.put(
+                    config.buttonboard.getOrDefault("right", "empty"),
+                    Controller.Button.RIGHT
+                );
+                buttonBoardMap.put(
+                    config.buttonboard.getOrDefault("downLeft", "empty"),
+                    Controller.Button.DOWN_LEFT
+                );
+                buttonBoardMap.put(
+                    config.buttonboard.getOrDefault("down", "empty"),
+                    Controller.Button.DOWN
+                );
+                buttonBoardMap.put(
+                    config.buttonboard.getOrDefault("downRight", "empty"),
+                    Controller.Button.DOWN_RIGHT
+                );
+            }
         }
     }
 
@@ -356,4 +396,13 @@ public class ControlBoardBridge {
                 operatorDpadMap.containsKey(key)
         );
     }
+
+    public HashMap<String, Controller.Button> getButtonBoardMap() {
+        return buttonBoardMap;
+    }
+
+    public boolean buttonBoardMapContainsKey(String key) {
+        return buttonBoardMap.containsKey(key);
+    }
+
 }

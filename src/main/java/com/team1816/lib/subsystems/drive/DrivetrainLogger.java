@@ -1,7 +1,6 @@
 package com.team1816.lib.subsystems.drive;
 
 import badlog.lib.BadLog;
-import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.configuration.Constants;
 
 /**
