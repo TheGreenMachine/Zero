@@ -94,8 +94,8 @@ public class Constants {
      * Badlog characterization
      */
     public static boolean kIsBadlogEnabled = factory.getConstant("badLogEnabled") > 0;
-    public static boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0;
-    public static boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0;
+    public static boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0 && kIsBadlogEnabled;
+    public static boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0 && kIsBadlogEnabled;
 
     public final boolean kUsePoseTrack =
         factory.getConstant("shooter", "usingPoseForSpeed", 0) > 0;

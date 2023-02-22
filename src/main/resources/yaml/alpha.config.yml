@@ -82,9 +82,9 @@ constants:
     ## Drivetrain Dimensions and Parameters ##
     maxAllowablePoseError: 0.1
     ## Logging Config ##
-    logTeleOp: 1
-    logAuto: 1
-    badLogEnabled: 1
+    logTeleOp: 0
+    logAuto: 0
+    badLogEnabled: 0
     configStatusFrames: 0
     verbose: 0 # 0 or 1
     ## General ##
