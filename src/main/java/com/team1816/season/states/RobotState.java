@@ -1,6 +1,7 @@
 package com.team1816.season.states;
 
 import com.google.inject.Singleton;
+import com.team1816.lib.auto.Color;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
@@ -25,9 +26,10 @@ public class RobotState {
      * Odometry and field characterization
      */
     public final Field2d field = new Field2d();
+    public Color allianceColor = Color.BLUE;
     public Pose2d fieldToVehicle = Constants.EmptyPose2d;
     public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose2d;
-    public Pose2d target = Constants.EmptyPose2d;
+    public Pose2d target = Constants.fieldCenterPose;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation2d;
     public Pose2d fieldToTurret = Constants.EmptyPose2d;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds(); // velocities of vehicle
@@ -111,7 +113,6 @@ public class RobotState {
         visibleTargets.clear();
         drivetrainTemp = 0;
         vehicleToFloorProximityCentimeters = 0;
-        target = Constants.fieldCenterPose;
     }
 
     /**

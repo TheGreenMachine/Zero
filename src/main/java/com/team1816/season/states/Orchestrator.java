@@ -119,10 +119,10 @@ public class Orchestrator {
         if (collecting) {
             if (cube) {
                 fieldElement = ELEMENT.CUBE;
-                collector.setDesiredState(Collector.STATE.COL_CUBE);
+                collector.setDesiredState(Collector.STATE.INTAKE_CUBE);
             } else {
                 fieldElement = ELEMENT.CONE;
-                collector.setDesiredState(Collector.STATE.COL_CONE);
+                collector.setDesiredState(Collector.STATE.INTAKE_CONE);
             }
         } else {
             collector.setDesiredState(Collector.STATE.STOP);
@@ -137,9 +137,9 @@ public class Orchestrator {
     public void setCollectorScoring(boolean scoring) {
         if (scoring) {
             if (fieldElement == ELEMENT.CONE) {
-                collector.setDesiredState(Collector.STATE.FLUSH_CONE);
+                collector.setDesiredState(Collector.STATE.OUTTAKE_CONE);
             } else {
-                collector.setDesiredState(Collector.STATE.FLUSH_CUBE);
+                collector.setDesiredState(Collector.STATE.OUTTAKE_CUBE);
             }
         } else {
             collector.setDesiredState(Collector.STATE.STOP);

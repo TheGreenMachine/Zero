@@ -75,7 +75,7 @@ subsystems:
             maxAccel: 1.27 # meters/s^ 2
             isDemoMode: 0
             autoBalanceDivider: 30
-            pitchRollMaxFlat: 1.5
+            autoBalanceThreshold: 1.5
 infrastructure:
     canivoreBusName: rio
     # power distribution

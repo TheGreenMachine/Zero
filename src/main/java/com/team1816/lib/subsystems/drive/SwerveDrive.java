@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A class that models a Swerve drivetrain
@@ -106,7 +107,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      * @param lm  LEDManager
      * @param inf Infrastructure
      * @param rs  RobotState
-     * @see Drive(LedManager, Infrastructure, RobotState)
+     * @see Drive#Drive(LedManager, Infrastructure, RobotState)
      */
     @Inject
     public SwerveDrive(LedManager lm, Infrastructure inf, RobotState rs) {
@@ -179,9 +180,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (RobotBase.isSimulation()) {
             simulateGyroOffset();
         }
-        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
-        swerveOdometry.update(gyroHeading, actualModulePositions);
+        swerveOdometry.update(actualHeading, actualModulePositions);
         updateRobotState();
     }
 
@@ -269,16 +270,16 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         double strafe = 0;
         var heading = Constants.EmptyRotation2d;
 
-        double maxFlatRange = Constants.pitchRollMaxFlat;
+        double threshold = Constants.autoBalanceThresholdDegrees;
 
         double autoBalanceDivider = Constants.autoBalanceDivider;
 
-        if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
+        if (Math.abs(pitch) > threshold || Math.abs(roll) > threshold) {
             throttle = pitch / autoBalanceDivider;
             strafe = roll / autoBalanceDivider;
         }
-//        !Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds())
-        if (!isBraking) {
+
+        if (!Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds()) && !isBraking) {
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
                 throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond,
                 strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond,
@@ -436,9 +437,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      */
     @Override
     public void resetOdometry(Pose2d pose) {
-        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
-        swerveOdometry.resetPosition(gyroHeading, actualModulePositions, pose);
-        swerveOdometry.update(gyroHeading, actualModulePositions);
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        swerveOdometry.resetPosition(actualHeading, actualModulePositions, pose);
+        swerveOdometry.update(actualHeading, actualModulePositions);
         updateRobotState();
     }
 

@@ -15,7 +15,7 @@ public class ScoreAction extends SeriesAction {
             // dipping and dropping game piece
             new ElevatorAction(Elevator.ANGLE_STATE.SCORE_DIP, extension_state),
             new WaitAction(.25),
-            new CollectAction(isCube ? Collector.STATE.FLUSH_CUBE : Collector.STATE.FLUSH_CONE),
+            new CollectAction(isCube ? Collector.STATE.OUTTAKE_CUBE : Collector.STATE.OUTTAKE_CONE),
             new WaitAction(.5),
             // resetting elevator / collector to starting states
             new CollectAction(Collector.STATE.STOP),
