@@ -183,6 +183,9 @@
         "open": true
       }
     },
+    "[...]##v_$serversub": {
+      "open": true
+    },
     "combined": true,
     "photonvision": {
       "open": true,

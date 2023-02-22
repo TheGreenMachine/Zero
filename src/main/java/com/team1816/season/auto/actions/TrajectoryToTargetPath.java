@@ -74,9 +74,7 @@ public class TrajectoryToTargetPath extends AutoPath {
                 }
             }
         } else if (
-            target.getY() > Constants.chargeStationThresholdYMin && target.getY() < Constants.chargeStationThresholdYMax ||
-                (target.getY() > Constants.chargeStationThresholdYMax && robotState.fieldToVehicle.getY() < Constants.chargeStationThresholdYMin) ||
-                (target.getY() < Constants.chargeStationThresholdYMin && robotState.fieldToVehicle.getY() > Constants.chargeStationThresholdYMax)
+            target.getY() > Constants.chargeStationThresholdYMin && target.getY() < Constants.chargeStationThresholdYMax
         ) { // target is in the middle but robot is not or path goes across the null box, so add waypoint closer to the scoring nodes
             waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
             if (robotState.fieldToVehicle.getY() > Constants.chargeStationThresholdYMax) { // upper bounding box
@@ -147,6 +145,36 @@ public class TrajectoryToTargetPath extends AutoPath {
                         waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinBlue, robotState.fieldToVehicle.getY()), target.getRotation())); // get off charging station
                     } else {
                         waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
+                    }
+                }
+            }
+        } else if (
+            (target.getY() > Constants.chargeStationThresholdYMax && robotState.fieldToVehicle.getY() < Constants.chargeStationThresholdYMin) ||
+            (target.getY() < Constants.chargeStationThresholdYMin && robotState.fieldToVehicle.getY() > Constants.chargeStationThresholdYMax))
+        { // target and robot are on opposite sides of the charge station
+            waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
+            if (robotState.fieldToVehicle.getY() > Constants.chargeStationThresholdYMax) { // upper bounding box
+                if (robotState.allianceColor == Color.RED) {
+                    if (!(robotState.fieldToVehicle.getX() > Constants.chargeStationThresholdXMaxRed)) {
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMax), target.getRotation()));
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMin), Rotation2d.fromDegrees(-90)));
+                    }
+                } else {
+                    if (!(robotState.fieldToVehicle.getX() < Constants.chargeStationThresholdXMinBlue)) {
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax), target.getRotation()));
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin), Rotation2d.fromDegrees(-90)));
+                    }
+                }
+            } else { // lower bounding box
+                if (robotState.allianceColor == Color.RED) {
+                    if (!(robotState.fieldToVehicle.getX() > Constants.chargeStationThresholdXMaxRed)) {
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMin), target.getRotation()));
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMax), Rotation2d.fromDegrees(90)));
+                    }
+                } else {
+                    if (!(robotState.fieldToVehicle.getX() < Constants.chargeStationThresholdXMinBlue)) {
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin), target.getRotation()));
+                        waypoints.add(new Pose2d(new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax), Rotation2d.fromDegrees(90)));
                     }
                 }
             }

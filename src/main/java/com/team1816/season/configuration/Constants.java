@@ -62,10 +62,10 @@ public class Constants {
         -.12065,
         .13335
     );
-    public static final double chargeStationThresholdXMinBlue = 2.6;
+    public static final double chargeStationThresholdXMinBlue = 2.4;
     public static final double chargeStationThresholdXMaxBlue = 5.0;
     public static final double chargeStationThresholdXMinRed = 11.5;
-    public static final double chargeStationThresholdXMaxRed = 14.0;
+    public static final double chargeStationThresholdXMaxRed = 14.1;
     public static final double chargeStationThresholdYMin = 1.1;
     public static final double chargeStationThresholdYMax = 4.5;
 

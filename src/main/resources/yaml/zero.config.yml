@@ -70,13 +70,13 @@ subsystems:
             isSwerve: 1
             encPPR: 14641
             azimuthEncPPR: 4096
-            maxRotVel: 18
-            trackWidth: 21 #inches
-            wheelbaseLength: 21.5 #inches
+            maxRotVel: 14
+            trackWidth: 19.75 # inches
+            wheelbaseLength: 19.75 # inches
             wheelDiameter: 4
             kTrackScrubFactor: 1.0
-            maxVelOpenLoop: 3.6 # meters/s (2.2)
-            maxVelPathFollowing: 3.6 # meters/s (2.2)
+            maxVelOpenLoop: 2.5 # meters/s (2.2)
+            maxVelPathFollowing: 2.5 # meters/s (2.2)
             maxAccel: 2.54 # meters/s^ 2
             isDemoMode: 0
             autoBalanceDivider: 40
@@ -153,12 +153,7 @@ infrastructure:
     isPigeon2: true
 controlboard: aleph1
 constants:
-    # drivetrain dimensions and movement
-    maxRotVel: 14
-    trackWidth: 19.75 #inches
-    wheelbaseLength: 19.75 #inches
-    wheelDiameter: 4
-    kTrackScrubFactor: 1.0
+    ## Drivetrain ##
     minAllowablePoseError: 0.1
     maxAllowablePoseError: 5
     ## Logging ##

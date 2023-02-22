@@ -1,5 +1,6 @@
 package com.team1816.lib.auto.paths;
 
+import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
