@@ -49,7 +49,11 @@ public abstract class AutoMode {
      */
     protected AutoMode(List<TrajectoryAction> trajectoryActions) {
         this.trajectoryActions = trajectoryActions;
-        initialPose = trajectoryActions.get(0).getTrajectory().getInitialPose();
+        if (trajectoryActions.get(0).getTrajectoryHeadings() != null) {
+            initialPose = new Pose2d(trajectoryActions.get(0).getTrajectory().getInitialPose().getTranslation(), trajectoryActions.get(0).getTrajectoryHeadings().get(0));
+        } else {
+            initialPose = trajectoryActions.get(0).getTrajectory().getInitialPose();
+        }
     }
 
     /**

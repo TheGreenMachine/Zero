@@ -8,19 +8,19 @@ import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.AutoBalanceAction;
 import com.team1816.season.auto.actions.ScoreAction;
-import com.team1816.season.auto.paths.DriveToBalance_Balance;
+import com.team1816.season.auto.paths.DriveToChargeStationPath;
 import com.team1816.season.subsystems.Elevator;
 
 import java.util.List;
 
-public class PlaceConeAutoBalance_BalanceMode extends AutoMode {
+public class PlaceConeAutoBalanceMode extends AutoMode {
 
-    public PlaceConeAutoBalance_BalanceMode(){
-        super(List.of(new TrajectoryAction(new DriveToBalance_Balance())));
+    public PlaceConeAutoBalanceMode(){
+        super(List.of(new TrajectoryAction(new DriveToChargeStationPath())));
     }
 
-    public PlaceConeAutoBalance_BalanceMode(Color color) {
-        super(List.of(new TrajectoryAction(new DriveToBalance_Balance(color))));
+    public PlaceConeAutoBalanceMode(Color color) {
+        super(List.of(new TrajectoryAction(new DriveToChargeStationPath(color))));
     }
 
     @Override
