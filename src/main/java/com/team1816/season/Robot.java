@@ -151,7 +151,6 @@ public class Robot extends TimedRobot {
      * @see Looper#getLastLoop()
      */
     public Double getLastEnabledLoop() {
-        dt = enabledLoop.getLastLoop();
         return enabledLoop.getLastLoop();
     }
 
@@ -506,6 +505,7 @@ public class Robot extends TimedRobot {
             subsystemManager.outputToSmartDashboard(); // update shuffleboard for subsystem values
             robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
+            dt = getLastEnabledLoop();
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());

@@ -261,20 +261,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
     }
 
-    public void setModuleStatesPercentOutput(SwerveModuleState[] desiredStates) { //TODO keep for now but delete when other works
-        if (controlState != ControlState.OPEN_LOOP) {
-            controlState = ControlState.OPEN_LOOP;
-        }
-        SwerveDriveKinematics.desaturateWheelSpeeds(
-            desiredStates,
-            (kPathFollowingMaxVelMeters)
-        );
-        desiredModuleStates = desiredStates;
-        for (int i = 0; i < 4; i++) {
-            swerveModules[i].setDesiredState(desiredStates[i], true);
-        }
-    }
-
     /**
      * Autobalances while in Swervedrive manual control TODO redo description
      */
