@@ -70,9 +70,9 @@ subsystems:
             isSwerve: 1
             encPPR: 14641
             azimuthEncPPR: 4096
-            maxRotVel: 18
-            trackWidth: 21 #inches
-            wheelbaseLength: 21.5 #inches
+            maxRotVel: 10
+            trackWidth: 19.75 #inches
+            wheelbaseLength: 19.75 #inches
             wheelDiameter: 4
             kTrackScrubFactor: 1.0
             maxVelOpenLoop: 2.2 # meters/s
@@ -103,14 +103,14 @@ subsystems:
         constants:
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
-            forwardAngleLimit: 10000 # Elevator horizontal orientation
-            reverseAngleLimit: -130000 # Elevator vertical orientation
-            stowAnglePosition: 0
-            collectAnglePosition: -90000
-            scoreAnglePosition: -37000
-            scoreDipAnglePosition: -50000
+            forwardAngleLimit: 100000 # Elevator horizontal orientation
+            reverseAngleLimit: -2000 # Elevator vertical orientation
+            stowAnglePosition: 95000
+            collectAnglePosition: -500
+            scoreAnglePosition: 64000
+            scoreDipAnglePosition: 55000
             minExtensionPosition: 20000
-            midExtensionPosition: 141000
+            midExtensionPosition: 120000
             maxExtensionPosition: 300000
     collector:
         implemented: true
@@ -125,7 +125,7 @@ subsystems:
             cubeIntakePower: -0.10 # percent output voltage
             cubeOuttakePower: 0.25 # percent output voltage
             coneIntakeVelocity: 420 # rpm
-            coneOuttakeVelocity: -840 # rpm
+            coneOuttakeVelocity: -420 # rpm
     ledmanager:
         implemented: false
         canifier: -1
@@ -152,18 +152,13 @@ infrastructure:
     isPigeon2: true
 controlboard: example
 constants:
-    # drivetrain dimensions and movement
-    maxRotVel: 14
-    trackWidth: 19.75 #inches
-    wheelbaseLength: 19.75 #inches
-    wheelDiameter: 4
-    kTrackScrubFactor: 1.0
+    # Drivetrain
     minAllowablePoseError: 0.1
     maxAllowablePoseError: 5
     ## Logging ##
-    logTeleOp: 1 # 0 or 1
-    logAuto: 1 # 0 or 1
-    badLogEnabled: 1 # 0 or 1
+    logTeleOp: 0 # 0 or 1
+    logAuto: 0 # 0 or 1
+    badLogEnabled: 0 # 0 or 1
     configStatusFrames: 0 # 0 or 1
     ## General ##
     EnableBucketTuning: 1

@@ -8,11 +8,13 @@ driver:
             horizontal: rotation
     buttonpad:
         a: autoTarget
+        b: autoBalance
     axes:
         leftTrigger: brakeMode
         rightTrigger: slowMode
     buttons:
-        leftBumper: autoBalance
+        leftBumper: intakeCube
+        rightBumper: intakeCone
         start: zeroPose
 operator:
     rumble: false
@@ -22,12 +24,12 @@ operator:
     buttons:
         leftBumper: bobDown
         rightBumper: outtake
-        start: lowerElevatorAngles
     axes:
-        leftTrigger: intakeCube
-        rightTrigger: intakeCone
+        leftTrigger: armStow
+        rightTrigger: armCollect
     buttonpad:
-        y: stowPosition
-        a: collectPosition
-        b: scorePosition
+        y: autoScoreMax
+        x: autoScoreMid
+        a: autoScoreMin
+        b: autoScoreRetract
 demoMode: false

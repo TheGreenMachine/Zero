@@ -156,12 +156,6 @@ public class Elevator extends Subsystem {
         }
     }
 
-    public void lowerRotationPoses(){
-        collectAngle -= 5000;
-        scoreDipAngle -= 5000;
-        outputsChanged = true;
-    }
-
     public ANGLE_STATE getDesiredAngleState() {
         return this.desiredAngleState;
     }
@@ -215,8 +209,8 @@ public class Elevator extends Subsystem {
                 case MIN:
                     extensionMotor.set(ControlMode.Position, (minExtension));
                     break;
-
             }
+            System.out.println("elev rot: " + desiredAngleState);
             switch (desiredAngleState) {
                 case STOW:
                     angleMotorMain.set(ControlMode.Position, (stowAngle));
