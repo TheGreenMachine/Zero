@@ -59,8 +59,8 @@ public class Collector extends Subsystem {
         coneOuttakeVelocity = factory.getConstant(NAME, "coneOuttakeVelocity", 840); // TODO tune these
     }
 
-    public void setDesiredState(STATE desiredState){
-        if(this.desiredState != desiredState){
+    public void setDesiredState(STATE desiredState) {
+        if (this.desiredState != desiredState) {
             this.desiredState = desiredState;
             outputsChanged = true;
         }
@@ -77,7 +77,7 @@ public class Collector extends Subsystem {
         solenoidOutput = intakeSolenoid.get();
 
         // no checking performed
-        if(robotState.actualCollectorState != desiredState){
+        if (robotState.actualCollectorState != desiredState) {
             robotState.actualCollectorState = desiredState;
         }
     }
@@ -91,24 +91,24 @@ public class Collector extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
-            switch (desiredState){
+            switch (desiredState) {
                 case STOP -> {
-                    intakeSolenoid.set(false); // TODO check if down = true or false for each of these
+                    intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.Velocity, 0);
                 }
-                case COL_CONE -> {
+                case INTAKE_CONE -> {
                     intakeSolenoid.set(true);
                     intakeMotor.set(ControlMode.Velocity, coneIntakeVelocity);
                 }
-                case COL_CUBE -> {
+                case INTAKE_CUBE -> {
                     intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.PercentOutput, cubeIntakePower);
                 }
-                case FLUSH_CONE -> {
+                case OUTTAKE_CONE -> {
                     intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.Velocity, coneOuttakeVelocity);
                 }
-                case FLUSH_CUBE -> {
+                case OUTTAKE_CUBE -> {
                     intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.PercentOutput, cubeOuttakePower);
                 }
@@ -149,9 +149,9 @@ public class Collector extends Subsystem {
     // should do exactly what it used to - just condensed the states into 5 instead of 3 separate for each enum
     public enum STATE {
         STOP,
-        COL_CUBE,
-        COL_CONE,
-        FLUSH_CUBE,
-        FLUSH_CONE
+        INTAKE_CUBE,
+        INTAKE_CONE,
+        OUTTAKE_CUBE,
+        OUTTAKE_CONE
     }
 }

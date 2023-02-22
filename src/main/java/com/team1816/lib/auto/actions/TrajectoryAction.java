@@ -131,6 +131,15 @@ public class TrajectoryAction implements AutoAction {
     }
 
     /**
+     * Returns the trajectory headings that are associated with the action
+     *
+     * @return trajectory headings
+     */
+    public List<Rotation2d> getTrajectoryHeadings() {
+        return headings;
+    }
+
+    /**
      * Starts the command, executes trajectory on drivetrain
      *
      * @see Drive#startTrajectory(Trajectory, List)

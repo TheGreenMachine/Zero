@@ -1,6 +1,5 @@
 package com.team1816.season.states;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.LedManager;
@@ -17,7 +16,6 @@ import edu.wpi.first.wpilibj.Timer;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,10 +119,10 @@ public class Orchestrator {
         if (collecting) {
             if (cube) {
                 fieldElement = ELEMENT.CUBE;
-                collector.setDesiredState(Collector.STATE.COL_CUBE);
+                collector.setDesiredState(Collector.STATE.INTAKE_CUBE);
             } else {
                 fieldElement = ELEMENT.CONE;
-                collector.setDesiredState(Collector.STATE.COL_CONE);
+                collector.setDesiredState(Collector.STATE.INTAKE_CONE);
             }
         } else {
             collector.setDesiredState(Collector.STATE.STOP);
@@ -139,9 +137,9 @@ public class Orchestrator {
     public void setCollectorScoring(boolean scoring) {
         if (scoring) {
             if (fieldElement == ELEMENT.CONE) {
-                collector.setDesiredState(Collector.STATE.FLUSH_CONE);
+                collector.setDesiredState(Collector.STATE.OUTTAKE_CONE);
             } else {
-                collector.setDesiredState(Collector.STATE.FLUSH_CUBE);
+                collector.setDesiredState(Collector.STATE.OUTTAKE_CUBE);
             }
         } else {
             collector.setDesiredState(Collector.STATE.STOP);
@@ -176,9 +174,9 @@ public class Orchestrator {
         }
     }
 
-    public void autoScore(){
+    public void autoScore() {
         System.out.println("Executing Auto Score Sequence!");
-        if(elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE){
+        if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
             elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
             elevator.writeToHardware();
             Timer.delay(0.10);

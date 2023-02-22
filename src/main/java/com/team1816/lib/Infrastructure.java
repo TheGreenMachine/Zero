@@ -8,8 +8,6 @@ import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.hardware.components.sensor.IProximitySensor;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
 import java.util.List;
@@ -86,8 +84,8 @@ public class Infrastructure {
      */
     public void resetPigeon(Rotation2d angle) {
         System.out.println("resetting Pigeon");
-        if(pigeon instanceof Pigeon2Impl){
-            ((Pigeon2Impl)pigeon).configMountPose(angle.getDegrees(), 0, 0);
+        if (pigeon instanceof Pigeon2Impl) {
+            ((Pigeon2Impl) pigeon).configMountPose(angle.getDegrees(), 0, 0);
         }
     }
 
@@ -141,6 +139,7 @@ public class Infrastructure {
     public PowerDistribution getPd() {
         return pd;
     }
+
     /**
      * Emulates gyroscope behaviour of the pigeon in simulation environments
      *
