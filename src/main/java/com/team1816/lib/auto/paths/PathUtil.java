@@ -1,5 +1,6 @@
 package com.team1816.lib.auto.paths;
 
+import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -36,7 +37,6 @@ public class PathUtil {
         boolean usingApp,
         List<Pose2d> waypoints
     ) {
-        /* Inch to meter conversions for waypoints for trajectory calculations */
         List<Pose2d> waypointsMeters = new ArrayList<>();
         for (Pose2d pose2d : waypoints) {
             waypointsMeters.add(
@@ -53,16 +53,6 @@ public class PathUtil {
             waypointsMeters,
             config
         );
-        /* If web application is not used, then the starting pose is transformed to the default starting pose, this has no impact on how the trajectory is run */
-        if (!usingApp) {
-            baseTrajectory =
-                baseTrajectory.transformBy(
-                    new Transform2d(
-                        Constants.kDefaultZeroingPose.getTranslation(),
-                        Constants.kDefaultZeroingPose.getRotation()
-                    )
-                );
-        }
         return baseTrajectory;
     }
 
@@ -82,7 +72,6 @@ public class PathUtil {
         ChassisSpeeds initial,
         List<Pose2d> waypoints
     ) {
-        /* Inch to meter conversions for waypoints for trajectory calculations */
         List<Pose2d> waypointsMeters = new ArrayList<>();
         for (Pose2d pose2d : waypoints) {
             waypointsMeters.add(
@@ -101,16 +90,6 @@ public class PathUtil {
             waypointsMeters,
             config
         );
-        /* If web application is not used, then the starting pose is transformed to the default starting pose, this has no impact on how the trajectory is run */
-        if (!usingApp) {
-            baseTrajectory =
-                baseTrajectory.transformBy(
-                    new Transform2d(
-                        Constants.kDefaultZeroingPose.getTranslation(),
-                        Constants.kDefaultZeroingPose.getRotation()
-                    )
-                );
-        }
         return baseTrajectory;
     }
 

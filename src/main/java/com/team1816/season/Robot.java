@@ -3,6 +3,7 @@ package com.team1816.season;
 import badlog.lib.BadLog;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
+import com.team1816.lib.auto.Color;
 import com.team1816.lib.controlboard.ActionManager;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
@@ -12,17 +13,20 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.lib.subsystems.vision.Camera;
-import com.team1816.lib.subsystems.drive.*;
 import com.team1816.season.auto.AutoModeManager;
+import com.team1816.season.auto.modes.AutoScoreMode;
 import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
+import com.team1816.season.configuration.DrivetrainTargets;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.wpilibj.*;
+import org.checkerframework.checker.units.qual.A;
 
+import javax.sound.midi.Soundbank;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -79,6 +83,7 @@ public class Robot extends TimedRobot {
      */
     private final AutoModeManager autoModeManager;
     private Thread autoTargetThread;
+    private Thread autoScoreThread;
 
     /**
      * Timing
@@ -92,14 +97,12 @@ public class Robot extends TimedRobot {
      * Properties
      */
     private boolean faulted;
-    private Drive.ControlState prevState;
-    private boolean isAutoBalancing;
-    private double autoBalanceDivider;
-    private static boolean isSwerve = false;
-
-
+    private int grid = 0;
+    private int node = 0;
+    private int level = 0;
 
     public static boolean runningAutoTarget = false;
+    public static boolean runningAutoScore = false;
     public static boolean runningAutoBalance = false;
 
     /**
@@ -121,8 +124,6 @@ public class Robot extends TimedRobot {
         infrastructure = Injector.get(Infrastructure.class);
         subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
-        autoBalanceDivider = factory.getConstant(Drive.NAME, "autoBalanceDivider");
-
     }
 
     /**
@@ -263,6 +264,11 @@ public class Robot extends TimedRobot {
 //                    createAction(
 //                        () -> controlBoard.getAsBool("autoTarget"),
 //                        () -> {
+//                            if (robotState.allianceColor == Color.BLUE) {
+//                                robotState.target = DrivetrainTargets.blueTargets.get(grid * 3 + node);
+//                            } else {
+//                                robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
+//                            }
 //                            if (!runningAutoTarget) {
 //                                runningAutoTarget = true;
 //                                orchestrator.updatePoseWithCamera();
@@ -284,6 +290,30 @@ public class Robot extends TimedRobot {
 //                            }
 //                        }
 //                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("autoScore"),
+                        () -> {
+                            if (!runningAutoScore) {
+                                runningAutoScore = true;
+                                System.out.println("Automatic score sequence started!");
+                                AutoScoreMode mode;
+                                if (level == 2) {
+                                    mode = new AutoScoreMode(Orchestrator.SCORE_LEVEL_STATE.MAX);
+                                } else if (level == 1) {
+                                    mode = new AutoScoreMode(Orchestrator.SCORE_LEVEL_STATE.MID);
+                                } else {
+                                    mode = new AutoScoreMode(Orchestrator.SCORE_LEVEL_STATE.MIN);
+                                }
+                                autoScoreThread = new Thread(mode::run);
+                                autoScoreThread.start();
+                                System.out.println("Automatic score sequence complete");
+                            } else {
+                                autoScoreThread.stop();
+                                System.out.println("Stopped! automatic score sequence canceled!");
+                                runningAutoScore = !runningAutoScore;
+                            }
+                        }
+                    ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("brakeMode"),
                         drive::setBraking
@@ -295,6 +325,18 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("autoBalance"),
                         drive::setAutoBalanceManual
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("score"),
+                        () -> {
+                            if (level == 0) {
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
+                            } else if (level == 1) {
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID);
+                            } else {
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
+                            }
+                        }
                     ),
                     // Operator Gamepad
                     createHoldAction(
@@ -389,8 +431,67 @@ public class Robot extends TimedRobot {
                             () -> orchestrator.setElevatorScoring(true, Elevator.EXTENSION_STATE.MAX)
                     ),
                     createAction(
-                            () -> controlBoard.getAsBool("autoScoreRetract"),
-                            orchestrator::autoScore
+                        () -> controlBoard.getAsBool("grid1"),
+                        () -> {
+                            grid = 0;
+                            System.out.println("Grid changed to 0");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("grid2"),
+                        () -> {
+                            grid = 1;
+                            System.out.println("Grid changed to 1");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("grid3"),
+                        () -> {
+                            grid = 2;
+                            System.out.println("Grid changed to 2");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("node1"),
+                        () -> {
+                            node = 0;
+                            System.out.println("Node changed to 0");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("node2"),
+                        () -> {
+                            node = 1;
+                            System.out.println("Node changed to 1");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("node3"),
+                        () -> {
+                            node = 2;
+                            System.out.println("Node changed to 2");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("level1"),
+                        () -> {
+                            level = 0;
+                            System.out.println("Score level changed to Low");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("level2"),
+                        () -> {
+                            level = 1;
+                            System.out.println("Score level changed to Mid");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("level3"),
+                        () -> {
+                            level = 2;
+                            System.out.println("Score level changed to High");
+                        }
                     )
                 );
         } catch (Throwable t) {
@@ -505,7 +606,7 @@ public class Robot extends TimedRobot {
             subsystemManager.outputToSmartDashboard(); // update shuffleboard for subsystem values
             robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
-            dt = getLastEnabledLoop();
+            Robot.dt = getLastEnabledLoop();
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());
@@ -594,8 +695,6 @@ public class Robot extends TimedRobot {
      */
     public void manualControl() {
         actionManager.update();
-
-        isSwerve = drive instanceof SwerveDrive;
 
         if(drive.isAutoBalancing()){
             ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
