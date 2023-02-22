@@ -352,7 +352,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         double strafe = 0;
         var heading = Constants.EmptyRotation2d;
 
-        double maxFlatRange = Constants.pitchRollMaxFlat;
+        double maxFlatRange = Constants.autoBalanceThresholdDegrees;
         double correction = (getInitialYaw() - infrastructure.getYaw()) / 1440;
 
         if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {

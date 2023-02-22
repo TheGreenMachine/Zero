@@ -80,6 +80,11 @@ public class Constants {
     public static double preTargetDistance = 0.4; // m
 
     /**
+     * Elevator characterization
+     */
+    public static final double maxElevatorFeedForward = 0.05;
+
+    /**
      * Camera characterization
      */
     public static final double kCameraMountingAngleY = 20; // degrees
@@ -101,8 +106,6 @@ public class Constants {
     );
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
     //AutoBalance
-    public static final double pitchRollMaxFlat = factory.getConstant("drivetrain","pitchRollMaxFlat",2);
+    public static final double autoBalanceThresholdDegrees = factory.getConstant("drivetrain","autoBalanceThreshold",2);
     public static final double autoBalanceDivider = factory.getConstant("drivetrain", "autoBalanceDivider", 30);
-
-
 }

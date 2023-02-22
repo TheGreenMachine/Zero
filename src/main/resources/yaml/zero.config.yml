@@ -65,22 +65,25 @@ subsystems:
                     kF: 0
                     allowableError: 5
         constants:
+            ## Positional Configurations ##
             maxVelTicks100ms: 12275.7 # ticks per 100ms
             openLoopRampRate: 0.8
             isSwerve: 1
             encPPR: 14641
             azimuthEncPPR: 4096
+            wheelDiameter: 4
+            kTrackScrubFactor: 1.0
+            ## Velocity Constraints ##
             maxRotVel: 14
             trackWidth: 19.75 # inches
             wheelbaseLength: 19.75 # inches
-            wheelDiameter: 4
-            kTrackScrubFactor: 1.0
             maxVelOpenLoop: 2.5 # meters/s (2.2)
             maxVelPathFollowing: 2.5 # meters/s (2.2)
             maxAccel: 2.54 # meters/s^ 2
             isDemoMode: 0
+            ## Auto Balance ##
             autoBalanceDivider: 40
-            pitchRollMaxFlat: 2.5
+            autoBalanceThreshold: 2.5
     elevator:
         implemented: true
         falcons:
@@ -101,11 +104,17 @@ subsystems:
                 kF: 0
                 allowableError: 1000
         constants:
+            ## Config ##
+            usingFeedForward: 1
+            ## Limits ##
             maxVelTicks100ms: 5000
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
             forwardAngleLimit: 10000 # Elevator horizontal orientation
             reverseAngleLimit: -130000 # Elevator vertical orientation
+            ## Positions ##
+            angleQuarterPPR: 120000 # Used for feed-forward
+            extensionPPR: 300000 # Used for feed-forward
             stowAnglePosition: 0
             collectAnglePosition: -90000
             scoreAnglePosition: -37000
@@ -123,6 +132,7 @@ subsystems:
             slot0:
                 kF: 0.0000899
         constants:
+            ## Demands ##
             cubeIntakePower: -0.10 # percent output voltage
             cubeOuttakePower: 0.25 # percent output voltage
             coneIntakeVelocity: 420 # rpm
@@ -141,17 +151,17 @@ subsystems:
             usingCamToUpdatePose: 0
 infrastructure:
     canivoreBusName: highSpeed
-    # power distribution
+    ## Power Distribution ##
     pdId: 1
     pdIsRev: true
-    # pneumatics control
+    ## Pneumatics Control ##
     compressorEnabled: true
     pcmIsRev: false
     pcmId: 2
-    # pigeon
+    ## Pigeon ##
     pigeonId: 32
     isPigeon2: true
-controlboard: aleph1
+controlboard: example
 constants:
     ## Drivetrain ##
     minAllowablePoseError: 0.1

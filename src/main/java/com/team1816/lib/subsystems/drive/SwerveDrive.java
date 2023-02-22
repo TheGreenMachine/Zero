@@ -283,7 +283,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         double strafe = 0;
         var heading = Constants.EmptyRotation2d;
 
-        double maxFlatRange = Constants.pitchRollMaxFlat;
+        double maxFlatRange = Constants.autoBalanceThresholdDegrees;
 
         double autoBalanceDivider = Constants.autoBalanceDivider;
 
