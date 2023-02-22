@@ -177,13 +177,20 @@ public class Orchestrator {
     }
 
     public void autoScore(){
+        System.out.println("auto score button pressed");
         if(elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE){
             elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
-            Timer.delay(0.25);
+            elevator.writeToHardware();
+            Timer.delay(0.10);
             setCollectorScoring(true);
+            collector.writeToHardware();
             Timer.delay(0.25);
             setCollectorScoring(false);
-            setElevatorScoring(false, Elevator.EXTENSION_STATE.MIN);
+            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+            elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
+            elevator.writeToHardware();
+            Timer.delay(0.75);
+            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.STOW);
         }
     }
 
