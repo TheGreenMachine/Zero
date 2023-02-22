@@ -366,7 +366,19 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("autoScoreMin"),
+                        () -> controlBoard.getAsBool("armStow"),
+                        () -> {
+                            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("armCollect"),
+                        () -> {
+                            elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
+                        }
+                    ),
+                    createAction(
+                            () -> controlBoard.getAsBool("autoScoreMin"),
                             () -> orchestrator.setElevatorScoring(true, Elevator.EXTENSION_STATE.MIN)
                     ),
                     createAction(

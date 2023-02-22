@@ -70,7 +70,7 @@ subsystems:
             isSwerve: 1
             encPPR: 14641
             azimuthEncPPR: 4096
-            maxRotVel: 10
+            maxRotVel: 14
             trackWidth: 19.75 #inches
             wheelbaseLength: 19.75 #inches
             wheelDiameter: 4
@@ -156,9 +156,9 @@ constants:
     minAllowablePoseError: 0.1
     maxAllowablePoseError: 5
     ## Logging ##
-    logTeleOp: 0 # 0 or 1
-    logAuto: 0 # 0 or 1
-    badLogEnabled: 0 # 0 or 1
+    logTeleOp: 1 # 0 or 1
+    logAuto: 1 # 0 or 1
+    badLogEnabled: 1 # 0 or 1
     configStatusFrames: 0 # 0 or 1
     ## General ##
     EnableBucketTuning: 1

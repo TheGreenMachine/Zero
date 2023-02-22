@@ -177,7 +177,7 @@ public class Orchestrator {
     }
 
     public void autoScore(){
-        System.out.println("auto score button pressed");
+        System.out.println("Executing Auto Score Sequence!");
         if(elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE){
             elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
             elevator.writeToHardware();
