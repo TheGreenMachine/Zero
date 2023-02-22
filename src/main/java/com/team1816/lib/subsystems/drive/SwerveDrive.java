@@ -9,6 +9,7 @@ import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveHelper;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
+import com.team1816.season.Robot;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -258,36 +259,22 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
     }
 
-    public void setModuleStatesPercentOutput(SwerveModuleState[] desiredStates) { //TODO keep for now but delete when other works
-        if (controlState != ControlState.OPEN_LOOP) {
-            controlState = ControlState.OPEN_LOOP;
-        }
-        SwerveDriveKinematics.desaturateWheelSpeeds(
-            desiredStates,
-            (kPathFollowingMaxVelMeters)
-        );
-        desiredModuleStates = desiredStates;
-        for (int i = 0; i < 4; i++) {
-            swerveModules[i].setDesiredState(desiredStates[i], true);
-        }
-    }
-
     /**
      * Autobalances while in Swervedrive manual control TODO redo description
      */
     @Override
     public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds){
-        double pitch = infrastructure.getPitch();
+        double pitch = -infrastructure.getPitch();
         double roll = infrastructure.getRoll();
         double throttle = 0;
         double strafe = 0;
         var heading = Constants.EmptyRotation2d;
 
-        double maxFlatRange = Constants.autoBalanceThresholdDegrees;
+        double threshold = Constants.autoBalanceThresholdDegrees;
 
         double autoBalanceDivider = Constants.autoBalanceDivider;
 
-        if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
+        if (Math.abs(pitch) > threshold || Math.abs(roll) > threshold) {
             throttle = pitch / autoBalanceDivider;
             strafe = roll / autoBalanceDivider;
         }
@@ -323,9 +310,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         robotState.calculatedVehicleAccel =
             new ChassisSpeeds(
                 (cs.vxMetersPerSecond - robotState.deltaVehicle.vxMetersPerSecond) /
-                Constants.kLooperDt,
+                    Robot.dt,
                 (cs.vyMetersPerSecond - robotState.deltaVehicle.vyMetersPerSecond) /
-                Constants.kLooperDt,
+                    Robot.dt,
                 -9.80
             );
         robotState.deltaVehicle = cs;

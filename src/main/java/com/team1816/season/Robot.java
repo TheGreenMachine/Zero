@@ -152,7 +152,6 @@ public class Robot extends TimedRobot {
      * @see Looper#getLastLoop()
      */
     public Double getLastEnabledLoop() {
-        dt = enabledLoop.getLastLoop();
         return enabledLoop.getLastLoop();
     }
 
@@ -245,9 +244,9 @@ public class Robot extends TimedRobot {
             }
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
-            subsystemManager.zeroSensors();
             // zeroing ypr
             infrastructure.resetPigeon(Constants.EmptyRotation2d);
+            subsystemManager.zeroSensors();
 
             /** Register ControlBoard */
             controlBoard = Injector.get(IControlBoard.class);
@@ -262,35 +261,35 @@ public class Robot extends TimedRobot {
                             drive.zeroSensors(Constants.kDefaultZeroingPose);
                         }
                     ),
-                    createAction(
-                        () -> controlBoard.getAsBool("autoTarget"),
-                        () -> {
-                            if (robotState.allianceColor == Color.BLUE) {
-                                robotState.target = DrivetrainTargets.blueTargets.get(grid * 3 + node);
-                            } else {
-                                robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
-                            }
-                            if (!runningAutoTarget) {
-                                runningAutoTarget = true;
-                                orchestrator.updatePoseWithCamera();
-                                double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
-                                if (distance < Constants.kMinTrajectoryDistance) {
-                                    System.out.println("Distance to target is " + distance + " m");
-                                    System.out.println("Too close to target! can not start trajectory!");
-                                } else {
-                                    System.out.println("Drive trajectory action started!");
-                                    TrajectoryToTargetMode mode = new TrajectoryToTargetMode();
-                                    autoTargetThread = new Thread(mode::run);
-                                    autoTargetThread.start();
-                                    System.out.println("Trajectory ended");
-                                }
-                            } else {
-                                autoTargetThread.stop();
-                                System.out.println("Stopped! driving to trajectory canceled!");
-                                runningAutoTarget = !runningAutoTarget;
-                            }
-                        }
-                    ),
+//                    createAction(
+//                        () -> controlBoard.getAsBool("autoTarget"),
+//                        () -> {
+//                            if (robotState.allianceColor == Color.BLUE) {
+//                                robotState.target = DrivetrainTargets.blueTargets.get(grid * 3 + node);
+//                            } else {
+//                                robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
+//                            }
+//                            if (!runningAutoTarget) {
+//                                runningAutoTarget = true;
+//                                orchestrator.updatePoseWithCamera();
+//                                double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
+//                                if (distance < Constants.kMinTrajectoryDistance) {
+//                                    System.out.println("Distance to target is " + distance + " m");
+//                                    System.out.println("Too close to target! can not start trajectory!");
+//                                } else {
+//                                    System.out.println("Drive trajectory action started!");
+//                                    TrajectoryToTargetMode mode = new TrajectoryToTargetMode();
+//                                    autoTargetThread = new Thread(mode::run);
+//                                    autoTargetThread.start();
+//                                    System.out.println("Trajectory ended");
+//                                }
+//                            } else {
+//                                autoTargetThread.stop();
+//                                System.out.println("Stopped! driving to trajectory canceled!");
+//                                runningAutoTarget = !runningAutoTarget;
+//                            }
+//                        }
+//                    ),
                     createAction(
                         () -> controlBoard.getAsBool("autoScore"),
                         () -> {
@@ -340,13 +339,9 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     // Operator Gamepad
-                    createAction( // TODO remove, for testing purposes only
-                        () -> controlBoard.getAsBool("updatePose"),
-                        orchestrator::updatePoseWithCamera
-                    ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("outtake"),
-                        orchestrator::setScoring
+                        orchestrator::setCollectorScoring
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("bobDown"),
@@ -361,13 +356,11 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("extendStage"),
                         () -> {
-//                            Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
                             Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
+
                             if (extensionState == Elevator.EXTENSION_STATE.MIN) {
-//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
                                 elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
                             } else if (extensionState == Elevator.EXTENSION_STATE.MID) {
-//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MAX);
                                 elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MAX);
                             }
                         }
@@ -375,13 +368,11 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("descendStage"),
                         () -> {
-//                            Orchestrator.SCORE_LEVEL_STATE scoreState = robotState.scoreLevelState;
                             Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
+
                             if (extensionState == Elevator.EXTENSION_STATE.MID) {
-//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MIN);
                                 elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
                             } else if (extensionState == Elevator.EXTENSION_STATE.MAX) {
-//                                orchestrator.setDesiredScoreLevelState(Orchestrator.SCORE_LEVEL_STATE.MID);
                                 elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
                             }
                         }
@@ -398,6 +389,7 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("stowPosition"),
                         () -> {
                             elevator.setDesiredAngleState(Elevator.ANGLE_STATE.STOW);
+                            collector.setDesiredState(Collector.STATE.STOP);
                         }
                     ),
                     createAction(
@@ -415,8 +407,28 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("lowerElevatorAngles"),
-                        elevator::lowerRotationPoses
+                        () -> controlBoard.getAsBool("armStow"),
+                        () -> {
+                            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("armCollect"),
+                        () -> {
+                            elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
+                        }
+                    ),
+                    createAction(
+                            () -> controlBoard.getAsBool("autoScoreMin"),
+                            () -> orchestrator.setElevatorScoring(true, Elevator.EXTENSION_STATE.MIN)
+                    ),
+                    createAction(
+                            () -> controlBoard.getAsBool("autoScoreMid"),
+                            () -> orchestrator.setElevatorScoring(true, Elevator.EXTENSION_STATE.MID)
+                    ),
+                    createAction(
+                            () -> controlBoard.getAsBool("autoScoreMax"),
+                            () -> orchestrator.setElevatorScoring(true, Elevator.EXTENSION_STATE.MAX)
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("grid1"),

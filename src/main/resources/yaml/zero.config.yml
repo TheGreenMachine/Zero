@@ -79,7 +79,7 @@ subsystems:
             wheelbaseLength: 19.75 # inches
             maxVelOpenLoop: 2.5 # meters/s (2.2)
             maxVelPathFollowing: 2.5 # meters/s (2.2)
-            maxAccel: 2.54 # meters/s^ 2
+            maxAccel: 1.5 # meters/s^ 2
             isDemoMode: 0
             ## Auto Balance ##
             autoBalanceDivider: 40
@@ -110,17 +110,14 @@ subsystems:
             maxVelTicks100ms: 5000
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
-            forwardAngleLimit: 10000 # Elevator horizontal orientation
-            reverseAngleLimit: -130000 # Elevator vertical orientation
-            ## Positions ##
-            angleQuarterPPR: 120000 # Used for feed-forward
-            extensionPPR: 300000 # Used for feed-forward
-            stowAnglePosition: 0
-            collectAnglePosition: -90000
-            scoreAnglePosition: -37000
-            scoreDipAnglePosition: -50000
+            forwardAngleLimit: 100000 # Elevator horizontal orientation
+            reverseAngleLimit: -2000 # Elevator vertical orientation
+            stowAnglePosition: 95000
+            collectAnglePosition: -500
+            scoreAnglePosition: 64000
+            scoreDipAnglePosition: 55000
             minExtensionPosition: 20000
-            midExtensionPosition: 141000
+            midExtensionPosition: 120000
             maxExtensionPosition: 300000
     collector:
         implemented: true
@@ -136,7 +133,7 @@ subsystems:
             cubeIntakePower: -0.10 # percent output voltage
             cubeOuttakePower: 0.25 # percent output voltage
             coneIntakeVelocity: 420 # rpm
-            coneOuttakeVelocity: -840 # rpm
+            coneOuttakeVelocity: -420 # rpm
     ledmanager:
         implemented: false
         canifier: -1
@@ -167,9 +164,9 @@ constants:
     minAllowablePoseError: 0.1
     maxAllowablePoseError: 5
     ## Logging ##
-    logTeleOp: 0 # 0 or 1
-    logAuto: 0 # 0 or 1
-    badLogEnabled: 0 # 0 or 1
+    logTeleOp: 1 # 0 or 1
+    logAuto: 1 # 0 or 1
+    badLogEnabled: 1 # 0 or 1
     configStatusFrames: 0 # 0 or 1
     ## General ##
     EnableBucketTuning: 1

@@ -1,6 +1,8 @@
 package com.team1816.lib.subsystems.drive;
 
+import badlog.lib.BadLog;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.configuration.Constants;
 
 /**
  * Class solely meant for logging drivetrain topics using the Badlogs logging utility.
@@ -9,8 +11,7 @@ public class DrivetrainLogger {
 
     public static void init(TrackableDrivetrain drivetrain) {
         var isSwerve = drivetrain instanceof SwerveDrivetrain;
-        var subsystem = (Subsystem) drivetrain;
-        if (isSwerve) {
+        if (isSwerve && Constants.kIsBadlogEnabled) {
             for (
                 int i = 0;
                 i < 1; //((SwerveDrivetrain) drivetrain).getSwerveModules().length;
@@ -20,21 +21,21 @@ public class DrivetrainLogger {
                 var name = module.getModuleName();
                 var prefix = "Drivetrain/" + name;
                 // Azimuth
-                subsystem.createBadLogTopic(
+                BadLog.createTopic(
                     prefix + "AzimuthPosition",
                     "ticks",
                     module::getActualAzimuth,
                     "hide",
                     "join:Drivetrain/AzimuthPosition"
                 );
-                subsystem.createBadLogTopic(
+                BadLog.createTopic(
                     prefix + "AzimuthDemand",
                     "ticks",
                     module::getDesiredAzimuth,
                     "hide",
                     "join:Drivetrain/AzimuthPosition"
                 );
-                subsystem.createBadLogTopic(
+                BadLog.createTopic(
                     prefix + "AzimuthError",
                     "ticks",
                     module::getAzimuthError,
@@ -43,28 +44,28 @@ public class DrivetrainLogger {
                 );
 
                 // Drive
-                subsystem.createBadLogTopic(
+                BadLog.createTopic(
                     prefix + "DriveVelocity",
                     "ticks",
                     module::getActualDrive,
                     "hide",
                     "join:Drivetrain/DriveVelocity"
                 );
-                subsystem.createBadLogTopic(
+                BadLog.createTopic(
                     prefix + "DriveVelocityDemand",
                     "ticks",
                     module::getDesiredDrive,
                     "hide",
                     "join:Drivetrain/DriveVelocity"
                 );
-                subsystem.createBadLogTopic(
+                BadLog.createTopic(
                     prefix + "DriveError",
                     "ticks",
                     module::getDriveError,
                     "hide",
                     "join:Drivetrain/DriveError"
                 );
-                subsystem.createBadLogTopic(
+                BadLog.createTopic(
                     prefix + "DriveTemperature",
                     "degrees C",
                     module::getMotorTemp,
@@ -73,42 +74,42 @@ public class DrivetrainLogger {
                 );
             }
         } else {
-            subsystem.createBadLogTopic(
+            BadLog.createTopic(
                 "Drivetrain/LeftActVel",
                 "NativeUnits",
                 ((TankDrive) drivetrain)::getLeftVelocityTicksActual,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
-            subsystem.createBadLogTopic(
+            BadLog.createTopic(
                 "Drivetrain/RightActVel",
                 "NativeUnits",
                 ((TankDrive) drivetrain)::getRightVelocityTicksActual,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
-            subsystem.createBadLogTopic(
+            BadLog.createTopic(
                 "Drivetrain/LeftVel",
                 "NativeUnits",
                 ((TankDrive) drivetrain)::getLeftVelocityTicksDemand,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
-            subsystem.createBadLogTopic(
+            BadLog.createTopic(
                 "Drivetrain/RightVel",
                 "NativeUnits",
                 ((TankDrive) drivetrain)::getRightVelocityTicksDemand,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
-            subsystem.createBadLogTopic(
+            BadLog.createTopic(
                 "Drivetrain/LeftError",
                 "NativeUnits",
                 ((TankDrive) drivetrain)::getLeftError,
                 "hide",
                 "join:Drivetrain/VelocityError"
             );
-            subsystem.createBadLogTopic(
+            BadLog.createTopic(
                 "Drivetrain/RightError",
                 "NativeUnits",
                 ((TankDrive) drivetrain)::getRightError,
@@ -116,42 +117,42 @@ public class DrivetrainLogger {
                 "join:Drivetrain/VelocityError"
             );
         }
-        subsystem.createBadLogTopic(
+        BadLog.createTopic(
             "Drivetrain/X Desired",
             "Inches",
             drivetrain::getFieldDesiredXDisplacement,
             "hide",
             "join:Drivetrain/Distance"
         );
-        subsystem.createBadLogTopic(
+        BadLog.createTopic(
             "Drivetrain/Y Desired",
             "Inches",
             drivetrain::getFieldDesiredYDisplacement,
             "hide",
             "join:Drivetrain/Distance"
         );
-        subsystem.createBadLogTopic(
+        BadLog.createTopic(
             "Drivetrain/X Actual",
             "Inches",
             drivetrain::getFieldXDisplacement,
             "hide",
             "join:Drivetrain/Distance"
         );
-        subsystem.createBadLogTopic(
+        BadLog.createTopic(
             "Drivetrain/Y Actual",
             "Inches",
             drivetrain::getFieldYDisplacement,
             "hide",
             "join:Drivetrain/Distance"
         );
-        subsystem.createBadLogTopic(
+        BadLog.createTopic(
             "Drivetrain/ActualHeading",
             "Angle",
             drivetrain::getActualHeadingDegrees,
             "hide",
             "join:Drivetrain/Heading"
         );
-        subsystem.createBadLogTopic(
+        BadLog.createTopic(
             "Drivetrain/DesiredHeading",
             "Angle",
             drivetrain::getDesiredHeadingDegrees,

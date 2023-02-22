@@ -1,6 +1,5 @@
 package com.team1816.season.states;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.LedManager;
@@ -13,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Timer;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -110,22 +110,6 @@ public class Orchestrator {
     }
 
     /**
-     * Sets the orchestrator to score
-     *
-     * @param scoring scoring
-     */
-    public void setScoring(boolean scoring) {
-        setCollectorScoring(scoring);
-//        if (desiredScoreLevelState == SCORE_LEVEL_STATE.MIN) {
-//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MIN);
-//        } else if (desiredScoreLevelState == SCORE_LEVEL_STATE.MID) {
-//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MID);
-//        } else {
-//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MAX);
-//        }
-    }
-
-    /**
      * Sets the desired state of the collector to collect
      *
      * @param collecting collecting
@@ -135,13 +119,13 @@ public class Orchestrator {
         if (collecting) {
             if (cube) {
                 fieldElement = ELEMENT.CUBE;
-                collector.setDesiredState(ControlMode.PercentOutput, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.INTAKE);
+                collector.setDesiredState(Collector.STATE.INTAKE_CUBE);
             } else {
                 fieldElement = ELEMENT.CONE;
-                collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.DOWN, Collector.ROLLER_STATE.INTAKE);
+                collector.setDesiredState(Collector.STATE.INTAKE_CONE);
             }
         } else {
-            collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.STOP);
+            collector.setDesiredState(Collector.STATE.STOP);
         }
     }
 
@@ -153,12 +137,12 @@ public class Orchestrator {
     public void setCollectorScoring(boolean scoring) {
         if (scoring) {
             if (fieldElement == ELEMENT.CONE) {
-                collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.OUTTAKE);
+                collector.setDesiredState(Collector.STATE.OUTTAKE_CONE);
             } else {
-                collector.setDesiredState(ControlMode.PercentOutput, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.OUTTAKE);
+                collector.setDesiredState(Collector.STATE.OUTTAKE_CUBE);
             }
         } else {
-            collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.STOP);
+            collector.setDesiredState(Collector.STATE.STOP);
         }
         fieldElement = ELEMENT.NULL;
     }
@@ -187,6 +171,24 @@ public class Orchestrator {
             elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, level);
         } else {
             elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
+        }
+    }
+
+    public void autoScore(){
+        System.out.println("Executing Auto Score Sequence!");
+        if(elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE){
+            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
+            elevator.writeToHardware();
+            Timer.delay(0.10);
+            setCollectorScoring(true);
+            collector.writeToHardware();
+            Timer.delay(0.25);
+            setCollectorScoring(false);
+            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+            elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
+            elevator.writeToHardware();
+            Timer.delay(0.75);
+            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.STOW);
         }
     }
 

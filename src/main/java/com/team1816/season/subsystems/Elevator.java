@@ -167,12 +167,6 @@ public class Elevator extends Subsystem {
         }
     }
 
-    public void lowerRotationPoses(){
-        collectAngle -= 5000;
-        scoreDipAngle -= 5000;
-        outputsChanged = true;
-    }
-
     public ANGLE_STATE getDesiredAngleState() {
         return this.desiredAngleState;
     }
