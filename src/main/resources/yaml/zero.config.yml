@@ -138,8 +138,8 @@ subsystems:
             ## Demands ##
             cubeIntakePower: -0.10 # percent output voltage
             cubeOuttakePower: 0.25 # percent output voltage
-            coneIntakeVelocity: 420 # rpm
-            coneOuttakeVelocity: -420 # rpm
+            coneIntakeVelocity: 600 # rpm
+            coneOuttakeVelocity: -600 # rpm
     ledmanager:
         implemented: false
         canifier: -1
