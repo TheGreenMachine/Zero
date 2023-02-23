@@ -39,7 +39,7 @@ public abstract class AutoMode {
      * Empty constructor for driveStraight and doNothing modes which don't require trajectories
      *
      * @see DoNothingMode
-     * @see com.team1816.season.auto.modes.DriveStraightMode
+     * @see DriveStraightMode
      */
     protected AutoMode() {
     }

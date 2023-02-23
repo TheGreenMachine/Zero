@@ -1,4 +1,4 @@
-package com.team1816.season.auto.paths;
+package com.team1816.lib.auto.paths;
 
 import com.team1816.lib.auto.paths.AutoPath;
 import com.team1816.season.configuration.Constants;

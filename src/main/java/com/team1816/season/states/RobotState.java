@@ -49,8 +49,6 @@ public class RobotState {
     /**
      * Orchestrator states
      */
-    public Orchestrator.STATE orchestratorState = Orchestrator.STATE.STOW;
-    public Orchestrator.SCORE_LEVEL_STATE scoreLevelState = Orchestrator.SCORE_LEVEL_STATE.MIN;
     public Elevator.EXTENSION_STATE actualElevatorExtensionState = Elevator.EXTENSION_STATE.MIN;
     public Elevator.ANGLE_STATE actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
 
@@ -104,8 +102,6 @@ public class RobotState {
         deltaVehicle = new ChassisSpeeds();
         calculatedVehicleAccel = new ChassisSpeeds();
         triAxialAcceleration = new Double[]{0d, 0d, 0d};
-        orchestratorState = Orchestrator.STATE.STOW;
-        scoreLevelState = Orchestrator.SCORE_LEVEL_STATE.MIN;
         actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
         actualElevatorExtensionState = Elevator.EXTENSION_STATE.MIN;
         actualCollectorState = Collector.STATE.STOP;

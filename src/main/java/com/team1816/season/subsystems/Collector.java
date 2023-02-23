@@ -37,6 +37,7 @@ public class Collector extends Subsystem {
      * States
      */
     private STATE desiredState = STATE.STOP;
+    private HELD_ELEMENT heldObj = HELD_ELEMENT.NOTHING;
     private double rollerVelocity = 0;
     private boolean solenoidOutput = false;
     private boolean outputsChanged = false;
@@ -63,6 +64,17 @@ public class Collector extends Subsystem {
         if (this.desiredState != desiredState) {
             this.desiredState = desiredState;
             outputsChanged = true;
+        }
+    }
+
+    // only used in teleop - need one button that can outtake both cubes and cones b/c we're low on button space
+    // if you know what game piece you're handling, use setDesiredState
+    public void outtakeGamePiece(boolean outtaking) {
+        if(outtaking){
+            // if holding no obj, use cube flush b/c its safe (using % out)
+            setDesiredState(heldObj == HELD_ELEMENT.CONE ? STATE.OUTTAKE_CONE : STATE.OUTTAKE_CUBE);
+        } else {
+            setDesiredState(STATE.STOP);
         }
     }
 
@@ -97,18 +109,22 @@ public class Collector extends Subsystem {
                     intakeMotor.set(ControlMode.Velocity, 0);
                 }
                 case INTAKE_CONE -> {
+                    heldObj = HELD_ELEMENT.CONE;
                     intakeSolenoid.set(true);
                     intakeMotor.set(ControlMode.Velocity, coneIntakeVelocity);
                 }
                 case INTAKE_CUBE -> {
+                    heldObj = HELD_ELEMENT.CUBE;
                     intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.PercentOutput, cubeIntakePower);
                 }
                 case OUTTAKE_CONE -> {
+                    heldObj = HELD_ELEMENT.NOTHING;
                     intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.Velocity, coneOuttakeVelocity);
                 }
                 case OUTTAKE_CUBE -> {
+                    heldObj = HELD_ELEMENT.NOTHING;
                     intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.PercentOutput, cubeOuttakePower);
                 }
@@ -153,5 +169,11 @@ public class Collector extends Subsystem {
         INTAKE_CONE,
         OUTTAKE_CUBE,
         OUTTAKE_CONE
+    }
+
+    private enum HELD_ELEMENT {
+        NOTHING,
+        CUBE,
+        CONE
     }
 }

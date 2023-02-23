@@ -13,7 +13,6 @@ import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.season.auto.AutoModeManager;
-import com.team1816.season.auto.modes.AutoScoreMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
@@ -207,11 +206,11 @@ public class Robot extends TimedRobot {
                     "xaxis",
                     "hide"
                 );
-                BadLog.createTopic(
-                    "Vision/Distance",
-                    "inches",
-                    robotState::getDistanceToGoal
-                );
+//                BadLog.createTopic(
+//                    "Vision/Distance",
+//                    "inches",
+//                    robotState::getDistanceToGoal
+//                );
                 BadLog.createValue("Drivetrain PID", drive.pidToString());
                 DrivetrainLogger.init(drive);
                 BadLog.createTopic(
@@ -219,7 +218,6 @@ public class Robot extends TimedRobot {
                     "Amps",
                     infrastructure.getPd()::getTotalCurrent
                 );
-
                 BadLog.createTopic(
                     "Pigeon/Yaw",
                     "degrees",
@@ -237,6 +235,7 @@ public class Robot extends TimedRobot {
                 );
                 logger.finishInitialization();
             }
+
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
             // zeroing ypr
@@ -285,30 +284,30 @@ public class Robot extends TimedRobot {
 //                            }
 //                        }
 //                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("autoScore"),
-                        () -> {
-                            if (!runningAutoScore) {
-                                runningAutoScore = true;
-                                System.out.println("Automatic score sequence started!");
-                                AutoScoreMode mode;
-                                if (level == 2) {
-                                    mode = new AutoScoreMode(Orchestrator.SCORE_LEVEL_STATE.MAX);
-                                } else if (level == 1) {
-                                    mode = new AutoScoreMode(Orchestrator.SCORE_LEVEL_STATE.MID);
-                                } else {
-                                    mode = new AutoScoreMode(Orchestrator.SCORE_LEVEL_STATE.MIN);
-                                }
-                                autoScoreThread = new Thread(mode::run);
-                                autoScoreThread.start();
-                                System.out.println("Automatic score sequence complete");
-                            } else {
-                                autoScoreThread.stop();
-                                System.out.println("Stopped! automatic score sequence canceled!");
-                                runningAutoScore = !runningAutoScore;
-                            }
-                        }
-                    ),
+//                    createAction(
+//                        () -> controlBoard.getAsBool("autoScore"),
+//                        () -> {
+//                            if (!runningAutoScore) {
+//                                runningAutoScore = true;
+//                                System.out.println("Automatic score sequence started!");
+//                                AutoScoreMode mode;
+//                                if (level == 2) {
+//                                    mode = new AutoScoreMode(Orchestrator.SCORE_LEVEL_STATE.MAX);
+//                                } else if (level == 1) {
+//                                    mode = new AutoScoreMode(Orchestrator.SCORE_LEVEL_STATE.MID);
+//                                } else {
+//                                    mode = new AutoScoreMode(Orchestrator.SCORE_LEVEL_STATE.MIN);
+//                                }
+//                                autoScoreThread = new Thread(mode::run);
+//                                autoScoreThread.start();
+//                                System.out.println("Automatic score sequence complete");
+//                            } else {
+//                                autoScoreThread.stop();
+//                                System.out.println("Stopped! automatic score sequence canceled!");
+//                                runningAutoScore = !runningAutoScore;
+//                            }
+//                        }
+//                    ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("brakeMode"),
                         drive::setBraking
@@ -321,22 +320,38 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("autoBalance"),
                         drive::setAutoBalanceManual
                     ),
-                    createAction(
-                        () -> controlBoard.getAsBool("score"),
-                        () -> {
-                            if (level == 0) {
-                                elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
-                            } else if (level == 1) {
-                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID);
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("intakeCone"),
+                        (pressed) -> {
+                            if(pressed){
+                                collector.setDesiredState(Collector.STATE.INTAKE_CONE);
+                                if(elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN){
+                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+                                }
                             } else {
-                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
+                                collector.setDesiredState(Collector.STATE.STOP);
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
+                            }
+                        }
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("intakeCube"),
+                        (pressed) -> {
+                            if(pressed){
+                                collector.setDesiredState(Collector.STATE.INTAKE_CUBE);
+                                if(elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN){
+                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+                                }
+                            } else {
+                                collector.setDesiredState(Collector.STATE.STOP);
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
                             }
                         }
                     ),
                     // Operator Gamepad
                     createHoldAction(
                         () -> controlBoard.getAsBool("outtake"),
-                        orchestrator::setCollectorScoring
+                        collector::outtakeGamePiece
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("bobDown"),
@@ -372,23 +387,21 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("intakeCone"),
-                        (pressed) -> orchestrator.setCollecting(pressed, false)
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("intakeCube"),
-                        (pressed) -> orchestrator.setCollecting(pressed, true)
-                    ),
+//                    createAction( // if you want to go to score pos, you could also just press the autoScoreMin button
+//                        () -> controlBoard.getAsBool("armScore"),
+//                        () -> {
+//                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+//                        }
+//                    ),
                     createAction(
-                        () -> controlBoard.getAsBool("stowPosition"),
+                        () -> controlBoard.getAsBool("armStow"),
                         () -> {
-                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.STOW);
+                            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
                             collector.setDesiredState(Collector.STATE.STOP);
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("collectPosition"),
+                        () -> controlBoard.getAsBool("armCollect"),
                         () -> {
                             if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
                                 elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
@@ -396,34 +409,16 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("scorePosition"),
-                        () -> {
-                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("armStow"),
-                        () -> {
-                            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("armCollect"),
-                        () -> {
-                            elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
-                        }
-                    ),
-                    createAction(
                         () -> controlBoard.getAsBool("autoScoreMin"),
-                        () -> orchestrator.setElevatorScoring(true, Elevator.EXTENSION_STATE.MIN)
+                        () -> elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN)
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("autoScoreMid"),
-                        () -> orchestrator.setElevatorScoring(true, Elevator.EXTENSION_STATE.MID)
+                        () -> elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID)
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("autoScoreMax"),
-                        () -> orchestrator.setElevatorScoring(true, Elevator.EXTENSION_STATE.MAX)
+                        () -> elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX)
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("grid1"),
