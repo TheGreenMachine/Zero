@@ -426,6 +426,10 @@ public class Robot extends TimedRobot {
                         () -> elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX)
                     ),
                     createAction(
+                            () -> controlBoard.getAsBool("autoScoreRetract"),
+                            orchestrator::autoScore
+                    ),
+                    createAction(
                         () -> controlBoard.getAsBool("grid1"),
                         () -> {
                             grid = 0;
