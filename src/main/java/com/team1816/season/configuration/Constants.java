@@ -96,6 +96,7 @@ public class Constants {
     public static boolean kIsBadlogEnabled = factory.getConstant("badLogEnabled") > 0;
     public static boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0 && kIsBadlogEnabled;
     public static boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0 && kIsBadlogEnabled;
+    public static boolean kIsLoggingDrivetrain = factory.getConstant("logDrivetrain") > 0;
 
     public final boolean kUsePoseTrack =
         factory.getConstant("shooter", "usingPoseForSpeed", 0) > 0;

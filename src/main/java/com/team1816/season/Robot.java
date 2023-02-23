@@ -98,6 +98,7 @@ public class Robot extends TimedRobot {
     public static boolean runningAutoTarget = false;
     public static boolean runningAutoScore = false;
     public static boolean runningAutoBalance = false;
+    public Elevator.ANGLE_STATE prevAngleState;
 
     /**
      * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
@@ -118,6 +119,8 @@ public class Robot extends TimedRobot {
         infrastructure = Injector.get(Infrastructure.class);
         subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
+
+        prevAngleState = Elevator.ANGLE_STATE.STOW;
     }
 
     /**
@@ -324,19 +327,21 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("intakeCone"),
                         (pressed) -> {
                             if(pressed){
+                                prevAngleState = elevator.getDesiredAngleState();
                                 collector.setDesiredState(Collector.STATE.INTAKE_CONE);
                                 if(elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN){
                                     elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
                                 }
                             } else {
                                 collector.setDesiredState(Collector.STATE.STOP);
-                                elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
+                                elevator.setDesiredState(prevAngleState, Elevator.EXTENSION_STATE.MIN);
                             }
                         }
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("intakeCube"),
                         (pressed) -> {
+                            prevAngleState = elevator.getDesiredAngleState();
                             if(pressed){
                                 collector.setDesiredState(Collector.STATE.INTAKE_CUBE);
                                 if(elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN){
@@ -344,7 +349,7 @@ public class Robot extends TimedRobot {
                                 }
                             } else {
                                 collector.setDesiredState(Collector.STATE.STOP);
-                                elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
+                                elevator.setDesiredState(prevAngleState, Elevator.EXTENSION_STATE.MIN);
                             }
                         }
                     ),

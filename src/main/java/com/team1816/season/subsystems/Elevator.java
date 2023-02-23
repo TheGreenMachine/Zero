@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
+import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
@@ -39,6 +40,8 @@ public class Elevator extends Subsystem {
     private static double midExtension;
     private static double maxExtension;
 
+    private AsyncTimer colPosTimer;
+
     private static double allowableAngleError;
     private static double allowableExtensionError;
 
@@ -68,7 +71,8 @@ public class Elevator extends Subsystem {
     private double angleFeedForward;
     private double extensionFeedForward;
 
-    private boolean outputsChanged;
+    private boolean angleOutputsChanged;
+    private boolean extensionOutputsChanged;
     private boolean hallEffectTriggered; // not using this rn - turn on robot with arm all the way down for ~20 secs
     private double zeroingHallEffectTriggerValue;
 
@@ -125,6 +129,19 @@ public class Elevator extends Subsystem {
         allowableAngleError = factory.getPidSlotConfig(NAME, "slot0").allowableError;
         allowableExtensionError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
 
+        colPosTimer = new AsyncTimer(
+                0.75,
+                () -> {
+                    angleMotorMain.set(ControlMode.Position, collectAngle);
+                },
+                () -> {
+                    // set it to go down until it hits rubber then just fight against the spring to stay down
+                    // that way we don't need to be dead-on for the collect pos
+                    angleMotorMain.set(ControlMode.PercentOutput, -0.06);
+                    System.out.println("running collector into rubber w/ %out");
+                }
+                );
+
 //        maxAngularVelocity = factory.getConstant(NAME, "maxAngularVelocity");
 //        maxAngularAcceleration = factory.getConstant(NAME, "maxAngularAcceleration");
 //        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtendedAngularAcceleration");
@@ -151,10 +168,8 @@ public class Elevator extends Subsystem {
      * @param desiredAngleState - Desired state for the angle of the elevator
      */
     public void setDesiredAngleState(ANGLE_STATE desiredAngleState) {
-        if (this.desiredAngleState != desiredAngleState) {
-            this.desiredAngleState = desiredAngleState;
-            outputsChanged = true;
-        }
+        this.desiredAngleState = desiredAngleState;
+        angleOutputsChanged = true;
     }
 
     /**
@@ -163,10 +178,8 @@ public class Elevator extends Subsystem {
      * @param desiredExtensionState - Desired state for the extension of the elevator
      */
     public void setDesiredExtensionState(EXTENSION_STATE desiredExtensionState) {
-        if (this.desiredExtensionState != desiredExtensionState) {
-            this.desiredExtensionState = desiredExtensionState;
-            outputsChanged = true;
-        }
+        this.desiredExtensionState = desiredExtensionState;
+        extensionOutputsChanged = true;
     }
 
     public ANGLE_STATE getDesiredAngleState() {
@@ -218,21 +231,9 @@ public class Elevator extends Subsystem {
      */
     @Override
     public void writeToHardware() {
-        if (outputsChanged) {
-            outputsChanged = false;
+        if (angleOutputsChanged) {
+            angleOutputsChanged = false;
             if (usingFeedForward) {
-                switch (desiredExtensionState) {
-                    case MAX:
-                        extensionMotor.set(ControlMode.Position, (maxExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        break;
-                    case MID:
-                        extensionMotor.set(ControlMode.Position, (midExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        break;
-                    case MIN:
-                        extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        break;
-
-                }
                 switch (desiredAngleState) {
                     case STOW:
                         angleMotorMain.set(ControlMode.Position, (stowAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
@@ -248,6 +249,44 @@ public class Elevator extends Subsystem {
                         break;
                 }
             } else {
+                switch (desiredAngleState) {
+                    case STOW:
+                        angleMotorMain.set(ControlMode.Position, (stowAngle));
+                        break;
+                    case COLLECT:
+                        colPosTimer.update();
+                        if(!colPosTimer.isCompleted()){
+                            angleOutputsChanged = true;
+                        } else {
+                            colPosTimer.reset();
+                        }
+                        break;
+                    case SCORE:
+                        angleMotorMain.set(ControlMode.Position, (scoreAngle));
+                        break;
+                    case SCORE_DIP:
+                        angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
+                        break;
+                }
+            }
+            System.out.println("rotation = " + desiredAngleState);
+        }
+        if (extensionOutputsChanged) {
+            extensionOutputsChanged = false;
+            if (usingFeedForward) {
+                switch (desiredExtensionState) {
+                    case MAX:
+                        extensionMotor.set(ControlMode.Position, (maxExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        break;
+                    case MID:
+                        extensionMotor.set(ControlMode.Position, (midExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        break;
+                    case MIN:
+                        extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        break;
+
+                }
+            } else {
                 switch (desiredExtensionState) {
                     case MAX:
                         extensionMotor.set(ControlMode.Position, (maxExtension));
@@ -260,21 +299,8 @@ public class Elevator extends Subsystem {
                         break;
 
                 }
-                switch (desiredAngleState) {
-                    case STOW:
-                        angleMotorMain.set(ControlMode.Position, (stowAngle));
-                        break;
-                    case COLLECT:
-                        angleMotorMain.set(ControlMode.Position, (collectAngle));
-                        break;
-                    case SCORE:
-                        angleMotorMain.set(ControlMode.Position, (scoreAngle));
-                        break;
-                    case SCORE_DIP:
-                        angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
-                        break;
-                }
             }
+            System.out.println("extension = " + desiredExtensionState);
         }
     }
 

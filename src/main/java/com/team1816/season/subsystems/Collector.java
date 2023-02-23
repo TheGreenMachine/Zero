@@ -61,10 +61,8 @@ public class Collector extends Subsystem {
     }
 
     public void setDesiredState(STATE desiredState) {
-        if (this.desiredState != desiredState) {
-            this.desiredState = desiredState;
-            outputsChanged = true;
-        }
+        this.desiredState = desiredState;
+        outputsChanged = true;
     }
 
     // only used in teleop - need one button that can outtake both cubes and cones b/c we're low on button space

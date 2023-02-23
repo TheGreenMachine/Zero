@@ -10,7 +10,7 @@ public class DrivetrainLogger {
 
     public static void init(TrackableDrivetrain drivetrain) {
         var isSwerve = drivetrain instanceof SwerveDrivetrain;
-        if(Constants.kIsBadlogEnabled){
+        if(Constants.kIsBadlogEnabled && Constants.kIsLoggingDrivetrain){
             if (isSwerve) {
                 for (
                         int i = 0;
