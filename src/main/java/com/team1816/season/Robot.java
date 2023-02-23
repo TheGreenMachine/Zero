@@ -206,6 +206,46 @@ public class Robot extends TimedRobot {
                     "xaxis",
                     "hide"
                 );
+                BadLog.createTopic(
+                    "Collector/SolenoidOutput",
+                    "output",
+                    collector::getSolenoidOutput,
+                    "hide"
+                );
+                BadLog.createTopic(
+                    "Collector/RollerVelocity",
+                    "CPR",
+                    collector::getRollerVelocity,
+                    "hide"
+                );
+                BadLog.createTopic(
+                    "Elevator/DesiredAnglePosition",
+                    "ticks",
+                    elevator::getDesiredAnglePosition,
+                    "hide",
+                    "join:Elevator/AnglePosition"
+                );
+                BadLog.createTopic(
+                    "Elevator/ActualAnglePosition",
+                    "ticks",
+                    elevator::getActualAnglePosition,
+                    "hide",
+                    "join:Elevator/AnglePosition"
+                );
+                BadLog.createTopic(
+                    "Elevator/DesiredExtensionPosition",
+                    "ticks",
+                    elevator::getDesiredExtensionPosition,
+                    "hide",
+                    "join:Elevator/ExtensionPosition"
+                );
+                BadLog.createTopic(
+                    "Elevator/ActualExtensionPosition",
+                    "ticks",
+                    elevator::getActualExtensionPosition,
+                    "hide",
+                    "join:Elevator/ExtensionPosition"
+                );
 //                BadLog.createTopic(
 //                    "Vision/Distance",
 //                    "inches",
@@ -323,9 +363,9 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("intakeCone"),
                         (pressed) -> {
-                            if(pressed){
+                            if (pressed) {
                                 collector.setDesiredState(Collector.STATE.INTAKE_CONE);
-                                if(elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN){
+                                if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
                                     elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
                                 }
                             } else {
@@ -337,9 +377,9 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("intakeCube"),
                         (pressed) -> {
-                            if(pressed){
+                            if (pressed) {
                                 collector.setDesiredState(Collector.STATE.INTAKE_CUBE);
-                                if(elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN){
+                                if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
                                     elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
                                 }
                             } else {

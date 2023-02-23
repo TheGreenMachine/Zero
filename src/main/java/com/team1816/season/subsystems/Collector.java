@@ -62,6 +62,11 @@ public class Collector extends Subsystem {
         coneOuttakeVelocity = factory.getConstant(NAME, "coneOuttakeVelocity", 840); // TODO tune these
     }
 
+    /**
+     * Sets the desired state of the collector
+     *
+     * @param desiredState STATE
+     */
     public void setDesiredState(STATE desiredState) {
         if (this.desiredState != desiredState) {
             this.desiredState = desiredState;
@@ -69,12 +74,33 @@ public class Collector extends Subsystem {
         }
     }
 
+    /**
+     * Sets the collector to outtake a game piece
+     *
+     * @param outtaking boolean
+     */
     public void outtakeGamePiece(boolean outtaking) {
-        if(outtaking){
+        if (outtaking) {
             setDesiredState(currentlyHeldObject == GAME_ELEMENT.CONE ? STATE.OUTTAKE_CONE : STATE.OUTTAKE_CUBE);
         } else {
             setDesiredState(STATE.STOP);
         }
+    }
+
+    /**
+     * Returns the actual output of the solenoid
+     *
+     * @return 1 if firing, 0 otherwise
+     */
+    public double getSolenoidOutput() {
+        return solenoidOutput ? 1 : 0;
+    }
+
+    /**
+     * Returns the roller output
+     */
+    public double getRollerVelocity() {
+        return rollerVelocity;
     }
 
     /**

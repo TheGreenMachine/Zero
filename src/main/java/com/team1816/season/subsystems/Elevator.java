@@ -54,7 +54,7 @@ public class Elevator extends Subsystem {
     private static double angleQuarterPPR;
     private static double extensionPPR;
 
-    private boolean usingFeedForward = false;
+    private boolean usingFeedForward;
 
 
     /**
@@ -111,7 +111,7 @@ public class Elevator extends Subsystem {
         angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
 
         usingFeedForward = factory.getConstant(NAME, "usingFeedForward") > 0;
-        if(usingFeedForward){
+        if (usingFeedForward) {
             extensionPPR = factory.getConstant(NAME, "extensionPPR");
             angleQuarterPPR = factory.getConstant(NAME, "angleQuarterPPR");
         }
@@ -172,16 +172,50 @@ public class Elevator extends Subsystem {
         }
     }
 
+    /**
+     * Returns the desired angle state
+     */
     public ANGLE_STATE getDesiredAngleState() {
         return this.desiredAngleState;
     }
 
+    /**
+     * Returns the desired extension state
+     */
     public EXTENSION_STATE getDesiredExtensionState() {
         return this.desiredExtensionState;
     }
 
     /**
-     * Reads extension and angle motor positions and their corresponding velocities
+     * Returns the desired angle position in ticks
+     */
+    public double getDesiredAnglePosition() {
+        return desiredAngleState.angle;
+    }
+
+    /**
+     * Returns the desired extension position in ticks
+     */
+    public double getDesiredExtensionPosition() {
+        return desiredExtensionState.extension;
+    }
+
+    /**
+     * Returns the actual angle position in ticks
+     */
+    public double getActualAnglePosition() {
+        return actualAnglePosition;
+    }
+
+    /**
+     * Returns the actual extension position in ticks
+     */
+    public double getActualExtensionPosition() {
+        return actualExtensionPosition;
+    }
+
+    /**
+     * Reads actual outputs from elevator components
      *
      * @see Subsystem#readFromHardware()
      */
@@ -193,12 +227,12 @@ public class Elevator extends Subsystem {
         actualExtensionPosition = extensionMotor.getSelectedSensorPosition(0); // not slot id
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
 
-        if(usingFeedForward){
+        if (usingFeedForward) {
             angleFeedForward = Math.cos(actualAnglePosition / angleQuarterPPR) * Constants.maxElevatorFeedForward;
             extensionFeedForward =
-                    Math.sin(actualAnglePosition / angleQuarterPPR) *
-                            ((actualExtensionPosition + extensionPPR) / 2 * extensionPPR)
-                            * Constants.maxElevatorFeedForward;
+                Math.sin(actualAnglePosition / angleQuarterPPR) *
+                    ((actualExtensionPosition + extensionPPR) / 2 * extensionPPR)
+                    * Constants.maxElevatorFeedForward;
         }
 
 //        if (hallEffectTriggered == zeroingHallEffect.get()) {
@@ -225,63 +259,38 @@ public class Elevator extends Subsystem {
             outputsChanged = false;
             if (usingFeedForward) {
                 switch (desiredExtensionState) {
-                    case MAX:
+                    case MAX ->
                         extensionMotor.set(ControlMode.Position, (maxExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        break;
-                    case MID:
+                    case MID ->
                         extensionMotor.set(ControlMode.Position, (midExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        break;
-                    case MIN:
+                    case MIN ->
                         extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        break;
-
                 }
                 switch (desiredAngleState) {
-                    case STOW:
+                    case STOW ->
                         angleMotorMain.set(ControlMode.Position, (stowAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
-                        break;
-                    case COLLECT:
+                    case COLLECT ->
                         angleMotorMain.set(ControlMode.Position, (collectAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
-                        break;
-                    case SCORE:
+                    case SCORE ->
                         angleMotorMain.set(ControlMode.Position, (scoreAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
-                        break;
-                    case SCORE_DIP:
-                        angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
-                        break;
+                    case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
                 }
             } else {
                 switch (desiredExtensionState) {
-                    case MAX:
-                        extensionMotor.set(ControlMode.Position, (maxExtension));
-                        break;
-                    case MID:
-                        extensionMotor.set(ControlMode.Position, (midExtension));
-                        break;
-                    case MIN:
-                        extensionMotor.set(ControlMode.Position, (minExtension));
-                        break;
-
+                    case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension));
+                    case MID -> extensionMotor.set(ControlMode.Position, (midExtension));
+                    case MIN -> extensionMotor.set(ControlMode.Position, (minExtension));
                 }
                 switch (desiredAngleState) {
-                    case STOW:
-                        angleMotorMain.set(ControlMode.Position, (stowAngle));
-                        break;
-                    case COLLECT:
-                        angleMotorMain.set(ControlMode.Position, (collectAngle));
-                        break;
-                    case SCORE:
-                        angleMotorMain.set(ControlMode.Position, (scoreAngle));
-                        break;
-                    case SCORE_DIP:
-                        angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
-                        break;
+                    case STOW -> angleMotorMain.set(ControlMode.Position, (stowAngle));
+                    case COLLECT -> angleMotorMain.set(ControlMode.Position, (collectAngle));
+                    case SCORE -> angleMotorMain.set(ControlMode.Position, (scoreAngle));
+                    case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
                 }
             }
         }
     }
 
-    // TODO later
     @Override
     public void zeroSensors() {
 
