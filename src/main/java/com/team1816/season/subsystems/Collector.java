@@ -10,7 +10,9 @@ import com.team1816.season.states.RobotState;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-// Oh my, where's the well formatted documentation??
+/**
+ * Represents a Collector with a solenoid and rollers powered by a motor to collect both a cone and a cube
+ */
 @Singleton
 public class Collector extends Subsystem {
 
@@ -37,7 +39,7 @@ public class Collector extends Subsystem {
      * States
      */
     private STATE desiredState = STATE.STOP;
-    private HELD_ELEMENT heldObj = HELD_ELEMENT.NOTHING;
+    private GAME_ELEMENT currentlyHeldObject = GAME_ELEMENT.NOTHING;
     private double rollerVelocity = 0;
     private boolean solenoidOutput = false;
     private boolean outputsChanged = false;
@@ -67,19 +69,16 @@ public class Collector extends Subsystem {
         }
     }
 
-    // only used in teleop - need one button that can outtake both cubes and cones b/c we're low on button space
-    // if you know what game piece you're handling, use setDesiredState
     public void outtakeGamePiece(boolean outtaking) {
         if(outtaking){
-            // if holding no obj, use cube flush b/c its safe (using % out)
-            setDesiredState(heldObj == HELD_ELEMENT.CONE ? STATE.OUTTAKE_CONE : STATE.OUTTAKE_CUBE);
+            setDesiredState(currentlyHeldObject == GAME_ELEMENT.CONE ? STATE.OUTTAKE_CONE : STATE.OUTTAKE_CUBE);
         } else {
             setDesiredState(STATE.STOP);
         }
     }
 
     /**
-     * Reads roller velocity
+     * Reads actual outputs from intake motor and solenoid
      *
      * @see Subsystem#readFromHardware()
      */
@@ -88,14 +87,13 @@ public class Collector extends Subsystem {
         rollerVelocity = intakeMotor.getSelectedSensorVelocity(0);
         solenoidOutput = intakeSolenoid.get();
 
-        // no checking performed
         if (robotState.actualCollectorState != desiredState) {
             robotState.actualCollectorState = desiredState;
         }
     }
 
     /**
-     * Writes outputs to collector motor and solenoid
+     * Writes outputs to intake motor and solenoid
      *
      * @see Subsystem#writeToHardware()
      */
@@ -109,22 +107,22 @@ public class Collector extends Subsystem {
                     intakeMotor.set(ControlMode.Velocity, 0);
                 }
                 case INTAKE_CONE -> {
-                    heldObj = HELD_ELEMENT.CONE;
+                    currentlyHeldObject = GAME_ELEMENT.CONE;
                     intakeSolenoid.set(true);
                     intakeMotor.set(ControlMode.Velocity, coneIntakeVelocity);
                 }
                 case INTAKE_CUBE -> {
-                    heldObj = HELD_ELEMENT.CUBE;
+                    currentlyHeldObject = GAME_ELEMENT.CUBE;
                     intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.PercentOutput, cubeIntakePower);
                 }
                 case OUTTAKE_CONE -> {
-                    heldObj = HELD_ELEMENT.NOTHING;
+                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                     intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.Velocity, coneOuttakeVelocity);
                 }
                 case OUTTAKE_CUBE -> {
-                    heldObj = HELD_ELEMENT.NOTHING;
+                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                     intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.PercentOutput, cubeOuttakePower);
                 }
@@ -171,7 +169,7 @@ public class Collector extends Subsystem {
         OUTTAKE_CONE
     }
 
-    private enum HELD_ELEMENT {
+    private enum GAME_ELEMENT {
         NOTHING,
         CUBE,
         CONE

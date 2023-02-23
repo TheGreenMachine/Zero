@@ -12,6 +12,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+/**
+ * Represents an elevator that can both rotate and extend
+ */
 @Singleton
 public class Elevator extends Subsystem {
 
