@@ -70,7 +70,9 @@ public class Orchestrator {
         elevator = el;
     }
 
-    /** Actions */
+    /**
+     * Actions
+     */
     public void autoScore() {
         System.out.println("Executing Auto Score Sequence!");
         if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
@@ -167,12 +169,12 @@ public class Orchestrator {
     public void updatePoseWithCamera() {
         Pose2d newRobotPose = calculatePoseFromCamera();
         if (
-                Math.abs(
-                        Math.hypot(
-                                robotState.fieldToVehicle.getX() - newRobotPose.getX(),
-                                robotState.fieldToVehicle.getY() - newRobotPose.getY()
-                        )
-                ) > minAllowablePoseError
+            Math.abs(
+                Math.hypot(
+                    robotState.fieldToVehicle.getX() - newRobotPose.getX(),
+                    robotState.fieldToVehicle.getY() - newRobotPose.getY()
+                )
+            ) > minAllowablePoseError
         ) {
             System.out.println(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);

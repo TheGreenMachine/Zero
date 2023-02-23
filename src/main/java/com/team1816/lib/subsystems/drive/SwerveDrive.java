@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * A class that models a Swerve drivetrain

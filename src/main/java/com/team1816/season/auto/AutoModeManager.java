@@ -1,12 +1,8 @@
 package com.team1816.season.auto;
 
 import com.team1816.lib.auto.Color;
-import com.team1816.lib.auto.modes.AutoMode;
-import com.team1816.lib.auto.modes.DoNothingMode;
-import com.team1816.lib.auto.modes.DriveStraightMode;
-import com.team1816.lib.auto.modes.LivingRoomMode;
+import com.team1816.lib.auto.modes.*;
 import com.team1816.season.auto.modes.PlaceConeAutoBalanceMode;
-import com.team1816.lib.auto.modes.TuneDrivetrainMode;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

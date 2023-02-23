@@ -1,8 +1,8 @@
 package com.team1816.lib.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
-import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.actions.DriveOpenLoopAction;
+import com.team1816.lib.auto.actions.WaitAction;
 
 public class DriveStraightMode extends AutoMode {
 

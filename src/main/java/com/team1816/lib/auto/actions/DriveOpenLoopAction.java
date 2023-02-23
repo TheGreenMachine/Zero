@@ -1,7 +1,6 @@
 package com.team1816.lib.auto.actions;
 
 import com.team1816.lib.Injector;
-import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.drive.Drive;
 

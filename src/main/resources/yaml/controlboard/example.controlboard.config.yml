@@ -21,8 +21,6 @@ operator:
     dpad:
         up: extendStage
         down: descendStage
-        left: lowerColPos
-        right: raiseColPos
     buttons:
         leftBumper: bobDown
         rightBumper: outtake
