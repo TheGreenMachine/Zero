@@ -100,6 +100,7 @@ public class Robot extends TimedRobot {
     public static boolean runningAutoScore = false;
     public static boolean runningAutoBalance = false;
     public Elevator.ANGLE_STATE prevAngleState;
+    private boolean operatorLock;
 
     /**
      * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
@@ -354,30 +355,58 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
+                    createAction(
+                        () -> controlBoard.getAsBool("toggleArmScoreCollect"),
+                        () -> {
+                            if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
+                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.STOW);
+                            } else {
+                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+                            }
+                        }
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("lockOperator"),
+                        (pressed) -> {
+                            if (pressed) {
+                                operatorLock = true;
+                            } else {
+                                operatorLock = false;
+                            }
+                        }
+                    ),
                     // Operator Gamepad
                     createHoldAction(
                         () -> controlBoard.getAsBool("outtake"),
-                        collector::outtakeGamePiece
+                        (pressed) -> {
+                            if (!operatorLock) {
+                                collector.outtakeGamePiece(pressed);
+                            }
+                        }
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("bobDown"),
                         (pressed) -> {
-                            if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
-                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
-                            } else if (!pressed && elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP) {
-                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+                            if (!operatorLock) {
+                                if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
+                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
+                                } else if (!pressed && elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP) {
+                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+                                }
                             }
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("extendStage"),
                         () -> {
-                            Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
+                            if (!operatorLock) {
+                                Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
 
-                            if (extensionState == Elevator.EXTENSION_STATE.MIN) {
-                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
-                            } else if (extensionState == Elevator.EXTENSION_STATE.MID) {
-                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MAX);
+                                if (extensionState == Elevator.EXTENSION_STATE.MIN) {
+                                    elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
+                                } else if (extensionState == Elevator.EXTENSION_STATE.MID) {
+                                    elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MAX);
+                                }
                             }
                         }
                     ),
@@ -393,12 +422,6 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-//                    createAction( // TODO if you want to go to score pos, just press the autoScoreMin button
-//                        () -> controlBoard.getAsBool("armScore"),
-//                        () -> {
-//                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
-//                        }
-//                    ),
                     createAction(
                         () -> controlBoard.getAsBool("armStow"),
                         () -> {
@@ -409,26 +432,42 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("armCollect"),
                         () -> {
-                            if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
+                            if (!operatorLock && elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
                                 elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
                             }
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("autoScoreMin"),
-                        () -> elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN)
+                        () -> {
+                            if (!operatorLock) {
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN);
+                            }
+                        }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("autoScoreMid"),
-                        () -> elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID)
+                        () -> {
+                            if (!operatorLock) {
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID);
+                            }
+                        }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("autoScoreMax"),
-                        () -> elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX)
+                        () -> {
+                            if (!operatorLock) {
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
+                            }
+                        }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("autoScoreRetract"),
-                        orchestrator::autoScore
+                        () -> {
+                            if (!operatorLock) {
+                                orchestrator.autoScore();
+                            }
+                        }
                     )
 //                    createAction(
 //                        () -> controlBoard.getAsBool("grid1"),
