@@ -2,7 +2,9 @@ package com.team1816.season.auto;
 
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.modes.*;
+import com.team1816.season.auto.modes.NodeToExitCommunityMode;
 import com.team1816.season.auto.modes.PlaceConeAutoBalanceMode;
+import com.team1816.season.auto.modes.PlaceConeMode;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -161,7 +163,9 @@ public class AutoModeManager {
         LIVING_ROOM,
         DRIVE_STRAIGHT,
         // 2023
-        PLACE_CONE_AUTO_BALANCE
+        PLACE_CONE_AUTO_BALANCE,
+        PLACE_ONLY,
+        EXIT_COMMUNITY
     }
 
     /**
@@ -181,6 +185,10 @@ public class AutoModeManager {
                 return (new LivingRoomMode(color));
             case PLACE_CONE_AUTO_BALANCE:
                 return (new PlaceConeAutoBalanceMode(color));
+            case EXIT_COMMUNITY:
+                return (new NodeToExitCommunityMode(color));
+            case PLACE_ONLY:
+                return (new PlaceConeMode());
             default:
                 System.out.println("Defaulting to drive straight mode");
                 return new DriveStraightMode();
