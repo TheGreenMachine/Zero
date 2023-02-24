@@ -18,6 +18,7 @@ import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.*;
 
@@ -241,8 +242,8 @@ public class Robot extends TimedRobot {
 
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
-            // zeroing ypr
-            infrastructure.resetPigeon(Constants.EmptyRotation2d);
+            // zeroing ypr - (-90) b/c our pigeon is mounted with the "y" axis facing forward
+            infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
             subsystemManager.zeroSensors();
 
             /** Register ControlBoard */
