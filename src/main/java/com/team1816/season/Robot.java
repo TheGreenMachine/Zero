@@ -327,10 +327,10 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("intakeCone"),
                         (pressed) -> {
-                            if(pressed){
+                            if (pressed) {
                                 prevAngleState = elevator.getDesiredAngleState();
                                 collector.setDesiredState(Collector.STATE.INTAKE_CONE);
-                                if(elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN){
+                                if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
                                     elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
                                 }
                             } else {
@@ -343,9 +343,9 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("intakeCube"),
                         (pressed) -> {
                             prevAngleState = elevator.getDesiredAngleState();
-                            if(pressed){
+                            if (pressed) {
                                 collector.setDesiredState(Collector.STATE.INTAKE_CUBE);
-                                if(elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN){
+                                if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
                                     elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
                                 }
                             } else {
@@ -427,8 +427,8 @@ public class Robot extends TimedRobot {
                         () -> elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX)
                     ),
                     createAction(
-                            () -> controlBoard.getAsBool("autoScoreRetract"),
-                            orchestrator::autoScore
+                        () -> controlBoard.getAsBool("autoScoreRetract"),
+                        orchestrator::autoScore
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("grid1"),
