@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 /**
  * This class is the main ControlBoard and through a series of hashmaps in ControlBoardBridge associates buttons to actions
  */
+
 @Singleton
 public class ControlBoard implements IControlBoard {
 
@@ -14,15 +15,18 @@ public class ControlBoard implements IControlBoard {
     // Control Board
     public static final int kDriveGamepadPort = 0;
     public static final int kOperatorGamepadPort = 1;
+    public static final int kButtonBoardPort = 2;
 
     private final Controller driverController;
     private final Controller operatorController;
+
+    private final Controller buttonBoardController;
 
     @Inject
     private ControlBoard(ControlBoardBridge bridge, Controller.Factory controller) {
         driverController = controller.getControllerInstance(kDriveGamepadPort);
         operatorController = controller.getControllerInstance(kOperatorGamepadPort);
-
+        buttonBoardController = controller.getControllerInstance(kButtonBoardPort);
         controlBoardBridge = bridge;
     }
 
@@ -70,6 +74,10 @@ public class ControlBoard implements IControlBoard {
                     ? 1
                     : 0;
             }
+        } else if (controlBoardBridge.getButtonBoardMap().containsKey(name)) {
+            return operatorController.getButton(
+                controlBoardBridge.getButtonBoardMap().get(name)
+            ) ? 1 : 0;
         }
 
         return defaultVal;
@@ -106,8 +114,11 @@ public class ControlBoard implements IControlBoard {
                         controlBoardBridge.getOperatorDpadMap().get(name)
                 );
             }
+        } else if (controlBoardBridge.buttonBoardMapContainsKey(name)) {
+            return buttonBoardController.getButton(
+                controlBoardBridge.getButtonBoardMap().get(name)
+            );
         }
-
         return defaultVal;
     }
 }

@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.drive.Drive;
-import com.team1816.lib.subsystems.turret.Turret;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.subsystems.Collector;
@@ -13,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Timer;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -24,7 +24,7 @@ import static com.team1816.lib.subsystems.Subsystem.robotState;
 
 /**
  * Main superstructure-style class and logical operator for handling and delegating subsystem tasks. Consists of an integrated
- * drivetrain with other subsystems and utilizes closed loop state dependent control via RobotState.
+ * drivetrain with other subsystems and utilizes closed loop state dependent control via {@link RobotState}.
  *
  * @see RobotState
  */
@@ -45,7 +45,6 @@ public class Orchestrator {
     /**
      * State
      */
-    private STATE superstructureState;
     private final double maxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
         4
@@ -71,41 +70,26 @@ public class Orchestrator {
         elevator = el;
     }
 
-    public void setOrchestratorState(STATE state){
-        superstructureState = state;
-    }
-
-    public void setCollectingCone(){
-        collector.setDesiredState(Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.COLLECT);
-        elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
-    }
-
-    public void setCollectingCube(){
-        collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.COLLECT);
-        elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
-    }
-
-    public void setScore(SCORE_LEVEL_STATE STATE){
-        if(STATE == SCORE_LEVEL_STATE.MIN) {
-            collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.FLUSH);
-            elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN);
-        } else if (STATE == SCORE_LEVEL_STATE.MID) {
-            collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.FLUSH);
-            elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID);
-        } else if (STATE == SCORE_LEVEL_STATE.MAX) {
-            collector.setDesiredState(Collector.PIVOT_STATE.UP, Collector.COLLECTOR_STATE.FLUSH);
-            elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
+    /**
+     * Actions
+     */
+    public void autoScore() {
+        System.out.println("Executing Auto Score Sequence!");
+        if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
+            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
+            elevator.writeToHardware();
+            Timer.delay(0.10);
+            collector.outtakeGamePiece(true);
+            collector.writeToHardware();
+            Timer.delay(0.25);
+            collector.outtakeGamePiece(false);
+            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+            elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
+            elevator.writeToHardware();
+            Timer.delay(0.75);
+            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.STOW);
         }
     }
-
-    public void setStow(){
-        collector.setDesiredState(Collector.PIVOT_STATE.DOWN, Collector.COLLECTOR_STATE.STOP);
-        elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
-    }
-
-    /** TODO: Actions */
-
-    /** TODO: Update Subsystem States */
 
     /** Superseded Odometry Handling */
 
@@ -199,18 +183,8 @@ public class Orchestrator {
         }
     }
 
-    /**
-     * Base enum for Orchestrator states
-     */
-    public enum STATE {
-        COLLECT,
-        STORE,
-        STOW
-    }
-
-    public enum SCORE_LEVEL_STATE {
-        MIN,
-        MID,
-        MAX
+    public enum CONTROL_MODE {
+        ALEPH_0,
+        ALEPH_1
     }
 }

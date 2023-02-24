@@ -166,6 +166,12 @@
         "open": true
       }
     },
+    "Persistent Values": {
+      "open": false
+    },
+    "Retained Values": {
+      "open": false
+    },
     "SmartDashboard": {
       "Drive": {
         "open": true
@@ -177,14 +183,16 @@
         "open": true
       }
     },
+    "[...]##v_$serversub": {
+      "open": true
+    },
+    "combined": true,
     "photonvision": {
       "open": true,
       "zed": {
         "open": true
       }
-    }
-  },
-  "NetworkTables Info": {
-    "visible": true
+    },
+    "special": true
   }
 }

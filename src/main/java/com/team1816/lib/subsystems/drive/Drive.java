@@ -47,6 +47,7 @@ public abstract class Drive
      * Properties
      */
     public static final String NAME = "drivetrain";
+    private double initialYaw;
 
     /**
      * Demo Mode
@@ -73,6 +74,7 @@ public abstract class Drive
 
     protected boolean isBraking;
     protected boolean isSlowMode;
+    protected boolean isAutoBalancing = false;
 
     /**
      * Trajectory
@@ -321,12 +323,52 @@ public abstract class Drive
     }
 
     /**
+     * Sets the initial yaw
+     */
+    public void setInitialYaw() {
+        initialYaw = robotState.fieldToVehicle.getRotation().getDegrees();
+    }
+
+    /**
+     * Returns the initial yaw
+     */
+    public double getInitialYaw() {
+        return initialYaw;
+    }
+
+
+    /**
      * Sets the drivetrain to be in slow mode which will modify the drive signals and the motor demands
      *
      * @param slowMode (boolean) isSlowMode
      */
     public void setSlowMode(boolean slowMode) {
         isSlowMode = slowMode;
+    }
+
+    /**
+     * Sets the Autobalancing signal boolean and the initial yaw TODO redo description
+     *
+     * @param balancing (boolean) isAutoBalancing
+     */
+    public void setAutoBalanceManual(boolean balancing) {
+        setInitialYaw();
+        isAutoBalancing = balancing;
+    }
+
+    /**
+     * Returns the current autobalancing state
+     *
+     * @return (boolean) isAutobalancing
+     */
+    public boolean isAutoBalancing() {
+        return isAutoBalancing;
+    }
+
+    /**
+     * Autobalances in teleop TODO redo description
+     */
+    public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds) {
     }
 
     /**

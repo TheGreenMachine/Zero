@@ -9,13 +9,13 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.util.driveUtil.DriveConversions;
 import com.team1816.lib.util.driveUtil.SwerveKinematics;
+import com.team1816.season.Robot;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 
-import static com.team1816.lib.subsystems.Subsystem.robotState;
 import static com.team1816.lib.subsystems.drive.Drive.NAME;
 import static com.team1816.lib.subsystems.drive.Drive.factory;
 
@@ -161,7 +161,7 @@ public class SwerveModule implements ISwerveModule {
         moduleState.speedMetersPerSecond = driveActual;
         moduleState.angle = Rotation2d.fromDegrees(azimuthActual);
 
-        drivePosition += driveActual * robotState.dt / 1000;
+        drivePosition += driveActual * Robot.dt / 1000;
         modulePosition.distanceMeters = drivePosition;
         modulePosition.angle = Rotation2d.fromDegrees(azimuthActual);
 
