@@ -62,6 +62,12 @@ public class Constants {
         -.12065,
         .13335
     );
+    public static final double chargeStationThresholdXMinBlue = 2.4;
+    public static final double chargeStationThresholdXMaxBlue = 5.0;
+    public static final double chargeStationThresholdXMinRed = 11.5;
+    public static final double chargeStationThresholdXMaxRed = 14.1;
+    public static final double chargeStationThresholdYMin = 1.1;
+    public static final double chargeStationThresholdYMax = 4.5;
 
     /**
      * Drivetrain characterization
@@ -71,6 +77,12 @@ public class Constants {
     public static double kMaxBalancingVelocity = 0.2; // m/s
     public static double kMinTrajectoryDistance = 0.05; // m
     public static double kMaxProximityThresholdCentimeters = 25; // cm
+    public static double preTargetDistance = 0.4; // m
+
+    /**
+     * Elevator characterization
+     */
+    public static final double maxElevatorFeedForward = 0.05;
 
     /**
      * Camera characterization
@@ -82,8 +94,9 @@ public class Constants {
      * Badlog characterization
      */
     public static boolean kIsBadlogEnabled = factory.getConstant("badLogEnabled") > 0;
-    public static boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0;
-    public static boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0;
+    public static boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0 && kIsBadlogEnabled;
+    public static boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0 && kIsBadlogEnabled;
+    public static boolean kIsLoggingDrivetrain = factory.getConstant("logDrivetrain") > 0;
 
     public final boolean kUsePoseTrack =
         factory.getConstant("shooter", "usingPoseForSpeed", 0) > 0;
@@ -94,8 +107,6 @@ public class Constants {
     );
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
     //AutoBalance
-    public static final double pitchRollMaxFlat = factory.getConstant("drivetrain","pitchRollMaxFlat",2);
+    public static final double autoBalanceThresholdDegrees = factory.getConstant("drivetrain", "autoBalanceThreshold", 2);
     public static final double autoBalanceDivider = factory.getConstant("drivetrain", "autoBalanceDivider", 30);
-
-
 }

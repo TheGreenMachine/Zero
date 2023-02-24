@@ -59,28 +59,31 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 1 #3.8 # 6.0
-                    kI: 0 #0.00075
-                    kD: 4 #77
+                    kP: 3.8 # 6.0
+                    kI: 0.00075
+                    kD: 77
                     kF: 0
                     allowableError: 5
         constants:
+            ## Positional Configurations ##
             maxVelTicks100ms: 12275.7 # ticks per 100ms
             openLoopRampRate: 0.8
             isSwerve: 1
             encPPR: 14641
             azimuthEncPPR: 4096
-            maxRotVel: 10
-            trackWidth: 19.75 #inches
-            wheelbaseLength: 19.75 #inches
             wheelDiameter: 4
             kTrackScrubFactor: 1.0
-            maxVelOpenLoop: 2.2 # meters/s
-            maxVelPathFollowing: 1.2 # meters/s (2.2)
+            ## Velocity Constraints ##
+            maxRotVel: 14
+            trackWidth: 19.75 # inches
+            wheelbaseLength: 19.75 # inches
+            maxVelOpenLoop: 2.5 # meters/s (2.2)
+            maxVelPathFollowing: 2.5 # meters/s (2.2)
             maxAccel: 1.5 # meters/s^ 2
             isDemoMode: 0
+            ## Auto Balance ##
             autoBalanceDivider: 40
-            pitchRollMaxFlat: 2.5
+            autoBalanceThreshold: 2.5
     elevator:
         implemented: true
         falcons:
@@ -88,24 +91,34 @@ subsystems:
             angleMotorFollower: 7
             extensionMotor: 15
         pidConfig:
-            slot0: # rotation
+            slot0: # rotation for stow pos
+                kP: 0.01
+                kI: 0
+                kD: 1.4
+                kF: 0
+                allowableError: 1000
+            slot1: # rotation at score + collect pos
                 kP: 0.02
                 kI: 0.00002
                 kD: 1.4
                 kF: 0
                 allowableError: 1000
-            slot1: # extension
+            slot2: # extension
                 kP: 0.15
                 kI: 0.001
                 kD: 2.25
                 kF: 0
                 allowableError: 1000
         constants:
+            ## Config ##
+            usingFeedForward: 0
+            ## Limits ##
+            maxVelTicks100ms: 5000
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
             forwardAngleLimit: 100000 # Elevator horizontal orientation
-            reverseAngleLimit: -2000 # Elevator vertical orientation
-            stowAnglePosition: 95000
+            reverseAngleLimit: -10000 # Elevator vertical orientation
+            stowAnglePosition: 90000
             collectAnglePosition: -500
             scoreAnglePosition: 64000
             scoreDipAnglePosition: 55000
@@ -122,10 +135,11 @@ subsystems:
             slot0:
                 kF: 0.0000899
         constants:
+            ## Demands ##
             cubeIntakePower: -0.10 # percent output voltage
             cubeOuttakePower: 0.25 # percent output voltage
-            coneIntakeVelocity: 420 # rpm
-            coneOuttakeVelocity: -420 # rpm
+            coneIntakeVelocity: 600 # rpm
+            coneOuttakeVelocity: -600 # rpm
     ledmanager:
         implemented: false
         canifier: -1
@@ -140,25 +154,26 @@ subsystems:
             usingCamToUpdatePose: 0
 infrastructure:
     canivoreBusName: highSpeed
-    # power distribution
+    ## Power Distribution ##
     pdId: 1
     pdIsRev: true
-    # pneumatics control
+    ## Pneumatics Control ##
     compressorEnabled: true
     pcmIsRev: false
     pcmId: 2
-    # pigeon
+    ## Pigeon ##
     pigeonId: 32
     isPigeon2: true
 controlboard: example
 constants:
-    # Drivetrain
+    ## Drivetrain ##
     minAllowablePoseError: 0.1
     maxAllowablePoseError: 5
     ## Logging ##
-    logTeleOp: 0 # 0 or 1
-    logAuto: 0 # 0 or 1
-    badLogEnabled: 0 # 0 or 1
+    logTeleOp: 1 # 0 or 1
+    logAuto: 1 # 0 or 1
+    badLogEnabled: 1 # 0 or 1
+    logDrivetrain: 0
     configStatusFrames: 0 # 0 or 1
     ## General ##
     EnableBucketTuning: 1

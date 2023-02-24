@@ -1,12 +1,13 @@
 package com.team1816.season.auto;
 
 import com.team1816.lib.auto.Color;
-import com.team1816.lib.auto.modes.AutoMode;
-import com.team1816.lib.auto.modes.DoNothingMode;
-import com.team1816.season.auto.modes.*;
+import com.team1816.lib.auto.modes.*;
+import com.team1816.season.auto.modes.PlaceConeAutoBalanceMode;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
@@ -18,6 +19,7 @@ public class AutoModeManager {
     /**
      * Properties: Selection
      */
+    public static com.team1816.season.states.RobotState robotState;
     private final SendableChooser<DesiredAuto> autoModeChooser;
     private final SendableChooser<Color> sideChooser;
     private DesiredAuto desiredAuto;
@@ -28,11 +30,16 @@ public class AutoModeManager {
      */
     private AutoMode autoMode;
     private static Thread autoModeThread;
+    private RobotState robotState1;
 
     /**
      * Instantiates and AutoModeManager with a default option and selective computation
+     *
+     * @param rs RobotState
      */
-    public AutoModeManager() {
+    @Inject
+    public AutoModeManager(com.team1816.season.states.RobotState rs) {
+        robotState = rs;
         autoModeChooser = new SendableChooser<>(); // Shuffleboard dropdown menu to choose desired auto mode
         sideChooser = new SendableChooser<>(); // Shuffleboard dropdown menu to choose desired side / bumper color
 
@@ -62,6 +69,7 @@ public class AutoModeManager {
         autoModeThread = new Thread(autoMode::run);
         desiredAuto = DesiredAuto.DRIVE_STRAIGHT;
         desiredColor = Color.RED;
+        robotState.allianceColor = desiredColor;
     }
 
     /**
@@ -84,13 +92,14 @@ public class AutoModeManager {
             if (colorChanged) {
                 System.out.println("Robot color changed from: " + desiredColor + ", to: " + selectedColor);
             }
-            autoMode = generateAutoMode(selectedAuto);
+            autoMode = generateAutoMode(selectedAuto, selectedColor);
             autoModeThread = new Thread(autoMode::run);
         }
         desiredAuto = selectedAuto;
         desiredColor = selectedColor;
+        robotState.allianceColor = desiredColor;
 
-        return autoChanged;
+        return autoChanged || colorChanged;
     }
 
     /**
@@ -152,8 +161,7 @@ public class AutoModeManager {
         LIVING_ROOM,
         DRIVE_STRAIGHT,
         // 2023
-        AUTO_BALANCE,
-        PLACE_CONE_DRIVE_TO_BALANCE_BALANCE
+        PLACE_CONE_AUTO_BALANCE
     }
 
     /**
@@ -163,18 +171,16 @@ public class AutoModeManager {
      * @return AutoMode
      * @see AutoMode
      */
-    private AutoMode generateAutoMode(DesiredAuto mode) {
+    private AutoMode generateAutoMode(DesiredAuto mode, Color color) {
         switch (mode) {
             case DO_NOTHING:
                 return new DoNothingMode();
             case TUNE_DRIVETRAIN:
                 return new TuneDrivetrainMode();
             case LIVING_ROOM:
-                return (new LivingRoomMode());
-            case AUTO_BALANCE:
-                return (new AutoBalanceMode());
-            case PLACE_CONE_DRIVE_TO_BALANCE_BALANCE:
-                return (new DriveToBalance_BalanceMode());
+                return (new LivingRoomMode(color));
+            case PLACE_CONE_AUTO_BALANCE:
+                return (new PlaceConeAutoBalanceMode(color));
             default:
                 System.out.println("Defaulting to drive straight mode");
                 return new DriveStraightMode();

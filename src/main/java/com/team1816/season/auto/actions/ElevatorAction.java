@@ -12,11 +12,12 @@ public class ElevatorAction implements AutoAction {
 
     private Elevator.EXTENSION_STATE desiredExtensionState;
 
-    public ElevatorAction(Elevator.ANGLE_STATE angle, Elevator.EXTENSION_STATE extension){
+    public ElevatorAction(Elevator.ANGLE_STATE angle, Elevator.EXTENSION_STATE extension) {
         elevator = Injector.get(Elevator.class);
         desiredAngleState = angle;
         desiredExtensionState = extension;
     }
+
     @Override
     public void start() {
         elevator.setDesiredState(desiredAngleState, desiredExtensionState);
