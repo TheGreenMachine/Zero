@@ -134,7 +134,7 @@ public class Elevator extends Subsystem {
         allowableExtensionError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
 
         colPosTimer = new AsyncTimer(
-            0.75,
+            1,
             () -> {
                 angleMotorMain.set(ControlMode.Position, collectAngle);
             },

@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A class that models a Swerve drivetrain
@@ -278,9 +279,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             strafe = roll / autoBalanceDivider;
         }
 
-        // !Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds())
-        // needed b/c we auto balance in auto passes an empty chassis speeds
-        if (!isBraking) {
+        // if not braking and ((throttle || strafe != 0) or joystick strafe input != 0), auto-balance
+        // Else, lock wheels to face left/right side of field
+        if (!isBraking && ((throttle != 0 || strafe != 0) || !Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds()))) {
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
                 throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond,
                 strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond,
