@@ -393,7 +393,7 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-//                    createAction( // if you want to go to score pos, you could also just press the autoScoreMin button
+//                    createAction( // TODO if you want to go to score pos, just press the autoScoreMin button
 //                        () -> controlBoard.getAsBool("armScore"),
 //                        () -> {
 //                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
