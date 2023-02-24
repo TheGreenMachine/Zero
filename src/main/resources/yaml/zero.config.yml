@@ -119,7 +119,7 @@ subsystems:
             forwardAngleLimit: 100000 # Elevator horizontal orientation
             reverseAngleLimit: -10000 # Elevator vertical orientation
             stowAnglePosition: 90000
-            collectAnglePosition: -500
+            collectAnglePosition: -1000
             scoreAnglePosition: 64000
             scoreDipAnglePosition: 55000
             minExtensionPosition: 20000
