@@ -136,7 +136,7 @@ subsystems:
                 kF: 0.0000899
         constants:
             ## Demands ##
-            cubeIntakePower: -0.10 # percent output voltage
+            cubeIntakePower: -0.25 # percent output voltage
             cubeOuttakePower: 0.25 # percent output voltage
             coneIntakeVelocity: 600 # rpm
             coneOuttakeVelocity: -600 # rpm
