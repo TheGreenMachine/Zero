@@ -20,6 +20,7 @@ public class ElevatorAction implements AutoAction {
 
     @Override
     public void start() {
+        System.out.println("Setting elevator to angle: " + desiredAngleState.name() + " and extension to: " + desiredExtensionState.name());
         elevator.setDesiredState(desiredAngleState, desiredExtensionState);
     }
 

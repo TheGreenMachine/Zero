@@ -7,21 +7,21 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 import java.util.List;
 
-public class NodeToChargeStationMiddlePath extends AutoPath {
+public class NodeToConeWallPath extends AutoPath {
 
-    public NodeToChargeStationMiddlePath() {
+    public NodeToConeWallPath() {
     }
 
-    public NodeToChargeStationMiddlePath(Color color) {
+    public NodeToConeWallPath(Color color) {
         super(color);
     }
 
     @Override
     protected List<Pose2d> getWaypoints() {
         return List.of(
-            new Pose2d(1.70, 3.24, Rotation2d.fromDegrees(0)),
-            new Pose2d(5.46, 3.05, Rotation2d.fromDegrees(-24)),
-            new Pose2d(3.92, 2.61, Rotation2d.fromDegrees(180))
+            new Pose2d(1.7, 0.61, Rotation2d.fromDegrees(0)),
+            new Pose2d(4.5, 0.96, Rotation2d.fromDegrees(0)),
+            new Pose2d(7.0, 0.96, Rotation2d.fromDegrees(0))
         );
     }
 
@@ -29,8 +29,8 @@ public class NodeToChargeStationMiddlePath extends AutoPath {
     protected List<Rotation2d> getWaypointHeadings() {
         return List.of(
             Rotation2d.fromDegrees(180),
-            Rotation2d.fromDegrees(180),
-            Rotation2d.fromDegrees(180)
+            Rotation2d.fromDegrees(0),
+            Rotation2d.fromDegrees(0)
         );
     }
 

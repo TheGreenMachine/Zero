@@ -17,11 +17,23 @@ public class PlaceConeAutoBalanceMiddleMode extends AutoMode {
     //Does NOT exit community
 
     public PlaceConeAutoBalanceMiddleMode() {
-        super(List.of(new TrajectoryAction(new NodeToChargeStationMiddlePath())));
+        super(
+            List.of(
+                new TrajectoryAction(
+                    new NodeToChargeStationMiddlePath()
+                )
+            )
+        );
     }
 
     public PlaceConeAutoBalanceMiddleMode(Color color) {
-        super(List.of(new TrajectoryAction(new NodeToChargeStationMiddlePath(color))));
+        super(
+            List.of(
+                new TrajectoryAction(
+                    new NodeToChargeStationMiddlePath(color)
+                )
+            )
+        );
     }
 
     @Override
@@ -29,10 +41,11 @@ public class PlaceConeAutoBalanceMiddleMode extends AutoMode {
         System.out.println("Running PlaceConeAutoBalance Middle Mode");
         runAction(
             new SeriesAction(
-                new WaitAction(.5),
+                new WaitAction(0.25),
                 new ScoreAction(false, Elevator.EXTENSION_STATE.MAX),
-                new WaitAction(.5),
+                new WaitAction(0.25),
                 trajectoryActions.get(0),
+                new WaitAction(0.5),
                 new AutoBalanceAction()
             )
         );

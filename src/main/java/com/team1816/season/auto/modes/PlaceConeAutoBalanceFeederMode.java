@@ -9,7 +9,6 @@ import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.AutoBalanceAction;
 import com.team1816.season.auto.actions.ScoreAction;
 import com.team1816.season.auto.paths.NodeToChargeStationFeederPath;
-import com.team1816.season.auto.paths.NodeToChargeStationMiddlePath;
 import com.team1816.season.subsystems.Elevator;
 
 import java.util.List;
@@ -30,10 +29,11 @@ public class PlaceConeAutoBalanceFeederMode extends AutoMode {
         System.out.println("Running PlaceConeAutoBalance Feeder Mode");
         runAction(
             new SeriesAction(
-                new WaitAction(.5),
+                new WaitAction(.25),
                 new ScoreAction(false, Elevator.EXTENSION_STATE.MAX),
-                new WaitAction(.5),
+                new WaitAction(0.25),
                 trajectoryActions.get(0),
+                new WaitAction(0.5),
                 new AutoBalanceAction()
             )
         );

@@ -19,10 +19,9 @@ public class NodeToChargeStationFeederPath extends AutoPath {
     @Override
     protected List<Pose2d> getWaypoints() {
         return List.of(
-            new Pose2d(1.7, 4.48, Rotation2d.fromDegrees(0)),
-            new Pose2d(4.09, 4.77, Rotation2d.fromDegrees(0)),
-            new Pose2d(5.41, 2.78, Rotation2d.fromDegrees(180)),
-            new Pose2d(3.86, 2.59, Rotation2d.fromDegrees(180))
+            new Pose2d(1.70, 4.96, Rotation2d.fromDegrees(0)),
+            new Pose2d(5.21, 4.28, Rotation2d.fromDegrees(-24)),
+            new Pose2d(3.68, 3.24, Rotation2d.fromDegrees(-180))
         );
     }
 
@@ -30,9 +29,8 @@ public class NodeToChargeStationFeederPath extends AutoPath {
     protected List<Rotation2d> getWaypointHeadings() {
         return List.of(
             Rotation2d.fromDegrees(180),
-            Rotation2d.fromDegrees(180),
-            Rotation2d.fromDegrees(180),
-            Rotation2d.fromDegrees(180)
+            Rotation2d.fromDegrees(270),
+            Rotation2d.fromDegrees(270)
         );
     }
 

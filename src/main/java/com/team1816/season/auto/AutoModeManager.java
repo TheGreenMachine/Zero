@@ -155,22 +155,23 @@ public class AutoModeManager {
      * Enum for AutoModes
      */
     enum DesiredAuto {
-        // Test : 2020
+        // Test : 2020 Legacy
         DO_NOTHING,
         TUNE_DRIVETRAIN,
         LIVING_ROOM,
         DRIVE_STRAIGHT,
+
         // 2023
-        PLACE_CONE_AUTO_BALANCE_FEEDER,
-        PLACE_CONE_AUTO_BALANCE_MIDDLE,
-        PLACE_CONE_AUTO_BALANCE_WALL,
-        PLACE_ONLY,
+        PLACE_CONE,
         EXIT_COMMUNITY,
         EXIT_BALANCE_FEEDER,
         EXIT_BALANCE_MIDDLE,
         EXIT_BALANCE_WALL,
-        TWO_CONE_FEEDER,
-        TWO_CONE_WALL
+        PLACE_CONE_AUTO_BALANCE_FEEDER,
+        PLACE_CONE_AUTO_BALANCE_MIDDLE,
+        PLACE_CONE_AUTO_BALANCE_WALL,
+        DOUBLE_CONE_FEEDER,
+        DOUBLE_CONE_WALL
     }
 
     /**
@@ -184,19 +185,13 @@ public class AutoModeManager {
         switch (mode) {
             case DO_NOTHING:
                 return new DoNothingMode();
-            case TUNE_DRIVETRAIN:
-                return new TuneDrivetrainMode();
-            case LIVING_ROOM:
-                return (new LivingRoomMode(color));
-            case PLACE_CONE_AUTO_BALANCE_FEEDER:
-                return (new PlaceConeAutoBalanceFeederMode(color));
-            case PLACE_CONE_AUTO_BALANCE_MIDDLE:
-                return (new PlaceConeAutoBalanceMiddleMode(color));
-            case PLACE_CONE_AUTO_BALANCE_WALL:
-                return (new PlaceConeAutoBalanceWallMode(color));
+//            case TUNE_DRIVETRAIN: // comented for competition purposes
+//                return new TuneDrivetrainMode();
+//            case LIVING_ROOM:
+//                return (new LivingRoomMode(color));
             case EXIT_COMMUNITY:
                 return (new NodeToExitCommunityMode(color));
-            case PLACE_ONLY:
+            case PLACE_CONE:
                 return (new PlaceConeMode());
             case EXIT_BALANCE_FEEDER:
                 return (new ExitCommunityBalanceFeederMode(color));
@@ -204,10 +199,16 @@ public class AutoModeManager {
                 return (new ExitCommunityBalanceMiddleMode(color));
             case EXIT_BALANCE_WALL:
                 return (new ExitCommunityBalanceWallMode(color));
-            case TWO_CONE_FEEDER:
-                return (new PlaceTwoFeederMode(color));
-            case TWO_CONE_WALL:
-                return (new PlaceTwoWallMode(color));
+            case PLACE_CONE_AUTO_BALANCE_FEEDER:
+                return (new PlaceConeAutoBalanceFeederMode(color));
+            case PLACE_CONE_AUTO_BALANCE_MIDDLE:
+                return (new PlaceConeAutoBalanceMiddleMode(color));
+            case PLACE_CONE_AUTO_BALANCE_WALL:
+                return (new PlaceConeAutoBalanceWallMode(color));
+            case DOUBLE_CONE_FEEDER:
+                return (new DoublePlaceConeFeederMode(color));
+            case DOUBLE_CONE_WALL:
+                return (new DoublePlaceConeWallMode(color));
             default:
                 System.out.println("Defaulting to drive straight mode");
                 return new DriveStraightMode();
