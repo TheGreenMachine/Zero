@@ -361,7 +361,9 @@ public class Robot extends TimedRobot {
                             if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
                                 elevator.setDesiredAngleState(Elevator.ANGLE_STATE.STOW);
                             } else {
-                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+                                if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
+                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+                                }
                             }
                         }
                     ),

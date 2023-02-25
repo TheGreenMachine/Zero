@@ -84,10 +84,11 @@ public class Orchestrator {
             Timer.delay(0.25);
             collector.outtakeGamePiece(false);
             elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
-            elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
+            Timer.delay(0.25);
+            elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
             elevator.writeToHardware();
             Timer.delay(0.75);
-            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.STOW);
+            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
         }
     }
 

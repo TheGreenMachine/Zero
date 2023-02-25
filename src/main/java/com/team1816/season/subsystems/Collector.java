@@ -141,14 +141,14 @@ public class Collector extends Subsystem {
                     intakeMotor.set(ControlMode.PercentOutput, cubeIntakePower);
                 }
                 case OUTTAKE_CONE -> {
-                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                     intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.Velocity, coneOuttakeVelocity);
+                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                 }
                 case OUTTAKE_CUBE -> {
-                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                     intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.PercentOutput, cubeOuttakePower);
+                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                 }
             }
         }
