@@ -93,8 +93,8 @@ subsystems:
         pidConfig:
             slot0: # rotation for stow pos
                 kP: 0.01
-                kI: 0
-                kD: 1.4
+                kI: 0.00002
+                kD: 1.2
                 kF: 0
                 allowableError: 1000
             slot1: # rotation at score + collect pos
@@ -136,7 +136,7 @@ subsystems:
                 kF: 0.0000899
         constants:
             ## Demands ##
-            cubeIntakePower: -0.40 # percent output voltage
+            cubeIntakePower: -0.40 # percent output voltage   IF INVERTED: negate (n/p) DON'T INVERT MOTOR
             cubeOuttakePower: 0.25 # percent output voltage
             coneIntakeVelocity: 840 # rpm
             coneOuttakeVelocity: -630 # rpm
@@ -149,7 +149,7 @@ subsystems:
             cameraLed: 1
             maxLevel: 255
     camera:
-        implemented: true
+        implemented: false
         constants:
             usingCamToUpdatePose: 0
 infrastructure:
