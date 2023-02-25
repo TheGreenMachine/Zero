@@ -8,7 +8,18 @@ import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismObject2d;
+
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -54,6 +65,7 @@ public class Elevator extends Subsystem {
     private int stowPIDslot = 0;
     private int collectScorePIDSlot = 1;
     private int extensionPIDSlot = 2;
+    private double kElevatorMinimumLength=1.5;
 
     private static double angleQuarterPPR;
     private static double extensionPPR;
@@ -80,6 +92,21 @@ public class Elevator extends Subsystem {
     private boolean hallEffectTriggered; // not using this rn - turn on robot with arm all the way down for ~20 secs
     private double zeroingHallEffectTriggerValue;
 
+/**
+ * mech 2d start
+ */
+// the main mechanism object
+    Mechanism2d elevatorsim = new Mechanism2d(3, 3);
+    // the mechanism root node
+    MechanismRoot2d root = elevatorsim.getRoot("climber", 2, 0);
+    // MechanismLigament2d objects represent each "section"/"stage" of the mechanism, and are based
+    // off the root node or another ligament object
+    MechanismLigament2d m_elevator = root.append(new MechanismLigament2d("elevator", kElevatorMinimumLength, 90));
+    MechanismLigament2d m_wrist =
+        m_elevator.append(
+            new MechanismLigament2d("wrist", 0.5, 90, 6, new Color8Bit(Color.kGreen)));
+//elevatorsim class
+
 
     /**
      * Base constructor needed to instantiate a subsystem
@@ -90,7 +117,7 @@ public class Elevator extends Subsystem {
     @Inject
     public Elevator(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
-
+        SmartDashboard.putData("Mech2d", elevatorsim);
         // components
         this.angleMotorMain = factory.getMotor(NAME, "angleMotorMain");
         this.angleMotorFollower = factory.getFollowerMotor(NAME, "angleMotorFollower", angleMotorMain);
@@ -225,6 +252,9 @@ public class Elevator extends Subsystem {
                 Math.sin(actualAnglePosition / angleQuarterPPR) *
                     ((actualExtensionPosition + extensionPPR) / 2 * extensionPPR)
                     * Constants.maxElevatorFeedForward;
+            // update the dashboard mechanism's state
+            m_elevator.setLength(kElevatorMinimumLength +   extensionMotor.getSelectedSensorPosition(0));
+            m_wrist.setAngle(extensionMotor.getSelectedSensorPosition(0));
         }
 
 //        if (hallEffectTriggered == zeroingHallEffect.get()) {
