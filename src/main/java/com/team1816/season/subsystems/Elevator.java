@@ -153,7 +153,8 @@ public class Elevator extends Subsystem {
             () -> {
                 // set it to go down until it hits rubber then just fight against the spring to stay down
                 // that way we don't need to be dead-on for the collect pos
-                extensionMotor.set(ControlMode.PercentOutput, 0);
+                //extensionMotor.set(ControlMode.PercentOutput, 0);
+                extensionMotor.set(ControlMode.Position, minExtension);
                 System.out.println("coasting extension motor");
             }
         );

@@ -172,7 +172,7 @@ constants:
     ## Logging ##
     logTeleOp: 1 # 0 or 1
     logAuto: 1 # 0 or 1
-    badLogEnabled: 1 # 0 or 1
+    badLogEnabled: 1 # 0 or 1     TURN IT OFF after we know it is safe? keep for beginning practice matches
     logDrivetrain: 0
     configStatusFrames: 0 # 0 or 1
     ## General ##
