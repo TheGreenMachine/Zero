@@ -9,6 +9,8 @@ import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.CollectAction;
 import com.team1816.season.auto.actions.ElevatorAction;
 import com.team1816.season.auto.actions.ScoreAction;
+import com.team1816.season.auto.paths.DriveFromCollectFeederPath;
+import com.team1816.season.auto.paths.DriveToCollectFeederPath;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 
@@ -16,13 +18,14 @@ import java.util.List;
 
 public class PlaceTwoFeederMode extends AutoMode {
 
-    public PlaceTwoFeederMode(Color color) {
-        super(List.of(new TrajectoryAction(new Place_DriveToCollect_FeederPath(color)), new TrajectoryAction(new DriveToPlaceFromCollect_FeederPath(color))));
-    }
 
     public PlaceTwoFeederMode() {
-        super(List.of(new TrajectoryAction(new Place_DriveToCollect_FeederPath()), new TrajectoryAction(new DriveToPlaceFromCollect_FeederPath())));
+        super(List.of(new TrajectoryAction(new DriveToCollectFeederPath()), new TrajectoryAction(new DriveFromCollectFeederPath())));
     }
+    public PlaceTwoFeederMode(Color color) {
+        super(List.of(new TrajectoryAction(new DriveToCollectFeederPath(color)), new TrajectoryAction(new DriveFromCollectFeederPath(color))));
+    }
+
 
     @Override
     protected void routine() throws AutoModeEndedException {
