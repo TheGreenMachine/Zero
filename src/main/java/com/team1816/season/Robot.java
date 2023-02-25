@@ -322,7 +322,7 @@ public class Robot extends TimedRobot {
                         drive::setSlowMode
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("extremeSlowMode"),
+                        () -> controlBoard.getAsBool("extremeSlowMode"),  //EXTREME is not "extreme", it is in between fast and slow modes
                         drive::setExtremeSlowMode
                     ),
                     createHoldAction(
