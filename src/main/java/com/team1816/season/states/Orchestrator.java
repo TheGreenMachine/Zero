@@ -75,7 +75,7 @@ public class Orchestrator {
      */
     public void autoScore() {
         System.out.println("Executing Auto Score Sequence!");
-        if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
+        if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE || elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP) {
             elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
             elevator.writeToHardware();
             Timer.delay(0.10);
