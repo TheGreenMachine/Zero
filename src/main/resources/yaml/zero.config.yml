@@ -74,7 +74,7 @@ subsystems:
             wheelDiameter: 4
             kTrackScrubFactor: 1.0
             ## Velocity Constraints ##
-            maxRotVel: 14.56
+            maxRotVel: 14
             trackWidth: 19.75 # inches
             wheelbaseLength: 19.75 # inches
             maxVelOpenLoop: 2.5 # meters/s (2.2)
@@ -136,10 +136,10 @@ subsystems:
                 kF: 0.0000899
         constants:
             ## Demands ##
-            cubeIntakePower: -0.10 # percent output voltage
+            cubeIntakePower: -0.40 # percent output voltage
             cubeOuttakePower: 0.25 # percent output voltage
-            coneIntakeVelocity: 600 # rpm
-            coneOuttakeVelocity: -600 # rpm
+            coneIntakeVelocity: 840 # rpm
+            coneOuttakeVelocity: -630 # rpm
     ledmanager:
         implemented: false
         canifier: -1
