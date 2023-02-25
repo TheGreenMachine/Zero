@@ -36,6 +36,7 @@ public class AutoBalanceAction implements AutoAction {
 
         isSwerve = drive instanceof SwerveDrive;
 
+        System.out.println("Initiating auto balance!");
         drive.autoBalance(new ChassisSpeeds());
     }
 
@@ -51,6 +52,7 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public void done() {
+        System.out.println("Drivetrain is Balanced!");
         drive.setBraking(true);
     }
 }

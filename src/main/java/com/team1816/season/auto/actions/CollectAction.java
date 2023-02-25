@@ -18,6 +18,7 @@ public class CollectAction implements AutoAction {
 
     @Override
     public void start() {
+        System.out.println("Setting collector to state: " + desiredState.name());
         collector.setDesiredState(desiredState);
     }
 
