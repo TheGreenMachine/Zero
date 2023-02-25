@@ -322,6 +322,10 @@ public class Robot extends TimedRobot {
                         drive::setSlowMode
                     ),
                     createHoldAction(
+                        () -> controlBoard.getAsBool("extremeSlowMode"),
+                        drive::setExtremeSlowMode
+                    ),
+                    createHoldAction(
                         () -> controlBoard.getAsBool("autoBalance"),
                         drive::setAutoBalanceManual
                     ),
