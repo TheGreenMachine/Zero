@@ -34,6 +34,8 @@ public class PlaceTwoWallMode extends AutoMode {
                 new WaitAction(.5),
                 trajectoryActions.get(0),
                 new CollectAction(Collector.STATE.INTAKE_CONE),
+                new WaitAction(3),
+                new CollectAction(Collector.STATE.STOP),
                 trajectoryActions.get(1),
                 new WaitAction(.5),
                 new CollectAction(Collector.STATE.OUTTAKE_CONE),

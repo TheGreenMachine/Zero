@@ -32,12 +32,13 @@ public class PlaceTwoFeederMode extends AutoMode {
         runAction(
             new SeriesAction(
                 new ScoreAction(false, Elevator.EXTENSION_STATE.MAX),
-                new WaitAction(1.2),
-                new ElevatorAction(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN),
                 new WaitAction(.5),
                 trajectoryActions.get(0),
                 new CollectAction(Collector.STATE.INTAKE_CONE),
+                new WaitAction(3),
+                new CollectAction(Collector.STATE.STOP),
                 trajectoryActions.get(1),
+                new WaitAction(.5),
                 new CollectAction(Collector.STATE.OUTTAKE_CONE),
                 new WaitAction(1.2),
                 new ElevatorAction(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN)
