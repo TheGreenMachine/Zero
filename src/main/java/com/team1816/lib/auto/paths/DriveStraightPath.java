@@ -51,9 +51,4 @@ public class DriveStraightPath extends AutoPath {
     public List<Rotation2d> getReflectedWaypointHeadings() {
         return null;
     }
-
-    @Override
-    public boolean usingApp() {
-        return false;
-    }
 }

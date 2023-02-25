@@ -16,7 +16,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 
-import static com.team1816.lib.subsystems.drive.Drive.*;
+import static com.team1816.lib.subsystems.drive.Drive.NAME;
+import static com.team1816.lib.subsystems.drive.Drive.factory;
 
 public class SwerveModule implements ISwerveModule {
 
@@ -32,11 +33,11 @@ public class SwerveModule implements ISwerveModule {
      */
     public SwerveModuleState moduleState;
     public SwerveModulePosition modulePosition;
-    public double driveDemand; // ticks
-    public double driveActual; // m/s
-    public double driveDistance; // m
-    public double azimuthDemand; // ticks
-    public double azimuthActual; // degrees
+    public double driveDemand;
+    public double driveActual;
+    public double drivePosition;
+    public double azimuthDemand;
+    public double azimuthActual;
     public double motorTemp; // Drive Motor Temperature
 
     /**
@@ -106,6 +107,7 @@ public class SwerveModule implements ISwerveModule {
         );
 
         allowableError = 5; // TODO this is a dummy value for checkSystem
+        drivePosition = 0;
 
         moduleState = new SwerveModuleState();
         modulePosition = new SwerveModulePosition();
@@ -148,11 +150,16 @@ public class SwerveModule implements ISwerveModule {
      * @see this#getActualPosition()
      */
     public void update() {
-        driveActual = driveMotor.getSelectedSensorVelocity(0);
-        azimuthActual = azimuthMotor.getSelectedSensorPosition(0);
+        driveActual =
+            DriveConversions.ticksToMeters(driveMotor.getSelectedSensorVelocity(0)) * 10;
+        azimuthActual =
+            DriveConversions.convertTicksToDegrees(
+                azimuthMotor.getSelectedSensorPosition(0) -
+                    mModuleConfig.azimuthEncoderHomeOffset
+            );
 
-        moduleState.speedMetersPerSecond = DriveConversions.ticksPer100msToMetersPerSecond(driveActual);
-        moduleState.angle = Rotation2d.fromDegrees(DriveConversions.convertTicksToDegrees(azimuthActual - mModuleConfig.azimuthEncoderHomeOffset));
+        moduleState.speedMetersPerSecond = driveActual;
+        moduleState.angle = Rotation2d.fromDegrees(azimuthActual);
 
         drivePosition += driveActual * Robot.dt / 1000;
         modulePosition.distanceMeters = drivePosition;
@@ -252,6 +259,16 @@ public class SwerveModule implements ISwerveModule {
     }
 
     /**
+     * Returns the "position" of the Drive motor
+     *
+     * @return drivePosition
+     */
+    @Override
+    public double getDrivePosition() {
+        return drivePosition;
+    }
+
+    /**
      * Returns the closed loop error of the Drive motor (in-built)
      *
      * @return driveError
@@ -259,24 +276,6 @@ public class SwerveModule implements ISwerveModule {
     @Override
     public double getDriveError() {
         return driveMotor.getClosedLoopError(0);
-    }
-
-    /**
-     * Returns the normalized azimuth demand in ticks with respect to the zero offset
-     * Used for logging only
-     */
-    @Override
-    public double getDesiredNormalizedAzimuth() {
-        return azimuthDemand - mModuleConfig.azimuthEncoderHomeOffset;
-    }
-
-    /**
-     * Returns the normalized azimuth position in ticks
-     * Used for logging only
-     */
-    @Override
-    public double getActualNormalizedAzimuth() {
-        return azimuthActual - mModuleConfig.azimuthEncoderHomeOffset;
     }
 
     /**

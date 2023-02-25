@@ -265,9 +265,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         robotState.calculatedVehicleAccel =
             new ChassisSpeeds(
                 (cs.vxMetersPerSecond - robotState.deltaVehicle.vxMetersPerSecond) /
-                    (timestamp-prevTimestamp),
+                    Constants.kLooperDt,
                 (cs.vyMetersPerSecond - robotState.deltaVehicle.vyMetersPerSecond) /
-                    (timestamp-prevTimestamp),
+                    Constants.kLooperDt,
                 cs.omegaRadiansPerSecond - robotState.deltaVehicle.omegaRadiansPerSecond
             );
         robotState.deltaVehicle = cs;
@@ -428,7 +428,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      * @see com.team1816.lib.util.driveUtil.DriveConversions#ticksPer100MSToMPS(double)
      */
     public double getLeftMPSActual() {
-        return ticksPer100msToMetersPerSecond(leftActualVelocity);
+        return ticksPer100MSToMPS(leftActualVelocity);
     }
 
     /**
@@ -438,7 +438,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      * @see com.team1816.lib.util.driveUtil.DriveConversions#ticksPer100MSToMPS(double)
      */
     public double getRightMPSActual() {
-        return ticksPer100msToMetersPerSecond(rightActualVelocity);
+        return ticksPer100MSToMPS(rightActualVelocity);
     }
 
     /**

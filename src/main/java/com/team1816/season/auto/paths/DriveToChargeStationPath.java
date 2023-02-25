@@ -17,7 +17,7 @@ public class DriveToChargeStationPath extends AutoPath {
     }
 
     @Override
-    protected List<Pose2d> getWaypoints() {
+    public List<Pose2d> getWaypoints() {
         return List.of(
             new Pose2d(1.7, 3.38, Rotation2d.fromDegrees(0)),
             new Pose2d(3.9, 2.78, Rotation2d.fromDegrees(0))
@@ -25,15 +25,10 @@ public class DriveToChargeStationPath extends AutoPath {
     }
 
     @Override
-    protected List<Rotation2d> getWaypointHeadings() {
+    public List<Rotation2d> getWaypointHeadings() {
         return List.of(
             Rotation2d.fromDegrees(180),
             Rotation2d.fromDegrees(180)
         );
-    }
-
-    @Override
-    protected boolean usingApp() {
-        return true;
     }
 }
