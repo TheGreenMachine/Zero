@@ -205,9 +205,9 @@ public class AutoModeManager {
             case EXIT_BALANCE_WALL:
                 return (new ExitCommunityBalanceWallMode(color));
             case TWO_CONE_FEEDER:
-                return (new PlaceTwoFeederMode());
+                return (new PlaceTwoFeederMode(color));
             case TWO_CONE_WALL:
-                return (new PlaceTwoWallMode());
+                return (new PlaceTwoWallMode(color));
             default:
                 System.out.println("Defaulting to drive straight mode");
                 return new DriveStraightMode();
