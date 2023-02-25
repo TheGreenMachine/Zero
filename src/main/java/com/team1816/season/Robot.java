@@ -329,29 +329,29 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("intakeCone"),
                         (pressed) -> {
                             if (pressed) {
-                                prevAngleState = elevator.getDesiredAngleState();
+//                                prevAngleState = elevator.getDesiredAngleState();
                                 collector.setDesiredState(Collector.STATE.INTAKE_CONE);
-                                if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
-                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
-                                }
+//                                if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
+//                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+//                                }
                             } else {
                                 collector.setDesiredState(Collector.STATE.STOP);
-                                elevator.setDesiredState(prevAngleState, Elevator.EXTENSION_STATE.MIN);
+//                                elevator.setDesiredState(prevAngleState, Elevator.EXTENSION_STATE.MIN);
                             }
                         }
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("intakeCube"),
                         (pressed) -> {
-                            prevAngleState = elevator.getDesiredAngleState();
+//                            prevAngleState = elevator.getDesiredAngleState();
                             if (pressed) {
                                 collector.setDesiredState(Collector.STATE.INTAKE_CUBE);
-                                if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
-                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
-                                }
+//                                if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
+//                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+//                                }
                             } else {
                                 collector.setDesiredState(Collector.STATE.STOP);
-                                elevator.setDesiredState(prevAngleState, Elevator.EXTENSION_STATE.MIN);
+//                                elevator.setDesiredState(prevAngleState, Elevator.EXTENSION_STATE.MIN);
                             }
                         }
                     ),
@@ -361,7 +361,9 @@ public class Robot extends TimedRobot {
                             if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
                                 elevator.setDesiredAngleState(Elevator.ANGLE_STATE.STOW);
                             } else {
-                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+                                if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
+                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
+                                }
                             }
                         }
                     ),
@@ -384,13 +386,25 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
+//                    createAction(
+//                        () -> controlBoard.getAsBool("bobDown"),
+//                        () -> {
+//                            if (!operatorLock) {
+//                                if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
+//                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
+//                                } else if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP) {
+//                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+//                                }
+//                            }
+//                        }
+//                    ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("bobDown"),
                         (pressed) -> {
                             if (!operatorLock) {
-                                if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
+                                if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE && pressed) {
                                     elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
-                                } else if (!pressed && elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP) {
+                                } else if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP && !pressed) {
                                     elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
                                 }
                             }
