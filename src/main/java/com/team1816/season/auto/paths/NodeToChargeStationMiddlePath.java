@@ -20,13 +20,17 @@ public class NodeToChargeStationMiddlePath extends AutoPath {
     protected List<Pose2d> getWaypoints() {
         return List.of(
             new Pose2d(1.7, 3.38, Rotation2d.fromDegrees(0)),
-            new Pose2d(3.9, 2.78, Rotation2d.fromDegrees(0))
+            new Pose2d(3.89, 2.51, Rotation2d.fromDegrees(0)),
+            new Pose2d(5.86, 2.71, Rotation2d.fromDegrees(0)),
+            new Pose2d(3.84, 2.73, Rotation2d.fromDegrees(0))
         );
     }
 
     @Override
     protected List<Rotation2d> getWaypointHeadings() {
         return List.of(
+            Rotation2d.fromDegrees(180),
+            Rotation2d.fromDegrees(180),
             Rotation2d.fromDegrees(180),
             Rotation2d.fromDegrees(180)
         );
