@@ -19,8 +19,8 @@ public class DriveFromCollectWallPath extends AutoPath {
     @Override
     protected List<Pose2d> getWaypoints() {
         return List.of(
-            new Pose2d(6.43, 4.53, Rotation2d.fromDegrees(180)),
-            new Pose2d(1.88, 4.55, Rotation2d.fromDegrees(180))
+            new Pose2d(6.43, 0.96, Rotation2d.fromDegrees(180)),
+            new Pose2d(1.93, 0.87, Rotation2d.fromDegrees(180))
         );
     }
 
