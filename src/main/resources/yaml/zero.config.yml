@@ -124,7 +124,7 @@ subsystems:
             scoreDipAnglePosition: 55000
             minExtensionPosition: 20000
             midExtensionPosition: 120000
-            maxExtensionPosition: 300000
+            maxExtensionPosition: 295000
     collector:
         implemented: true
         solenoids:
