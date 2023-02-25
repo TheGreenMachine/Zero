@@ -74,6 +74,8 @@ public abstract class Drive
 
     protected boolean isBraking;
     protected boolean isSlowMode;
+
+    protected boolean isExtremeSlowMode;
     protected boolean isAutoBalancing = false;
 
     /**
@@ -344,6 +346,10 @@ public abstract class Drive
      */
     public void setSlowMode(boolean slowMode) {
         isSlowMode = slowMode;
+    }
+
+    public void setExtremeSlowMode(boolean extremeSlowMode) {
+        isExtremeSlowMode = extremeSlowMode;
     }
 
     /**

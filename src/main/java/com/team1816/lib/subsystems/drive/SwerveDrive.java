@@ -9,6 +9,7 @@ import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveHelper;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
+import com.team1816.lib.subsystems.drive.*;
 import com.team1816.season.Robot;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
@@ -382,7 +383,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 (isDemoMode ? forward * demoModeMultiplier : forward),
                 (isDemoMode ? strafe * demoModeMultiplier : strafe),
                 (isDemoMode ? rotation * demoModeMultiplier : rotation),
-                isSlowMode,
+                isSlowMode, isExtremeSlowMode,
                 true,
                 false
             );

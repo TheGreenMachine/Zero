@@ -130,16 +130,27 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      * @see IGreenMotor
      */
     @Override
-    public synchronized void writeToHardware() { // sets the demands for hardware from the inputs provided
+    public synchronized void writeToHardware() {// sets the demands for hardware from the inputs provided
         if (controlState == ControlState.OPEN_LOOP) {
-            leftMain.set(
-                ControlMode.PercentOutput,
-                isSlowMode ? (leftPowerDemand * 0.5) : leftPowerDemand
-            );
-            rightMain.set(
-                ControlMode.PercentOutput,
-                isSlowMode ? (rightPowerDemand * 0.5) : rightPowerDemand
-            );
+            if (isExtremeSlowMode) {
+                leftMain.set(
+                    ControlMode.PercentOutput,
+                    0.25*leftPowerDemand
+                );
+                rightMain.set(
+                    ControlMode.PercentOutput,
+                    0.25*rightPowerDemand
+                );
+            } else {
+                leftMain.set(
+                    ControlMode.PercentOutput,
+                    isSlowMode ? (leftPowerDemand * 0.5) : leftPowerDemand
+                );
+                rightMain.set(
+                    ControlMode.PercentOutput,
+                    isSlowMode ? (rightPowerDemand * 0.5) : rightPowerDemand
+                );
+            }
         } else {
             leftMain.set(ControlMode.Velocity, leftVelDemand);
             rightMain.set(ControlMode.Velocity, rightVelDemand);
