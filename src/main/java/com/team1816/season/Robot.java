@@ -386,13 +386,25 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    createAction(
+//                    createAction(
+//                        () -> controlBoard.getAsBool("bobDown"),
+//                        () -> {
+//                            if (!operatorLock) {
+//                                if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
+//                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
+//                                } else if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP) {
+//                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+//                                }
+//                            }
+//                        }
+//                    ),
+                    createHoldAction(
                         () -> controlBoard.getAsBool("bobDown"),
-                        () -> {
+                        (pressed) -> {
                             if (!operatorLock) {
-                                if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
+                                if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE && pressed) {
                                     elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
-                                } else if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP) {
+                                } else if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP && !pressed) {
                                     elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
                                 }
                             }
