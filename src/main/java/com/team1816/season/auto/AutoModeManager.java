@@ -168,7 +168,9 @@ public class AutoModeManager {
         EXIT_COMMUNITY,
         EXIT_BALANCE_FEEDER,
         EXIT_BALANCE_MIDDLE,
-        EXIT_BALANCE_WALL
+        EXIT_BALANCE_WALL,
+        TWO_CONE_FEEDER,
+        TWO_CONE_WALL
     }
 
     /**
@@ -202,6 +204,10 @@ public class AutoModeManager {
                 return (new ExitCommunityBalanceMiddleMode(color));
             case EXIT_BALANCE_WALL:
                 return (new ExitCommunityBalanceWallMode(color));
+            case TWO_CONE_FEEDER:
+                return (new PlaceTwoFeederMode());
+            case TWO_CONE_WALL:
+                return (new PlaceTwoWallMode());
             default:
                 System.out.println("Defaulting to drive straight mode");
                 return new DriveStraightMode();
