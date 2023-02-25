@@ -2,9 +2,7 @@ package com.team1816.season.auto;
 
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.modes.*;
-import com.team1816.season.auto.modes.NodeToExitCommunityMode;
-import com.team1816.season.auto.modes.PlaceConeAutoBalanceMode;
-import com.team1816.season.auto.modes.PlaceConeMode;
+import com.team1816.season.auto.modes.*;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -163,9 +161,11 @@ public class AutoModeManager {
         LIVING_ROOM,
         DRIVE_STRAIGHT,
         // 2023
-        PLACE_CONE_AUTO_BALANCE,
+        PLACE_CONE_AUTO_BALANCE_FEEDER,
+        PLACE_CONE_AUTO_BALANCE_MIDDLE,
+        PLACE_CONE_AUTO_BALANCE_WALL,
         PLACE_ONLY,
-        EXIT_COMMUNITY
+        EXIT_COMMUNITY,
     }
 
     /**
@@ -183,8 +183,12 @@ public class AutoModeManager {
                 return new TuneDrivetrainMode();
             case LIVING_ROOM:
                 return (new LivingRoomMode(color));
-            case PLACE_CONE_AUTO_BALANCE:
-                return (new PlaceConeAutoBalanceMode(color));
+            case PLACE_CONE_AUTO_BALANCE_FEEDER:
+                return (new PlaceConeAutoBalanceFeederMode(color));
+            case PLACE_CONE_AUTO_BALANCE_MIDDLE:
+                return (new PlaceConeAutoBalanceMiddleMode(color));
+            case PLACE_CONE_AUTO_BALANCE_WALL:
+                return (new PlaceConeAutoBalanceWallMode(color));
             case EXIT_COMMUNITY:
                 return (new NodeToExitCommunityMode(color));
             case PLACE_ONLY:
