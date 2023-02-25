@@ -1,9 +1,12 @@
 package com.team1816.season.states;
 
 import com.google.inject.Singleton;
+import com.team1816.lib.auto.Color;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
+import com.team1816.season.subsystems.Collector;
+import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -23,9 +26,10 @@ public class RobotState {
      * Odometry and field characterization
      */
     public final Field2d field = new Field2d();
+    public Color allianceColor = Color.BLUE;
     public Pose2d fieldToVehicle = Constants.EmptyPose2d;
     public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose2d;
-    public Pose2d target = Constants.EmptyPose2d;
+    public Pose2d target = Constants.fieldCenterPose;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation2d;
     public Pose2d fieldToTurret = Constants.EmptyPose2d;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds(); // velocities of vehicle
@@ -33,6 +37,7 @@ public class RobotState {
     public Double[] triAxialAcceleration = new Double[]{0d, 0d, 0d};
     public boolean isPoseUpdated = true;
     public double vehicleToFloorProximityCentimeters = 0;
+    public double drivetrainTemp = 0;
 
     /**
      * Inertial characterization
@@ -44,8 +49,11 @@ public class RobotState {
     /**
      * Orchestrator states
      */
+    public Elevator.EXTENSION_STATE actualElevatorExtensionState = Elevator.EXTENSION_STATE.MIN;
+    public Elevator.ANGLE_STATE actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
+
+    public Collector.STATE actualCollectorState = Collector.STATE.STOP;
     public List<VisionPoint> visibleTargets = new ArrayList<>();
-    public double drivetrainTemp = 0;
 
     /**
      * Initializes RobotState and field
@@ -94,11 +102,13 @@ public class RobotState {
         deltaVehicle = new ChassisSpeeds();
         calculatedVehicleAccel = new ChassisSpeeds();
         triAxialAcceleration = new Double[]{0d, 0d, 0d};
+        actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
+        actualElevatorExtensionState = Elevator.EXTENSION_STATE.MIN;
+        actualCollectorState = Collector.STATE.STOP;
         isPoseUpdated = true;
         visibleTargets.clear();
         drivetrainTemp = 0;
         vehicleToFloorProximityCentimeters = 0;
-        target = Constants.fieldCenterPose;
     }
 
     /**

@@ -29,22 +29,22 @@ subsystems:
                     drive: FLDr
                     azimuth: FLAz
                     constants:
-                        encoderOffset: 2445
+                        encoderOffset: 2435
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
                     constants:
-                        encoderOffset: 1479
+                        encoderOffset: 1343
                 backLeft:
                     drive: RLDr
                     azimuth: RLAz
                     constants:
-                        encoderOffset: 539
+                        encoderOffset: 536
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     constants:
-                        encoderOffset: 224
+                        encoderOffset: 108
             drivePID:
                 slot0:
                     kP: .11
@@ -63,19 +63,19 @@ subsystems:
             maxVelTicks100ms: 12275.7 # ticks per 100ms
             openLoopRampRate: 0.8
             isSwerve: 1
-            encPPR: 12855.51 #Use for distance calibration
+            encPPR: 13260.36 #Use for distance calibration
             azimuthEncPPR: 4096
-            maxRotVel: 14
+            maxRotVel: 7
             trackWidth: 21 #inches
             wheelbaseLength: 21.5 #inches
             wheelDiameter: 4
             kTrackScrubFactor: 1.0
-            maxVelOpenLoop: 1 # meters/s
-            maxVelPathFollowing: 1 # meters/s (2.2)
-            maxAccel: .5 # meters/s^ 2
+            maxVelOpenLoop: 3 # meters/s
+            maxVelPathFollowing: 3 # meters/s (2.2)
+            maxAccel: 1.27 # meters/s^ 2
             isDemoMode: 0
             autoBalanceDivider: 30
-            pitchRollMaxFlat: 2.5
+            autoBalanceThreshold: 1.5
 infrastructure:
     canivoreBusName: rio
     # power distribution
@@ -101,6 +101,5 @@ constants:
     ## General ##
     EnableBucketTuning: 0
     teleopFieldCentric: 1 # 0 or 1
-    kLooperDt: .050 # seconds
-    resetFactoryDefaults: 0 # whether motors get reset to factory default - doesn't affect motor encoder offset
-    # - if motors reset, rebooting the robot mid-match would kill the turret
+    kLooperDt: .035 # seconds
+    resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret

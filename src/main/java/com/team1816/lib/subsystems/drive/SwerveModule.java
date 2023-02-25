@@ -9,6 +9,7 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.util.driveUtil.DriveConversions;
 import com.team1816.lib.util.driveUtil.SwerveKinematics;
+import com.team1816.season.Robot;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -153,8 +154,9 @@ public class SwerveModule implements ISwerveModule {
         moduleState.speedMetersPerSecond = DriveConversions.ticksPer100msToMetersPerSecond(driveActual);
         moduleState.angle = Rotation2d.fromDegrees(DriveConversions.convertTicksToDegrees(azimuthActual - mModuleConfig.azimuthEncoderHomeOffset));
 
-        modulePosition.distanceMeters += moduleState.speedMetersPerSecond * (timestamp-prevTimestamp);
-        modulePosition.angle = Rotation2d.fromDegrees(DriveConversions.convertTicksToDegrees(azimuthActual - mModuleConfig.azimuthEncoderHomeOffset));
+        drivePosition += driveActual * Robot.dt / 1000;
+        modulePosition.distanceMeters = drivePosition;
+        modulePosition.angle = Rotation2d.fromDegrees(azimuthActual);
 
         motorTemp = driveMotor.getTemperature(); // Celsius
     }

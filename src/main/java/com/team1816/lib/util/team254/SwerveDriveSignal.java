@@ -4,12 +4,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
 import java.text.DecimalFormat;
-import java.util.Arrays;
 
-import static com.team1816.lib.subsystems.drive.Drive.kOpenLoopMaxVelMeters;
 import static com.team1816.lib.subsystems.drive.SwerveDrive.kFrontLeft;
 import static com.team1816.lib.subsystems.drive.SwerveDrive.kFrontRight;
-import static com.team1816.lib.util.driveUtil.DriveConversions.metersPerSecondToTicksPer100ms;
 
 /**
  * A drivetrain signal containing the speed and azimuth for each wheel
@@ -98,6 +95,17 @@ public class SwerveDriveSignal extends DriveSignal {
     public double[] getWheelSpeeds() {
         return mWheelSpeeds;
     }
+
+//    public SwerveDriveSignal toVelocity() {
+//        return new SwerveDriveSignal(
+//            Arrays
+//                .stream(this.mWheelSpeeds)
+//                .map(x -> x * inchesPerSecondToTicksPer100ms(kOpenLoopMaxVelMeters))
+//                .toArray(),
+//            this.mWheelAzimuths,
+//            this.mBrakeMode
+//        );
+//    }
 
     /**
      * Returns the wheel azimuth rotations

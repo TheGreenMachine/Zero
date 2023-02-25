@@ -3,6 +3,7 @@ package com.team1816.lib.subsystems.vision;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
+import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.visionUtil.GreenSimVisionSystem;
 import com.team1816.lib.util.visionUtil.GreenSimVisionTarget;
@@ -10,7 +11,6 @@ import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -48,9 +48,10 @@ public class Camera extends Subsystem {
 
     /**
      * Instantiates a camera with the base subsystem properties
+     *
      * @param ledManager LedManager
-     * @param inf Infrastructure
-     * @param rs RobotState
+     * @param inf        Infrastructure
+     * @param rs         RobotState
      */
     @Inject
     public Camera(LedManager ledManager, Infrastructure inf, RobotState rs) {
@@ -99,6 +100,7 @@ public class Camera extends Subsystem {
 
     /**
      * Sets the camera to be enabled
+     *
      * @param cameraEnabled boolean
      */
     public void setCameraEnabled(boolean cameraEnabled) {
@@ -141,8 +143,8 @@ public class Camera extends Subsystem {
 
     /**
      * Polls targets from the camera and returns the best target as a list of VisionPoints (reduces computational overhead)
-     * @return List of VisionPoint
      *
+     * @return List of VisionPoint
      * @see VisionPoint
      */
     public ArrayList<VisionPoint> getPoints() {
@@ -157,6 +159,8 @@ public class Camera extends Subsystem {
             p.id = bestTarget.getFiducialId();
             p.cameraToTarget = bestTarget.getBestCameraToTarget(); // missing method in PhotonTrackedTarget
             targets.add(p);
+        } else {
+            System.out.println("camera not returning points b/c camera not implemented");
         }
         return targets;
     }
@@ -199,16 +203,19 @@ public class Camera extends Subsystem {
      * Functionality: nonexistent
      */
     @Override
-    public void writeToHardware() {}
+    public void writeToHardware() {
+    }
 
     /**
      * Functionality: nonexistent
      */
     @Override
-    public void zeroSensors() {}
+    public void zeroSensors() {
+    }
 
     /**
      * Tests the camera
+     *
      * @return true if tests passed
      */
     @Override

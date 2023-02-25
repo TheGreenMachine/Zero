@@ -4,7 +4,6 @@ import com.team1816.lib.Injector;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 
 /**
  * Action that stops processes / waits inside a region.
@@ -80,8 +79,8 @@ public class WaitUntilInsideRegion implements AutoAction {
     @Override
     public boolean isFinished() {
         Pose2d position = mRobotState.fieldToVehicle;
-        var x = position.getX();
-        var y = position.getY();
+        var x = (position.getX());
+        var y = (position.getY());
         return (
             x > mBottomLeft.getX() &&
                 x < mTopRight.getX() &&

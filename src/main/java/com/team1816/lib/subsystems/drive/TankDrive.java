@@ -9,13 +9,13 @@ import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
+import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.lib.util.team254.CheesyDriveHelper;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -310,9 +310,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      */
     @Override
     public void setTeleopInputs(double forward, double strafe, double rotation) {
-        if (controlState != ControlState.OPEN_LOOP) {
-            controlState = ControlState.OPEN_LOOP;
-        }
         DriveSignal driveSignal = driveHelper.cheesyDrive(
             (isDemoMode ? forward * demoModeMultiplier : forward),
             (isDemoMode ? rotation * demoModeMultiplier : rotation),
@@ -342,6 +339,38 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
         leftVelDemand = signal.getLeft();
         rightVelDemand = signal.getRight();
+    }
+
+    /**
+     * Autobalances while in Tankdrive manual control TODO redo description
+     */
+    @Override
+    public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds) {
+        double pitch = infrastructure.getPitch();
+        double roll = infrastructure.getRoll();
+        double throttle = 0;
+        double strafe = 0;
+        var heading = Constants.EmptyRotation2d;
+
+        double maxFlatRange = Constants.autoBalanceThresholdDegrees;
+        double correction = (getInitialYaw() - infrastructure.getYaw()) / 1440;
+
+        if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
+            throttle = pitch / 4;
+            strafe = roll / 4;
+
+            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(throttle, strafe, correction);
+
+
+            DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
+            DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters);
+            setVelocity(driveSignal);
+        } else {
+
+            heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
+            //TODO tankdrive jolt align
+        }
+
     }
 
     /**
