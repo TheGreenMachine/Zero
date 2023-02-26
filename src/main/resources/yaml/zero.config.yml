@@ -111,7 +111,7 @@ subsystems:
                 allowableError: 1000 #DO NOT CHANGE
         constants:
             ## Config ##
-            usingFeedForward: 0
+            usingFeedForward: 1 # FULL LIBERTY if you want to feed forward the elevator or not
             ## Limits ##
             maxVelTicks100ms: 5000 # USELESS DOES NOTHING
             forwardExtensionLimit: 320000 # Out # MAX LIMIT DO NOT GO FURTHER
