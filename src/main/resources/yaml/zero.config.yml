@@ -64,7 +64,7 @@ subsystems:
                     kD: 77
                     kF: 0
                     allowableError: 5
-        constants:
+        constants:        # TODO DO NOT CHANGE ANY CONSTANTS HERE
             ## Positional Configurations ##
             maxVelTicks100ms: 12275.7 # ticks per 100ms
             openLoopRampRate: 0.8
@@ -73,14 +73,14 @@ subsystems:
             azimuthEncPPR: 4096
             wheelDiameter: 4
             kTrackScrubFactor: 1.0
-            ## Velocity Constraints ##
-            maxRotVel: 14
-            trackWidth: 19.75 # inches
-            wheelbaseLength: 19.75 # inches
-            maxVelOpenLoop: 2.5 # meters/s (2.2)
-            maxVelPathFollowing: 3.0 # meters/s (2.2)
+            ## Velocity Constraints ##       #FULL Liberty to modify Auto Waypoints, be very careful on actions as it affects all modes
+            maxRotVel: 14       #DO NOT TOUCH
+            trackWidth: 19.75 # inches       #DO NOT TOUCH
+            wheelbaseLength: 19.75 # inches       #DO NOT TOUCH
+            maxVelOpenLoop: 2.5 # meters/s (2.2)        #DO NOT TOUCH
+            maxVelPathFollowing: 3.0 # meters/s (2.2)        #TODO MAY TOUCH TO MAKE AUTOS FASTER ABS MAX LIMIT 3.6 FOR WEEK 1
             maxAccel: 1.5 # meters/s^ 2
-            isDemoMode: 0
+            isDemoMode: 0        # FALSE
             ## Auto Balance ##
             autoBalanceDivider: 40
             autoBalanceThreshold: 2.5
@@ -90,41 +90,41 @@ subsystems:
             angleMotorMain: 6
             angleMotorFollower: 7
             extensionMotor: 15
-        pidConfig:
+        pidConfig: # DO NOT TOUCH, TODO MAY only tune DOWN max power (peak output) in Elevator.java constructor
             slot0: # rotation for stow pos
                 kP: 0.01
                 kI: 0
                 kD: 1.4
                 kF: 0
-                allowableError: 1000
+                allowableError: 1000 #DO NOT CHANGE
             slot1: # rotation at score + collect pos
                 kP: 0.02
                 kI: 0.00002
                 kD: 1.4
                 kF: 0
-                allowableError: 1000
+                allowableError: 1000 #DO NOT CHANGE
             slot2: # extension
                 kP: 0.15
                 kI: 0.001
                 kD: 2.25
                 kF: 0
-                allowableError: 1000
+                allowableError: 1000 #DO NOT CHANGE
         constants:
             ## Config ##
             usingFeedForward: 0
             ## Limits ##
-            maxVelTicks100ms: 5000
-            forwardExtensionLimit: 320000 # Out
-            reverseExtensionLimit: 0 # In
+            maxVelTicks100ms: 5000 # USELESS DOES NOTHING
+            forwardExtensionLimit: 320000 # Out # MAX LIMIT DO NOT GO FURTHER
+            reverseExtensionLimit: 0 # In # REMEMBER ASYNC TIMER in Elevator brings it to physically desired state
             forwardAngleLimit: 100000 # Elevator horizontal orientation
             reverseAngleLimit: -10000 # Elevator vertical orientation
-            stowAnglePosition: 90000
-            collectAnglePosition: -1000
-            scoreAnglePosition: 64000
-            scoreDipAnglePosition: 55000
-            minExtensionPosition: 20000
-            midExtensionPosition: 120000
-            maxExtensionPosition: 300000
+            stowAnglePosition: 90000 # full liberty
+            collectAnglePosition: -1000 # REMEMBER ASYNC TIMER
+            scoreAnglePosition: 64000 # full liberty
+            scoreDipAnglePosition: 55000 # full liberty
+            minExtensionPosition: 20000 # only liberty to increase
+            midExtensionPosition: 120000 # full liberty
+            maxExtensionPosition: 300000 # very limited liberty to increase (max 310k)
     collector:
         implemented: true
         solenoids:
@@ -136,11 +136,11 @@ subsystems:
                 kF: 0.0000899
         constants:
             ## Demands ##
-            cubeIntakePower: -0.40 # percent output voltage
-            cubeOuttakePower: 0.25 # percent output voltage
-            coneIntakeVelocity: 840 # rpm
-            coneOuttakeVelocity: -630 # rpm
-    ledmanager:
+            cubeIntakePower: -0.40 # percent output voltage  # full liberty abs max is 0.5
+            cubeOuttakePower: 0.25 # percent output voltage  # full liberty abs max is 0.5
+            coneIntakeVelocity: 840 # rpm  # limited liberty not higher than 1000 rpm
+            coneOuttakeVelocity: -630 # rpm  # limited liberty not higher than 1000 rpm
+    ledmanager: # TODO
         implemented: false
         canifier: -1
         constants:
@@ -148,10 +148,10 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255
-    camera:
-        implemented: true
+    camera: # only used for stream
+        implemented: false # not implemented
         constants:
-            usingCamToUpdatePose: 0
+            usingCamToUpdatePose: 0 # Make sure print out in camera.java is disabled to save cpu
 infrastructure:
     canivoreBusName: highSpeed
     ## Power Distribution ##
@@ -166,16 +166,16 @@ infrastructure:
     isPigeon2: true
 controlboard: example
 constants:
-    ## Drivetrain ##
+    ## Drivetrain ##        #TODO DO NOT TOUCH ANY CONSTANTS HERE
     minAllowablePoseError: 0.1
     maxAllowablePoseError: 5
     ## Logging ##
-    logTeleOp: 1 # 0 or 1
-    logAuto: 1 # 0 or 1
-    badLogEnabled: 1 # 0 or 1
-    logDrivetrain: 0
-    configStatusFrames: 0 # 0 or 1
-    ## General ##
+    logTeleOp: 1 # 0 or 1       # limited flexibility based on performance
+    logAuto: 1 # 0 or 1       # limited flexibility based on performance
+    badLogEnabled: 1 # 0 or 1        # limited flexibility based on performance
+    logDrivetrain: 0        # full flexibility
+    configStatusFrames: 0 # 0 or 1        #TODO DO NOT TOUCH
+    ## General ##        #TODO DO NOT TOUCH ANY CONSTANTS HERE
     EnableBucketTuning: 1
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .025 # seconds
