@@ -59,6 +59,8 @@ public class Elevator extends Subsystem {
     private static double extensionPPR;
 
     private boolean usingFeedForward = false;
+    private boolean usingMotionMagic = false; // not motion profiling w/ setpoint feeder
+    private boolean usingMotionProfiling = false; // motion profiling w/ setpoint feeder
 
 
     /**
@@ -119,6 +121,19 @@ public class Elevator extends Subsystem {
         if (usingFeedForward) {
             extensionPPR = factory.getConstant(NAME, "extensionPPR");
             angleQuarterPPR = factory.getConstant(NAME, "angleQuarterPPR");
+        }
+
+        usingMotionMagic = factory.getConstant(NAME, "usingMotionMagic") > 0;
+        if (usingMotionMagic) {
+            double angleCruiseVelocity = factory.getConstant(NAME, "angleMaxMotionMagicVel", 5000);
+            double angleAcceleration = factory.getConstant(NAME, "angleMaxMotionMagicAccel", 1500);
+            double extensionCruiseVelocity = factory.getConstant(NAME, "extensionMaxMotionMagicVel", 15000);
+            double extensionAcceleration = factory.getConstant(NAME, "extensionMaxMotionMagicAccel", 7500);
+
+            angleMotorMain.configMotionCruiseVelocity(angleCruiseVelocity, Constants.kCANTimeoutMs); // 50,000 ticks per second, half range
+            angleMotorMain.configMotionAcceleration(angleAcceleration, Constants.kCANTimeoutMs); // uses worst case scenario 3.3 second accel
+            extensionMotor.configMotionCruiseVelocity(extensionCruiseVelocity, Constants.kCANTimeoutMs); // 150,000 ticks per second, half range
+            extensionMotor.configMotionAcceleration(extensionAcceleration, Constants.kCANTimeoutMs); // 2 second acceleration single direction
         }
 
         // constants
@@ -266,6 +281,16 @@ public class Elevator extends Subsystem {
                         angleMotorMain.set(ControlMode.Position, (scoreAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
                     case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
                 }
+            } else if (usingMotionMagic) {
+                switch (desiredAngleState) {
+                    case STOW ->
+                        angleMotorMain.set(ControlMode.MotionMagic, (stowAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
+                    case COLLECT ->
+                        angleMotorMain.set(ControlMode.MotionMagic, (collectAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
+                    case SCORE ->
+                        angleMotorMain.set(ControlMode.MotionMagic, (scoreAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
+                    case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
+                }
             } else {
                 switch (desiredAngleState) {
                     case STOW -> {
@@ -313,6 +338,15 @@ public class Elevator extends Subsystem {
                             extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
                         }
                     }
+                }
+            } else if (usingMotionMagic) {
+                switch (desiredExtensionState) {
+                    case MAX ->
+                        extensionMotor.set(ControlMode.MotionMagic, (maxExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                    case MID ->
+                        extensionMotor.set(ControlMode.MotionMagic, (midExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                    case MIN ->
+                        extensionMotor.set(ControlMode.MotionMagic, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
                 }
             } else {
                 switch (desiredExtensionState) {

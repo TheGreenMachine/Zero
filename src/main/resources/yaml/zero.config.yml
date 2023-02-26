@@ -111,7 +111,8 @@ subsystems:
                 allowableError: 1000 #DO NOT CHANGE
         constants:
             ## Config ##
-            usingFeedForward: 1 # FULL LIBERTY if you want to feed forward the elevator or not
+            usingFeedForward: 0 # FULL LIBERTY if you want to feed forward the elevator or not
+            usingMotionMagic: 1 # FULL LIBERTY if you want to profile the elevator or not (safer)
             ## Limits ##
             maxVelTicks100ms: 5000 # USELESS DOES NOTHING
             forwardExtensionLimit: 320000 # Out # MAX LIMIT DO NOT GO FURTHER
@@ -125,6 +126,11 @@ subsystems:
             minExtensionPosition: 20000
             midExtensionPosition: 120000
             maxExtensionPosition: 295000
+            ## Motion Magic ##
+            angleMaxMotionMagicVel: 5000 # ONLY DECREASE
+            angleMaxMotionMagicAccel: 1500 # ONLY DECREASE
+            extensionMaxMotionMagicVel: 15000 # ONLY DECREASE
+            extensionMaxMotionMagicAccel: 7500 # ONLY DECREASE
     collector:
         implemented: true
         solenoids:
