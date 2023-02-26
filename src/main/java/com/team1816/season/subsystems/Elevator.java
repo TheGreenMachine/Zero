@@ -140,8 +140,8 @@ public class Elevator extends Subsystem {
             },
             () -> {
                 // set it to go down until it hits rubber then just fight against the spring to stay down
-                // that way we don't need to be dead-on for the collect position
-                angleMotorMain.set(ControlMode.PercentOutput, -0.07);
+                // that way we don't need to be dead-on for the collect pos
+                angleMotorMain.set(ControlMode.PercentOutput, -0.09);   //(start -.08)i can go up to -0.1 if collecting too high
                 System.out.println("running collector into rubber w/ %out");
             }
         );
@@ -152,9 +152,9 @@ public class Elevator extends Subsystem {
             },
             () -> {
                 // set it to go down until it hits rubber then just fight against the spring to stay down
-                // that way we don't need to be dead-on for the retract position
-                extensionMotor.set(ControlMode.PercentOutput, 0);
-                System.out.println("coasting extension motor");
+                // that way we're safer when retracting and have a buffer
+                extensionMotor.set(ControlMode.PercentOutput, -0.05);
+                System.out.println("slow rolling the extension motor");
             }
         );
 
