@@ -140,7 +140,7 @@ public class Elevator extends Subsystem {
             },
             () -> {
                 // set it to go down until it hits rubber then just fight against the spring to stay down
-                // that way we don't need to be dead-on for the collect position
+                // that way we don't need to be dead-on for the collect pos
                 angleMotorMain.set(ControlMode.PercentOutput, -0.07);
                 System.out.println("running collector into rubber w/ %out");
             }
