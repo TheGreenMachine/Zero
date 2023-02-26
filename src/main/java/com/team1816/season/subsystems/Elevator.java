@@ -97,7 +97,7 @@ public class Elevator extends Subsystem {
         this.extensionMotor = factory.getMotor(NAME, "extensionMotor");
         this.zeroingHallEffect = new DigitalInput(0);
 
-        double extensionPeakOutput = 0.80;
+        double extensionPeakOutput = 0.60;
         extensionMotor.configPeakOutputForward(extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.configPeakOutputReverse(-extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.configForwardSoftLimitEnable(true, Constants.kCANTimeoutMs);
@@ -253,8 +253,15 @@ public class Elevator extends Subsystem {
                 switch (desiredAngleState) {
                     case STOW ->
                         angleMotorMain.set(ControlMode.Position, (stowAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case COLLECT ->
-                        angleMotorMain.set(ControlMode.Position, (collectAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
+                    case COLLECT -> {
+                        angleMotorMain.selectProfileSlot(collectScorePIDSlot, 0);
+                        colPosTimer.update();
+                        if (!colPosTimer.isCompleted()) {
+                            angleOutputsChanged = true;
+                        } else {
+                            colPosTimer.reset();
+                        }
+                    }
                     case SCORE ->
                         angleMotorMain.set(ControlMode.Position, (scoreAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
                     case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
@@ -294,8 +301,18 @@ public class Elevator extends Subsystem {
                         extensionMotor.set(ControlMode.Position, (maxExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
                     case MID ->
                         extensionMotor.set(ControlMode.Position, (midExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                    case MIN ->
-                        extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                    case MIN -> {
+                        if (desiredAngleState == ANGLE_STATE.STOW) {
+                            stowExtensionTimer.update();
+                            if (!stowExtensionTimer.isCompleted()) {
+                                extensionOutputsChanged = true;
+                            } else {
+                                stowExtensionTimer.reset();
+                            }
+                        } else {
+                            extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        }
+                    }
                 }
             } else {
                 switch (desiredExtensionState) {
