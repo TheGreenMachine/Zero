@@ -4,12 +4,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
+import com.team1816.lib.hardware.components.sensor.IProximitySensor;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveHelper;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
-import com.team1816.lib.subsystems.drive.*;
 import com.team1816.season.Robot;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
@@ -102,6 +102,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     SwerveModulePosition[] actualModulePositions = new SwerveModulePosition[4];
     public double[] motorTemperatures = new double[4];
 
+
+
     /**
      * Instantiates a swerve drivetrain from base subsystem parameters
      *
@@ -183,8 +185,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
+
         swerveOdometry.update(actualHeading, actualModulePositions);
         updateRobotState();
+
+
     }
 
     /** General getters and setters */
@@ -271,6 +276,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         double strafe = 0;
         var heading = Constants.EmptyRotation2d;
 
+
+
         double threshold = Constants.autoBalanceThresholdDegrees;
 
         double autoBalanceDivider = Constants.autoBalanceDivider;
@@ -279,6 +286,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             throttle = pitch / autoBalanceDivider;
             strafe = roll / autoBalanceDivider;
         }
+
 
         // if not braking and ((throttle || strafe != 0) or joystick strafe input != 0), auto-balance
         // Else, lock wheels to face left/right side of field

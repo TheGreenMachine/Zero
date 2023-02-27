@@ -5,7 +5,9 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.gyro.IPigeonIMU;
 import com.team1816.lib.hardware.components.gyro.Pigeon2Impl;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
+import com.team1816.lib.hardware.components.sensor.GhostProximitySensor;
 import com.team1816.lib.hardware.components.sensor.IProximitySensor;
+import com.team1816.lib.hardware.components.sensor.ProximitySensor;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -164,5 +166,20 @@ public class Infrastructure {
             }
         }
         return maximumProximity;
+    }
+
+    /**
+     * Returns the sensor with the highest  proximity value
+     *
+     * @return mostExceedingSensor
+     */
+    public ProximitySensor getHighestProximitySensor(){
+        ProximitySensor farthestSensor = (ProximitySensor)(proximitySensors.get(0));
+        for(int i = 0; i<4; i++){
+            if(proximitySensors.get(i).getProximity() > farthestSensor.getProximity()) {
+                farthestSensor = (ProximitySensor)(proximitySensors.get(i));
+            }
+        }
+        return farthestSensor;
     }
 }

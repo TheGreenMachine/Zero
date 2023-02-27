@@ -25,6 +25,8 @@ public class AutoBalanceAction implements AutoAction {
 
     private static boolean isSwerve = false;
 
+
+
     public AutoBalanceAction() {
     }
 
@@ -42,7 +44,16 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public void update() {
-        drive.autoBalance(new ChassisSpeeds());
+        ChassisSpeeds fieldRelativeChassisSpeed = new ChassisSpeeds();
+        if(infrastructure.getMaximumProximity() >= 40){ //TODO tune this value
+            fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
+                0,
+                infrastructure.getHighestProximitySensor().
+                0,
+                robotState.fieldToVehicle.getRotation());
+            drive.autoBalance(fieldRelativeChassisSpeed);
+        }
+        drive.autoBalance(fieldRelativeChassisSpeed);
     }
 
     @Override
