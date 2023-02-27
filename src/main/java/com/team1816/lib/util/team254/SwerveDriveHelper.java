@@ -52,7 +52,7 @@ public class SwerveDriveHelper implements DriveHelper {
         double strafeInput,
         double rotationInput,
         boolean low_power,
-        boolean extreme_low_power,
+        boolean mid_low_power,
         boolean field_relative,
         boolean use_heading_controller
     ) {
@@ -132,7 +132,7 @@ public class SwerveDriveHelper implements DriveHelper {
         translationalInput = translationalInput.times(kOpenLoopMaxVelMeters);
         rotationInput *= kMaxRotation;
 
-        if (extreme_low_power) {
+        if (mid_low_power) {
             translationalInput = translationalInput.times(kMidLowPowerScalar);
             rotationInput *= kMidLowPowerRotationScalar;
         } else if (low_power) {
