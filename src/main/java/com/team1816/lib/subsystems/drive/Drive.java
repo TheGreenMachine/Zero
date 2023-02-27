@@ -377,10 +377,6 @@ public abstract class Drive
     public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds) {
     }
 
-    public double getAutoBalanceProximityStrafe(){
-
-    }
-
     /**
      * Returns the actual heading of the drivetrain based on Odometry and gyroscopic measurements
      *
