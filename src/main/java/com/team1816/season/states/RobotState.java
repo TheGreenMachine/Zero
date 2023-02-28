@@ -39,42 +39,6 @@ public class RobotState {
     public double vehicleToFloorProximityCentimeters = 0;
     public double drivetrainTemp = 0;
 
-package com.team1816.season.states;
-
-import com.google.inject.Singleton;
-import com.team1816.lib.util.visionUtil.VisionPoint;
-import com.team1816.season.configuration.Constants;
-import com.team1816.season.configuration.FieldConfig;
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * This class is responsible for logging the robot's actual states and estimated states.
- * Including superstructure and subsystem states.
- */
-
-@Singleton
-public class RobotState {
-
-    /**
-     * Odometry and field characterization
-     */
-    public final Field2d field = new Field2d();
-    public Pose2d fieldToVehicle = Constants.EmptyPose2d;
-    public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose2d;
-    public Pose2d target = Constants.EmptyPose2d;
-    public Rotation2d vehicleToTurret = Constants.EmptyRotation2d;
-    public Pose2d fieldToTurret = Constants.EmptyPose2d;
-    public ChassisSpeeds deltaVehicle = new ChassisSpeeds(); // velocities of vehicle
-    public ChassisSpeeds calculatedVehicleAccel = new ChassisSpeeds(); // accel values calculated by watching drivetrain encoders
-    public Double[] triAxialAcceleration = new Double[]{0d, 0d, 0d};
-    public boolean isPoseUpdated = true;
-    public double vehicleToFloorProximityCentimeters = 0;
-
     /**
      * Inertial characterization
      */

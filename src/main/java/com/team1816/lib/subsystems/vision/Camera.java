@@ -101,20 +101,6 @@ public class Camera extends Subsystem {
     }
 
     /**
-     * Sets the camera to be enabled
-     *
-     * @param cameraEnabled boolean
-     */
-    public void setCameraEnabled(boolean cameraEnabled) {
-        if (this.isImplemented()) {
-            this.cameraEnabled = cameraEnabled;
-            led.setCameraLed(cameraEnabled);
-        } else {
-            System.out.println("Camera Not Implemented...");
-        }
-    }
-
-    /**
      * Periodically reads inputs and polls visible camera targets
      */
     public void readFromHardware() {
@@ -221,9 +207,7 @@ public class Camera extends Subsystem {
     @Override
     public boolean testSubsystem() {
         if (isImplemented()) {
-            led.setCameraLed(true);
             Timer.delay(2);
-            led.setCameraLed(false);
         }
         return true;
     }

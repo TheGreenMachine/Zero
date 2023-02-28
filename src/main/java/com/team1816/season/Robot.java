@@ -165,10 +165,7 @@ public class Robot extends TimedRobot {
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            // Remember to register our elevator and collector subsystems below!! The subsystem manager deals with calling
-            // read/writetohardware on a loop, but it can only call read/write if it recognizes said subsystem. To recognize
-            // your subsystem, just add it alongside the drive, ledManager, and camera parameters :)
-            subsystemManager.setSubsystems(drive, ledManager, camera, elevator, collector);
+            subsystemManager.setSubsystems(drive, ledManager, camera);
 
             /** Register BadLogs */
             if (Constants.kIsBadlogEnabled) {
@@ -211,11 +208,11 @@ public class Robot extends TimedRobot {
                     "xaxis",
                     "hide"
                 );
-//                BadLog.createTopic(
-//                    "Vision/Distance",
-//                    "inches",
-//                    robotState::getDistanceToGoal
-//                );
+                BadLog.createTopic(
+                    "Vision/Distance",
+                    "inches",
+                    robotState::getDistanceToGoal
+                );
                 BadLog.createValue("Drivetrain PID", drive.pidToString());
                 DrivetrainLogger.init(drive);
                 BadLog.createTopic(
@@ -223,6 +220,7 @@ public class Robot extends TimedRobot {
                     "Amps",
                     infrastructure.getPd()::getTotalCurrent
                 );
+
                 BadLog.createTopic(
                     "Pigeon/Yaw",
                     "degrees",
@@ -240,17 +238,9 @@ public class Robot extends TimedRobot {
                 );
                 logger.finishInitialization();
             }
-
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
-            // zeroing ypr - (-90) b/c our pigeon is mounted with the "y" axis facing forward
-            infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
             subsystemManager.zeroSensors();
-
-            /** Register ControlBoard */
-            controlBoard = Injector.get(IControlBoard.class);
-            DriverStation.silenceJoystickConnectionWarning(true);
-
             actionManager =
                 new ActionManager(
                     // Driver Gamepad
@@ -419,224 +409,6 @@ public class Robot extends TimedRobot {
                         () -> {
                             if (!operatorLock) {
                                 Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
-import com.team1816.lib.subsystems.LedManager;
-import com.team1816.lib.subsystems.SubsystemLooper;
-import com.team1816.lib.subsystems.drive.Drive;
-import com.team1816.lib.subsystems.drive.DrivetrainLogger;
-import com.team1816.lib.subsystems.vision.Camera;
-import com.team1816.season.auto.AutoModeManager;
-import com.team1816.season.auto.modes.AutoBalanceMode;
-import com.team1816.season.auto.modes.TrajectoryToTargetMode;
-import com.team1816.season.configuration.Constants;
-import com.team1816.season.states.Orchestrator;
-import com.team1816.season.states.RobotState;
-import edu.wpi.first.wpilibj.*;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import static com.team1816.lib.controlboard.ControlUtils.createAction;
-import static com.team1816.lib.controlboard.ControlUtils.createHoldAction;
-
-public class Robot extends TimedRobot {
-
-    /**
-     * Looper
-     */
-    private final Looper enabledLoop;
-    private final Looper disabledLoop;
-
-    /**
-     * Logger
-     */
-    private static BadLog logger;
-
-    /**
-     * Controls
-     */
-    private IControlBoard controlBoard;
-    private ActionManager actionManager;
-
-    private final Infrastructure infrastructure;
-    private final SubsystemLooper subsystemManager;
-
-    /**
-     * State Managers
-     */
-    private final Orchestrator orchestrator;
-    private final RobotState robotState;
-
-    /**
-     * Subsystems
-     */
-    private final Drive drive;
-
-    private final LedManager ledManager;
-    private final Camera camera;
-
-    /**
-     * Factory
-     */
-    private static RobotFactory factory;
-
-    /**
-     * Autonomous
-     */
-    private final AutoModeManager autoModeManager;
-    private Thread autoTargetThread;
-    private Thread autoBalanceThread;
-
-    /**
-     * Timing
-     */
-    private double loopStart;
-    public static double autoStart;
-    public static double teleopStart;
-
-    /**
-     * Properties
-     */
-    private boolean faulted;
-    public static boolean runningAutoTarget = false;
-    public static boolean runningAutoBalance = false;
-
-    /**
-     * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
-     */
-    Robot() {
-        super();
-        // initialize injector
-        Injector.registerModule(new SeasonModule());
-        enabledLoop = new Looper(this);
-        disabledLoop = new Looper(this);
-        drive = (Injector.get(Drive.Factory.class)).getInstance();
-        camera = Injector.get(Camera.class);
-        ledManager = Injector.get(LedManager.class);
-        robotState = Injector.get(RobotState.class);
-        orchestrator = Injector.get(Orchestrator.class);
-        infrastructure = Injector.get(Infrastructure.class);
-        subsystemManager = Injector.get(SubsystemLooper.class);
-        autoModeManager = Injector.get(AutoModeManager.class);
-    }
-
-    /**
-     * Returns the static factory instance of the Robot
-     *
-     * @return RobotFactory
-     */
-    public static RobotFactory getFactory() {
-        if (factory == null) factory = Injector.get(RobotFactory.class);
-        return factory;
-    }
-
-    /**
-     * Returns the length of the last loop that the Robot was on
-     *
-     * @return duration (ms)
-     */
-    public Double getLastRobotLoop() {
-        return (Timer.getFPGATimestamp() - loopStart) * 1000;
-    }
-
-    /**
-     * Returns the duration of the last enabled loop
-     *
-     * @return duration (ms)
-     * @see Looper#getLastLoop()
-     */
-    public Double getLastEnabledLoop() {
-        return enabledLoop.getLastLoop();
-    }
-
-    /**
-     * Actions to perform when the robot has just begun being powered and is done booting up.
-     * Initializes the robot by injecting the controlboard, registering all subsystems, and setting up BadLogs.
-     */
-    @Override
-    public void robotInit() {
-        try {
-            /** Register All Subsystems */
-            controlBoard = Injector.get(IControlBoard.class);
-            DriverStation.silenceJoystickConnectionWarning(true);
-
-            subsystemManager.setSubsystems(drive, ledManager, camera);
-
-            /** Register BadLogs */
-            if (Constants.kIsBadlogEnabled) {
-                var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
-                var robotName = System.getenv("ROBOT_NAME");
-                if (robotName == null) robotName = "default";
-                var logFileDir = "/home/lvuser/";
-                // if there is a USB drive use it
-                if (Files.exists(Path.of("/media/sda1"))) {
-                    logFileDir = "/media/sda1/";
-                }
-                if (RobotBase.isSimulation()) {
-                    if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                        logFileDir = System.getenv("temp") + "\\";
-                    } else {
-                        logFileDir = System.getProperty("user.dir") + "/";
-                    }
-                }
-                var filePath = logFileDir + robotName + "_" + logFile + ".bag";
-                logger = BadLog.init(filePath);
-
-                BadLog.createTopic(
-                    "Timings/Looper",
-                    "ms",
-                    this::getLastEnabledLoop,
-                    "hide",
-                    "join:Timings"
-                );
-                BadLog.createTopic(
-                    "Timings/RobotLoop",
-                    "ms",
-                    this::getLastRobotLoop,
-                    "hide",
-                    "join:Timings"
-                );
-                BadLog.createTopic(
-                    "Timings/Timestamp",
-                    "s",
-                    Timer::getFPGATimestamp,
-                    "xaxis",
-                    "hide"
-                );
-                BadLog.createTopic(
-                    "Vision/Distance",
-                    "inches",
-                    robotState::getDistanceToGoal
-                );
-                BadLog.createValue("Drivetrain PID", drive.pidToString());
-                DrivetrainLogger.init(drive);
-                BadLog.createTopic(
-                    "PDP/Current",
-                    "Amps",
-                    infrastructure.getPd()::getTotalCurrent
-                );
-
-                BadLog.createTopic(
-                    "Pigeon/Yaw",
-                    "degrees",
-                    infrastructure::getYaw
-                );
-                BadLog.createTopic(
-                    "Pigeon/Pitch",
-                    "degrees",
-                    infrastructure::getPitch
-                );
-                BadLog.createTopic(
-                    "Pigeon/Roll",
-                    "degrees",
-                    infrastructure::getRoll
-                );
-                logger.finishInitialization();
-            }
-            subsystemManager.registerEnabledLoops(enabledLoop);
-            subsystemManager.registerDisabledLoops(disabledLoop);
-            subsystemManager.zeroSensors();
 
                                 if (extensionState == Elevator.EXTENSION_STATE.MIN) {
                                     elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
@@ -847,7 +619,7 @@ public class Robot extends TimedRobot {
         try {
             double initTime = System.currentTimeMillis();
 
-            ledManager.blinkStatus(LedManager.RobotStatus.DRIVETRAIN_FLIPPED);
+            ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
             // Warning - blocks thread - intended behavior?
             while (System.currentTimeMillis() - initTime <= 3000) {
                 ledManager.writeToHardware();

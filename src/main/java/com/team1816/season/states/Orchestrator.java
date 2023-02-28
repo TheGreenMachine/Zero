@@ -39,41 +39,8 @@ public class Orchestrator {
      */
     private static Drive drive;
     private static LedManager ledManager;
-
     private static Collector collector;
-
     private static Elevator elevator;
-
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.RobotBase;
-import org.photonvision.PhotonUtils;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.team1816.lib.hardware.factory.RobotFactory.PIDConfig.Drive;
-import static com.team1816.lib.subsystems.Subsystem.factory;
-import static com.team1816.lib.subsystems.Subsystem.robotState;
-
-/**
- * Main superstructure-style class and logical operator for handling and delegating subsystem tasks. Consists of an integrated
- * drivetrain with other subsystems and utilizes closed loop state dependent control via RobotState.
- *
- * @see RobotState
- */
-@Singleton
-public class Orchestrator {
-
-    /**
-     * Subsystems
-     */
-    private static Drive drive;
-    private static LedManager ledManager;
 
 
     /**
