@@ -24,7 +24,7 @@ public class ExitCommunityBalanceFeederMode extends AutoMode {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running ExitCommunityBalance Feeder Mode");
+        System.out.println("Running Exit Community Balance Mode");
         runAction(
             new SeriesAction(
                 new WaitAction(.5),

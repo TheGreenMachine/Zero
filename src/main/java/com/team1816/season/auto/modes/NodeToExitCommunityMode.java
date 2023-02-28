@@ -21,7 +21,7 @@ public class NodeToExitCommunityMode extends AutoMode {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Move Out Mode");
+        System.out.println("Running Exit Community Mode");
         runAction(new WaitAction(.5));
         runAction(trajectoryActions.get(0));
     }
