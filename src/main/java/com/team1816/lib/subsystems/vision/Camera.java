@@ -13,6 +13,8 @@ import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import org.photonvision.PhotonCamera;
@@ -203,15 +205,13 @@ public class Camera extends Subsystem {
      * Functionality: nonexistent
      */
     @Override
-    public void writeToHardware() {
-    }
+    public void writeToHardware() {}
 
     /**
      * Functionality: nonexistent
      */
     @Override
-    public void zeroSensors() {
-    }
+    public void zeroSensors() {}
 
     /**
      * Tests the camera

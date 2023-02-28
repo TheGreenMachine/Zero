@@ -21,7 +21,7 @@ public class LivingRoomPath extends AutoPath {
         List<Pose2d> waypoints = new ArrayList<>();
         waypoints.add(new Pose2d(0.5, 4.1, Rotation2d.fromDegrees(0)));
         waypoints.add(new Pose2d(2.0, 4.4, Rotation2d.fromDegrees(45)));
-        waypoints.add(new Pose2d(4.4, 4.9, Rotation2d.fromDegrees(0)));
+        waypoints.add(new Pose2d(5.4, 4.9, Rotation2d.fromDegrees(0)));
         return waypoints;
     }
 

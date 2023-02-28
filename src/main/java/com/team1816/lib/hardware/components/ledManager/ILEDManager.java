@@ -70,6 +70,8 @@ public interface ILEDManager {
      */
     ErrorCode animate(Animation animation);
 
+    ErrorCode configV5Enabled(boolean enable5V, int timeoutMs);
+
     /**
      * Sets the status frame period of the LEDManager
      *

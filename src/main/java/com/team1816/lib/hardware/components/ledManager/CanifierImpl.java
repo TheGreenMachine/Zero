@@ -102,4 +102,9 @@ public class CanifierImpl extends CANifier implements ILEDManager {
     public ErrorCode animate(Animation animation) {
         return null;
     }
+
+    @Override
+    public ErrorCode configV5Enabled(boolean enable5V, int timeoutMs) {
+        return null;
+    }
 }
