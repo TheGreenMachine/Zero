@@ -25,8 +25,8 @@ public class SwerveDriveHelper implements DriveHelper {
     private static final double kRotationExponent = 6.0;
     private static final double kPoleThreshold = 0.0;
     private static final double kRobotRelativePoleThreshold = Math.toRadians(5);
-    private static final double kDeadband = 0.15;
-    private static final double kRotationDeadband = 0.15;
+    private static final double kDeadband = 0.05;
+    private static final double kRotationDeadband = 0.05;
 
     /**
      * Instantiates a SwerveDriveHelper

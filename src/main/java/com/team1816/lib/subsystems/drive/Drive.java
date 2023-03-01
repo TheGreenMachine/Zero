@@ -349,6 +349,7 @@ public abstract class Drive
     }
 
     public void setMidSlowMode(boolean midSlowMode) {
+        System.out.println("setting slow mode to: " + midSlowMode);
         isMidSlowMode = midSlowMode;
     }
 
