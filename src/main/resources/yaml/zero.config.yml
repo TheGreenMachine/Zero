@@ -126,7 +126,7 @@ subsystems:
             midExtensionPosition: 120000
             maxExtensionPosition: 295000
     collector:
-        implemented: true
+        implemented: false
         solenoids:
             intakeSolenoid: 7
         sparkmaxes:
