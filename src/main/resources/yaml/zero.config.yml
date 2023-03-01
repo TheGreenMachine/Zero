@@ -166,7 +166,7 @@ infrastructure:
     ## Pneumatics Control ##
     compressorEnabled: true
     pcmIsRev: false
-    pcmId: 2
+    pcmId: 4
     ## Pigeon ##
     pigeonId: 32
     isPigeon2: true

@@ -59,8 +59,6 @@ public class Elevator extends Subsystem {
     private static double extensionPPR;
 
     private boolean usingFeedForward = false;
-    private boolean usingMotionMagic = false; // not motion profiling w/ setpoint feeder
-    private boolean usingMotionProfiling = false; // motion profiling w/ setpoint feeder
 
 
     /**
@@ -123,19 +121,6 @@ public class Elevator extends Subsystem {
             angleQuarterPPR = factory.getConstant(NAME, "angleQuarterPPR");
         }
 
-        usingMotionMagic = factory.getConstant(NAME, "usingMotionMagic") > 0;
-        if (usingMotionMagic) {
-            double angleCruiseVelocity = factory.getConstant(NAME, "angleMaxMotionMagicVel", 5000);
-            double angleAcceleration = factory.getConstant(NAME, "angleMaxMotionMagicAccel", 1500);
-            double extensionCruiseVelocity = factory.getConstant(NAME, "extensionMaxMotionMagicVel", 15000);
-            double extensionAcceleration = factory.getConstant(NAME, "extensionMaxMotionMagicAccel", 7500);
-
-            angleMotorMain.configMotionCruiseVelocity(angleCruiseVelocity, Constants.kCANTimeoutMs); // 50,000 ticks per second, half range
-            angleMotorMain.configMotionAcceleration(angleAcceleration, Constants.kCANTimeoutMs); // uses worst case scenario 3.3 second accel
-            extensionMotor.configMotionCruiseVelocity(extensionCruiseVelocity, Constants.kCANTimeoutMs); // 150,000 ticks per second, half range
-            extensionMotor.configMotionAcceleration(extensionAcceleration, Constants.kCANTimeoutMs); // 2 second acceleration single direction
-        }
-
         // constants
         stowAngle = factory.getConstant(NAME, "stowAnglePosition");
         collectAngle = factory.getConstant(NAME, "collectAnglePosition");
@@ -156,7 +141,7 @@ public class Elevator extends Subsystem {
             () -> {
                 // set it to go down until it hits rubber then just fight against the spring to stay down
                 // that way we don't need to be dead-on for the collect pos
-                angleMotorMain.set(ControlMode.PercentOutput, -0.09);   //(start -.08)i can go up to -0.1 if collecting too high
+                angleMotorMain.set(ControlMode.PercentOutput, -0.07);   //(start -.08)i can go up to -0.1 if collecting too high
                 System.out.println("running collector into rubber w/ %out");
             }
         );
@@ -268,27 +253,10 @@ public class Elevator extends Subsystem {
                 switch (desiredAngleState) {
                     case STOW ->
                         angleMotorMain.set(ControlMode.Position, (stowAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case COLLECT -> {
-                        angleMotorMain.selectProfileSlot(collectScorePIDSlot, 0);
-                        colPosTimer.update();
-                        if (!colPosTimer.isCompleted()) {
-                            angleOutputsChanged = true;
-                        } else {
-                            colPosTimer.reset();
-                        }
-                    }
+                    case COLLECT ->
+                        angleMotorMain.set(ControlMode.Position, (collectAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
                     case SCORE ->
                         angleMotorMain.set(ControlMode.Position, (scoreAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
-                }
-            } else if (usingMotionMagic) {
-                switch (desiredAngleState) {
-                    case STOW ->
-                        angleMotorMain.set(ControlMode.MotionMagic, (stowAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case COLLECT ->
-                        angleMotorMain.set(ControlMode.MotionMagic, (collectAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case SCORE ->
-                        angleMotorMain.set(ControlMode.MotionMagic, (scoreAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
                     case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
                 }
             } else {
@@ -326,27 +294,8 @@ public class Elevator extends Subsystem {
                         extensionMotor.set(ControlMode.Position, (maxExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
                     case MID ->
                         extensionMotor.set(ControlMode.Position, (midExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                    case MIN -> {
-                        if (desiredAngleState == ANGLE_STATE.STOW) {
-                            stowExtensionTimer.update();
-                            if (!stowExtensionTimer.isCompleted()) {
-                                extensionOutputsChanged = true;
-                            } else {
-                                stowExtensionTimer.reset();
-                            }
-                        } else {
-                            extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        }
-                    }
-                }
-            } else if (usingMotionMagic) {
-                switch (desiredExtensionState) {
-                    case MAX ->
-                        extensionMotor.set(ControlMode.MotionMagic, (maxExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                    case MID ->
-                        extensionMotor.set(ControlMode.MotionMagic, (midExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
                     case MIN ->
-                        extensionMotor.set(ControlMode.MotionMagic, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
                 }
             } else {
                 switch (desiredExtensionState) {
