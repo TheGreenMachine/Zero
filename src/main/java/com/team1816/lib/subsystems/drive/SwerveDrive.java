@@ -282,17 +282,17 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         // if not braking and ((throttle || strafe != 0) or joystick strafe input != 0), auto-balance
         // Else, lock wheels to face left/right side of field
-        if (!isBraking && ((throttle != 0 || strafe != 0) || !Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds()))) {
+        if (isBraking || ((throttle == 0 && strafe == 0) && Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds()))) {
+            heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
+            SwerveModuleState templateState = new SwerveModuleState(0, heading);
+            SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
+            setModuleStates(statePassIn);
+        } else {
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
                 throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond,
                 strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond,
                 fieldRelativeChassisSpeeds.omegaRadiansPerSecond);
             setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
-        } else {
-            heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
-            SwerveModuleState templateState = new SwerveModuleState(0, heading);
-            SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
-            setModuleStates(statePassIn);
         }
     }
 

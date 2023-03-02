@@ -29,8 +29,8 @@ public class NodeToChargeStationFeederPath extends AutoPath {
     protected List<Rotation2d> getWaypointHeadings() {
         return List.of(
             Rotation2d.fromDegrees(180),
-            Rotation2d.fromDegrees(270),
-            Rotation2d.fromDegrees(270)
+            Rotation2d.fromDegrees(180),
+            Rotation2d.fromDegrees(180)
         );
     }
 
