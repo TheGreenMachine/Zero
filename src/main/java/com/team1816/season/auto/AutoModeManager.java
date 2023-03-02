@@ -5,13 +5,11 @@ import com.team1816.lib.auto.modes.*;
 import com.team1816.season.auto.modes.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.print.DocFlavor;
 
 /**
  * An integrated and optimized manager for autonomous mode selection and configuration
@@ -175,7 +173,7 @@ public class AutoModeManager {
 
         // 2023
         PLACE_CONE,
-        EXIT_COMMUNITY,
+        PLACE_CONE_EXIT_COMMUNITY,
         EXIT_BALANCE_FEEDER,
         EXIT_BALANCE_MIDDLE,
         EXIT_BALANCE_WALL,
@@ -201,8 +199,8 @@ public class AutoModeManager {
 //                return new TuneDrivetrainMode();
 //            case LIVING_ROOM:
 //                return (new LivingRoomMode(color));
-            case EXIT_COMMUNITY:
-                return (new NodeToExitCommunityMode(color));
+            case PLACE_CONE_EXIT_COMMUNITY:
+                return (new PlaceConeExitCommunityMode(color));
             case PLACE_CONE:
                 return (new PlaceConeMode());
             case EXIT_BALANCE_FEEDER:
