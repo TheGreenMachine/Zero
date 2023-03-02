@@ -3,12 +3,15 @@ package com.team1816.season.auto;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.modes.*;
 import com.team1816.season.auto.modes.*;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.print.DocFlavor;
 
 /**
  * An integrated and optimized manager for autonomous mode selection and configuration
@@ -30,7 +33,6 @@ public class AutoModeManager {
      */
     private AutoMode autoMode;
     private static Thread autoModeThread;
-    private RobotState robotState1;
 
     /**
      * Instantiates and AutoModeManager with a default option and selective computation
@@ -79,7 +81,17 @@ public class AutoModeManager {
      */
     public boolean update() {
         DesiredAuto selectedAuto = autoModeChooser.getSelected();
-        Color selectedColor = sideChooser.getSelected();
+        Color selectedColor = Color.BLUE;
+        if (RobotBase.isSimulation()) {
+            selectedColor = sideChooser.getSelected();
+        } else if (RobotBase.isReal()) {
+            var dsAlliance = DriverStation.getAlliance();
+            if (dsAlliance == DriverStation.Alliance.Red) {
+                selectedColor = Color.RED;
+            } else {
+                selectedColor = Color.BLUE;
+            }
+        }
         boolean autoChanged = desiredAuto != selectedAuto;
         boolean colorChanged = desiredColor != selectedColor;
         // if auto has been changed, update selected auto mode + thread

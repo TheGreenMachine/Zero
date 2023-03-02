@@ -97,7 +97,7 @@ public class Elevator extends Subsystem {
         this.extensionMotor = factory.getMotor(NAME, "extensionMotor");
         this.zeroingHallEffect = new DigitalInput(0);
 
-        double extensionPeakOutput = 0.80;
+        double extensionPeakOutput = 0.56;
         extensionMotor.configPeakOutputForward(extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.configPeakOutputReverse(-extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.configForwardSoftLimitEnable(true, Constants.kCANTimeoutMs);
@@ -107,7 +107,7 @@ public class Elevator extends Subsystem {
         extensionMotor.configClosedLoopPeakOutput(1, extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.selectProfileSlot(extensionPIDSlot, 0); // uses the system slot1 configuration for extension control
 
-        double angularPeakOutput = 0.60;
+        double angularPeakOutput = 0.56;
         angleMotorMain.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
         angleMotorMain.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
         angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
@@ -141,7 +141,7 @@ public class Elevator extends Subsystem {
             () -> {
                 // set it to go down until it hits rubber then just fight against the spring to stay down
                 // that way we don't need to be dead-on for the collect pos
-                angleMotorMain.set(ControlMode.PercentOutput, -0.07);
+                angleMotorMain.set(ControlMode.PercentOutput, -0.07);   //(start -.08)i can go up to -0.1 if collecting too high
                 System.out.println("running collector into rubber w/ %out");
             }
         );
@@ -152,9 +152,9 @@ public class Elevator extends Subsystem {
             },
             () -> {
                 // set it to go down until it hits rubber then just fight against the spring to stay down
-                // that way we don't need to be dead-on for the collect pos
-                extensionMotor.set(ControlMode.PercentOutput, 0);
-                System.out.println("coasting extension motor");
+                // that way we're safer when retracting and have a buffer
+                extensionMotor.set(ControlMode.PercentOutput, -0.05);
+                System.out.println("slow rolling the extension motor");
             }
         );
 

@@ -78,8 +78,8 @@ subsystems:
             trackWidth: 19.75 # inches
             wheelbaseLength: 19.75 # inches
             maxVelOpenLoop: 2.5 # meters/s (2.2)
-            maxVelPathFollowing: 3.0 # meters/s (2.2)
-            maxAccel: 1.5 # meters/s^ 2
+            maxVelPathFollowing: 3.4 # meters/s (2.2)
+            maxAccel: 2.54 # meters/s^ 2
             isDemoMode: 0
             ## Auto Balance ##
             autoBalanceDivider: 40
@@ -93,8 +93,8 @@ subsystems:
         pidConfig:
             slot0: # rotation for stow pos
                 kP: 0.01
-                kI: 0
-                kD: 1.4
+                kI: 0.00002
+                kD: 1.2
                 kF: 0
                 allowableError: 1000
             slot1: # rotation at score + collect pos
@@ -124,7 +124,7 @@ subsystems:
             scoreDipAnglePosition: 55000
             minExtensionPosition: 20000
             midExtensionPosition: 120000
-            maxExtensionPosition: 300000
+            maxExtensionPosition: 295000
     collector:
         implemented: true
         solenoids:
@@ -136,7 +136,7 @@ subsystems:
                 kF: 0.0000899
         constants:
             ## Demands ##
-            cubeIntakePower: -0.40 # percent output voltage
+            cubeIntakePower: -0.40 # percent output voltage   IF INVERTED: negate (n/p) DON'T INVERT MOTOR
             cubeOuttakePower: 0.25 # percent output voltage
             coneIntakeVelocity: 840 # rpm
             coneOuttakeVelocity: -630 # rpm
@@ -149,7 +149,7 @@ subsystems:
             cameraLed: 1
             maxLevel: 255
     camera:
-        implemented: true
+        implemented: false
         constants:
             usingCamToUpdatePose: 0
 infrastructure:
@@ -160,7 +160,7 @@ infrastructure:
     ## Pneumatics Control ##
     compressorEnabled: true
     pcmIsRev: false
-    pcmId: 2
+    pcmId: 4
     ## Pigeon ##
     pigeonId: 32
     isPigeon2: true
@@ -172,7 +172,7 @@ constants:
     ## Logging ##
     logTeleOp: 1 # 0 or 1
     logAuto: 1 # 0 or 1
-    badLogEnabled: 1 # 0 or 1
+    badLogEnabled: 1 # 0 or 1     TURN IT OFF after we know it is safe? keep for beginning practice matches
     logDrivetrain: 0
     configStatusFrames: 0 # 0 or 1
     ## General ##
