@@ -21,7 +21,7 @@ public class NodeToChargeStationMiddlePath extends AutoPath {
         return List.of(
             new Pose2d(1.70, 3.24, Rotation2d.fromDegrees(0)),
             new Pose2d(5.75, 2.61, Rotation2d.fromDegrees(0)),
-            new Pose2d(3.92, 2.61, Rotation2d.fromDegrees(0))
+            new Pose2d(3.92, 2.61, Rotation2d.fromDegrees(180))
         );
     }
 
