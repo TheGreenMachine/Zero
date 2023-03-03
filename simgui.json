@@ -6,6 +6,16 @@
           "open": true
         }
       }
+    },
+    "RoboRIO": {
+      "window": {
+        "visible": true
+      }
+    },
+    "Timing": {
+      "window": {
+        "visible": false
+      }
     }
   },
   "NTProvider": {
@@ -167,6 +177,17 @@
     }
   },
   "NetworkTables": {
+    "$pub$": {
+      "SmartDashboard": {
+        "Mech2d": {
+          "climber": {
+            "elevator": {
+              "open": true
+            }
+          }
+        }
+      }
+    },
     "LiveWindow": {
       "drivetrain": {
         "open": true
@@ -179,26 +200,39 @@
       "open": false
     },
     "SmartDashboard": {
-      "Drive": {
+      "Field": {
         "open": true
       },
-      "Field": {
+      "Mech2d": {
+        "climber": {
+          "elevator": {
+            "open": true
+          },
+          "open": true
+        },
         "open": true
       },
       "Starting Position": {
         "open": true
-      }
+      },
+      "open": true
     },
     "[...]##v_$serversub": {
       "open": true
     },
     "combined": true,
     "photonvision": {
-      "open": true,
       "zed": {
         "open": true
       }
     },
     "special": true
+  },
+  "NetworkTables Info": {
+    "Server": {
+      "Publishers": {
+        "open": true
+      }
+    }
   }
 }

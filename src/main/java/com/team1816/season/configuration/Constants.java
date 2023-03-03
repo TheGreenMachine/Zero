@@ -6,6 +6,8 @@ import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.season.Robot;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
 
 /**
  * This class contains all constants pertinent to robot-specific aspects.
@@ -18,7 +20,17 @@ public class Constants {
      * Factory & Stem
      */
     private static final RobotFactory factory = Robot.getFactory();
-
+    /**Temp arbitrary elevator specs
+      **/
+   public static final int kElevatorGearing=3;
+    public static final int m_elevatorGearbox=3;
+    public static final int kCarriageMass=3;
+    public static final int kElevatorDrumRadius=3;
+    public static final int kMinElevatorHeightMeters=3;
+    public static final int kMaxElevatorHeightMeters=3;
+    /**
+     * end of arb elevator specs
+     */
     public static final Pose2d EmptyPose2d = new Pose2d();
     public static final Rotation2d EmptyRotation2d = new Rotation2d();
     public static final Transform2d EmptyTransform2d = new Transform2d();

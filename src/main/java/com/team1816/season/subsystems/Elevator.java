@@ -2,6 +2,7 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.loops.AsyncTimer;
@@ -9,9 +10,15 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -37,6 +44,7 @@ public class Elevator extends Subsystem {
      */
     private final IGreenMotor angleMotorMain;
     private final IGreenMotor angleMotorFollower;
+
     private final IGreenMotor extensionMotor;
     private final DigitalInput zeroingHallEffect;
 
@@ -102,11 +110,30 @@ public class Elevator extends Subsystem {
     // MechanismLigament2d objects represent each "section"/"stage" of the mechanism, and are based
     // off the root node or another ligament object
     MechanismLigament2d m_elevator = root.append(new MechanismLigament2d("elevator", kElevatorMinimumLength, 90));
-    MechanismLigament2d m_wrist =
-        m_elevator.append(
-            new MechanismLigament2d("wrist", 0.5, 90, 6, new Color8Bit(Color.kGreen)));
-//elevatorsim class
 
+
+//elevatorsim class
+/**private final ElevatorSim m_elevatorSim =
+    new ElevatorSim(
+        m_elevatorGearbox,
+        Constants.kElevatorGearing,
+        Constants.kCarriageMass,
+        Constants.kElevatorDrumRadius,
+        Constants.kMinElevatorHeightMeters,
+        Constants.kMaxElevatorHeightMeters,
+        true,
+        VecBuilder.fill(0.01));
+**/
+private final ElevatorSim m_elevatorSim =
+    new ElevatorSim(
+        DCMotor.getCIM(Constants.m_elevatorGearbox),
+        Constants.kElevatorGearing,
+        Constants.kCarriageMass,
+        Constants.kElevatorDrumRadius,
+        Constants.kMinElevatorHeightMeters,
+        Constants.kMaxElevatorHeightMeters,
+        true,
+        VecBuilder.fill(0.01));
 
     /**
      * Base constructor needed to instantiate a subsystem
@@ -253,8 +280,12 @@ public class Elevator extends Subsystem {
                     ((actualExtensionPosition + extensionPPR) / 2 * extensionPPR)
                     * Constants.maxElevatorFeedForward;
             // update the dashboard mechanism's state
-            m_elevator.setLength(kElevatorMinimumLength +   extensionMotor.getSelectedSensorPosition(0));
-            m_wrist.setAngle(extensionMotor.getSelectedSensorPosition(0));
+
+            // In this method, we update our simulation of what our elevator is doing
+            // First, we set our "inputs" (voltages)
+            m_elevatorSim.setInput(Math.abs(extensionMotor.getSelectedSensorVelocity(0)) * RobotController.getBatteryVoltage());
+            // Next, we update it. The standard loop time is 20ms.
+            m_elevatorSim.update(0.02);
         }
 
 //        if (hallEffectTriggered == zeroingHallEffect.get()) {
@@ -277,6 +308,14 @@ public class Elevator extends Subsystem {
      */
     @Override
     public void writeToHardware() {
+        // SimBattery estimates loaded battery voltages
+        RoboRioSim.setVInVoltage(
+            BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps()));
+        m_elevator.setLength(kElevatorMinimumLength + extensionMotor.getSelectedSensorPosition(0));
+        m_elevator.setAngle(extensionMotor.getSelectedSensorPosition(0));
+        if (extensionMotor.getSelectedSensorPosition(0)<=115)
+        setDesiredExtensionState(EXTENSION_STATE.MID);
+        setDesiredAngleState(ANGLE_STATE.COLLECT);
         if (angleOutputsChanged) {
             angleOutputsChanged = false;
             if (usingFeedForward) {
