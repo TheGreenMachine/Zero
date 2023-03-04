@@ -86,8 +86,10 @@ public class AutoModeManager {
             var dsAlliance = DriverStation.getAlliance();
             if (dsAlliance == DriverStation.Alliance.Red) {
                 selectedColor = Color.RED;
+                System.out.println("Alliance is red");
             } else {
                 selectedColor = Color.BLUE;
+                System.out.println("Alliance is blue");
             }
         }
         boolean autoChanged = desiredAuto != selectedAuto;
