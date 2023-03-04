@@ -374,12 +374,12 @@ public class Elevator extends Subsystem {
             // rotation
             double rotationDistance = (thetaFinal - thetaInitial);
             double rotationAccelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxAngularAcceleration;
-            double rotationDecelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxExtendedAngularAcceleration;
-            double maxRotationDist = rotationDistance - rotationAccelerationTime * rotationAccelerationTime * feederConstraints.maxAngularAcceleration / 2 - rotationDecelerationTime * rotationDecelerationTime * feederConstraints.maxExtendedAngularAcceleration / 2;
+            double rotationDecelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxAngularDeceleration;
+            double maxRotationDist = rotationDistance - rotationAccelerationTime * rotationAccelerationTime * feederConstraints.maxAngularAcceleration / 2 - rotationDecelerationTime * rotationDecelerationTime * feederConstraints.maxAngularDeceleration / 2;
 
             if (maxRotationDist < 0) {
                 rotationAccelerationTime = Math.sqrt(rotationDistance / feederConstraints.maxAngularAcceleration);
-                rotationDecelerationTime = Math.sqrt(rotationDistance / feederConstraints.maxExtendedAngularAcceleration);
+                rotationDecelerationTime = Math.sqrt(rotationDistance / feederConstraints.maxAngularDeceleration);
                 maxRotationDist = 0;
             }
 
@@ -421,7 +421,41 @@ public class Elevator extends Subsystem {
             this.rFinal = rFinal;
             this.thetaFinal = thetaFinal;
 
-            new SetPointFeeder(f);
+            feederConstraints = f; // initializes constraints
+            // calculates relative timestamps to 0
+            // rotation
+            double rotationDistance = (thetaFinal - thetaInitial);
+            double rotationAccelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxAngularAcceleration;
+            double rotationDecelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxAngularDeceleration;
+            double maxRotationDist = rotationDistance - rotationAccelerationTime * rotationAccelerationTime * feederConstraints.maxAngularAcceleration / 2 - rotationDecelerationTime * rotationDecelerationTime * feederConstraints.maxAngularDeceleration / 2;
+
+            if (maxRotationDist < 0) {
+                rotationAccelerationTime = Math.sqrt(rotationDistance / feederConstraints.maxAngularAcceleration);
+                rotationDecelerationTime = Math.sqrt(rotationDistance / feederConstraints.maxAngularDeceleration);
+                maxRotationDist = 0;
+            }
+
+            endRotationAccelerationPhase = rotationAccelerationTime;
+            endRotationVelocityPhase = endRotationAccelerationPhase + maxRotationDist / feederConstraints.maxAngularVelocity;
+            endRotationDecelerationPhase = endRotationVelocityPhase + rotationDecelerationTime;
+
+            // translation
+            double translationDistance = rFinal - rInitial;
+            double translationAccelTime = feederConstraints.maxExtensionVelocity / feederConstraints.maxExtensionAcceleration;
+            double maxTranslationDist = translationDistance - translationAccelTime * translationAccelTime * feederConstraints.maxExtensionAcceleration;
+
+            if (maxTranslationDist < 0) {
+                translationAccelTime = Math.sqrt(translationDistance / feederConstraints.maxExtensionAcceleration);
+                maxTranslationDist = 0;
+            }
+
+            endTranslationAccelerationPhase = translationAccelTime;
+            endTranslationVelocityPhase = endTranslationAccelerationPhase + maxTranslationDist / feederConstraints.maxExtensionVelocity;
+            endTranslationDecelerationPhase = endTranslationVelocityPhase + translationAccelTime;
+
+            a = rFinal * Math.sin(thetaFinal) - rInitial * Math.sin(thetaInitial);
+            b = -1 * (rFinal * Math.cos(thetaFinal) - rInitial * Math.cos(thetaInitial));
+            c = -1 * rInitial * Math.sin(thetaInitial) * (rFinal * Math.cos(thetaFinal) - rInitial * Math.cos(thetaInitial));
         }
 
         /**
@@ -431,6 +465,8 @@ public class Elevator extends Subsystem {
          */
         public void start(double timestamp) {
             startTimestamp = timestamp;
+            rotationEnded = false;
+            translationEnded = false;
         }
 
         /**
@@ -448,7 +484,7 @@ public class Elevator extends Subsystem {
                     feederConstraints.maxAngularVelocity * (t - endRotationAccelerationPhase);
             } else if (t <= endRotationDecelerationPhase) {
                 double timeRemaining = endRotationDecelerationPhase - t;
-                return thetaFinal - (timeRemaining * timeRemaining * feederConstraints.maxExtendedAngularAcceleration / 2);
+                return thetaFinal - (timeRemaining * timeRemaining * feederConstraints.maxAngularDeceleration / 2);
             } else {
                 rotationEnded = true;
                 return thetaFinal;
@@ -497,6 +533,20 @@ public class Elevator extends Subsystem {
         public boolean ended() {
             return rotationEnded && translationEnded;
         }
+
+        /**
+         * Returns true if the angular section is complete
+         */
+        public boolean rotationEnded() {
+            return rotationEnded;
+        }
+
+        /**
+         * Returns true if the extension section is complete
+         */
+        public boolean extensionEnded() {
+            return extensionEnded();
+        }
     }
 
     /**
@@ -504,14 +554,14 @@ public class Elevator extends Subsystem {
      */
     public static class FeederConstraints {
         public double maxAngularVelocity; // rad/s
-        public double maxExtendedAngularAcceleration; // rad/s^2
+        public double maxAngularDeceleration; // rad/s^2
         public double maxAngularAcceleration; // rad/s^2
         public double maxExtensionVelocity; // m/s
         public double maxExtensionAcceleration; // m/s^2
 
-        public FeederConstraints(double maxAngularVelocity, double maxExtendedAngularAcceleration, double maxAngularAcceleration, double maxExtensionVelocity, double maxExtensionAcceleration) {
+        public FeederConstraints(double maxAngularVelocity, double maxAngularDeceleration, double maxAngularAcceleration, double maxExtensionVelocity, double maxExtensionAcceleration) {
             this.maxAngularVelocity = maxAngularVelocity;
-            this.maxExtendedAngularAcceleration = maxExtendedAngularAcceleration;
+            this.maxAngularDeceleration = maxAngularDeceleration;
             this.maxAngularAcceleration = maxAngularAcceleration;
             this.maxExtensionVelocity = maxExtensionVelocity;
             this.maxExtensionAcceleration = maxExtensionAcceleration;
