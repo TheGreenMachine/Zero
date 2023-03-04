@@ -178,7 +178,7 @@ public class Elevator extends Subsystem {
         }
     }
 
-    public void lowerRotationPoses(){
+    public void lowerRotationPoses() {
         collectAngle -= 5000;
         scoreDipAngle -= 5000;
         outputsChanged = true;
@@ -364,49 +364,6 @@ public class Elevator extends Subsystem {
         private double c; // polar coefficient
 
         /**
-         * Initializes a setpoint feeder
-         *
-         * @param f profile constraints
-         */
-        public SetPointFeeder(FeederConstraints f) {
-            feederConstraints = f; // initializes constraints
-            // calculates relative timestamps to 0
-            // rotation
-            double rotationDistance = (thetaFinal - thetaInitial);
-            double rotationAccelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxAngularAcceleration;
-            double rotationDecelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxAngularDeceleration;
-            double maxRotationDist = rotationDistance - rotationAccelerationTime * rotationAccelerationTime * feederConstraints.maxAngularAcceleration / 2 - rotationDecelerationTime * rotationDecelerationTime * feederConstraints.maxAngularDeceleration / 2;
-
-            if (maxRotationDist < 0) {
-                rotationAccelerationTime = Math.sqrt(rotationDistance / feederConstraints.maxAngularAcceleration);
-                rotationDecelerationTime = Math.sqrt(rotationDistance / feederConstraints.maxAngularDeceleration);
-                maxRotationDist = 0;
-            }
-
-            endRotationAccelerationPhase = rotationAccelerationTime;
-            endRotationVelocityPhase = endRotationAccelerationPhase + maxRotationDist / feederConstraints.maxAngularVelocity;
-            endRotationDecelerationPhase = endRotationVelocityPhase + rotationDecelerationTime;
-
-            // translation
-            double translationDistance = rFinal - rInitial;
-            double translationAccelTime = feederConstraints.maxExtensionVelocity / feederConstraints.maxExtensionAcceleration;
-            double maxTranslationDist = translationDistance - translationAccelTime * translationAccelTime * feederConstraints.maxExtensionAcceleration;
-
-            if (maxTranslationDist < 0) {
-                translationAccelTime = Math.sqrt(translationDistance / feederConstraints.maxExtensionAcceleration);
-                maxTranslationDist = 0;
-            }
-
-            endTranslationAccelerationPhase = translationAccelTime;
-            endTranslationVelocityPhase = endTranslationAccelerationPhase + maxTranslationDist / feederConstraints.maxExtensionVelocity;
-            endTranslationDecelerationPhase = endTranslationVelocityPhase + translationAccelTime;
-
-            a = rFinal * Math.sin(thetaFinal) - rInitial * Math.sin(thetaInitial);
-            b = -1 * (rFinal * Math.cos(thetaFinal) - rInitial * Math.cos(thetaInitial));
-            c = -1 * rInitial * Math.sin(thetaInitial) * (rFinal * Math.cos(thetaFinal) - rInitial * Math.cos(thetaInitial));
-        }
-
-        /**
          * Initializes a full setpoint feeder with initial and final constraints
          *
          * @param f            profile constraints
@@ -424,7 +381,7 @@ public class Elevator extends Subsystem {
             feederConstraints = f; // initializes constraints
             // calculates relative timestamps to 0
             // rotation
-            double rotationDistance = (thetaFinal - thetaInitial);
+            double rotationDistance = Math.abs(thetaFinal - thetaInitial);
             double rotationAccelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxAngularAcceleration;
             double rotationDecelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxAngularDeceleration;
             double maxRotationDist = rotationDistance - rotationAccelerationTime * rotationAccelerationTime * feederConstraints.maxAngularAcceleration / 2 - rotationDecelerationTime * rotationDecelerationTime * feederConstraints.maxAngularDeceleration / 2;
@@ -439,8 +396,15 @@ public class Elevator extends Subsystem {
             endRotationVelocityPhase = endRotationAccelerationPhase + maxRotationDist / feederConstraints.maxAngularVelocity;
             endRotationDecelerationPhase = endRotationVelocityPhase + rotationDecelerationTime;
 
+
+            if (thetaFinal - thetaInitial < 0) { // negation
+                feederConstraints.maxAngularVelocity *= -1;
+                feederConstraints.maxAngularAcceleration *= -1;
+                feederConstraints.maxAngularDeceleration *= -1;
+            }
+
             // translation
-            double translationDistance = rFinal - rInitial;
+            double translationDistance = Math.abs(rFinal - rInitial);
             double translationAccelTime = feederConstraints.maxExtensionVelocity / feederConstraints.maxExtensionAcceleration;
             double maxTranslationDist = translationDistance - translationAccelTime * translationAccelTime * feederConstraints.maxExtensionAcceleration;
 
@@ -453,9 +417,15 @@ public class Elevator extends Subsystem {
             endTranslationVelocityPhase = endTranslationAccelerationPhase + maxTranslationDist / feederConstraints.maxExtensionVelocity;
             endTranslationDecelerationPhase = endTranslationVelocityPhase + translationAccelTime;
 
-            a = rFinal * Math.sin(thetaFinal) - rInitial * Math.sin(thetaInitial);
-            b = -1 * (rFinal * Math.cos(thetaFinal) - rInitial * Math.cos(thetaInitial));
-            c = -1 * rInitial * Math.sin(thetaInitial) * (rFinal * Math.cos(thetaFinal) - rInitial * Math.cos(thetaInitial));
+            if (rFinal - rInitial < 0) { // negation
+                feederConstraints.maxExtensionVelocity *= -1;
+                feederConstraints.maxExtensionAcceleration *= -1;
+            }
+
+
+            a = this.rFinal * Math.sin(this.thetaFinal) - this.rInitial * Math.sin(this.thetaInitial);
+            b = -1 * (this.rFinal * Math.cos(this.thetaFinal) - this.rInitial * Math.cos(this.thetaInitial));
+            c = -1 * this.rInitial * Math.sin(this.thetaInitial) * (this.rFinal * Math.cos(this.thetaFinal) - this.rInitial * Math.cos(this.thetaInitial));
         }
 
         /**
@@ -465,8 +435,6 @@ public class Elevator extends Subsystem {
          */
         public void start(double timestamp) {
             startTimestamp = timestamp;
-            rotationEnded = false;
-            translationEnded = false;
         }
 
         /**
@@ -478,10 +446,10 @@ public class Elevator extends Subsystem {
         public double getAngle(double timestamp) {
             double t = timestamp - startTimestamp;
             if (t <= endRotationAccelerationPhase) {
-                return t * t * feederConstraints.maxAngularAcceleration / 2;
+                return t * t * feederConstraints.maxAngularAcceleration / 2 + thetaInitial;
             } else if (t <= endRotationVelocityPhase) {
                 return endRotationAccelerationPhase * endRotationAccelerationPhase * feederConstraints.maxAngularAcceleration / 2 +
-                    feederConstraints.maxAngularVelocity * (t - endRotationAccelerationPhase);
+                    feederConstraints.maxAngularVelocity * (t - endRotationAccelerationPhase) + thetaInitial;
             } else if (t <= endRotationDecelerationPhase) {
                 double timeRemaining = endRotationDecelerationPhase - t;
                 return thetaFinal - (timeRemaining * timeRemaining * feederConstraints.maxAngularDeceleration / 2);
@@ -500,10 +468,10 @@ public class Elevator extends Subsystem {
         public double getExtension(double timestamp) {
             double t = timestamp - startTimestamp;
             if (t <= endTranslationAccelerationPhase) {
-                return t * t * feederConstraints.maxExtensionAcceleration / 2;
+                return t * t * feederConstraints.maxExtensionAcceleration / 2 + rInitial;
             } else if (t <= endTranslationVelocityPhase) {
                 return endTranslationAccelerationPhase * endTranslationAccelerationPhase * feederConstraints.maxExtensionAcceleration / 2 +
-                    feederConstraints.maxExtensionVelocity * (t - endTranslationAccelerationPhase);
+                    feederConstraints.maxExtensionVelocity * (t - endTranslationAccelerationPhase) + rInitial;
             } else if (t <= endTranslationDecelerationPhase) {
                 double timeRemaining = endTranslationDecelerationPhase - t;
                 return rFinal - (timeRemaining * timeRemaining * feederConstraints.maxExtensionAcceleration);
@@ -528,6 +496,7 @@ public class Elevator extends Subsystem {
 
         /**
          * Returns true if the feeder is complete
+         *
          * @return true if the feeder is complete
          */
         public boolean ended() {
