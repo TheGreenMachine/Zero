@@ -52,7 +52,7 @@ public class DoublePlaceConeFeederMode extends AutoMode {
                 new ParallelAction(
                     trajectoryActions.get(0),
                     new SeriesAction(
-                        new WaitAction(1),
+                        new WaitAction(1.3),
                         new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
                         new CollectAction(Collector.STATE.INTAKE_CONE),
                         new WaitAction(2),
@@ -60,10 +60,10 @@ public class DoublePlaceConeFeederMode extends AutoMode {
                     )
                 ),
                 new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
-                trajectoryActions.get(1),
-                new WaitAction(0.25),
+                trajectoryActions.get(1)
+                /*new WaitAction(0.25),
                 new ScoreAction(false, Elevator.EXTENSION_STATE.MAX),
-                new WaitAction(0.5)
+                new WaitAction(0.5)*/
             )
         );
     }

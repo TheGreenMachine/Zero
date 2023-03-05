@@ -590,7 +590,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        System.out.println("DriverStation Color is: " + DriverStation.getAlliance());
         disabledLoop.stop();
         ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
 
