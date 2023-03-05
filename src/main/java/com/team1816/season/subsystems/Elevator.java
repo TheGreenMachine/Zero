@@ -93,6 +93,15 @@ public class Elevator extends Subsystem {
         this.extensionMotor = factory.getMotor(NAME, "extensionMotor");
         this.zeroingHallEffect = new DigitalInput(0);
 
+        double angularPeakOutput = 0.80;
+        angleMotorMain.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorMain.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorFollower.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorFollower.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorMain.selectProfileSlot(anglePIDSlot, 0); // uses the slot0 configuration for angular control
+
         double extensionPeakOutput = 0.80;
         extensionMotor.configPeakOutputForward(extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.configPeakOutputReverse(-extensionPeakOutput, Constants.kCANTimeoutMs);
@@ -102,15 +111,6 @@ public class Elevator extends Subsystem {
         extensionMotor.configReverseSoftLimitThreshold(factory.getConstant(NAME, "reverseExtensionLimit"), Constants.kCANTimeoutMs);
         extensionMotor.configClosedLoopPeakOutput(1, extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.selectProfileSlot(extensionPIDSlot, 0); // uses the slot1 configuration for extension control
-
-
-        double angularPeakOutput = 0.80;
-        angleMotorMain.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
-        angleMotorMain.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
-        angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
-        angleMotorFollower.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
-        angleMotorFollower.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
-        angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
 
         // constants
         stowAngle = factory.getConstant(NAME, "stowAnglePosition");
@@ -126,7 +126,7 @@ public class Elevator extends Subsystem {
 
         maxAngularVelocity = factory.getConstant(NAME, "maxAngularVelocity");
         maxAngularAcceleration = factory.getConstant(NAME, "maxAngularAcceleration");
-        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtendedAngularAcceleration");
+        maxExtendedAngularAcceleration = factory.getConstant(NAME, "maxExtendedAngularAcceleration");
         maxExtensionVelocity = factory.getConstant(NAME, "maxExtensionVelocity");
         maxExtensionAcceleration = factory.getConstant(NAME, "maxExtensionAcceleration");
     }
@@ -470,10 +470,29 @@ public class Elevator extends Subsystem {
             if (t <= endRotationAccelerationPhase) {
                 return t * feederConstraints.maxAngularAcceleration;
             } else if (t <= endRotationVelocityPhase) {
-                return maxAngularVelocity;
+                return feederConstraints.maxAngularVelocity;
             } else if (t <= endRotationDecelerationPhase) {
                 double timeRemaining = endRotationDecelerationPhase - t;
                 return timeRemaining * feederConstraints.maxAngularDeceleration;
+            } else {
+                return 0;
+            }
+        }
+
+        /**
+         * Returns the profiled angular polar acceleration component based on constraints
+         *
+         * @param timestamp current timestamp
+         * @return angular acceleration
+         */
+        public double getAngularAcceleration(double timestamp) {
+            double t = timestamp - startTimestamp;
+            if (t <= endRotationAccelerationPhase) {
+                return feederConstraints.maxAngularAcceleration;
+            } else if (t <= endRotationVelocityPhase) {
+                return 0;
+            } else if (t <= endRotationDecelerationPhase) {
+                return (-1) * feederConstraints.maxAngularDeceleration;
             } else {
                 return 0;
             }
@@ -512,10 +531,29 @@ public class Elevator extends Subsystem {
             if (t <= endRotationAccelerationPhase) {
                 return t * feederConstraints.maxExtensionAcceleration;
             } else if (t <= endRotationVelocityPhase) {
-                return maxExtensionVelocity;
+                return feederConstraints.maxExtensionVelocity;
             } else if (t <= endRotationDecelerationPhase) {
                 double timeRemaining = endRotationDecelerationPhase - t;
                 return timeRemaining * feederConstraints.maxExtensionAcceleration;
+            } else {
+                return 0;
+            }
+        }
+
+        /**
+         * Returns the profiled translational polar acceleration component based on constraints
+         *
+         * @param timestamp current timestamp
+         * @return extension acceleration
+         */
+        public double getExtensionAcceleration(double timestamp) {
+            double t = timestamp - startTimestamp;
+            if (t <= endRotationAccelerationPhase) {
+                return feederConstraints.maxExtensionAcceleration;
+            } else if (t <= endRotationVelocityPhase) {
+                return 0;
+            } else if (t <= endRotationDecelerationPhase) {
+                return (-1) * feederConstraints.maxExtensionAcceleration;
             } else {
                 return 0;
             }

@@ -79,7 +79,7 @@ public class Constants {
     public static double kMaxProximityThresholdCentimeters = 25; // cm
     public static double preTargetDistance = 0.4; // m
 
-    public static final double autoBalanceThresholdDegrees = factory.getConstant("drivetrain","autoBalanceThreshold",2);
+    public static final double autoBalanceThresholdDegrees = factory.getConstant("drivetrain", "autoBalanceThreshold", 2);
     public static final double autoBalanceDivider = factory.getConstant("drivetrain", "autoBalanceDivider", 30);
 
     /**

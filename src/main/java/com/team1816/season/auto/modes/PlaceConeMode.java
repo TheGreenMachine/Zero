@@ -8,7 +8,8 @@ import com.team1816.season.subsystems.Elevator;
 
 public class PlaceConeMode extends AutoMode {
 
-    public PlaceConeMode(){}
+    public PlaceConeMode() {
+    }
 
     @Override
     protected void routine() throws AutoModeEndedException {

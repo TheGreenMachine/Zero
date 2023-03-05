@@ -11,10 +11,11 @@ import java.util.List;
 
 public class NodeToExitCommunityMode extends AutoMode {
 
-    public NodeToExitCommunityMode(){
+    public NodeToExitCommunityMode() {
         super(List.of(new TrajectoryAction(new NodeToExitCommunityPath())));
     }
-    public NodeToExitCommunityMode(Color color){
+
+    public NodeToExitCommunityMode(Color color) {
         super(List.of(new TrajectoryAction(new NodeToExitCommunityPath(color))));
     }
 
