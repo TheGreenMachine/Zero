@@ -182,10 +182,20 @@ public class Elevator extends Subsystem {
         extensionOutputsChanged = true;
     }
 
+    /**
+     * Returns the desired angle state of the elevator
+     *
+     * @return desiredAngleState
+     */
     public ANGLE_STATE getDesiredAngleState() {
         return this.desiredAngleState;
     }
 
+    /**
+     * Returns the desired extension state of the elevator
+     *
+     * @return desiredExtensionState
+     */
     public EXTENSION_STATE getDesiredExtensionState() {
         return this.desiredExtensionState;
     }
