@@ -74,12 +74,12 @@ subsystems:
             wheelDiameter: 4
             kTrackScrubFactor: 1.0
             ## Velocity Constraints ##
-            maxRotVel: 15
+            maxRotVel: 7 # rad/s (15)
             trackWidth: 19.75 # inches
             wheelbaseLength: 19.75 # inches
-            maxVelOpenLoop: 3.9 # meters/s (2.2)
-            maxVelPathFollowing: 3.9 # meters/s (2.2)
-            maxAccel: 3.117 # meters/s^ 2
+            maxVelOpenLoop: 2.2 # meters/s (3.9)
+            maxVelPathFollowing: 2.2 # meters/s (3.9)
+            maxAccel: 1.27 # meters/s^2 (3.117)
             isDemoMode: 0
             ## Auto Balance ##
             autoBalanceDivider: 40
