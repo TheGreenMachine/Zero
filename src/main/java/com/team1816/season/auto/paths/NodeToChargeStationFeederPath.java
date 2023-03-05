@@ -7,22 +7,21 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 import java.util.List;
 
-public class DriveToBalance_Balance extends AutoPath {
+public class NodeToChargeStationFeederPath extends AutoPath {
 
-    public DriveToBalance_Balance() {
+    public NodeToChargeStationFeederPath() {
     }
 
-    public DriveToBalance_Balance(Color color) {
+    public NodeToChargeStationFeederPath(Color color) {
         super(color);
     }
-
-
 
     @Override
     protected List<Pose2d> getWaypoints() {
         return List.of(
-            new Pose2d(1.7, 2.78, Rotation2d.fromDegrees(180)),
-            new Pose2d(4, 2.85, Rotation2d.fromDegrees(0))
+            new Pose2d(1.70, 4.96, Rotation2d.fromDegrees(0)),
+            new Pose2d(6.71, 4.28, Rotation2d.fromDegrees(-24)),
+            new Pose2d(3.68, 3.24, Rotation2d.fromDegrees(-180))
         );
     }
 
@@ -30,7 +29,8 @@ public class DriveToBalance_Balance extends AutoPath {
     protected List<Rotation2d> getWaypointHeadings() {
         return List.of(
             Rotation2d.fromDegrees(180),
-            Rotation2d.fromDegrees(0)
+            Rotation2d.fromDegrees(270),
+            Rotation2d.fromDegrees(270)
         );
     }
 

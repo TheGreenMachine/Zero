@@ -12,19 +12,21 @@ import static com.team1816.lib.subsystems.drive.Drive.kOpenLoopMaxVelMeters;
  */
 public class SwerveDriveHelper implements DriveHelper {
 
-    private static final double kHighAdjustmentPower = 1.50; // 1.75 + 0.4375
-    private static final double kLowAdjustmentPower = 1.50;
-    private static final double kMaxSpeed = (kOpenLoopMaxVelMeters);
+    private static final double kTranslationPower = 1.50; // 1.75 + 0.4375
     private static final double kMaxRotation = kMaxAngularSpeed;
 
-    private static final double kHighPowerRotationScalar = 0.8;
-    private static final double kLowPowerRotationScalar = 0.025; //yml time
+    private static final double kHighPowerRotationScalar = 0.05;
+    private static final double kLowPowerRotationScalar = 0.0125; //yml time
     private static final double kLowPowerScalar = 0.075; //yml time
-    private static final double kRotationExponent = 6.0;
+
+    private static final double kMidLowPowerRotationScalar = 0.025;
+
+    private static final double kMidLowPowerScalar = 0.15;
+    private static final double kRotationExponent = 2.0;
     private static final double kPoleThreshold = 0.0;
     private static final double kRobotRelativePoleThreshold = Math.toRadians(5);
     private static final double kDeadband = 0.15;
-    private static final double kRotationDeadband = 0.15;
+    private static final double kRotationDeadband = 0.05;
 
     /**
      * Instantiates a SwerveDriveHelper
@@ -50,6 +52,7 @@ public class SwerveDriveHelper implements DriveHelper {
         double strafeInput,
         double rotationInput,
         boolean low_power,
+        boolean extreme_low_power,
         boolean field_relative,
         boolean use_heading_controller
     ) {
@@ -107,16 +110,16 @@ public class SwerveDriveHelper implements DriveHelper {
 
         // Scale x and y by applying a power to the magnitude of the vector they create,
         // in order to make the controls less sensitive at the lower end.
-        final double power = (low_power) ? kHighAdjustmentPower : kLowAdjustmentPower;
         Rotation2d direction = translationalInputDirection;
-        double scaledMagnitude = Math.pow(inputMagnitude, power);
+        double scaledMagnitude = Math.pow(inputMagnitude, kTranslationPower);
+
         translationalInput =
             new Translation2d(
                 direction.getCos() * scaledMagnitude,
                 direction.getSin() * scaledMagnitude
             );
-
         rotationInput = (Math.abs(rotationInput) < kRotationDeadband) ? 0 : rotationInput;
+
         if (use_heading_controller) { // current constants are tuned to be put to the power of 1.75, and I don't want to retune right now
             rotationInput =
                 Math.pow(Math.abs(rotationInput), 1.75) * Math.signum(rotationInput);
@@ -126,10 +129,13 @@ public class SwerveDriveHelper implements DriveHelper {
                     Math.signum(rotationInput);
         }
 
-        translationalInput = translationalInput.times(kMaxSpeed);
+        translationalInput = translationalInput.times(kOpenLoopMaxVelMeters);
         rotationInput *= kMaxRotation;
 
-        if (low_power) {
+        if (extreme_low_power) {
+            translationalInput = translationalInput.times(kMidLowPowerScalar);
+            rotationInput *= kMidLowPowerRotationScalar;
+        } else if (low_power) {
             translationalInput = translationalInput.times(kLowPowerScalar);
             rotationInput *= kLowPowerRotationScalar;
         } else {

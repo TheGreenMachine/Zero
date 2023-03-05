@@ -1,6 +1,5 @@
 package com.team1816.season.states;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.LedManager;
@@ -13,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Timer;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -45,9 +45,6 @@ public class Orchestrator {
     /**
      * State
      */
-    private STATE orhcestratorState;
-    private SCORE_LEVEL_STATE desiredScoreLevelState;
-    private ELEMENT fieldElement;
     private final double maxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
         4
@@ -71,147 +68,27 @@ public class Orchestrator {
         ledManager = led;
         collector = col;
         elevator = el;
-
-        fieldElement = ELEMENT.NULL;
-    }
-
-    public void setOrchestratorState(STATE state) {
-        orhcestratorState = state;
-    }
-
-    public void setDesiredScoreLevelState(SCORE_LEVEL_STATE dsls) {
-        desiredScoreLevelState = dsls;
-    }
-
-    /** Actions */
-
-    /**
-     * Sets the orchestrator to collect
-     *
-     * @param collecting
-     */
-    public void setCollecting(boolean collecting) {
-        if (collecting) {
-            setOrchestratorState(STATE.COLLECT);
-        }
-        setCollectorCollecting(collecting, fieldElement == ELEMENT.CUBE);
-        setElevatorCollecting(collecting);
     }
 
     /**
-     * Sets the orchestrator to collect
-     *
-     * @param collecting collecting
-     * @param cube       cube
+     * Actions
      */
-    public void setCollecting(boolean collecting, boolean cube) {
-        setCollectorCollecting(collecting, cube);
-        //setElevatorCollecting(collecting);
-    }
-
-    /**
-     * Sets the orchestrator to score
-     *
-     * @param scoring scoring
-     */
-    public void setScoring(boolean scoring) {
-        setCollectorScoring(scoring);
-//        if (desiredScoreLevelState == SCORE_LEVEL_STATE.MIN) {
-//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MIN);
-//        } else if (desiredScoreLevelState == SCORE_LEVEL_STATE.MID) {
-//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MID);
-//        } else {
-//            setElevatorScoring(scoring, Elevator.EXTENSION_STATE.MAX);
-//        }
-    }
-
-    /**
-     * Sets the desired state of the collector to collect
-     *
-     * @param collecting collecting
-     * @param cube       field element
-     */
-    public void setCollectorCollecting(boolean collecting, boolean cube) {
-        if (collecting) {
-            if (cube) {
-                fieldElement = ELEMENT.CUBE;
-                collector.setDesiredState(ControlMode.PercentOutput, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.INTAKE);
-            } else {
-                fieldElement = ELEMENT.CONE;
-                collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.DOWN, Collector.ROLLER_STATE.INTAKE);
-            }
-        } else {
-            collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.STOP);
-        }
-    }
-
-    /**
-     * Sets the desired state of the collector to score based on the stored field element
-     *
-     * @param scoring scoring
-     */
-    public void setCollectorScoring(boolean scoring) {
-        if (scoring) {
-            if (fieldElement == ELEMENT.CONE) {
-                collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.OUTTAKE);
-            } else {
-                collector.setDesiredState(ControlMode.PercentOutput, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.OUTTAKE);
-            }
-        } else {
-            collector.setDesiredState(ControlMode.Velocity, Collector.PIVOT_STATE.UP, Collector.ROLLER_STATE.STOP);
-        }
-        fieldElement = ELEMENT.NULL;
-    }
-
-    /**
-     * Sets the desired state of the elevator to collect
-     *
-     * @param collecting collecting
-     */
-    public void setElevatorCollecting(boolean collecting) {
-        if (collecting) {
-            elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
-        } else {
+    public void autoScore() {
+        System.out.println("Executing Auto Score Sequence!");
+        if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE || elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP) {
+            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
+            elevator.writeToHardware();
+            Timer.delay(0.10);
+            collector.outtakeGamePiece(true);
+            collector.writeToHardware();
+            Timer.delay(0.25);
+            collector.outtakeGamePiece(false);
+            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
+            Timer.delay(0.25);
+            elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
+            elevator.writeToHardware();
+            Timer.delay(0.75);
             elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
-        }
-    }
-
-    /**
-     * Sets the desired state of the elevator to score based on the desired level fed by robot state
-     *
-     * @param scoring scoring
-     * @param level   desired level
-     */
-    public void setElevatorScoring(boolean scoring, Elevator.EXTENSION_STATE level) {
-        if (scoring) {
-            elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, level);
-        } else {
-            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
-        }
-    }
-
-
-    /**
-     * Updates orchestrator states based on subsystem states
-     */
-    public void update() {
-        if (orhcestratorState == STATE.SCORE) {
-            if (desiredScoreLevelState == SCORE_LEVEL_STATE.MIN && robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.COLLECT && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MIN) {
-                robotState.scoreLevelState = desiredScoreLevelState;
-            } else if (desiredScoreLevelState == SCORE_LEVEL_STATE.MID && robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.SCORE && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MID) {
-                robotState.scoreLevelState = desiredScoreLevelState;
-            } else if (desiredScoreLevelState == SCORE_LEVEL_STATE.MAX && robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.SCORE && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MAX) {
-                robotState.scoreLevelState = desiredScoreLevelState;
-            }
-            robotState.orchestratorState = orhcestratorState;
-        } else if (orhcestratorState == STATE.COLLECT) {
-            if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.COLLECT && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MIN) {
-                robotState.orchestratorState = STATE.COLLECT;
-            }
-        } else {
-            if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.STOW && robotState.actualElevatorExtensionState == Elevator.EXTENSION_STATE.MIN) {
-                robotState.orchestratorState = STATE.STOW;
-            }
         }
     }
 
@@ -305,27 +182,6 @@ public class Orchestrator {
             robotState.fieldToVehicle = newRobotPose;
             robotState.isPoseUpdated = true;
         }
-    }
-
-    /**
-     * Base enum for Orchestrator states
-     */
-    public enum ELEMENT {
-        NULL,
-        CONE,
-        CUBE
-    }
-
-    public enum STATE {
-        COLLECT,
-        SCORE,
-        STOW
-    }
-
-    public enum SCORE_LEVEL_STATE {
-        MIN,
-        MID,
-        MAX
     }
 
     public enum CONTROL_MODE {

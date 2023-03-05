@@ -47,7 +47,16 @@ public class Elevator extends Subsystem {
     private static double maxExtendedAngularAcceleration; // rad/s^2
     private static double maxExtensionVelocity; // m/s
     private static double maxExtensionAcceleration; // m/s^2
+
+    private int anglePIDSlot = 0;
+    private int extensionPIDSlot = 1;
+
+    private static double angleQuarterPPR;
+    private static double extensionPPR;
+
     private static boolean usingSetpointFeeder = true;
+    private SetPointFeeder setPointFeeder;
+    private boolean feederStarted = false;
 
 
     /**
@@ -61,10 +70,9 @@ public class Elevator extends Subsystem {
     private double actualExtensionVel;
     private ANGLE_STATE desiredAngleState = ANGLE_STATE.STOW;
     private EXTENSION_STATE desiredExtensionState = EXTENSION_STATE.MIN;
-    private SetPointFeeder setPointFeeder;
-    private boolean feederStarted = false;
 
-    private boolean outputsChanged;
+    private boolean angleOutputsChanged;
+    private boolean extensionOutputsChanged;
     private boolean hallEffectTriggered;
     private double zeroingHallEffectTriggerValue;
 
@@ -93,7 +101,7 @@ public class Elevator extends Subsystem {
         extensionMotor.configForwardSoftLimitThreshold(factory.getConstant(NAME, "forwardExtensionLimit"), Constants.kCANTimeoutMs);
         extensionMotor.configReverseSoftLimitThreshold(factory.getConstant(NAME, "reverseExtensionLimit"), Constants.kCANTimeoutMs);
         extensionMotor.configClosedLoopPeakOutput(1, extensionPeakOutput, Constants.kCANTimeoutMs);
-        extensionMotor.selectProfileSlot(1, 0); // uses the system slot1 configuration for extension control
+        extensionMotor.selectProfileSlot(extensionPIDSlot, 0); // uses the slot1 configuration for extension control
 
 
         double angularPeakOutput = 0.80;
@@ -160,10 +168,8 @@ public class Elevator extends Subsystem {
      * @param desiredAngleState - Desired state for the angle of the elevator
      */
     public void setDesiredAngleState(ANGLE_STATE desiredAngleState) {
-        if (this.desiredAngleState != desiredAngleState) {
-            this.desiredAngleState = desiredAngleState;
-            outputsChanged = true;
-        }
+        this.desiredAngleState = desiredAngleState;
+        angleOutputsChanged = true;
     }
 
     /**
@@ -172,16 +178,8 @@ public class Elevator extends Subsystem {
      * @param desiredExtensionState - Desired state for the extension of the elevator
      */
     public void setDesiredExtensionState(EXTENSION_STATE desiredExtensionState) {
-        if (this.desiredExtensionState != desiredExtensionState) {
-            this.desiredExtensionState = desiredExtensionState;
-            outputsChanged = true;
-        }
-    }
-
-    public void lowerRotationPoses() {
-        collectAngle -= 5000;
-        scoreDipAngle -= 5000;
-        outputsChanged = true;
+        this.desiredExtensionState = desiredExtensionState;
+        extensionOutputsChanged = true;
     }
 
     public ANGLE_STATE getDesiredAngleState() {
@@ -205,9 +203,6 @@ public class Elevator extends Subsystem {
         actualExtensionPosition = extensionMotor.getSelectedSensorPosition(0); // not slot id
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
 
-        if (hallEffectTriggered == zeroingHallEffect.get()) {
-            zeroingHallEffectTriggerValue = actualAnglePosition;
-        }
         hallEffectTriggered = !zeroingHallEffect.get();
 
         if (Math.abs(desiredAngleState.getAngle() - actualAnglePosition) < allowableAngleError * 2) {
@@ -225,8 +220,7 @@ public class Elevator extends Subsystem {
      */
     @Override
     public void writeToHardware() {
-        if (outputsChanged) {
-            outputsChanged = false;
+        if (angleOutputsChanged || extensionOutputsChanged) {
             if (usingSetpointFeeder) {
                 if (feederStarted) {
                     double[] positions = setPointFeeder.get(Timer.getFPGATimestamp());
@@ -234,39 +228,36 @@ public class Elevator extends Subsystem {
                     extensionMotor.set(ControlMode.Position, positions[1]);
                     if (setPointFeeder.ended()) {
                         feederStarted = false;
+                        angleOutputsChanged = false;
+                        extensionOutputsChanged = false;
                     }
                 }
             } else {
-                switch (desiredExtensionState) {
-                    case MAX:
-                        extensionMotor.set(ControlMode.Position, (maxExtension));
-                        break;
-                    case MID:
-                        extensionMotor.set(ControlMode.Position, (midExtension));
-                        break;
-                    case MIN:
-                        extensionMotor.set(ControlMode.Position, (minExtension));
-                        break;
-
+                if (angleOutputsChanged) {
+                    angleOutputsChanged = false;
                 }
                 switch (desiredAngleState) {
-                    case STOW:
-                        angleMotorMain.set(ControlMode.Position, (stowAngle));
-                        break;
-                    case COLLECT:
-                        angleMotorMain.set(ControlMode.Position, (collectAngle));
-                        break;
-                    case SCORE:
-                        angleMotorMain.set(ControlMode.Position, (scoreAngle));
-                        break;
-                    case SCORE_DIP:
-                        angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
-                        break;
+                    case STOW -> angleMotorMain.set(ControlMode.Position, (stowAngle));
+                    case COLLECT -> angleMotorMain.set(ControlMode.Position, (collectAngle));
+                    case SCORE -> angleMotorMain.set(ControlMode.Position, (scoreAngle));
+                    case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
+                }
+
+                if (extensionOutputsChanged) {
+                    extensionOutputsChanged = false;
+                }
+                switch (desiredExtensionState) {
+                    case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension));
+                    case MID -> extensionMotor.set(ControlMode.Position, (midExtension));
+                    case MIN -> extensionMotor.set(ControlMode.Position, (minExtension));
                 }
             }
         }
     }
 
+    /**
+     * Functionality: nonexistent
+     */
     @Override
     public void zeroSensors() {
 

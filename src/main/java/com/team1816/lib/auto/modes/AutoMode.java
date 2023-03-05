@@ -1,8 +1,11 @@
 package com.team1816.lib.auto.modes;
 
+import com.team1816.lib.DriveFactory;
+import com.team1816.lib.Injector;
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
+import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -36,7 +39,7 @@ public abstract class AutoMode {
      * Empty constructor for driveStraight and doNothing modes which don't require trajectories
      *
      * @see DoNothingMode
-     * @see com.team1816.season.auto.modes.DriveStraightMode
+     * @see DriveStraightMode
      */
     protected AutoMode() {
     }
@@ -49,7 +52,12 @@ public abstract class AutoMode {
      */
     protected AutoMode(List<TrajectoryAction> trajectoryActions) {
         this.trajectoryActions = trajectoryActions;
-        initialPose = trajectoryActions.get(0).getTrajectory().getInitialPose();
+        boolean isSwerve = Injector.get(DriveFactory.class).getInstance() instanceof SwerveDrive;
+        if (trajectoryActions.get(0).getTrajectoryHeadings() != null && isSwerve) {
+            initialPose = new Pose2d(trajectoryActions.get(0).getTrajectory().getInitialPose().getTranslation(), trajectoryActions.get(0).getTrajectoryHeadings().get(0));
+        } else {
+            initialPose = trajectoryActions.get(0).getTrajectory().getInitialPose();
+        }
     }
 
     /**

@@ -9,6 +9,7 @@ import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveHelper;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
+import com.team1816.season.Robot;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -106,7 +107,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      * @param lm  LEDManager
      * @param inf Infrastructure
      * @param rs  RobotState
-     * @see Drive(LedManager, Infrastructure, RobotState)
+     * @see Drive#Drive(LedManager, Infrastructure, RobotState)
      */
     @Inject
     public SwerveDrive(LedManager lm, Infrastructure inf, RobotState rs) {
@@ -179,9 +180,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (RobotBase.isSimulation()) {
             simulateGyroOffset();
         }
-        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
-        swerveOdometry.update(gyroHeading, actualModulePositions);
+        swerveOdometry.update(actualHeading, actualModulePositions);
         updateRobotState();
     }
 
@@ -258,50 +259,38 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
     }
 
-    public void setModuleStatesPercentOutput(SwerveModuleState[] desiredStates) { //TODO keep for now but delete when other works
-        if (controlState != ControlState.OPEN_LOOP) {
-            controlState = ControlState.OPEN_LOOP;
-        }
-        SwerveDriveKinematics.desaturateWheelSpeeds(
-            desiredStates,
-            (kPathFollowingMaxVelMeters)
-        );
-        desiredModuleStates = desiredStates;
-        for (int i = 0; i < 4; i++) {
-            swerveModules[i].setDesiredState(desiredStates[i], true);
-        }
-    }
-
     /**
      * Autobalances while in Swervedrive manual control TODO redo description
      */
     @Override
-    public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds){
-        double pitch = infrastructure.getPitch();
+    public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds) {
+        double pitch = -infrastructure.getPitch();
         double roll = infrastructure.getRoll();
         double throttle = 0;
         double strafe = 0;
         var heading = Constants.EmptyRotation2d;
 
-        double maxFlatRange = Constants.autoBalanceThreshold;
+        double threshold = Constants.autoBalanceThresholdDegrees;
 
         double autoBalanceDivider = Constants.autoBalanceDivider;
 
-        if (Math.abs(pitch) > maxFlatRange || Math.abs(roll) > maxFlatRange) {
+        if (Math.abs(pitch) > threshold || Math.abs(roll) > threshold) {
             throttle = pitch / autoBalanceDivider;
             strafe = roll / autoBalanceDivider;
         }
 
-        if (!Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds()) && !isBraking) {
+        // if not braking and ((throttle || strafe != 0) or joystick strafe input != 0), auto-balance
+        // Else, lock wheels to face left/right side of field
+        if (!isBraking && ((throttle != 0 || strafe != 0) || !Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds()))) {
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
-                    throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond,
-                    strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond,
-                    fieldRelativeChassisSpeeds.omegaRadiansPerSecond);
+                throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond,
+                strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond,
+                fieldRelativeChassisSpeeds.omegaRadiansPerSecond);
             setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
         } else {
             heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
-            SwerveModuleState templateState = new SwerveModuleState(0,heading);
-            SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState,templateState,templateState,templateState};
+            SwerveModuleState templateState = new SwerveModuleState(0, heading);
+            SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
             setModuleStates(statePassIn);
         }
     }
@@ -323,9 +312,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         robotState.calculatedVehicleAccel =
             new ChassisSpeeds(
                 (cs.vxMetersPerSecond - robotState.deltaVehicle.vxMetersPerSecond) /
-                Constants.kLooperDt,
+                    Robot.dt,
                 (cs.vyMetersPerSecond - robotState.deltaVehicle.vyMetersPerSecond) /
-                Constants.kLooperDt,
+                    Robot.dt,
                 -9.80
             );
         robotState.deltaVehicle = cs;
@@ -379,22 +368,21 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             controlState = ControlState.OPEN_LOOP;
         }
 
-        if(forward == 0 && strafe == 0 && rotation == 0){
+        if (forward == 0 && strafe == 0 && rotation == 0) {
 
             Rotation2d[] azimuths = new Rotation2d[4];
 
-            for (int i = 0; i<4; i++) {
+            for (int i = 0; i < 4; i++) {
                 azimuths[i] = Rotation2d.fromDegrees(swerveModules[i].azimuthActual);
             }
 
-            signal = new SwerveDriveSignal(new double[]{0,0,0,0}, azimuths, false);
-        }
-        else {
+            signal = new SwerveDriveSignal(new double[]{0, 0, 0, 0}, azimuths, false);
+        } else {
             signal = swerveDriveHelper.calculateDriveSignal(
                 (isDemoMode ? forward * demoModeMultiplier : forward),
                 (isDemoMode ? strafe * demoModeMultiplier : strafe),
                 (isDemoMode ? rotation * demoModeMultiplier : rotation),
-                isSlowMode,
+                isSlowMode, isMidSlowMode,
                 true,
                 false
             );
@@ -451,9 +439,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      */
     @Override
     public void resetOdometry(Pose2d pose) {
-        gyroHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
-        swerveOdometry.resetPosition(gyroHeading, actualModulePositions, pose);
-        swerveOdometry.update(gyroHeading, actualModulePositions);
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        swerveOdometry.resetPosition(actualHeading, actualModulePositions, pose);
+        swerveOdometry.update(actualHeading, actualModulePositions);
         updateRobotState();
     }
 

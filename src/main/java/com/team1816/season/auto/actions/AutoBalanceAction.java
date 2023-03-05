@@ -5,16 +5,14 @@ import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
-import com.team1816.lib.subsystems.drive.TankDrive;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
-import static com.team1816.lib.subsystems.Subsystem.factory;
-
 /**
  * Action for infrastructure based / gyroscopic balancing
+ *
  * @see AutoAction
  */
 public class AutoBalanceAction implements AutoAction {
@@ -27,7 +25,8 @@ public class AutoBalanceAction implements AutoAction {
 
     private static boolean isSwerve = false;
 
-    public AutoBalanceAction() {}
+    public AutoBalanceAction() {
+    }
 
     @Override
     public void start() {
@@ -37,6 +36,7 @@ public class AutoBalanceAction implements AutoAction {
 
         isSwerve = drive instanceof SwerveDrive;
 
+        System.out.println("Initiating auto balance!");
         drive.autoBalance(new ChassisSpeeds());
     }
 
@@ -52,6 +52,7 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public void done() {
+        System.out.println("Drivetrain is Balanced!");
         drive.setBraking(true);
     }
 }

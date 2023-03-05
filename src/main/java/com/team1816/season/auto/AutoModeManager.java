@@ -1,13 +1,17 @@
 package com.team1816.season.auto;
 
 import com.team1816.lib.auto.Color;
-import com.team1816.lib.auto.modes.AutoMode;
-import com.team1816.lib.auto.modes.DoNothingMode;
+import com.team1816.lib.auto.modes.*;
 import com.team1816.season.auto.modes.*;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.print.DocFlavor;
 
 /**
  * An integrated and optimized manager for autonomous mode selection and configuration
@@ -18,6 +22,7 @@ public class AutoModeManager {
     /**
      * Properties: Selection
      */
+    public static com.team1816.season.states.RobotState robotState;
     private final SendableChooser<DesiredAuto> autoModeChooser;
     private final SendableChooser<Color> sideChooser;
     private DesiredAuto desiredAuto;
@@ -31,8 +36,12 @@ public class AutoModeManager {
 
     /**
      * Instantiates and AutoModeManager with a default option and selective computation
+     *
+     * @param rs RobotState
      */
-    public AutoModeManager() {
+    @Inject
+    public AutoModeManager(com.team1816.season.states.RobotState rs) {
+        robotState = rs;
         autoModeChooser = new SendableChooser<>(); // Shuffleboard dropdown menu to choose desired auto mode
         sideChooser = new SendableChooser<>(); // Shuffleboard dropdown menu to choose desired side / bumper color
 
@@ -62,6 +71,7 @@ public class AutoModeManager {
         autoModeThread = new Thread(autoMode::run);
         desiredAuto = DesiredAuto.DRIVE_STRAIGHT;
         desiredColor = Color.RED;
+        robotState.allianceColor = desiredColor;
     }
 
     /**
@@ -71,7 +81,17 @@ public class AutoModeManager {
      */
     public boolean update() {
         DesiredAuto selectedAuto = autoModeChooser.getSelected();
-        Color selectedColor = sideChooser.getSelected();
+        Color selectedColor = Color.BLUE;
+        if (RobotBase.isSimulation()) {
+            selectedColor = sideChooser.getSelected();
+        } else if (RobotBase.isReal()) {
+            var dsAlliance = DriverStation.getAlliance();
+            if (dsAlliance == DriverStation.Alliance.Red) {
+                selectedColor = Color.RED;
+            } else {
+                selectedColor = Color.BLUE;
+            }
+        }
         boolean autoChanged = desiredAuto != selectedAuto;
         boolean colorChanged = desiredColor != selectedColor;
         // if auto has been changed, update selected auto mode + thread
@@ -84,13 +104,14 @@ public class AutoModeManager {
             if (colorChanged) {
                 System.out.println("Robot color changed from: " + desiredColor + ", to: " + selectedColor);
             }
-            autoMode = generateAutoMode(selectedAuto);
+            autoMode = generateAutoMode(selectedAuto, selectedColor);
             autoModeThread = new Thread(autoMode::run);
         }
         desiredAuto = selectedAuto;
         desiredColor = selectedColor;
+        robotState.allianceColor = desiredColor;
 
-        return autoChanged;
+        return autoChanged || colorChanged;
     }
 
     /**
@@ -146,14 +167,23 @@ public class AutoModeManager {
      * Enum for AutoModes
      */
     enum DesiredAuto {
-        // Test : 2020
+        // Test : 2020 Legacy
         DO_NOTHING,
         TUNE_DRIVETRAIN,
         LIVING_ROOM,
         DRIVE_STRAIGHT,
+
         // 2023
-        AUTO_BALANCE,
-        PLACE_CONE_DRIVE_TO_BALANCE_BALANCE
+        PLACE_CONE,
+        EXIT_COMMUNITY,
+        EXIT_BALANCE_FEEDER,
+        EXIT_BALANCE_MIDDLE,
+        EXIT_BALANCE_WALL,
+        PLACE_CONE_AUTO_BALANCE_FEEDER,
+        PLACE_CONE_AUTO_BALANCE_MIDDLE,
+        PLACE_CONE_AUTO_BALANCE_WALL,
+        DOUBLE_CONE_FEEDER,
+        DOUBLE_CONE_WALL
     }
 
     /**
@@ -163,18 +193,34 @@ public class AutoModeManager {
      * @return AutoMode
      * @see AutoMode
      */
-    private AutoMode generateAutoMode(DesiredAuto mode) {
+    private AutoMode generateAutoMode(DesiredAuto mode, Color color) {
         switch (mode) {
             case DO_NOTHING:
                 return new DoNothingMode();
-            case TUNE_DRIVETRAIN:
-                return new TuneDrivetrainMode();
-            case LIVING_ROOM:
-                return (new LivingRoomMode());
-            case AUTO_BALANCE:
-                return (new AutoBalanceMode());
-            case PLACE_CONE_DRIVE_TO_BALANCE_BALANCE:
-                return (new DriveToBalance_BalanceMode());
+//            case TUNE_DRIVETRAIN: // comented for competition purposes
+//                return new TuneDrivetrainMode();
+//            case LIVING_ROOM:
+//                return (new LivingRoomMode(color));
+            case EXIT_COMMUNITY:
+                return (new NodeToExitCommunityMode(color));
+            case PLACE_CONE:
+                return (new PlaceConeMode());
+            case EXIT_BALANCE_FEEDER:
+                return (new ExitCommunityBalanceFeederMode(color));
+            case EXIT_BALANCE_MIDDLE:
+                return (new ExitCommunityBalanceMiddleMode(color));
+            case EXIT_BALANCE_WALL:
+                return (new ExitCommunityBalanceWallMode(color));
+            case PLACE_CONE_AUTO_BALANCE_FEEDER:
+                return (new PlaceConeAutoBalanceFeederMode(color));
+            case PLACE_CONE_AUTO_BALANCE_MIDDLE:
+                return (new PlaceConeAutoBalanceMiddleMode(color));
+            case PLACE_CONE_AUTO_BALANCE_WALL:
+                return (new PlaceConeAutoBalanceWallMode(color));
+            case DOUBLE_CONE_FEEDER:
+                return (new DoublePlaceConeFeederMode(color));
+            case DOUBLE_CONE_WALL:
+                return (new DoublePlaceConeWallMode(color));
             default:
                 System.out.println("Defaulting to drive straight mode");
                 return new DriveStraightMode();

@@ -59,28 +59,31 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 1 #3.8 # 6.0
-                    kI: 0 #0.00075
-                    kD: 4 #77
+                    kP: 3.8 # 6.0
+                    kI: 0.00075
+                    kD: 77
                     kF: 0
                     allowableError: 5
         constants:
+            ## Positional Configurations ##
             maxVelTicks100ms: 12275.7 # ticks per 100ms
-            openLoopRampRate: 0.8 # percentage per minute?
-            isSwerve: 1 # boolean
-            encPPR: 14641 # ticks
-            azimuthEncPPR: 4096 # ticks
-            maxRotVel: 14 # radians per second
-            trackWidth: 21 # inches
-            wheelbaseLength: 21.5 # inches
-            wheelDiameter: 4 # inches
+            openLoopRampRate: 0.8
+            isSwerve: 1
+            encPPR: 14641
+            azimuthEncPPR: 4096
+            wheelDiameter: 4
             kTrackScrubFactor: 1.0
-            maxVelOpenLoop: 2.2 # meters/s
-            maxVelPathFollowing: 2.2 # meters/s (2.2)
-            maxAccel: 1.5 # meters/s^ 2
-            isDemoMode: 0 # boolean
-            autoBalanceDivider: 40 # random constant
-            autoBalanceThreshold: 2.5 # degrees
+            ## Velocity Constraints ##
+            maxRotVel: 14
+            trackWidth: 19.75 # inches
+            wheelbaseLength: 19.75 # inches
+            maxVelOpenLoop: 3.9 # meters/s (2.2)
+            maxVelPathFollowing: 3.9 # meters/s (2.2)
+            maxAccel: 3.117 # meters/s^ 2
+            isDemoMode: 0
+            ## Auto Balance ##
+            autoBalanceDivider: 40
+            autoBalanceThreshold: 2.5
     elevator:
         implemented: true
         falcons:
@@ -101,20 +104,23 @@ subsystems:
                 kF: 0
                 allowableError: 1000
         constants:
-            # limits
+            ## Config ##
+            usingFeedForward: 0
+            ## Limits ##
+            maxVelTicks100ms: 5000
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
-            forwardAngleLimit: 10000 # Elevator horizontal orientation
-            reverseAngleLimit: -130000 # Elevator vertical orientation
-            # positions
-            stowAnglePosition: 0 # ticks
-            collectAnglePosition: -90000 # ticks
-            scoreAnglePosition: -37000 # ticks
-            scoreDipAnglePosition: -50000 # ticks
-            minExtensionPosition: 20000 # ticks
-            midExtensionPosition: 141000 # ticks
-            maxExtensionPosition: 300000 # ticks
-            # constraints
+            forwardAngleLimit: 100000 # Elevator horizontal orientation
+            reverseAngleLimit: -10000 # Elevator vertical orientation
+            ## Positions ##
+            stowAnglePosition: 90000
+            collectAnglePosition: -1000
+            scoreAnglePosition: 64000
+            scoreDipAnglePosition: 55000
+            minExtensionPosition: 20000
+            midExtensionPosition: 120000
+            maxExtensionPosition: 295000
+            ## Constraints ##
             maxAngularVelocity: 45000 # ticks per second
             maxAngularAcceleration: 45000 # ticks per second per second
             maxExtendedAngularAcceleration: 15000 # ticks per second per second
@@ -130,10 +136,11 @@ subsystems:
             slot0:
                 kF: 0.0000899
         constants:
-            cubeIntakePower: -0.10 # percent output voltage
+            ## Demands ##
+            cubeIntakePower: -0.40 # percent output voltage   IF INVERTED: negate (n/p) DON'T INVERT MOTOR
             cubeOuttakePower: 0.25 # percent output voltage
-            coneIntakeVelocity: 420 # rpm
-            coneOuttakeVelocity: -840 # rpm
+            coneIntakeVelocity: 840 # rpm
+            coneOuttakeVelocity: -630 # rpm
     ledmanager:
         implemented: false
         canifier: -1
@@ -143,38 +150,34 @@ subsystems:
             cameraLed: 1
             maxLevel: 255 # 0-255
     camera:
-        implemented: true
+        implemented: false
         constants:
             usingCamToUpdatePose: 0
 infrastructure:
     canivoreBusName: highSpeed
-    # power distribution
+    ## Power Distribution ##
     pdId: 1
     pdIsRev: true
-    # pneumatics control
+    ## Pneumatics Control ##
     compressorEnabled: true
     pcmIsRev: false
-    pcmId: 2
-    # pigeon
+    pcmId: 4
+    ## Pigeon ##
     pigeonId: 32
     isPigeon2: true
 controlboard: example
 constants:
-    # drivetrain dimensions and movement
-    maxRotVel: 14
-    trackWidth: 19.75 # inches
-    wheelbaseLength: 19.75 # inches
-    wheelDiameter: 4 # inches
-    kTrackScrubFactor: 1.0 # constant
-    minAllowablePoseError: 0.1 # meters
-    maxAllowablePoseError: 5 # meters
+    ## Drivetrain ##
+    minAllowablePoseError: 0.1
+    maxAllowablePoseError: 5
     ## Logging ##
     logTeleOp: 1 # 0 or 1
     logAuto: 1 # 0 or 1
     badLogEnabled: 1 # 0 or 1
+    logDrivetrain: 0
     configStatusFrames: 0 # 0 or 1
     ## General ##
-    EnableBucketTuning: 1 # 0 or 1
+    EnableBucketTuning: 1
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .025 # seconds
     resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret

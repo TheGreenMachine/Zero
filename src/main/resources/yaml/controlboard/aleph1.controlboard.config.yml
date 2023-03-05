@@ -1,0 +1,45 @@
+driver:
+    rumble: false
+    joysticks:
+        left:
+            horizontal: strafe
+            vertical: throttle
+        right:
+            horizontal: rotation
+    buttonpad:
+        a: autoTarget
+        b: autoBalance
+    axes:
+        leftTrigger: brakeMode
+        rightTrigger: slowMode
+    buttons:
+        leftBumper: intakeCube
+        rightBumper: intakeCone
+        start: zeroPose
+operator:
+    rumble: false
+    dpad:
+        up: extendStage
+        down: descendStage
+    buttons:
+        leftBumper: bobDown
+        rightBumper: outtake
+    axes:
+        leftTrigger: armStow
+        rightTrigger: armCollect
+    buttonpad:
+        y: autoScoreMax
+        x: autoScoreMid
+        a: autoScoreMin
+        b: autoScoreRetract
+buttonboard:
+    upLeft: grid1 # farthest from opposing feeder
+    up: grid2 # coopertition
+    upRight: grid3 # closes to opposing feeder
+    left: node1 # cone set farthest from opposing feeder
+    center: node2 # cube set
+    right: node3 # cone set closest to opposing feeder
+    downLeft: level1 # low
+    down: level2 # mid
+    downRight: level3 # high
+demoMode: false

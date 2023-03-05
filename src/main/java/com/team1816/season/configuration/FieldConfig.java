@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * A class that stores the positions of location targets used for global localization with the help of a vision system
+ */
 @Singleton
 public class FieldConfig {
 
