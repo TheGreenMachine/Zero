@@ -96,7 +96,7 @@ public class Elevator extends Subsystem {
         extensionMotor.selectProfileSlot(1, 0); // uses the system slot1 configuration for extension control
 
 
-        double angularPeakOutput = 0.60;
+        double angularPeakOutput = 0.80;
         angleMotorMain.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
         angleMotorMain.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
         angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
