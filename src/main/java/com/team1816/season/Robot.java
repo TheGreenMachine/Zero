@@ -291,7 +291,7 @@ public class Robot extends TimedRobot {
                                     System.out.println("Trajectory ended");
                                 }
                             } else {
-                                autoTargetThread.interrupt();
+                                autoTargetThread.stop();
                                 System.out.println("Stopped! driving to trajectory canceled!");
                                 runningAutoTarget = !runningAutoTarget;
                             }
