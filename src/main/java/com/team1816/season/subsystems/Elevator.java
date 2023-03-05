@@ -460,6 +460,26 @@ public class Elevator extends Subsystem {
         }
 
         /**
+         * Returns the profiled angular polar velocity component based on constraints
+         *
+         * @param timestamp current timestamp
+         * @return angular velocity
+         */
+        public double getAngularVelocity(double timestamp) {
+            double t = timestamp - startTimestamp;
+            if (t <= endRotationAccelerationPhase) {
+                return t * feederConstraints.maxAngularAcceleration;
+            } else if (t <= endRotationVelocityPhase) {
+                return maxAngularVelocity;
+            } else if (t <= endRotationDecelerationPhase) {
+                double timeRemaining = endRotationDecelerationPhase - t;
+                return timeRemaining * feederConstraints.maxAngularDeceleration;
+            } else {
+                return 0;
+            }
+        }
+
+        /**
          * Returns the profiled translational polar component based on constraints
          *
          * @param timestamp current timestamp
@@ -478,6 +498,26 @@ public class Elevator extends Subsystem {
             } else {
                 translationEnded = true;
                 return rFinal;
+            }
+        }
+
+        /**
+         * Returns the profiled translational polar velocity component based on constraints
+         *
+         * @param timestamp current timestamp
+         * @return extension velocity
+         */
+        public double getExtensionVelocity(double timestamp) {
+            double t = timestamp - startTimestamp;
+            if (t <= endRotationAccelerationPhase) {
+                return t * feederConstraints.maxExtensionAcceleration;
+            } else if (t <= endRotationVelocityPhase) {
+                return maxExtensionVelocity;
+            } else if (t <= endRotationDecelerationPhase) {
+                double timeRemaining = endRotationDecelerationPhase - t;
+                return timeRemaining * feederConstraints.maxExtensionAcceleration;
+            } else {
+                return 0;
             }
         }
 
