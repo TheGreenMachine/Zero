@@ -127,7 +127,7 @@ public class Elevator extends Subsystem {
      * Sets the desired angle and extension state of the elevator
      *
      * @param elevatorAngleState     - the angle of the elevator
-     * @param elevatorExtensionState - how far the elevator is extended
+     * @param elevatorExtensionState - the extension of the elevator
      * @see this#setDesiredAngleState(ANGLE_STATE)
      * @see this#setDesiredExtensionState(EXTENSION_STATE)
      */
