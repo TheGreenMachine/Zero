@@ -15,7 +15,7 @@ public class SwerveDriveHelper implements DriveHelper {
     private static final double kTranslationPower = 1.50; // 1.75 + 0.4375
     private static final double kMaxRotation = kMaxAngularSpeed;
 
-    private static final double kHighPowerRotationScalar = 0.05;
+    private static final double kHighPowerRotationScalar = 0.35;
     private static final double kLowPowerRotationScalar = 0.0125; //yml time
     private static final double kLowPowerScalar = 0.075; //yml time
 
