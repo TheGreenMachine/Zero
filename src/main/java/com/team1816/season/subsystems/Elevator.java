@@ -142,12 +142,14 @@ public class Elevator extends Subsystem {
     public void setDesiredState(ANGLE_STATE elevatorAngleState, EXTENSION_STATE elevatorExtensionState) {
         setDesiredAngleState(elevatorAngleState);
         setDesiredExtensionState(elevatorExtensionState);
+
+        // Fits a line to the accelerations to determine the appropriate acceleration and deceleration
         FeederConstraints feederConstraints = new FeederConstraints(
             maxAngularVelocity,
             (maxExtendedAngularAcceleration - maxAngularAcceleration) / (maxExtension - minExtension) *
-                desiredExtensionState.extension,
+                (actualAnglePosition - minExtension) + maxExtendedAngularAcceleration,
             (maxExtendedAngularAcceleration - maxAngularAcceleration) / (maxExtension - minExtension) *
-                actualExtensionPosition,
+                (desiredExtensionState.extension - minExtension) + maxExtendedAngularAcceleration,
             maxExtensionVelocity,
             maxExtensionAcceleration
         );
@@ -594,6 +596,13 @@ public class Elevator extends Subsystem {
         public boolean extensionEnded() {
             return extensionEnded();
         }
+
+        /**
+         * Returns the duration of the profile
+         */
+        public double getDuration() {
+            return Math.max(endRotationDecelerationPhase, endTranslationDecelerationPhase);
+        }
     }
 
     /**
@@ -606,12 +615,12 @@ public class Elevator extends Subsystem {
         public double maxExtensionVelocity; // m/s
         public double maxExtensionAcceleration; // m/s^2
 
-        public FeederConstraints(double maxAngularVelocity, double maxAngularDeceleration, double maxAngularAcceleration, double maxExtensionVelocity, double maxExtensionAcceleration) {
-            this.maxAngularVelocity = maxAngularVelocity;
-            this.maxAngularDeceleration = maxAngularDeceleration;
-            this.maxAngularAcceleration = maxAngularAcceleration;
-            this.maxExtensionVelocity = maxExtensionVelocity;
-            this.maxExtensionAcceleration = maxExtensionAcceleration;
+        public FeederConstraints(double maxAngularVelocity, double maxAngularAcceleration, double maxAngularDeceleration, double maxExtensionVelocity, double maxExtensionAcceleration) {
+            this.maxAngularVelocity = Math.abs(maxAngularVelocity);
+            this.maxAngularAcceleration = Math.abs(maxAngularAcceleration);
+            this.maxAngularDeceleration = Math.abs(maxAngularDeceleration);
+            this.maxExtensionVelocity = Math.abs(maxExtensionVelocity);
+            this.maxExtensionAcceleration = Math.abs(maxExtensionAcceleration);
         }
     }
 }
