@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 public class ProximitySensor implements IProximitySensor {
     private AnalogInput sensor;
     private String NAME;
+    private int group
 
     /**
      * Initializes a proximity sensor given a name and its analog port on the RoboRIO
@@ -18,6 +19,7 @@ public class ProximitySensor implements IProximitySensor {
     public ProximitySensor(String name, int port) {
         NAME = name;
         sensor = new AnalogInput(port);
+        group = -1;
     }
 
     /**
@@ -50,5 +52,15 @@ public class ProximitySensor implements IProximitySensor {
     public String getName() {
         return NAME;
     }
+
+    public void setUpGroup(){
+
+    }
+
+    public void setGroup(int group){
+        this.group = group;
+    }
+
+
 
 }

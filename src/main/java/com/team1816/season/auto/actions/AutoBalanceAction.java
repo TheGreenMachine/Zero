@@ -45,15 +45,17 @@ public class AutoBalanceAction implements AutoAction {
     @Override
     public void update() {
         ChassisSpeeds fieldRelativeChassisSpeed = new ChassisSpeeds();
-        if(infrastructure.getMaximumProximity() >= 40){ //TODO tune this value
+      /* if(infrastructure.getMaximumProximity() >= 40){ //TODO tune this value
             fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
                 0,
-                infrastructure.getHighestProximitySensor().
+                infrastructure.getHighestProximitySensor().getGroup
                 0,
                 robotState.fieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
         }
         drive.autoBalance(fieldRelativeChassisSpeed);
+        */
+
     }
 
     @Override
