@@ -147,6 +147,11 @@ public class LedManager extends Subsystem {
         setLedColorBlink(status.getRed(), status.getGreen(), status.getBlue());
     }
 
+    public void setLedControlState(LedControlState ledControlState){
+        this.controlState = ledControlState;
+        outputsChanged = true;
+    }
+
     public void setDefaultStatus(RobotStatus defaultStatus) {
         this.defaultStatus = defaultStatus;
         indicateDefaultStatus();
@@ -178,6 +183,7 @@ public class LedManager extends Subsystem {
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
+            System.out.println(controlState);
             outputsChanged = false;
             switch (controlState) {
                 case RAVE:

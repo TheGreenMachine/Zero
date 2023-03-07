@@ -141,10 +141,10 @@ subsystems:
             coneIntakeVelocity: 840 # rpm
             coneOuttakeVelocity: -630 # rpm
     ledmanager:
-        implemented: false
-        canifier: -1
+        implemented: true
+        candle: 23
         constants:
-            raveEnabled: 0
+            raveEnabled: 1
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255

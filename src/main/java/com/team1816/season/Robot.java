@@ -567,7 +567,7 @@ public class Robot extends TimedRobot {
 
             // Stop any running autos
             autoModeManager.stopAuto();
-            ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
+            ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
 
             if (autoModeManager.getSelectedAuto() == null) {
                 autoModeManager.reset();
@@ -685,7 +685,7 @@ public class Robot extends TimedRobot {
                 if (faulted) {
                     ledManager.blinkStatus(LedManager.RobotStatus.ERROR);
                 } else {
-                    ledManager.indicateStatus(LedManager.RobotStatus.DISABLED);
+//                    ledManager.indicateDefaultStatus();
                 }
             }
 
@@ -702,6 +702,10 @@ public class Robot extends TimedRobot {
             if (drive.isDemoMode()) { // Demo-mode
                 drive.update();
             }
+
+
+            ledManager.writeToHardware();
+
         } catch (Throwable t) {
             faulted = true;
             throw t;
