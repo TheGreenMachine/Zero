@@ -26,7 +26,7 @@ public class AutoBalanceAction implements AutoAction {
 
     private static boolean isSwerve = false;
 
-    private int[] sideHeadings = new int[]{0,90,180,270};
+    private double[] sideHeadings = new double[]{0.0,90.0,180.0,270.0};
 
 
     public AutoBalanceAction() {
@@ -46,19 +46,26 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public void update() {
+        int tempCompare = ((int)robotState.fieldToVehicle.getRotation().getDegrees()) + infrastructure.getHighestProximitySensor().sensorOrientation.proxyOrientOffset;
+
+        int closeDiff = (int)Math.abs(sideHeadings[0] - tempCompare);
+        int closeIndex = 0;
+        for(int i = 1; i<4; i++){
+            if(Math.abs(sideHeadings[i] - tempCompare) > closeDiff){
+                closeDiff = (int)Math.abs(sideHeadings[i] - tempCompare);
+                closeIndex = i;
+            }
+        }
         ChassisSpeeds fieldRelativeChassisSpeed = new ChassisSpeeds();
 
-      /* if(infrastructure.getMaximumProximity() >= 40){ //TODO tune this value
+       if(infrastructure.getMaximumProximity() >= 40){ //TODO tune this value
             fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
                 0,
-                infrastructure.getHighestProximitySensor().getGroup
+                (sideHeadings[closeIndex] + 180) / 1440,
                 0,
                 robotState.fieldToVehicle.getRotation());
-            drive.autoBalance(fieldRelativeChassisSpeed);
         }
         drive.autoBalance(fieldRelativeChassisSpeed);
-        */
-
     }
 
     @Override

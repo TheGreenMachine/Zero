@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 public class ProximitySensor implements IProximitySensor {
     private AnalogInput sensor;
     private String NAME;
-    private PROXY_ORIENTATION sensorOrientation;
+    public PROXY_ORIENTATION sensorOrientation; //TODO DON'T USE THIS UNLESS IT'S INITIALIZED WITH THE ORIENTATION ENUM
 
 
     /**
@@ -76,14 +76,8 @@ public class ProximitySensor implements IProximitySensor {
         public final int proxyOrientOffset;
 
         PROXY_ORIENTATION(int proxyOrientOffset) {this.proxyOrientOffset = proxyOrientOffset;}
-
-        public int getProxyOrientOffset(){
-            return proxyOrientOffset;
-        }
-
-
-
-
     }
+
+
 
 }
