@@ -312,7 +312,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
         } else {
             heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
-            SwerveModuleState templateState = new SwerveModuleState(0, headproing);
+            SwerveModuleState templateState = new SwerveModuleState(0, heading);
             SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
             setModuleStates(statePassIn);
         }
