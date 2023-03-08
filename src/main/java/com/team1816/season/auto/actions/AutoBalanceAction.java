@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
+
 /**
  * Action for infrastructure based / gyroscopic balancing
  *
@@ -25,6 +26,7 @@ public class AutoBalanceAction implements AutoAction {
 
     private static boolean isSwerve = false;
 
+    private int[] sideHeadings = new int[]{0,90,180,270};
 
 
     public AutoBalanceAction() {
@@ -45,6 +47,7 @@ public class AutoBalanceAction implements AutoAction {
     @Override
     public void update() {
         ChassisSpeeds fieldRelativeChassisSpeed = new ChassisSpeeds();
+
       /* if(infrastructure.getMaximumProximity() >= 40){ //TODO tune this value
             fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
                 0,
