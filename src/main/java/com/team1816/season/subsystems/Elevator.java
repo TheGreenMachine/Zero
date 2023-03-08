@@ -2,6 +2,7 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.loops.AsyncTimer;
@@ -27,8 +28,6 @@ public class Elevator extends Subsystem {
     private final IGreenMotor angleMotorMain;
     private final IGreenMotor angleMotorFollower;
     private final IGreenMotor extensionMotor;
-    private final DigitalInput zeroingHallEffect;
-
     /**
      * Properties
      */
@@ -95,7 +94,7 @@ public class Elevator extends Subsystem {
         this.angleMotorMain = factory.getMotor(NAME, "angleMotorMain");
         this.angleMotorFollower = factory.getFollowerMotor(NAME, "angleMotorFollower", angleMotorMain);
         this.extensionMotor = factory.getMotor(NAME, "extensionMotor");
-        this.zeroingHallEffect = new DigitalInput(0);
+
 
         double extensionPeakOutput = 0.56;
         extensionMotor.configPeakOutputForward(extensionPeakOutput, Constants.kCANTimeoutMs);
@@ -321,7 +320,12 @@ public class Elevator extends Subsystem {
 
     @Override
     public void zeroSensors() {
+        angleMotorMain.setSelectedSensorPosition(0,0, Constants.kCANTimeoutMs);
+        setBraking(false);
+    }
 
+    public void setBraking(boolean braking){
+        angleMotorMain.setNeutralMode(braking ? NeutralMode.Brake : NeutralMode.Coast);
     }
 
     /**
@@ -329,7 +333,6 @@ public class Elevator extends Subsystem {
      */
     @Override
     public void stop() {
-
     }
 
     /**

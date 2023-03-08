@@ -45,7 +45,7 @@ public class LedManager extends Subsystem {
     private int ledB;
     private boolean cameraLedOn;
 
-    private int period; // ms
+    private int period = 1000; // ms
     private long lastWriteTime = System.currentTimeMillis();
     private LedControlState controlState = LedControlState.STANDARD;
     private RobotStatus defaultStatus = RobotStatus.DISABLED;
@@ -166,6 +166,9 @@ public class LedManager extends Subsystem {
 
     @Override
     public void writeToHardware() {
+        if(controlState == LedControlState.BLINK && System.currentTimeMillis() >= lastWriteTime + (period / 2)){
+            outputsChanged = true;
+        }
         if (outputsChanged) {
             System.out.println(controlState);
             outputsChanged = false;
@@ -181,18 +184,14 @@ public class LedManager extends Subsystem {
                     }
                     break;
                 case BLINK:
-                    if (System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
-                        if (blinkLedOn) {
-                            outputsChanged = true;
-                            writeToLed(0, 0, 0);
-                            blinkLedOn = false;
-                        } else {
-                            outputsChanged = true;
-                            writeToLed(ledR, ledG, ledB);
-                            blinkLedOn = true;
-                        }
-                        lastWriteTime = System.currentTimeMillis();
+                    if (blinkLedOn) {
+                        writeToLed(0, 0, 0);
+                        blinkLedOn = false;
+                    } else {
+                        writeToLed(ledR, ledG, ledB);
+                        blinkLedOn = true;
                     }
+                    lastWriteTime = System.currentTimeMillis();
                     break;
                 case STANDARD:
                     writeToLed(ledR, ledG, ledB);
@@ -272,7 +271,7 @@ public class LedManager extends Subsystem {
         ENDGAME(0, 0, MAX), // blue
         SEEN_TARGET(MAX, 0, MAX), // magenta
         ON_TARGET(MAX, 0, 20), // deep magenta
-        DRIVETRAIN_FLIPPED(MAX, MAX, 0), // yellow,
+        ZEROING_ELEVATOR(MAX, 0, 20), // deep magenta,
         MANUAL_TURRET(MAX, MAX, MAX), // white
         OFF(0, 0, 0); // off
 

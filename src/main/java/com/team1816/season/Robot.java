@@ -68,6 +68,10 @@ public class Robot extends TimedRobot {
     private final Elevator elevator;
     private final Collector collector;
 
+    private DigitalInput zeroingButton;
+    private Boolean zeroing = false;
+    private boolean lastButton;
+
     /**
      * Factory
      */
@@ -123,6 +127,9 @@ public class Robot extends TimedRobot {
         autoModeManager = Injector.get(AutoModeManager.class);
 
         prevAngleState = Elevator.ANGLE_STATE.STOW;
+        if(RobotBase.isReal()){
+            zeroingButton = new DigitalInput((int)factory.getConstant("zeroingButton", -1));
+        }
     }
 
     /**
@@ -579,6 +586,9 @@ public class Robot extends TimedRobot {
             robotState.resetAllStates();
             drive.zeroSensors();
 
+            lastButton = zeroingButton.get();
+            faulted = true;
+
             disabledLoop.start();
         } catch (Throwable t) {
             faulted = true;
@@ -630,7 +640,7 @@ public class Robot extends TimedRobot {
         try {
             double initTime = System.currentTimeMillis();
 
-            ledManager.indicateStatus(LedManager.RobotStatus.DRIVETRAIN_FLIPPED, LedManager.LedControlState.BLINK);
+            ledManager.indicateStatus(LedManager.RobotStatus.ZEROING_ELEVATOR, LedManager.LedControlState.BLINK);
             // Warning - blocks thread - intended behavior?
             while (System.currentTimeMillis() - initTime <= 3000) {
                 ledManager.writeToHardware();
@@ -685,6 +695,36 @@ public class Robot extends TimedRobot {
                 // non-camera LEDs will flash red if robot periodic updates fail
                 if (faulted) {
                     ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.LedControlState.BLINK);
+                    ledManager.writeToHardware();
+                }
+            }
+
+            if(RobotBase.isReal()){
+                // logic for zeroing elevator
+                if(lastButton != zeroingButton.get() && lastButton){ // will only be true when changing from false to true
+                    if(zeroing == null) {
+                        faulted = false;
+                        zeroing = true;
+                        elevator.zeroSensors();
+                        ledManager.indicateStatus(LedManager.RobotStatus.ZEROING_ELEVATOR, LedManager.LedControlState.BLINK);
+                        ledManager.writeToHardware();
+                        infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
+                    } else if(zeroing){
+                        zeroing = false;
+                        elevator.setBraking(true);
+                        ledManager.indicateStatus(LedManager.RobotStatus.DISABLED, LedManager.LedControlState.STANDARD);
+                        ledManager.writeToHardware();
+                    } else {
+                        zeroing = null;
+                        elevator.setBraking(false);
+                        ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.LedControlState.BLINK);
+                        ledManager.writeToHardware();
+                        faulted = true;
+                    }
+                }
+                lastButton = zeroingButton.get();
+
+                if(!faulted){
                     ledManager.writeToHardware();
                 }
             }
