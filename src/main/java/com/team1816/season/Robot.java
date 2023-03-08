@@ -406,13 +406,12 @@ public class Robot extends TimedRobot {
                         (pressed) -> {
                             if (!operatorLock) {
                                 collector.outtakeGamePiece(pressed);
+                                if(pressed){
+                                    ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET);
+                                } else {
+                                    ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
+                                }
                             }
-                            if(pressed){
-                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET);
-                            } else {
-                                ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
-                            }
-
                         }
                     ),
 //                    createAction(
