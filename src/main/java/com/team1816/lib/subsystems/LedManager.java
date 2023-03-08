@@ -8,7 +8,6 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 
 import javax.inject.Singleton;
-import java.awt.*;
 
 /**
  * Subsystem container for an LEDManager
@@ -158,10 +157,10 @@ public class LedManager extends Subsystem {
             switch (controlState) {
                 case RAVE:
                     if (RAVE_ENABLED) {
-                        var color = Color.getHSBColor(raveHue, 1.0f, MAX / 255.0f);
+                        var color = Color.fromHSV(raveHue, MAX, MAX);
                         if (!color.equals(lastRaveColor)) {
                             outputsChanged = true;
-                            writeToLed(color.getRed(), color.getGreen(), color.getBlue());
+                            writeToLed((int) color.red * MAX, (int) color.green * MAX, (int) color.blue * MAX);
                         }
                         raveHue += RAVE_SPEED;
                     }
@@ -263,9 +262,9 @@ public class LedManager extends Subsystem {
         }
 
         RobotStatus(Color color) {
-            this.red = color.getRed();
-            this.green = color.getGreen();
-            this.blue = color.getBlue();
+            this.red = (int) color.red * MAX;
+            this.green = (int) color.green * MAX;
+            this.blue = (int) color.blue * MAX;
         }
 
         public int getRed() {
@@ -279,32 +278,5 @@ public class LedManager extends Subsystem {
         public int getBlue() {
             return blue;
         }
-    }
-
-    /**
-     * Base class for Colors
-     */
-    public static class LEDColor {
-        /**
-         * Primary
-         */
-        public static Color STRONTIUM = new Color(1 * MAX, 0 * MAX, 0 * MAX); // red
-        public static Color BORON = new Color(0 * MAX, 1 * MAX, 0 * MAX); // green
-        public static Color INDIUM = new Color(0 * MAX, 0 * MAX, 1 * MAX); // blue
-
-        /**
-         * Secondary
-         */
-        public static Color IRON = new Color(1 * MAX, 1 * MAX, 0 * MAX); // yellow
-        public static Color COPPER = new Color(0 * MAX, 1 * MAX, 1 * MAX); // cyan
-        public static Color POTASSIUM = new Color(1 * MAX, 0 * MAX, 1 * MAX); // magenta
-        public static Color CALCIUM = new Color(1 * MAX, (int) (1d / 5 * MAX), 0 * MAX); // orange
-
-        /**
-         * Tertiary
-         */
-        public static Color ARSENIC = new Color((int) (155d / 255 * MAX), (int) (220d / 255 * MAX), (int) (225d / 255 * MAX)); // gray
-        public static Color MAGNESIUM = new Color(1 * MAX, 1 * MAX, 1 * MAX); // white
-
     }
 }
