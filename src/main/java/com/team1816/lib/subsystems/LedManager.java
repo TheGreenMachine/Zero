@@ -3,6 +3,7 @@ package com.team1816.lib.subsystems;
 import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.ledManager.ILEDManager;
+import com.team1816.season.Robot;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
@@ -47,8 +48,10 @@ public class LedManager extends Subsystem {
 
     private int period = 1000; // ms
     private long lastWriteTime = System.currentTimeMillis();
-    private LedControlState controlState = LedControlState.STANDARD;
+    private LedControlState controlState = LedControlState.SOLID;
     private RobotStatus defaultStatus = RobotStatus.DISABLED;
+
+    private RobotStatus currentStatus = RobotStatus.DISABLED;
     private float raveHue;
     private Color lastRaveColor;
 
@@ -58,7 +61,7 @@ public class LedManager extends Subsystem {
     public enum LedControlState {
         RAVE,
         BLINK,
-        STANDARD,
+        SOLID,
     }
 
     /**
@@ -117,16 +120,17 @@ public class LedManager extends Subsystem {
      * @see RobotStatus
      */
     public void indicateStatus(RobotStatus status) {
+        this.currentStatus = status;
         setLedColor(status.getRed(), status.getGreen(), status.getBlue());
     }
 
     public void indicateStatus(RobotStatus status, LedControlState controlState) {
         setLedControlState(controlState);
-        setLedColor(status.getRed(), status.getGreen(), status.getBlue());
+        indicateStatus(status);
     }
 
     public void indicateDefaultStatus() {
-        indicateStatus(defaultStatus, LedControlState.STANDARD);
+        indicateStatus(defaultStatus, LedControlState.SOLID);
     }
 
     public void setLedControlState(LedControlState ledControlState){
@@ -143,6 +147,10 @@ public class LedManager extends Subsystem {
 
     public double getPeriod() {
         return period;
+    }
+
+    public RobotStatus getCurrentStatus(){
+        return currentStatus;
     }
 
     private void writeToCameraLed(int r, int g, int b) { // not using camera leds this year :)
@@ -193,7 +201,7 @@ public class LedManager extends Subsystem {
                     }
                     lastWriteTime = System.currentTimeMillis();
                     break;
-                case STANDARD:
+                case SOLID:
                     writeToLed(ledR, ledG, ledB);
                     break;
             }
@@ -229,7 +237,7 @@ public class LedManager extends Subsystem {
     public boolean testSubsystem() {
         // no checking performed
         System.out.println("Checking LED systems");
-        controlState = LedControlState.STANDARD;
+        controlState = LedControlState.SOLID;
         setLedColor(MAX, 0, 0); // set red
         testDelay();
         setCameraLed(true); // turn on camera

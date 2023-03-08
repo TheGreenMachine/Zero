@@ -586,7 +586,6 @@ public class Robot extends TimedRobot {
             robotState.resetAllStates();
             drive.zeroSensors();
 
-            lastButton = zeroingButton.get();
             faulted = true;
 
             disabledLoop.start();
@@ -700,21 +699,22 @@ public class Robot extends TimedRobot {
             }
 
             if(RobotBase.isReal()){
-                // logic for zeroing elevator
-                if(lastButton != zeroingButton.get() && lastButton){ // will only be true when changing from false to true
-                    if(zeroing == null) {
+                // logic for zeroing elevator - using a Boolean obj because it technically has THREE states (true, false, null)
+                // which match up to our three zeroing states (needs zeroing, zeroing, ready)
+                if(lastButton != zeroingButton.get() && lastButton){ // logic to make button a toggle
+                    if(zeroing == null) { // zeroing
                         faulted = false;
                         zeroing = true;
                         elevator.zeroSensors();
                         ledManager.indicateStatus(LedManager.RobotStatus.ZEROING_ELEVATOR, LedManager.LedControlState.BLINK);
                         ledManager.writeToHardware();
                         infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
-                    } else if(zeroing){
+                    } else if(zeroing){ // ready
                         zeroing = false;
                         elevator.setBraking(true);
-                        ledManager.indicateStatus(LedManager.RobotStatus.DISABLED, LedManager.LedControlState.STANDARD);
+                        ledManager.indicateStatus(LedManager.RobotStatus.DISABLED, LedManager.LedControlState.SOLID);
                         ledManager.writeToHardware();
-                    } else {
+                    } else { // needs zeroing
                         zeroing = null;
                         elevator.setBraking(false);
                         ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.LedControlState.BLINK);
@@ -724,7 +724,8 @@ public class Robot extends TimedRobot {
                 }
                 lastButton = zeroingButton.get();
 
-                if(!faulted){
+                if(ledManager.getCurrentStatus() == LedManager.RobotStatus.ZEROING_ELEVATOR){
+                    // only keep looping through write if zeroing elevator cus we need to update its blinking
                     ledManager.writeToHardware();
                 }
             }
