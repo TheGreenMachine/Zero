@@ -13,8 +13,6 @@ import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import org.photonvision.PhotonCamera;
@@ -97,6 +95,19 @@ public class Camera extends Subsystem {
         PhotonCamera.setVersionCheckEnabled(false);
         if (cameraEnabled) {
             cam = new PhotonCamera("IMX219");
+        }
+    }
+
+    /**
+     * Sets the camera to be enabled
+     *
+     * @param cameraEnabled boolean
+     */
+    public void setCameraEnabled(boolean cameraEnabled) {
+        if (this.isImplemented()) {
+            this.cameraEnabled = cameraEnabled;
+        } else {
+            System.out.println("Camera Not Implemented...");
         }
     }
 
@@ -191,13 +202,15 @@ public class Camera extends Subsystem {
      * Functionality: nonexistent
      */
     @Override
-    public void writeToHardware() {}
+    public void writeToHardware() {
+    }
 
     /**
      * Functionality: nonexistent
      */
     @Override
-    public void zeroSensors() {}
+    public void zeroSensors() {
+    }
 
     /**
      * Tests the camera
@@ -206,9 +219,6 @@ public class Camera extends Subsystem {
      */
     @Override
     public boolean testSubsystem() {
-        if (isImplemented()) {
-            Timer.delay(2);
-        }
         return true;
     }
 

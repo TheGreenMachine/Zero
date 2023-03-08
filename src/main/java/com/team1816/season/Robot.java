@@ -334,7 +334,15 @@ public class Robot extends TimedRobot {
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("autoBalance"),
-                        drive::setAutoBalanceManual
+                        (pressed) -> {
+                            if (pressed) {
+                                drive.setAutoBalance(true);
+                                ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.BLINK);
+                            } else {
+                                drive.setAutoBalance(false);
+                                ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
+                            }
+                        }
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("intakeCone"),
@@ -345,9 +353,11 @@ public class Robot extends TimedRobot {
 //                                if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
 //                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
 //                                }
+                                ledManager.indicateStatus(LedManager.RobotStatus.CONE);
                             } else {
                                 collector.setDesiredState(Collector.STATE.STOP);
 //                                elevator.setDesiredState(prevAngleState, Elevator.EXTENSION_STATE.MIN);
+                                ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
                         }
                     ),
@@ -360,9 +370,11 @@ public class Robot extends TimedRobot {
 //                                if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
 //                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
 //                                }
+                                ledManager.indicateStatus(LedManager.RobotStatus.CUBE);
                             } else {
                                 collector.setDesiredState(Collector.STATE.STOP);
 //                                elevator.setDesiredState(prevAngleState, Elevator.EXTENSION_STATE.MIN);
+                                ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
                         }
                     ),
@@ -392,9 +404,15 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("outtake"),
                         (pressed) -> {
-                            if (!operatorLock) {
-                                collector.outtakeGamePiece(pressed);
+                            if(pressed){
+                                if (!operatorLock) {
+                                    collector.outtakeGamePiece(pressed);
+                                }
+                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET);
+                            } else {
+                                ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
                             }
+
                         }
                     ),
 //                    createAction(
@@ -586,7 +604,10 @@ public class Robot extends TimedRobot {
             robotState.resetAllStates();
             drive.zeroSensors();
 
-            faulted = true;
+            if (RobotBase.isReal()) {
+                lastButton = zeroingButton.get();
+                faulted = true;
+            }
 
             disabledLoop.start();
         } catch (Throwable t) {
@@ -639,7 +660,7 @@ public class Robot extends TimedRobot {
         try {
             double initTime = System.currentTimeMillis();
 
-            ledManager.indicateStatus(LedManager.RobotStatus.ZEROING_ELEVATOR, LedManager.LedControlState.BLINK);
+            ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.BLINK);
             // Warning - blocks thread - intended behavior?
             while (System.currentTimeMillis() - initTime <= 3000) {
                 ledManager.writeToHardware();
@@ -649,7 +670,7 @@ public class Robot extends TimedRobot {
             disabledLoop.start();
             drive.zeroSensors();
 
-            ledManager.indicateStatus(LedManager.RobotStatus.DISABLED, LedManager.LedControlState.BLINK);
+            ledManager.indicateStatus(LedManager.RobotStatus.DISABLED, LedManager.ControlState.BLINK);
 
             if (subsystemManager.testSubsystems()) {
                 System.out.println("ALL SYSTEMS PASSED");
@@ -689,11 +710,11 @@ public class Robot extends TimedRobot {
         try {
             if (RobotController.getUserButton()) {
                 drive.zeroSensors(Constants.kDefaultZeroingPose);
-                ledManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
+                ledManager.indicateStatus(LedManager.RobotStatus.CUBE);
             } else {
                 // non-camera LEDs will flash red if robot periodic updates fail
                 if (faulted) {
-                    ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.LedControlState.BLINK);
+                    ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.ControlState.BLINK);
                     ledManager.writeToHardware();
                 }
             }
@@ -706,18 +727,18 @@ public class Robot extends TimedRobot {
                         faulted = false;
                         zeroing = true;
                         elevator.zeroSensors();
-                        ledManager.indicateStatus(LedManager.RobotStatus.ZEROING_ELEVATOR, LedManager.LedControlState.BLINK);
+                        ledManager.indicateStatus(LedManager.RobotStatus.ZEROING_ELEVATOR, LedManager.ControlState.BLINK);
                         ledManager.writeToHardware();
                         infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
                     } else if(zeroing){ // ready
                         zeroing = false;
                         elevator.setBraking(true);
-                        ledManager.indicateStatus(LedManager.RobotStatus.DISABLED, LedManager.LedControlState.SOLID);
+                        ledManager.indicateStatus(LedManager.RobotStatus.DISABLED, LedManager.ControlState.SOLID);
                         ledManager.writeToHardware();
                     } else { // needs zeroing
                         zeroing = null;
                         elevator.setBraking(false);
-                        ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.LedControlState.BLINK);
+                        ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.ControlState.BLINK);
                         ledManager.writeToHardware();
                         faulted = true;
                     }

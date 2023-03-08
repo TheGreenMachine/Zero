@@ -136,7 +136,7 @@ subsystems:
                 kF: 0.0000899
         constants:
             ## Demands ##
-            cubeIntakePower: -0.40 # percent output voltage   IF INVERTED: negate (n/p) DON'T INVERT MOTOR
+            cubeIntakePower: -0.40 # percent output voltage
             cubeOuttakePower: 0.25 # percent output voltage
             coneIntakeVelocity: 840 # rpm
             coneOuttakeVelocity: -630 # rpm
@@ -147,7 +147,8 @@ subsystems:
             raveEnabled: 0
             raveSpeed: 0.05
             cameraLed: 1
-            maxLevel: 255
+            maxLevel: 150
+            ledStripCount: 30
     camera:
         implemented: false
         constants:
@@ -173,11 +174,11 @@ constants:
     ## Logging ##
     logTeleOp: 1 # 0 or 1
     logAuto: 1 # 0 or 1
-    badLogEnabled: 1 # 0 or 1     TURN IT OFF after we know it is safe? keep for beginning practice matches
+    badLogEnabled: 1 # 0 or 1
     logDrivetrain: 0
     configStatusFrames: 0 # 0 or 1
     ## General ##
     EnableBucketTuning: 1
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .025 # seconds
-    resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
+    resetFactoryDefaults: 0 # whether motors get reset to factory default
