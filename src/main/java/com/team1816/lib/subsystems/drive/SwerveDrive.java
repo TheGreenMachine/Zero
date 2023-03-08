@@ -276,10 +276,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         double strafe = 0;
         var heading = Constants.EmptyRotation2d;
 
-
+        double[] sideHeadings = new double[]{0.0,90.0,180.0,270.0};
+        int sensorCompare = ((int)robotState.fieldToVehicle.getRotation().getDegrees()) + infrastructure.getHighestProximitySensor().sensorOrientation.proxyOrientOffset;
+        double proximityOffset = 0;
 
         double threshold = Constants.autoBalanceThresholdDegrees;
-
         double autoBalanceDivider = Constants.autoBalanceDivider;
 
         if (Math.abs(pitch) > threshold || Math.abs(roll) > threshold) {
@@ -287,18 +288,31 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             strafe = roll / autoBalanceDivider;
         }
 
+        int closeDiff = (int)Math.abs(sideHeadings[0] - sensorCompare);
+        int closeIndex = 0;
+
+        if(infrastructure.getMaximumProximity() >= 40) { //TODO tune this value
+            for(int i = 1; i<4; i++){
+                double currentDiff = Math.abs(sideHeadings[i] - sensorCompare);
+                if(currentDiff > closeDiff){
+                    closeDiff = (int)currentDiff;
+                    closeIndex = i;
+                }
+            }
+            proximityOffset = (sideHeadings[closeIndex] + 180) / 1440;
+        }
 
         // if not braking and ((throttle || strafe != 0) or joystick strafe input != 0), auto-balance
         // Else, lock wheels to face left/right side of field
         if (!isBraking && ((throttle != 0 || strafe != 0) || !Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds()))) {
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
                 throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond,
-                strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond,
+                strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond + proximityOffset,
                 fieldRelativeChassisSpeeds.omegaRadiansPerSecond);
             setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
         } else {
             heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
-            SwerveModuleState templateState = new SwerveModuleState(0, heading);
+            SwerveModuleState templateState = new SwerveModuleState(0, headproing);
             SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
             setModuleStates(statePassIn);
         }

@@ -46,26 +46,7 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public void update() {
-        int sensorCompare = ((int)robotState.fieldToVehicle.getRotation().getDegrees()) + infrastructure.getHighestProximitySensor().sensorOrientation.proxyOrientOffset;
-
-        int closeDiff = (int)Math.abs(sideHeadings[0] - sensorCompare);
-        int closeIndex = 0;
-        for(int i = 1; i<4; i++){
-            if(Math.abs(sideHeadings[i] - sensorCompare) > closeDiff){
-                closeDiff = (int)Math.abs(sideHeadings[i] - sensorCompare);
-                closeIndex = i;
-            }
-        }
-        ChassisSpeeds fieldRelativeChassisSpeed = new ChassisSpeeds();
-
-       if(infrastructure.getMaximumProximity() >= 40){ //TODO tune this value
-            fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
-                0,
-                (sideHeadings[closeIndex] + 180) / 1440,
-                0,
-                robotState.fieldToVehicle.getRotation());
-        }
-        drive.autoBalance(fieldRelativeChassisSpeed);
+        drive.autoBalance(new ChassisSpeeds());
     }
 
     @Override
