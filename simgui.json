@@ -172,6 +172,12 @@
     "Retained Values": {
       "open": false
     },
+    "Shuffleboard": {
+      "Shuffleboard": {
+        "open": true
+      },
+      "open": true
+    },
     "SmartDashboard": {
       "Drive": {
         "open": true
@@ -181,7 +187,8 @@
       },
       "Starting Position": {
         "open": true
-      }
+      },
+      "open": true
     },
     "[...]##v_$serversub": {
       "open": true
@@ -194,5 +201,8 @@
       }
     },
     "special": true
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }
