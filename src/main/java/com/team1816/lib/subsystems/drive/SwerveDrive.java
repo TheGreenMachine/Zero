@@ -261,7 +261,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     /**
-     * Autobalances while in Swervedrive manual control TODO redo description
+     * Sub-container of gyroscopic based balancing with manual adjustment factors for a swerve drivetrain
+     *
+     * @see Drive#autoBalance(ChassisSpeeds)
      */
     @Override
     public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds) {

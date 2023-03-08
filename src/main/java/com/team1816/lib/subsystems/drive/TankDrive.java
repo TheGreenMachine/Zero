@@ -353,7 +353,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     /**
-     * Autobalances while in Tankdrive manual control TODO redo description
+     * Sub-container of gyroscopic based balancing with manual adjustment factors for a swerve drivetrain
+     *
+     * @see Drive#autoBalance(ChassisSpeeds)
      */
     @Override
     public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds) {
