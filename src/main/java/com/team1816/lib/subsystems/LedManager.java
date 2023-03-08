@@ -27,6 +27,7 @@ public class LedManager extends Subsystem {
         factory.getConstant(NAME, "raveEnabled") > 0;
     private static final double RAVE_SPEED = factory.getConstant(NAME, "raveSpeed", 1.0);
     private static final int MAX = (int) factory.getConstant(NAME, "maxLevel", 255);
+    private static final int LED_STRIP_COUNT = (int) factory.getConstant(NAME, "ledStripCount", 0);
 
     /**
      * Components
@@ -38,12 +39,10 @@ public class LedManager extends Subsystem {
      */
     private boolean blinkLedOn = false;
     private boolean outputsChanged = false;
-    private boolean cameraLedChanged = false;
 
     private int ledR;
     private int ledG;
     private int ledB;
-    private boolean cameraLedOn;
 
     private int period; // ms
     private long lastWriteTime = System.currentTimeMillis();
@@ -76,22 +75,9 @@ public class LedManager extends Subsystem {
         ledG = 0;
         ledB = 0;
 
-        cameraLedOn = false;
     }
 
     /** Actions */
-
-    /**
-     * Sets the Camera led(s) to be on or off
-     *
-     * @param cameraOn boolean
-     */
-    public void setCameraLed(boolean cameraOn) {
-        if (cameraLedOn != cameraOn) {
-            cameraLedChanged = true;
-            cameraLedOn = cameraOn;
-        }
-    }
 
     /**
      * Sets led color
@@ -102,13 +88,12 @@ public class LedManager extends Subsystem {
      */
     private void setLedColor(int r, int g, int b) {
         if (ledR != r || ledG != g || ledB != b) {
-            ledR = r;
-            ledG = g;
-            ledB = b;
+            ledR = (int) (r / 255.0 * MAX);
+            ledG = (int) (g / 255.0 * MAX);
+            ledB = (int) (b / 255.0 * MAX);
             outputsChanged = true;
         }
     }
-
 
     /**
      * Indicates status
@@ -145,16 +130,8 @@ public class LedManager extends Subsystem {
         return period;
     }
 
-    private void writeToCameraLed(int r, int g, int b) { // not using camera leds this year :)
-        if (cameraLedOn) {
-            ledManager.setLEDs(0, 255, 0, 0, 0, 8);
-        } else {
-            ledManager.setLEDs(r, g, b, 0, 0, 8);
-        }
-    }
-
     private void writeToLed(int r, int g, int b) {
-        ledManager.setLEDs(r, g, b, 0, 0, 82); // 8 == number of camera leds
+        ledManager.setLEDs(r, g, b, 0, 0, LED_STRIP_COUNT + 8); // 8 == number of camera leds
     }
 
     /**
@@ -199,10 +176,6 @@ public class LedManager extends Subsystem {
                     break;
             }
         }
-        if (cameraLedChanged) {
-            cameraLedChanged = false;
-            writeToCameraLed(ledR, ledG, ledB);
-        }
     }
 
     /** Config and Tests */
@@ -233,10 +206,6 @@ public class LedManager extends Subsystem {
         controlState = LedControlState.STANDARD;
         setLedColor(MAX, 0, 0); // set red
         testDelay();
-        setCameraLed(true); // turn on camera
-        testDelay();
-        setCameraLed(false);
-        testDelay();
         setLedColor(0, MAX, 0); // set green
         testDelay();
         setLedColor(0, 0, MAX); // set blue
@@ -266,14 +235,14 @@ public class LedManager extends Subsystem {
      */
     public enum RobotStatus {
         ENABLED(0, MAX, 0), // green
-        DISABLED(MAX, MAX / 5, 0), // orange
+        DISABLED(MAX, MAX / 4, 0), // orange
         ERROR(MAX, 0, 0), // red
         AUTONOMOUS(0, MAX, MAX), // cyan
         ENDGAME(0, 0, MAX), // blue
-        SEEN_TARGET(MAX, 0, MAX), // magenta
-        ON_TARGET(MAX, 0, 20), // deep magenta
-        DRIVETRAIN_FLIPPED(MAX, MAX, 0), // yellow,
-        MANUAL_TURRET(MAX, MAX, MAX), // white
+        CUBE(MAX, 0, 150), // magenta
+        RAGE(MAX, 5, 5), // deep magenta
+        CONE(MAX, 50, 0), // yellow,
+        ON_TARGET(MAX, MAX, MAX), // white
         OFF(0, 0, 0); // off
 
         final int red;

@@ -147,7 +147,8 @@ subsystems:
             raveEnabled: 0
             raveSpeed: 0.05
             cameraLed: 1
-            maxLevel: 255
+            maxLevel: 150
+            ledStripCount: 30
     camera:
         implemented: false
         constants:
