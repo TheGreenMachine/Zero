@@ -567,7 +567,8 @@ public class Robot extends TimedRobot {
 
             // Stop any running autos
             autoModeManager.stopAuto();
-            ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
+            ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
+            ledManager.writeToHardware();
 
             if (autoModeManager.getSelectedAuto() == null) {
                 autoModeManager.reset();
@@ -629,7 +630,7 @@ public class Robot extends TimedRobot {
         try {
             double initTime = System.currentTimeMillis();
 
-            ledManager.blinkStatus(LedManager.RobotStatus.DRIVETRAIN_FLIPPED);
+            ledManager.indicateStatus(LedManager.RobotStatus.DRIVETRAIN_FLIPPED, LedManager.LedControlState.BLINK);
             // Warning - blocks thread - intended behavior?
             while (System.currentTimeMillis() - initTime <= 3000) {
                 ledManager.writeToHardware();
@@ -639,7 +640,7 @@ public class Robot extends TimedRobot {
             disabledLoop.start();
             drive.zeroSensors();
 
-            ledManager.blinkStatus(LedManager.RobotStatus.DISABLED);
+            ledManager.indicateStatus(LedManager.RobotStatus.DISABLED, LedManager.LedControlState.BLINK);
 
             if (subsystemManager.testSubsystems()) {
                 System.out.println("ALL SYSTEMS PASSED");
@@ -683,9 +684,8 @@ public class Robot extends TimedRobot {
             } else {
                 // non-camera LEDs will flash red if robot periodic updates fail
                 if (faulted) {
-                    ledManager.blinkStatus(LedManager.RobotStatus.ERROR);
-                } else {
-//                    ledManager.indicateDefaultStatus();
+                    ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.LedControlState.BLINK);
+                    ledManager.writeToHardware();
                 }
             }
 
@@ -702,9 +702,6 @@ public class Robot extends TimedRobot {
             if (drive.isDemoMode()) { // Demo-mode
                 drive.update();
             }
-
-
-            ledManager.writeToHardware();
 
         } catch (Throwable t) {
             faulted = true;

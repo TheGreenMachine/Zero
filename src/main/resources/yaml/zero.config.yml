@@ -144,7 +144,7 @@ subsystems:
         implemented: true
         candle: 23
         constants:
-            raveEnabled: 1
+            raveEnabled: 0
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255

@@ -307,13 +307,11 @@ public class RobotFactory {
                     );
             }
             if (ledManager != null) {
-                if (getConstant("resetFactoryDefaults") > 0) {
-                    ledManager.configFactoryDefault();
-                    ledManager.configStatusLedState(true);
-                    ledManager.configLOSBehavior(true);
-                    ledManager.configLEDType(CANdle.LEDStripType.BRG);
-                    ledManager.configBrightnessScalar(1);
-                }
+                ledManager.configFactoryDefault();
+                ledManager.configStatusLedState(true);
+                ledManager.configLOSBehavior(false);
+                ledManager.configLEDType(CANdle.LEDStripType.BRG);
+                ledManager.configBrightnessScalar(1);
                 return ledManager;
             }
             reportGhostWarning("LEDManager", subsystemName, "");

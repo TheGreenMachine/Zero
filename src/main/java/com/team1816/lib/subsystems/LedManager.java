@@ -109,19 +109,6 @@ public class LedManager extends Subsystem {
         }
     }
 
-    /**
-     * Sets LEDs to blink with a certain color
-     *
-     * @param r LED color red value (0-255)
-     * @param g LED color green value (0-255)
-     * @param b LED color blue value (0-255)
-     */
-    private void setLedColorBlink(int r, int g, int b) {
-        setLedColor(r, g, b);
-        controlState = LedControlState.BLINK;
-        this.period = 1000;
-        outputsChanged = true;
-    }
 
     /**
      * Indicates status
@@ -130,26 +117,23 @@ public class LedManager extends Subsystem {
      * @see RobotStatus
      */
     public void indicateStatus(RobotStatus status) {
-        controlState = LedControlState.STANDARD;
+        setLedColor(status.getRed(), status.getGreen(), status.getBlue());
+    }
+
+    public void indicateStatus(RobotStatus status, LedControlState controlState) {
+        setLedControlState(controlState);
         setLedColor(status.getRed(), status.getGreen(), status.getBlue());
     }
 
     public void indicateDefaultStatus() {
-        if (RAVE_ENABLED && defaultStatus != RobotStatus.DISABLED) {
-            controlState = LedControlState.RAVE;
-            setLedColor(0, 0, 0);
-        } else {
-            indicateStatus(defaultStatus);
-        }
-    }
-
-    public void blinkStatus(RobotStatus status) {
-        setLedColorBlink(status.getRed(), status.getGreen(), status.getBlue());
+        indicateStatus(defaultStatus, LedControlState.STANDARD);
     }
 
     public void setLedControlState(LedControlState ledControlState){
-        this.controlState = ledControlState;
-        outputsChanged = true;
+        if(ledControlState != controlState){
+            this.controlState = ledControlState;
+            outputsChanged = true;
+        }
     }
 
     public void setDefaultStatus(RobotStatus defaultStatus) {
@@ -161,7 +145,7 @@ public class LedManager extends Subsystem {
         return period;
     }
 
-    private void writeToCameraLed(int r, int g, int b) {
+    private void writeToCameraLed(int r, int g, int b) { // not using camera leds this year :)
         if (cameraLedOn) {
             ledManager.setLEDs(0, 255, 0, 0, 0, 8);
         } else {
@@ -170,7 +154,7 @@ public class LedManager extends Subsystem {
     }
 
     private void writeToLed(int r, int g, int b) {
-        ledManager.setLEDs(r, g, b, 0, 8, 74 - 8); // 8 == number of camera leds
+        ledManager.setLEDs(r, g, b, 0, 0, 82); // 8 == number of camera leds
     }
 
     /**
@@ -187,12 +171,14 @@ public class LedManager extends Subsystem {
             outputsChanged = false;
             switch (controlState) {
                 case RAVE:
-                    var color = Color.getHSBColor(raveHue, 1.0f, MAX / 255.0f);
-                    if (!color.equals(lastRaveColor)) {
-                        outputsChanged = true;
-                        writeToLed(color.getRed(), color.getGreen(), color.getBlue());
+                    if(RAVE_ENABLED){
+                        var color = Color.getHSBColor(raveHue, 1.0f, MAX / 255.0f);
+                        if (!color.equals(lastRaveColor)) {
+                            outputsChanged = true;
+                            writeToLed(color.getRed(), color.getGreen(), color.getBlue());
+                        }
+                        raveHue += RAVE_SPEED;
                     }
-                    raveHue += RAVE_SPEED;
                     break;
                 case BLINK:
                     if (System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
