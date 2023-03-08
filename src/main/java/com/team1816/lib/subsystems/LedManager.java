@@ -3,6 +3,7 @@ package com.team1816.lib.subsystems;
 import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.ledManager.ILEDManager;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 
 import javax.inject.Singleton;
 import java.util.Map;
@@ -61,7 +63,7 @@ public class LedManager extends Subsystem {
     private ControlState controlState = ControlState.SOLID;
     private RobotStatus defaultStatus = RobotStatus.DISABLED;
     private RobotStatus controlStatus = RobotStatus.DISABLED;
-    private float raveHue;
+    private int raveHue;
     private Color lastRaveColor;
 
     SimpleWidget colorWidget;
@@ -92,7 +94,7 @@ public class LedManager extends Subsystem {
         ledB = 0;
 
         if(RobotBase.isSimulation()){
-            colorWidget = Shuffleboard.getTab("Simulation").add("LEDColor", false);
+            colorWidget = Constants.kSimWindow.add("LEDColor", false);
             colorWidget.withPosition(0, 4);
             colorWidget.withProperties(Map.of("colorWhenFalse", "white"));
             colorWidgetEntry = colorWidget.getEntry();

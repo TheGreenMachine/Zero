@@ -667,7 +667,7 @@ public class Robot extends TimedRobot {
             } else {
                 // non-camera LEDs will flash red if robot periodic updates fail
                 if (faulted) {
-                    if(ledManager.getCurrentStatus() != LedManager.RobotStatus.ERROR){
+                    if(ledManager.getCurrentControlStatus() != LedManager.RobotStatus.ERROR){
                         ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.ControlState.BLINK);
                     }
                     ledManager.writeToHardware();
