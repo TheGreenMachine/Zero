@@ -505,8 +505,20 @@ public class RobotFactory {
             return new GhostProximitySensor();
         }
         System.out.println("Creating Proximity Sensor: " + name + " at port: " + id);
-        return new ProximitySensor(name, config.infrastructure.proximitySensors.get(name));
+
+        return switch (name.substring(0, 2)) {
+            case ("FL") ->
+                new ProximitySensor(name, config.infrastructure.proximitySensors.get(name), ProximitySensor.PROXY_ORIENTATION.FRONT_LEFT);
+            case ("FR") ->
+                new ProximitySensor(name, config.infrastructure.proximitySensors.get(name), ProximitySensor.PROXY_ORIENTATION.FRONT_RIGHT);
+            case ("BL") ->
+                new ProximitySensor(name, config.infrastructure.proximitySensors.get(name), ProximitySensor.PROXY_ORIENTATION.BACK_LEFT);
+            case ("BR") ->
+                new ProximitySensor(name, config.infrastructure.proximitySensors.get(name), ProximitySensor.PROXY_ORIENTATION.BACK_RIGHT);
+            default -> new ProximitySensor(name, config.infrastructure.proximitySensors.get(name));
+        };
     }
+
 
     public int getPcmId() {
         if (config.infrastructure == null && config.infrastructure.pcmId == null) return -1;

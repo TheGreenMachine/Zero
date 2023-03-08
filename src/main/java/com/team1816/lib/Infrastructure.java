@@ -50,9 +50,9 @@ public class Infrastructure {
 
         var frontLeft = factory.getProximitySensor("FLProximitySensor");
         var frontRight = factory.getProximitySensor("FRProximitySensor");
-        var rearLeft = factory.getProximitySensor("RLProximitySensor");
-        var rearRight = factory.getProximitySensor("RRProximitySensor");
-        proximitySensors = List.of(frontLeft, frontRight, rearLeft, rearRight);
+        var backLeft = factory.getProximitySensor("BLProximitySensor");
+        var backRight = factory.getProximitySensor("BRProximitySensor");
+        proximitySensors = List.of(frontLeft, frontRight, backLeft, backRight);
         pitchOffset = 0;
         rollOffset = 0;
     }

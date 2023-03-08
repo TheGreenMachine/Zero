@@ -29,7 +29,7 @@ public class ProximitySensor implements IProximitySensor {
      * @param port the analog port that the sensor is wired to
      * @param orientation the orientation of the proximity sensor (Ex. Front left)
      */
-    public ProximitySensor(String name, int port,PROXY_ORIENTATION orientation) {
+    public ProximitySensor(String name, int port, PROXY_ORIENTATION orientation) {
         NAME = name;
         sensor = new AnalogInput(port);
         sensorOrientation = orientation;
@@ -68,10 +68,22 @@ public class ProximitySensor implements IProximitySensor {
     }
 
     public enum PROXY_ORIENTATION{
-        FRONT_LEFT,
-        FRONT_RIGHT,
-        BACK_LEFT,
-        BACK_RIGHT
+        FRONT_LEFT(45),
+        FRONT_RIGHT(135),
+        BACK_LEFT(225),
+        BACK_RIGHT(315);
+
+        public final int proxyOrientOffset;
+
+        PROXY_ORIENTATION(int proxyOrientOffset) {this.proxyOrientOffset = proxyOrientOffset;}
+
+        public int getProxyOrientOffset(){
+            return proxyOrientOffset;
+        }
+
+
+
+
     }
 
 }
