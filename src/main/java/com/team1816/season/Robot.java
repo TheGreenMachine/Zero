@@ -404,10 +404,10 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("outtake"),
                         (pressed) -> {
+                            if (!operatorLock) {
+                                collector.outtakeGamePiece(pressed);
+                            }
                             if(pressed){
-                                if (!operatorLock) {
-                                    collector.outtakeGamePiece(pressed);
-                                }
                                 ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET);
                             } else {
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
