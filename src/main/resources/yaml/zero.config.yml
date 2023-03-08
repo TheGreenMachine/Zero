@@ -127,10 +127,9 @@ subsystems:
             maxExtensionPosition: 295000
     collector:
         implemented: true
-        solenoids:
-            intakeSolenoid: 7
         sparkmaxes:
             intakeMotor: 14
+            hingeMotor: -1
         pidConfig:
             slot0:
                 kF: 0.0000899

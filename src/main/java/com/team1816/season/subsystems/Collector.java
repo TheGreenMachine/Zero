@@ -24,8 +24,9 @@ public class Collector extends Subsystem {
     /**
      * Components
      */
-    private final ISolenoid intakeSolenoid;
     private final IGreenMotor intakeMotor;
+
+    private final IGreenMotor hingeMotor;
 
     /**
      * Properties
@@ -53,8 +54,8 @@ public class Collector extends Subsystem {
     @Inject
     public Collector(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
-        intakeSolenoid = factory.getSolenoid(NAME, "intakeSolenoid");
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
+        hingeMotor = factory.getMotor(NAME, "hingeMotor");
 
         cubeIntakePower = factory.getConstant(NAME, "cubeIntakePower", 0.10); // TODO tune these
         cubeOuttakePower = factory.getConstant(NAME, "cubeOuttakePower", -0.25); // TODO tune these
@@ -109,8 +110,6 @@ public class Collector extends Subsystem {
     @Override
     public void readFromHardware() {
         rollerVelocity = intakeMotor.getSelectedSensorVelocity(0);
-        solenoidOutput = intakeSolenoid.get();
-
         if (robotState.actualCollectorState != desiredState) {
             robotState.actualCollectorState = desiredState;
         }
@@ -125,28 +124,24 @@ public class Collector extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
+            hingeMotor.set(ControlMode.Velocity, 0);
             switch (desiredState) {
                 case STOP -> {
-                    intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.Velocity, 0);
                 }
                 case INTAKE_CONE -> {
                     currentlyHeldObject = GAME_ELEMENT.CONE;
-                    intakeSolenoid.set(true);
                     intakeMotor.set(ControlMode.Velocity, coneIntakeVelocity);
                 }
                 case INTAKE_CUBE -> {
                     currentlyHeldObject = GAME_ELEMENT.CUBE;
-                    intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.PercentOutput, cubeIntakePower);
                 }
                 case OUTTAKE_CONE -> {
-                    intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.Velocity, coneOuttakeVelocity);
 //                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                 }
                 case OUTTAKE_CUBE -> {
-                    intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.PercentOutput, cubeOuttakePower);
 //                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                 }
