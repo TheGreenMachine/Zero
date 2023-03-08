@@ -130,8 +130,8 @@ public class Robot extends TimedRobot {
         autoModeManager = Injector.get(AutoModeManager.class);
 
         prevAngleState = Elevator.ANGLE_STATE.STOW;
-        if(RobotBase.isReal()){
-            zeroingButton = new DigitalInput((int)factory.getConstant("zeroingButton", -1));
+        if (RobotBase.isReal()) {
+            zeroingButton = new DigitalInput((int) factory.getConstant("zeroingButton", -1));
         }
     }
 
@@ -694,17 +694,17 @@ public class Robot extends TimedRobot {
                 }
             }
 
-            if(RobotBase.isReal()){
+            if (RobotBase.isReal()) {
                 // logic for zeroing elevator
-                if(lastButton != zeroingButton.get() && lastButton){ // will only be true when changing from false to true
-                    if(zeroing == null) {
+                if (lastButton != zeroingButton.get() && lastButton) { // will only be true when changing from false to true
+                    if (zeroing == null) {
                         faulted = false;
                         zeroing = true;
                         elevator.zeroSensors();
                         ledManager.indicateStatus(LedManager.RobotStatus.ZEROING_ELEVATOR, LedManager.LedControlState.BLINK);
                         ledManager.writeToHardware();
                         infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
-                    } else if(zeroing){
+                    } else if (zeroing) {
                         zeroing = false;
                         elevator.setBraking(true);
                         ledManager.indicateStatus(LedManager.RobotStatus.DISABLED, LedManager.LedControlState.SOLID);
@@ -719,7 +719,7 @@ public class Robot extends TimedRobot {
                 }
                 lastButton = zeroingButton.get();
 
-                if(!faulted){
+                if (!faulted) {
                     ledManager.writeToHardware();
                 }
             }

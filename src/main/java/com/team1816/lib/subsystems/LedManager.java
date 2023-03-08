@@ -117,8 +117,8 @@ public class LedManager extends Subsystem {
         indicateStatus(defaultStatus, LedControlState.SOLID);
     }
 
-    public void setLedControlState(LedControlState ledControlState){
-        if(ledControlState != controlState){
+    public void setLedControlState(LedControlState ledControlState) {
+        if (ledControlState != controlState) {
             this.controlState = ledControlState;
             outputsChanged = true;
         }
@@ -146,7 +146,7 @@ public class LedManager extends Subsystem {
 
     @Override
     public void writeToHardware() {
-        if(controlState == LedControlState.BLINK && System.currentTimeMillis() >= lastWriteTime + (period / 2)){
+        if (controlState == LedControlState.BLINK && System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
             outputsChanged = true;
         }
         if (outputsChanged) {
@@ -154,7 +154,7 @@ public class LedManager extends Subsystem {
             outputsChanged = false;
             switch (controlState) {
                 case RAVE:
-                    if(RAVE_ENABLED){
+                    if (RAVE_ENABLED) {
                         var color = Color.getHSBColor(raveHue, 1.0f, MAX / 255.0f);
                         if (!color.equals(lastRaveColor)) {
                             outputsChanged = true;
@@ -259,6 +259,12 @@ public class LedManager extends Subsystem {
             this.blue = b;
         }
 
+        RobotStatus(Color color) {
+            this.red = color.getRed();
+            this.green = color.getGreen();
+            this.blue = color.getBlue();
+        }
+
         public int getRed() {
             return red;
         }
@@ -271,4 +277,32 @@ public class LedManager extends Subsystem {
             return blue;
         }
     }
+
+    /**
+     * Base class for Colors
+     */
+    public static class LEDColor {
+        /**
+         * Primary
+         */
+        public static Color STRONTIUM = new Color(1 * MAX, 0 * MAX, 0 * MAX); // red
+        public static Color BORON = new Color(0 * MAX, 1 * MAX, 0 * MAX); // green
+        public static Color INDIUM = new Color(0 * MAX, 0 * MAX, 1 * MAX); // blue
+
+        /**
+         * Secondary
+         */
+        public static Color IRON = new Color(1 * MAX, 1 * MAX, 0 * MAX); // yellow
+        public static Color COPPER = new Color(0 * MAX, 1 * MAX, 1 * MAX); // cyan
+        public static Color POTASSIUM = new Color(1 * MAX, 0 * MAX, 1 * MAX); // magenta
+        public static Color CALCIUM = new Color(1 * MAX, (int) (1d / 5 * MAX), 0 * MAX); // orange
+
+        /**
+         * Tertiary
+         */
+        public static Color ARSENIC = new Color((int) (155d / 255 * MAX), (int) (220d / 255 * MAX), (int) (225d / 255 * MAX)); // gray
+        public static Color MAGNESIUM = new Color(1 * MAX, 1 * MAX, 1 * MAX); // white
+
+    }
+
 }

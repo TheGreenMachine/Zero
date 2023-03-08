@@ -31,6 +31,7 @@ public class DoublePlaceConeFeederMode extends AutoMode {
             )
         );
     }
+
     public DoublePlaceConeFeederMode(Color color) {
         super(
             List.of(

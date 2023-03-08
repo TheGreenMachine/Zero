@@ -9,9 +9,10 @@ import java.util.List;
 
 public class NodeToExitCommunityPath extends AutoPath {
 
-    public NodeToExitCommunityPath(){}
+    public NodeToExitCommunityPath() {
+    }
 
-    public NodeToExitCommunityPath(Color color){
+    public NodeToExitCommunityPath(Color color) {
         super(color);
     }
 

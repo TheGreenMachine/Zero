@@ -14,12 +14,14 @@ import java.util.List;
 
 public class ExitCommunityPlaceWallMode extends AutoMode {
 
-    public ExitCommunityPlaceWallMode(){
+    public ExitCommunityPlaceWallMode() {
         super(List.of(new TrajectoryAction(new NodeToExitCommunityPath())));
     }
-    public ExitCommunityPlaceWallMode(Color color){
+
+    public ExitCommunityPlaceWallMode(Color color) {
         super(List.of(new TrajectoryAction(new NodeToExitCommunityPath(color))));
     }
+
     @Override
     protected void routine() throws AutoModeEndedException {
         System.out.println("Running Place Cone Exit Community Mode");

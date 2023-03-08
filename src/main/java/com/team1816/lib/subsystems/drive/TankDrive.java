@@ -135,11 +135,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             if (isMidSlowMode) {
                 leftMain.set(
                     ControlMode.PercentOutput,
-                    0.25*leftPowerDemand
+                    0.25 * leftPowerDemand
                 );
                 rightMain.set(
                     ControlMode.PercentOutput,
-                    0.25*rightPowerDemand
+                    0.25 * rightPowerDemand
                 );
             } else {
                 leftMain.set(
