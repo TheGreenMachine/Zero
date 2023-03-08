@@ -46,13 +46,13 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public void update() {
-        int tempCompare = ((int)robotState.fieldToVehicle.getRotation().getDegrees()) + infrastructure.getHighestProximitySensor().sensorOrientation.proxyOrientOffset;
+        int sensorCompare = ((int)robotState.fieldToVehicle.getRotation().getDegrees()) + infrastructure.getHighestProximitySensor().sensorOrientation.proxyOrientOffset;
 
-        int closeDiff = (int)Math.abs(sideHeadings[0] - tempCompare);
+        int closeDiff = (int)Math.abs(sideHeadings[0] - sensorCompare);
         int closeIndex = 0;
         for(int i = 1; i<4; i++){
-            if(Math.abs(sideHeadings[i] - tempCompare) > closeDiff){
-                closeDiff = (int)Math.abs(sideHeadings[i] - tempCompare);
+            if(Math.abs(sideHeadings[i] - sensorCompare) > closeDiff){
+                closeDiff = (int)Math.abs(sideHeadings[i] - sensorCompare);
                 closeIndex = i;
             }
         }
