@@ -4,10 +4,22 @@ import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.ledManager.ILEDManager;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Singleton;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Subsystem container for an LEDManager
@@ -43,13 +55,17 @@ public class LedManager extends Subsystem {
     private int ledG;
     private int ledB;
 
-    private int period = 1000; // ms
+    private final int period = 1000; // ms
     private long lastWriteTime = System.currentTimeMillis();
+    private edu.wpi.first.wpilibj.util.Color lastColor = edu.wpi.first.wpilibj.util.Color.kWhite;
     private ControlState controlState = ControlState.SOLID;
     private RobotStatus defaultStatus = RobotStatus.DISABLED;
     private RobotStatus controlStatus = RobotStatus.DISABLED;
     private float raveHue;
     private Color lastRaveColor;
+
+    SimpleWidget colorWidget;
+    GenericEntry colorWidgetEntry;
 
     /**
      * Base enum for LED states
@@ -75,6 +91,12 @@ public class LedManager extends Subsystem {
         ledG = 0;
         ledB = 0;
 
+        if(RobotBase.isSimulation()){
+            colorWidget = Shuffleboard.getTab("Simulation").add("LEDColor", false);
+            colorWidget.withPosition(0, 4);
+            colorWidget.withProperties(Map.of("colorWhenFalse", "white"));
+            colorWidgetEntry = colorWidget.getEntry();
+        }
     }
 
     /** Actions */
@@ -144,6 +166,14 @@ public class LedManager extends Subsystem {
      */
     @Override
     public void readFromHardware() {
+        if(RobotBase.isSimulation()){
+           var color = ledManager.getLastColor();
+            if (!Objects.equals(color.toHexString(), lastColor.toHexString())) {
+                // Choose "true" color based on color of wheel
+                colorWidget.withProperties(Map.of("colorWhenTrue", color.toHexString()));
+                colorWidgetEntry.setBoolean(true);
+            }
+        }
     }
 
     @Override
@@ -152,7 +182,7 @@ public class LedManager extends Subsystem {
             outputsChanged = true;
         }
         if (outputsChanged) {
-            System.out.println(controlStatus);
+//            System.out.println(controlState);
             outputsChanged = false;
             switch (controlState) {
                 case RAVE:

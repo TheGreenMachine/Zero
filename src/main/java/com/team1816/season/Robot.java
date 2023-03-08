@@ -256,6 +256,7 @@ public class Robot extends TimedRobot {
             // zeroing ypr - (-90) b/c our pigeon is mounted with the "y" axis facing forward
             infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
             subsystemManager.zeroSensors();
+            faulted = true; // elevator not zeroed on bootup - letting ppl know
 
             /** Register ControlBoard */
             controlBoard = Injector.get(IControlBoard.class);
@@ -561,11 +562,6 @@ public class Robot extends TimedRobot {
             robotState.resetAllStates();
             drive.zeroSensors();
 
-            if (RobotBase.isReal()) {
-                lastButton = zeroingButton.get();
-                faulted = true;
-            }
-
             disabledLoop.start();
         } catch (Throwable t) {
             faulted = true;
@@ -671,7 +667,9 @@ public class Robot extends TimedRobot {
             } else {
                 // non-camera LEDs will flash red if robot periodic updates fail
                 if (faulted) {
-                    ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.ControlState.BLINK);
+                    if(ledManager.getCurrentStatus() != LedManager.RobotStatus.ERROR){
+                        ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.ControlState.BLINK);
+                    }
                     ledManager.writeToHardware();
                 }
             }

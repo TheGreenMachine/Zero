@@ -310,7 +310,7 @@ public class RobotFactory {
                 ledManager.configFactoryDefault();
                 ledManager.configStatusLedState(true);
                 ledManager.configLOSBehavior(false);
-                ledManager.configLEDType(CANdle.LEDStripType.BRG);
+                ledManager.configLEDType(CANdle.LEDStripType.BRG); // type config of the strip we use rn
                 ledManager.configBrightnessScalar(1);
                 return ledManager;
             }
