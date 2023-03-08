@@ -746,7 +746,9 @@ public class Robot extends TimedRobot {
                 0,
                 robotState.fieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
+            ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.LedControlState.BLINK);
         } else {
+            ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.LedControlState.SOLID);
             drive.setTeleopInputs(
                 -controlBoard.getAsDouble("throttle"),
                 -controlBoard.getAsDouble("strafe"),

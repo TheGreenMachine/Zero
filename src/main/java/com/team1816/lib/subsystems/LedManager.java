@@ -46,7 +46,7 @@ public class LedManager extends Subsystem {
 
     private int period; // ms
     private long lastWriteTime = System.currentTimeMillis();
-    private LedControlState controlState = LedControlState.STANDARD;
+    private LedControlState controlState = LedControlState.SOLID;
     private RobotStatus defaultStatus = RobotStatus.DISABLED;
     private float raveHue;
     private Color lastRaveColor;
@@ -57,7 +57,7 @@ public class LedManager extends Subsystem {
     public enum LedControlState {
         RAVE,
         BLINK,
-        STANDARD,
+        SOLID,
     }
 
     /**
@@ -111,7 +111,7 @@ public class LedManager extends Subsystem {
     }
 
     public void indicateDefaultStatus() {
-        indicateStatus(defaultStatus, LedControlState.STANDARD);
+        indicateStatus(defaultStatus, LedControlState.SOLID);
     }
 
     public void setLedControlState(LedControlState ledControlState){
@@ -171,7 +171,7 @@ public class LedManager extends Subsystem {
                         lastWriteTime = System.currentTimeMillis();
                     }
                     break;
-                case STANDARD:
+                case SOLID:
                     writeToLed(ledR, ledG, ledB);
                     break;
             }
@@ -203,7 +203,7 @@ public class LedManager extends Subsystem {
     public boolean testSubsystem() {
         // no checking performed
         System.out.println("Checking LED systems");
-        controlState = LedControlState.STANDARD;
+        controlState = LedControlState.SOLID;
         setLedColor(MAX, 0, 0); // set red
         testDelay();
         setLedColor(0, MAX, 0); // set green
@@ -243,6 +243,7 @@ public class LedManager extends Subsystem {
         RAGE(MAX, 5, 5), // deep magenta
         CONE(MAX, 50, 0), // yellow,
         ON_TARGET(MAX, MAX, MAX), // white
+        BALANCE(50, 50, MAX), // light blue
         OFF(0, 0, 0); // off
 
         final int red;
