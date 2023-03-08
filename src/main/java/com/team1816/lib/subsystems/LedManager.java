@@ -46,7 +46,7 @@ public class LedManager extends Subsystem {
 
     private int period = 1000; // ms
     private long lastWriteTime = System.currentTimeMillis();
-    private LedControlState controlState = LedControlState.SOLID;
+    private ControlState controlState = ControlState.SOLID;
     private RobotStatus defaultStatus = RobotStatus.DISABLED;
     private RobotStatus controlStatus = RobotStatus.DISABLED;
     private float raveHue;
@@ -55,7 +55,7 @@ public class LedManager extends Subsystem {
     /**
      * Base enum for LED states
      */
-    public enum LedControlState {
+    public enum ControlState {
         RAVE,
         BLINK,
         SOLID,
@@ -107,19 +107,18 @@ public class LedManager extends Subsystem {
         controlStatus = status;
     }
 
-    public void indicateStatus(RobotStatus status, LedControlState controlState) {
+    public void indicateStatus(RobotStatus status, ControlState controlState) {
         setLedControlState(controlState);
-        setLedColor(status.getRed(), status.getGreen(), status.getBlue());
-        controlStatus = status;
+        indicateStatus(status);
     }
 
     public void indicateDefaultStatus() {
-        indicateStatus(defaultStatus, LedControlState.SOLID);
+        indicateStatus(defaultStatus, ControlState.SOLID);
     }
 
-    public void setLedControlState(LedControlState ledControlState) {
-        if (ledControlState != controlState) {
-            this.controlState = ledControlState;
+    public void setLedControlState(ControlState controlState){
+        if(controlState != this.controlState){
+            this.controlState = controlState;
             outputsChanged = true;
         }
     }
@@ -131,6 +130,10 @@ public class LedManager extends Subsystem {
 
     public double getPeriod() {
         return period;
+    }
+
+    public RobotStatus getCurrentControlStatus(){
+        return controlStatus;
     }
 
     private void writeToLed(int r, int g, int b) {
@@ -146,7 +149,7 @@ public class LedManager extends Subsystem {
 
     @Override
     public void writeToHardware() {
-        if (controlState == LedControlState.BLINK && System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
+        if (controlState == ControlState.BLINK && System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
             outputsChanged = true;
         }
         if (outputsChanged) {
@@ -205,7 +208,7 @@ public class LedManager extends Subsystem {
     public boolean testSubsystem() {
         // no checking performed
         System.out.println("Checking LED systems");
-        controlState = LedControlState.SOLID;
+        controlState = ControlState.SOLID;
         setLedColor(MAX, 0, 0); // set red
         testDelay();
         setLedColor(0, MAX, 0); // set green
@@ -304,5 +307,4 @@ public class LedManager extends Subsystem {
         public static Color MAGNESIUM = new Color(1 * MAX, 1 * MAX, 1 * MAX); // white
 
     }
-
 }
