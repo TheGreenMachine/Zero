@@ -348,15 +348,10 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("intakeCone"),
                         (pressed) -> {
                             if (pressed) {
-//                                prevAngleState = elevator.getDesiredAngleState();
                                 collector.setDesiredState(Collector.STATE.INTAKE_CONE);
-//                                if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
-//                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
-//                                }
                                 ledManager.indicateStatus(LedManager.RobotStatus.CONE);
                             } else {
                                 collector.setDesiredState(Collector.STATE.STOP);
-//                                elevator.setDesiredState(prevAngleState, Elevator.EXTENSION_STATE.MIN);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
                         }
@@ -364,16 +359,11 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("intakeCube"),
                         (pressed) -> {
-//                            prevAngleState = elevator.getDesiredAngleState();
                             if (pressed) {
                                 collector.setDesiredState(Collector.STATE.INTAKE_CUBE);
-//                                if (elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
-//                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
-//                                }
                                 ledManager.indicateStatus(LedManager.RobotStatus.CUBE);
                             } else {
                                 collector.setDesiredState(Collector.STATE.STOP);
-//                                elevator.setDesiredState(prevAngleState, Elevator.EXTENSION_STATE.MIN);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
                         }
@@ -414,18 +404,6 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-//                    createAction(
-//                        () -> controlBoard.getAsBool("bobDown"),
-//                        () -> {
-//                            if (!operatorLock) {
-//                                if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE) {
-//                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
-//                                } else if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP) {
-//                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
-//                                }
-//                            }
-//                        }
-//                    ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("bobDown"),
                         (pressed) -> {
