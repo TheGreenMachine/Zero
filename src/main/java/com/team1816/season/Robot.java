@@ -165,7 +165,10 @@ public class Robot extends TimedRobot {
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            subsystemManager.setSubsystems(drive, ledManager, camera);
+            // Remember to register our elevator and collector subsystems below!! The subsystem manager deals with calling
+            // read/writetohardware on a loop, but it can only call read/write if it recognizes said subsystem. To recognize
+            // your subsystem, just add it alongside the drive, ledManager, and camera parameters :)
+            subsystemManager.setSubsystems(drive, ledManager, camera, elevator, collector);
 
             /** Register BadLogs */
             if (Constants.kIsBadlogEnabled) {
@@ -208,11 +211,11 @@ public class Robot extends TimedRobot {
                     "xaxis",
                     "hide"
                 );
-                BadLog.createTopic(
-                    "Vision/Distance",
-                    "inches",
-                    robotState::getDistanceToGoal
-                );
+//                BadLog.createTopic(
+//                    "Vision/Distance",
+//                    "inches",
+//                    robotState::getDistanceToGoal
+//                );
                 BadLog.createValue("Drivetrain PID", drive.pidToString());
                 DrivetrainLogger.init(drive);
                 BadLog.createTopic(
@@ -220,7 +223,6 @@ public class Robot extends TimedRobot {
                     "Amps",
                     infrastructure.getPd()::getTotalCurrent
                 );
-
                 BadLog.createTopic(
                     "Pigeon/Yaw",
                     "degrees",
@@ -238,9 +240,17 @@ public class Robot extends TimedRobot {
                 );
                 logger.finishInitialization();
             }
+
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
+            // zeroing ypr - (-90) b/c our pigeon is mounted with the "y" axis facing forward
+            infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
             subsystemManager.zeroSensors();
+
+            /** Register ControlBoard */
+            controlBoard = Injector.get(IControlBoard.class);
+            DriverStation.silenceJoystickConnectionWarning(true);
+
             actionManager =
                 new ActionManager(
                     // Driver Gamepad
@@ -558,6 +568,7 @@ public class Robot extends TimedRobot {
             // Stop any running autos
             autoModeManager.stopAuto();
             ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
+            ledManager.writeToHardware();
 
             if (autoModeManager.getSelectedAuto() == null) {
                 autoModeManager.reset();
@@ -619,7 +630,7 @@ public class Robot extends TimedRobot {
         try {
             double initTime = System.currentTimeMillis();
 
-            ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
+            ledManager.indicateStatus(LedManager.RobotStatus.DRIVETRAIN_FLIPPED, LedManager.LedControlState.BLINK);
             // Warning - blocks thread - intended behavior?
             while (System.currentTimeMillis() - initTime <= 3000) {
                 ledManager.writeToHardware();
@@ -629,7 +640,7 @@ public class Robot extends TimedRobot {
             disabledLoop.start();
             drive.zeroSensors();
 
-            ledManager.indicateStatus(LedManager.RobotStatus.DISABLED);
+            ledManager.indicateStatus(LedManager.RobotStatus.DISABLED, LedManager.LedControlState.BLINK);
 
             if (subsystemManager.testSubsystems()) {
                 System.out.println("ALL SYSTEMS PASSED");
@@ -653,7 +664,7 @@ public class Robot extends TimedRobot {
             subsystemManager.outputToSmartDashboard(); // update shuffleboard for subsystem values
             robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
-            dt = getLastEnabledLoop();
+            Robot.dt = getLastEnabledLoop();
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());
@@ -667,16 +678,14 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic() {
         loopStart = Timer.getFPGATimestamp();
         try {
-            ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
             if (RobotController.getUserButton()) {
                 drive.zeroSensors(Constants.kDefaultZeroingPose);
-                ledManager.indicateStatus(LedManager.RobotStatus.DISABLED);
+                ledManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
             } else {
-                // non-candle LEDs will  flash red if robot periodic updates fail
+                // non-camera LEDs will flash red if robot periodic updates fail
                 if (faulted) {
-                    ledManager.indicateStatus(LedManager.RobotStatus.ERROR);
-                } else {
-                    ledManager.indicateStatus(LedManager.RobotStatus.DISABLED);
+                    ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.LedControlState.BLINK);
+                    ledManager.writeToHardware();
                 }
             }
 
@@ -693,6 +702,7 @@ public class Robot extends TimedRobot {
             if (drive.isDemoMode()) { // Demo-mode
                 drive.update();
             }
+
         } catch (Throwable t) {
             faulted = true;
             throw t;

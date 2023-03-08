@@ -297,22 +297,21 @@ public class RobotFactory {
         var subsystem = getSubsystem(subsystemName);
         ILEDManager ledManager = null;
         if (subsystem.implemented) {
-             if (isHardwareValid(subsystem.candle)) {
+            if (isHardwareValid(subsystem.canifier)) {
+                ledManager = new CanifierImpl(subsystem.canifier);
+            } else if (isHardwareValid(subsystem.candle)) {
                 ledManager =
                     new CANdleImpl(
                         subsystem.candle,
                         config.infrastructure.canivoreBusName
                     );
-            } else if (isHardwareValid(subsystem.canifier)) {
-                ledManager = new CanifierImpl(subsystem.canifier);
             }
             if (ledManager != null) {
                 ledManager.configFactoryDefault();
                 ledManager.configStatusLedState(true);
-                ledManager.configLOSBehavior(true);
+                ledManager.configLOSBehavior(false);
                 ledManager.configLEDType(CANdle.LEDStripType.BRG);
-                ledManager.configV5Enabled(false, 0);
-                ledManager.configBrightnessScalar(0.5);
+                ledManager.configBrightnessScalar(1);
                 return ledManager;
             }
             reportGhostWarning("LEDManager", subsystemName, "");
@@ -536,7 +535,7 @@ public class RobotFactory {
         );
     }
 
-    public enum PIDConfig {
+    private enum PIDConfig {
         Azimuth,
         Drive,
         Generic,
