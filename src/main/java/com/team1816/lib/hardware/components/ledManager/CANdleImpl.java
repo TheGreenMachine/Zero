@@ -3,6 +3,7 @@ package com.team1816.lib.hardware.components.ledManager;
 import com.ctre.phoenix.CANifierStatusFrame;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.led.CANdle;
+import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * A class that interfaces with the CANdle LedManager
@@ -11,6 +12,8 @@ import com.ctre.phoenix.led.CANdle;
  * @see ILEDManager
  */
 public class CANdleImpl extends CANdle implements ILEDManager {
+
+    private Color lastColor;
 
     /**
      * Instantiates a CANdle based on CAN-bus id and CAN-bus name
@@ -39,5 +42,16 @@ public class CANdleImpl extends CANdle implements ILEDManager {
         int timeoutMs
     ) {
         return null;
+    }
+
+    @Override
+    public Color getLastColor() {
+        return lastColor;
+    }
+
+    @Override
+    public ErrorCode setLEDs(int r, int g, int b, int w, int startIdx, int count) {
+        lastColor = new Color(r, g, b);
+        return super.setLEDs(r, g, b, w, startIdx, count);
     }
 }

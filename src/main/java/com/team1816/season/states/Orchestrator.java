@@ -36,9 +36,7 @@ public class Orchestrator {
      */
     private static Drive drive;
     private static LedManager ledManager;
-
     private static Collector collector;
-
     private static Elevator elevator;
 
 

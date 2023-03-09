@@ -39,7 +39,7 @@ public class Collector extends Subsystem {
      * States
      */
     private STATE desiredState = STATE.STOP;
-    private GAME_ELEMENT currentlyHeldObject = GAME_ELEMENT.NOTHING;
+    private GAME_ELEMENT currentlyHeldObject = GAME_ELEMENT.NOTHING;    //remember, game_element and state enums
     private double rollerVelocity = 0;
     private boolean solenoidOutput = false;
     private boolean outputsChanged = false;

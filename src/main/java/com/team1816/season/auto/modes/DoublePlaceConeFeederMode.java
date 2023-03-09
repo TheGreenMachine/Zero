@@ -31,6 +31,7 @@ public class DoublePlaceConeFeederMode extends AutoMode {
             )
         );
     }
+
     public DoublePlaceConeFeederMode(Color color) {
         super(
             List.of(
@@ -47,6 +48,7 @@ public class DoublePlaceConeFeederMode extends AutoMode {
 
     @Override
     protected void routine() throws AutoModeEndedException {
+        System.out.println("Running Double Place Cone Mode");
         runAction(
             new SeriesAction(
                 new ScoreAction(false, Elevator.EXTENSION_STATE.MAX),

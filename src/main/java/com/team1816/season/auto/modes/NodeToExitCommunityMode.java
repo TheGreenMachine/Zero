@@ -11,17 +11,18 @@ import java.util.List;
 
 public class NodeToExitCommunityMode extends AutoMode {
 
-    public NodeToExitCommunityMode(){
+    public NodeToExitCommunityMode() {
         super(List.of(new TrajectoryAction(new NodeToExitCommunityPath())));
     }
-    public NodeToExitCommunityMode(Color color){
+
+    public NodeToExitCommunityMode(Color color) {
         super(List.of(new TrajectoryAction(new NodeToExitCommunityPath(color))));
     }
 
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Move Out Mode");
+        System.out.println("Running Exit Community Mode");
         runAction(new WaitAction(.5));
         runAction(trajectoryActions.get(0));
     }

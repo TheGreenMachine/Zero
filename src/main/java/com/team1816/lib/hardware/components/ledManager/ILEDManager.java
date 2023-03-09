@@ -4,6 +4,7 @@ import com.ctre.phoenix.CANifierStatusFrame;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
+import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * The base interface that connects to all LEDManagers
@@ -70,6 +71,8 @@ public interface ILEDManager {
      */
     ErrorCode animate(Animation animation);
 
+    ErrorCode configV5Enabled(boolean enable5V, int timeoutMs);
+
     /**
      * Sets the status frame period of the LEDManager
      *
@@ -84,4 +87,6 @@ public interface ILEDManager {
         int periodMs,
         int timeoutMs
     );
+
+    Color getLastColor();
 }

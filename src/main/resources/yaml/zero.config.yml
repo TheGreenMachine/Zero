@@ -77,9 +77,9 @@ subsystems:
             maxRotVel: 14
             trackWidth: 19.75 # inches
             wheelbaseLength: 19.75 # inches
-            maxVelOpenLoop: 2.5 # meters/s (2.2)
-            maxVelPathFollowing: 3.4 # meters/s (2.2)
-            maxAccel: 2.54 # meters/s^ 2
+            maxVelOpenLoop: 2.2 # meters/s (3.6)
+            maxVelPathFollowing: 2.2 # meters/s (3.6)
+            maxAccel: 1.27 # meters/s^ 2
             isDemoMode: 0
             ## Auto Balance ##
             autoBalanceDivider: 40
@@ -136,18 +136,19 @@ subsystems:
                 kF: 0.0000899
         constants:
             ## Demands ##
-            cubeIntakePower: -0.40 # percent output voltage   IF INVERTED: negate (n/p) DON'T INVERT MOTOR
+            cubeIntakePower: -0.40 # percent output voltage
             cubeOuttakePower: 0.25 # percent output voltage
             coneIntakeVelocity: 840 # rpm
             coneOuttakeVelocity: -630 # rpm
     ledmanager:
-        implemented: false
-        canifier: -1
+        implemented: true
+        candle: 23
         constants:
             raveEnabled: 0
             raveSpeed: 0.05
             cameraLed: 1
-            maxLevel: 255
+            maxLevel: 150
+            ledStripCount: 30
     camera:
         implemented: false
         constants:
@@ -166,17 +167,18 @@ infrastructure:
     isPigeon2: true
 controlboard: example
 constants:
+    zeroingButton: 9 # channel of DIO port
     ## Drivetrain ##
     minAllowablePoseError: 0.1
     maxAllowablePoseError: 5
     ## Logging ##
     logTeleOp: 1 # 0 or 1
     logAuto: 1 # 0 or 1
-    badLogEnabled: 1 # 0 or 1     TURN IT OFF after we know it is safe? keep for beginning practice matches
+    badLogEnabled: 1 # 0 or 1
     logDrivetrain: 0
     configStatusFrames: 0 # 0 or 1
     ## General ##
     EnableBucketTuning: 1
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .025 # seconds
-    resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
+    resetFactoryDefaults: 0 # whether motors get reset to factory default

@@ -4,6 +4,7 @@ import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
+import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * A class that interfaces with a CANifier LedManager
@@ -12,6 +13,9 @@ import com.ctre.phoenix.led.CANdle;
  * @see ILEDManager
  */
 public class CanifierImpl extends CANifier implements ILEDManager {
+
+
+    private Color lastColor;
 
     /**
      * Instantiates a Canifier based on its device ID
@@ -37,6 +41,7 @@ public class CanifierImpl extends CANifier implements ILEDManager {
      */
     @Override
     public ErrorCode setLEDs(int r, int g, int b, int w, int startIdx, int count) {
+        lastColor = new Color(r, g, b);
         setLEDOutput(r / 255.0, CANifier.LEDChannel.LEDChannelB);
         setLEDOutput(g / 255.0, CANifier.LEDChannel.LEDChannelA);
         setLEDOutput(b / 255.0, CANifier.LEDChannel.LEDChannelC);
@@ -101,5 +106,15 @@ public class CanifierImpl extends CANifier implements ILEDManager {
     @Override
     public ErrorCode animate(Animation animation) {
         return null;
+    }
+
+    @Override
+    public ErrorCode configV5Enabled(boolean enable5V, int timeoutMs) {
+        return null;
+    }
+
+    @Override
+    public Color getLastColor() {
+        return lastColor;
     }
 }

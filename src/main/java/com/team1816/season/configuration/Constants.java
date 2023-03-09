@@ -6,6 +6,8 @@ import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.season.Robot;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 /**
  * This class contains all constants pertinent to robot-specific aspects.
@@ -109,4 +111,6 @@ public class Constants {
     //AutoBalance
     public static final double autoBalanceThresholdDegrees = factory.getConstant("drivetrain", "autoBalanceThreshold", 2);
     public static final double autoBalanceDivider = factory.getConstant("drivetrain", "autoBalanceDivider", 30);
+
+    public static final ShuffleboardTab kSimWindow = Shuffleboard.getTab("Simulation");
 }

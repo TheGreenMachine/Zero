@@ -38,7 +38,7 @@ public class PlaceConeAutoBalanceMiddleMode extends AutoMode {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running PlaceConeAutoBalance Middle Mode");
+        System.out.println("Running Place Cone Balance Mode");
         runAction(
             new SeriesAction(
                 new WaitAction(0.25),

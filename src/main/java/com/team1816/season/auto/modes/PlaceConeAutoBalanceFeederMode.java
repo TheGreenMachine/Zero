@@ -26,7 +26,7 @@ public class PlaceConeAutoBalanceFeederMode extends AutoMode {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running PlaceConeAutoBalance Feeder Mode");
+        System.out.println("Running Place Cone Balance Mode");
         runAction(
             new SeriesAction(
                 new WaitAction(.25),

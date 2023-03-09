@@ -135,11 +135,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             if (isMidSlowMode) {
                 leftMain.set(
                     ControlMode.PercentOutput,
-                    0.25*leftPowerDemand
+                    0.25 * leftPowerDemand
                 );
                 rightMain.set(
                     ControlMode.PercentOutput,
-                    0.25*rightPowerDemand
+                    0.25 * rightPowerDemand
                 );
             } else {
                 leftMain.set(
@@ -353,7 +353,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     /**
-     * Autobalances while in Tankdrive manual control TODO redo description
+     * Sub-container of gyroscopic based balancing with manual adjustment factors for a swerve drivetrain
+     *
+     * @see Drive#autoBalance(ChassisSpeeds)
      */
     @Override
     public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds) {

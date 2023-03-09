@@ -19,7 +19,7 @@ import com.team1816.lib.hardware.components.pcm.*;
 import com.team1816.lib.hardware.components.sensor.GhostProximitySensor;
 import com.team1816.lib.hardware.components.sensor.IProximitySensor;
 import com.team1816.lib.hardware.components.sensor.ProximitySensor;
-import com.team1816.lib.subsystems.drive.*;
+import com.team1816.lib.subsystems.drive.SwerveModule;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -307,13 +307,11 @@ public class RobotFactory {
                     );
             }
             if (ledManager != null) {
-                if (getConstant("resetFactoryDefaults") > 0) {
-                    ledManager.configFactoryDefault();
-                    ledManager.configStatusLedState(true);
-                    ledManager.configLOSBehavior(true);
-                    ledManager.configLEDType(CANdle.LEDStripType.BRG);
-                    ledManager.configBrightnessScalar(1);
-                }
+                ledManager.configFactoryDefault();
+                ledManager.configStatusLedState(true);
+                ledManager.configLOSBehavior(false);
+                ledManager.configLEDType(CANdle.LEDStripType.BRG); // type config of the strip we use rn
+                ledManager.configBrightnessScalar(1);
                 return ledManager;
             }
             reportGhostWarning("LEDManager", subsystemName, "");

@@ -9,7 +9,6 @@ import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveHelper;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
-import com.team1816.lib.subsystems.drive.*;
 import com.team1816.season.Robot;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
@@ -261,7 +260,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     /**
-     * Autobalances while in Swervedrive manual control TODO redo description
+     * Sub-container of gyroscopic based balancing with manual adjustment factors for a swerve drivetrain
+     *
+     * @see Drive#autoBalance(ChassisSpeeds)
      */
     @Override
     public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds) {
@@ -383,7 +384,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 (isDemoMode ? forward * demoModeMultiplier : forward),
                 (isDemoMode ? strafe * demoModeMultiplier : strafe),
                 (isDemoMode ? rotation * demoModeMultiplier : rotation),
-                isSlowMode, isMidSlowMode,
+                isSlowMode,
+                isMidSlowMode,
                 true,
                 false
             );
