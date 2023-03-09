@@ -150,7 +150,7 @@ subsystems:
             maxLevel: 150
             ledStripCount: 30
     camera:
-        implemented: false
+        implemented: true
         constants:
             usingCamToUpdatePose: 0
 infrastructure:
