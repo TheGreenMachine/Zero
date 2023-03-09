@@ -276,9 +276,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         double strafe = 0;
         var heading = Constants.EmptyRotation2d;
 
-        double[] sideHeadings = new double[]{0.0,90.0,180.0,270.0};
-        int sensorCompare = ((int)robotState.fieldToVehicle.getRotation().getDegrees()) + infrastructure.getHighestProximitySensor().sensorOrientation.proxyOrientOffset;
-        double proximityOffset = 0;
+        ChassisSpeeds proximityOffset = new ChassisSpeeds();
 
         double threshold = Constants.autoBalanceThresholdDegrees;
         double autoBalanceDivider = Constants.autoBalanceDivider;
@@ -288,10 +286,13 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             strafe = roll / autoBalanceDivider;
         }
 
-        int closeDiff = (int)Math.abs(sideHeadings[0] - sensorCompare);
-        int closeIndex = 0;
-
         if(infrastructure.getMaximumProximity() >= 40) { //TODO tune this value
+            double[] sideHeadings = new double[]{0.0,90.0,180.0,270.0};
+            int sensorCompare = ((int)robotState.fieldToVehicle.getRotation().getDegrees()) + infrastructure.getHighestProximitySensor().sensorOrientation.proxyOrientOffset;
+
+            int closeDiff = (int)Math.abs(sideHeadings[0] - sensorCompare);
+            int closeIndex = 0;
+
             for(int i = 1; i<4; i++){
                 double currentDiff = Math.abs(sideHeadings[i] - sensorCompare);
                 if(currentDiff > closeDiff){
@@ -299,15 +300,15 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                     closeIndex = i;
                 }
             }
-            proximityOffset = (sideHeadings[closeIndex] + 180) / 1440;
+            proximityOffset = ChassisSpeeds.fromFieldRelativeSpeeds(0,(sideHeadings[closeIndex] + 180) / 1440, 0, Constants.EmptyRotation2d);
         }
 
         // if not braking and ((throttle || strafe != 0) or joystick strafe input != 0), auto-balance
         // Else, lock wheels to face left/right side of field
         if (!isBraking && ((throttle != 0 || strafe != 0) || !Objects.equals(fieldRelativeChassisSpeeds, new ChassisSpeeds()))) {
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
-                throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond,
-                strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond + proximityOffset,
+                throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond + proximityOffset.vxMetersPerSecond,
+                strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond + proximityOffset.vyMetersPerSecond,
                 fieldRelativeChassisSpeeds.omegaRadiansPerSecond);
             setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
         } else {
