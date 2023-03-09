@@ -193,7 +193,7 @@ public abstract class AutoPath {
      */
     public List<Rotation2d> getAsTrajectoryHeadings() {
         if (headings == null) {
-            String name = getClass().getName()+"Headings";
+            String name = getClass().getName() + "Headings";
             if (!reflected && !rotated) {
                 headings =
                     PathUtil.generateHeadings(

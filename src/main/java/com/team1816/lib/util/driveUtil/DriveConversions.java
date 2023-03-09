@@ -6,7 +6,7 @@ import com.team1816.lib.util.Util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 
-import static com.team1816.lib.subsystems.drive.Drive.*;
+import static com.team1816.lib.subsystems.drive.Drive.kWheelCircumferenceMeters;
 
 /**
  * Utility class and constants dump for Drivetrain conversions and miscellaneous math

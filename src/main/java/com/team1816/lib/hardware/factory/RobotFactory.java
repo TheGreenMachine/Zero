@@ -51,7 +51,17 @@ public class RobotFactory {
                 false
             );
         }
-        loadConfig(robotName);
+        System.out.println("Loading Config for " + robotName);
+        try {
+            config =
+                YamlConfig.loadFrom(
+                    this.getClass()
+                        .getClassLoader()
+                        .getResourceAsStream("yaml/" + robotName + ".config.yml")
+                );
+        } catch (Exception e) {
+            DriverStation.reportError("Yaml Config error!", e.getStackTrace());
+        }
     }
 
     public void loadConfig(String robotName) {
@@ -311,13 +321,11 @@ public class RobotFactory {
                     );
             }
             if (ledManager != null) {
-                if (getConstant("resetFactoryDefaults") > 0) {
-                    ledManager.configFactoryDefault();
-                    ledManager.configStatusLedState(true);
-                    ledManager.configLOSBehavior(true);
-                    ledManager.configLEDType(CANdle.LEDStripType.BRG);
-                    ledManager.configBrightnessScalar(1);
-                }
+                ledManager.configFactoryDefault();
+                ledManager.configStatusLedState(true);
+                ledManager.configLOSBehavior(false);
+                ledManager.configLEDType(CANdle.LEDStripType.BRG); // type config of the strip we use rn
+                ledManager.configBrightnessScalar(1);
                 return ledManager;
             }
             reportGhostWarning("LEDManager", subsystemName, "");

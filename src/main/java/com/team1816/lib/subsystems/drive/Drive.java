@@ -74,6 +74,8 @@ public abstract class Drive
 
     protected boolean isBraking;
     protected boolean isSlowMode;
+
+    protected boolean isMidSlowMode;
     protected boolean isAutoBalancing = false;
 
     /**
@@ -347,26 +349,39 @@ public abstract class Drive
     }
 
     /**
-     * Sets the Autobalancing signal boolean and the initial yaw TODO redo description
+     * Sets the drivetrain to attain a slightly faster slow mode
      *
-     * @param balancing (boolean) isAutoBalancing
+     * @param midSlowMode - boolean
      */
-    public void setAutoBalanceManual(boolean balancing) {
+    public void setMidSlowMode(boolean midSlowMode) {
+        System.out.println("setting slow mode to: " + midSlowMode);
+        isMidSlowMode = midSlowMode;
+    }
+
+    /**
+     * Sets the drivetrain to normalize gyroscopic pitch and yaw with gradient of maximal descent
+     *
+     * @param balancing - boolean
+     */
+    public void setAutoBalance(boolean balancing) {
         setInitialYaw();
         isAutoBalancing = balancing;
     }
 
     /**
-     * Returns the current autobalancing state
+     * Returns whether the drivetrain is balancing
      *
-     * @return (boolean) isAutobalancing
+     * @return boolean balancing
      */
     public boolean isAutoBalancing() {
         return isAutoBalancing;
     }
 
     /**
-     * Autobalances in teleop TODO redo description
+     * Super-ceding container of gyroscopic based balancing with manual adjustment factors
+     *
+     * @see SwerveDrive#autoBalance(ChassisSpeeds)
+     * @see TankDrive#autoBalance(ChassisSpeeds)
      */
     public void autoBalance(ChassisSpeeds fieldRelativeChassisSpeeds) {
     }

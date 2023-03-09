@@ -3,12 +3,18 @@ package com.team1816.lib.subsystems;
 import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.ledManager.ILEDManager;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+import edu.wpi.first.wpilibj.util.Color;
 
 import javax.inject.Singleton;
-import java.awt.*;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Subsystem container for an LEDManager
@@ -27,6 +33,7 @@ public class LedManager extends Subsystem {
         factory.getConstant(NAME, "raveEnabled") > 0;
     private static final double RAVE_SPEED = factory.getConstant(NAME, "raveSpeed", 1.0);
     private static final int MAX = (int) factory.getConstant(NAME, "maxLevel", 255);
+    private static final int LED_STRIP_COUNT = (int) factory.getConstant(NAME, "ledStripCount", 0);
 
     /**
      * Components
@@ -38,27 +45,30 @@ public class LedManager extends Subsystem {
      */
     private boolean blinkLedOn = false;
     private boolean outputsChanged = false;
-    private boolean cameraLedChanged = false;
 
     private int ledR;
     private int ledG;
     private int ledB;
-    private boolean cameraLedOn;
 
-    private int period; // ms
+    private final int period = 1000; // ms
     private long lastWriteTime = System.currentTimeMillis();
-    private LedControlState controlState = LedControlState.STANDARD;
+    private edu.wpi.first.wpilibj.util.Color lastColor = edu.wpi.first.wpilibj.util.Color.kWhite;
+    private ControlState controlState = ControlState.SOLID;
     private RobotStatus defaultStatus = RobotStatus.DISABLED;
-    private float raveHue;
+    private RobotStatus controlStatus = RobotStatus.DISABLED;
+    private int raveHue;
     private Color lastRaveColor;
+
+    SimpleWidget colorWidget;
+    GenericEntry colorWidgetEntry;
 
     /**
      * Base enum for LED states
      */
-    public enum LedControlState {
+    public enum ControlState {
         RAVE,
         BLINK,
-        STANDARD,
+        SOLID,
     }
 
     /**
@@ -76,22 +86,15 @@ public class LedManager extends Subsystem {
         ledG = 0;
         ledB = 0;
 
-        cameraLedOn = false;
+        if (RobotBase.isSimulation()) {
+            colorWidget = Constants.kSimWindow.add("LEDColor", false);
+            colorWidget.withPosition(0, 4);
+            colorWidget.withProperties(Map.of("colorWhenFalse", "white"));
+            colorWidgetEntry = colorWidget.getEntry();
+        }
     }
 
     /** Actions */
-
-    /**
-     * Sets the Camera led(s) to be on or off
-     *
-     * @param cameraOn boolean
-     */
-    public void setCameraLed(boolean cameraOn) {
-        if (cameraLedOn != cameraOn) {
-            cameraLedChanged = true;
-            cameraLedOn = cameraOn;
-        }
-    }
 
     /**
      * Sets led color
@@ -102,25 +105,11 @@ public class LedManager extends Subsystem {
      */
     private void setLedColor(int r, int g, int b) {
         if (ledR != r || ledG != g || ledB != b) {
-            ledR = r;
-            ledG = g;
-            ledB = b;
+            ledR = (int) (r / 255.0 * MAX);
+            ledG = (int) (g / 255.0 * MAX);
+            ledB = (int) (b / 255.0 * MAX);
             outputsChanged = true;
         }
-    }
-
-    /**
-     * Sets LEDs to blink with a certain color
-     *
-     * @param r LED color red value (0-255)
-     * @param g LED color green value (0-255)
-     * @param b LED color blue value (0-255)
-     */
-    private void setLedColorBlink(int r, int g, int b) {
-        setLedColor(r, g, b);
-        controlState = LedControlState.BLINK;
-        this.period = 1000;
-        outputsChanged = true;
     }
 
     /**
@@ -130,21 +119,24 @@ public class LedManager extends Subsystem {
      * @see RobotStatus
      */
     public void indicateStatus(RobotStatus status) {
-        controlState = LedControlState.STANDARD;
         setLedColor(status.getRed(), status.getGreen(), status.getBlue());
+        controlStatus = status;
+    }
+
+    public void indicateStatus(RobotStatus status, ControlState controlState) {
+        setLedControlState(controlState);
+        indicateStatus(status);
     }
 
     public void indicateDefaultStatus() {
-        if (RAVE_ENABLED && defaultStatus != RobotStatus.DISABLED) {
-            controlState = LedControlState.RAVE;
-            setLedColor(0, 0, 0);
-        } else {
-            indicateStatus(defaultStatus);
-        }
+        indicateStatus(defaultStatus, ControlState.SOLID);
     }
 
-    public void blinkStatus(RobotStatus status) {
-        setLedColorBlink(status.getRed(), status.getGreen(), status.getBlue());
+    public void setLedControlState(ControlState controlState) {
+        if (controlState != this.controlState) {
+            this.controlState = controlState;
+            outputsChanged = true;
+        }
     }
 
     public void setDefaultStatus(RobotStatus defaultStatus) {
@@ -156,16 +148,12 @@ public class LedManager extends Subsystem {
         return period;
     }
 
-    private void writeToCameraLed(int r, int g, int b) {
-        if (cameraLedOn) {
-            ledManager.setLEDs(0, 255, 0, 0, 0, 8);
-        } else {
-            ledManager.setLEDs(r, g, b, 0, 0, 8);
-        }
+    public RobotStatus getCurrentControlStatus() {
+        return controlStatus;
     }
 
     private void writeToLed(int r, int g, int b) {
-        ledManager.setLEDs(r, g, b, 0, 8, 74 - 8); // 8 == number of camera leds
+        ledManager.setLEDs(r, g, b, 0, 0, LED_STRIP_COUNT + 8); // 8 == number of camera leds
     }
 
     /**
@@ -173,43 +161,49 @@ public class LedManager extends Subsystem {
      */
     @Override
     public void readFromHardware() {
+        if (RobotBase.isSimulation()) {
+            var color = ledManager.getLastColor();
+            if (!Objects.equals(color.toHexString(), lastColor.toHexString())) {
+                // Choose "true" color based on color of wheel
+                colorWidget.withProperties(Map.of("colorWhenTrue", color.toHexString()));
+                colorWidgetEntry.setBoolean(true);
+            }
+        }
     }
 
     @Override
     public void writeToHardware() {
+        if (controlState == ControlState.BLINK && System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
+            outputsChanged = true;
+        }
         if (outputsChanged) {
+//            System.out.println(controlState);
             outputsChanged = false;
             switch (controlState) {
                 case RAVE:
-                    var color = Color.getHSBColor(raveHue, 1.0f, MAX / 255.0f);
-                    if (!color.equals(lastRaveColor)) {
-                        outputsChanged = true;
-                        writeToLed(color.getRed(), color.getGreen(), color.getBlue());
+                    if (RAVE_ENABLED) {
+                        var color = Color.fromHSV(raveHue, MAX, MAX);
+                        if (!color.equals(lastRaveColor)) {
+                            outputsChanged = true;
+                            writeToLed((int) color.red * MAX, (int) color.green * MAX, (int) color.blue * MAX);
+                        }
+                        raveHue += RAVE_SPEED;
                     }
-                    raveHue += RAVE_SPEED;
                     break;
                 case BLINK:
-                    if (System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
-                        if (blinkLedOn) {
-                            outputsChanged = true;
-                            writeToLed(0, 0, 0);
-                            blinkLedOn = false;
-                        } else {
-                            outputsChanged = true;
-                            writeToLed(ledR, ledG, ledB);
-                            blinkLedOn = true;
-                        }
-                        lastWriteTime = System.currentTimeMillis();
+                    if (blinkLedOn) {
+                        writeToLed(0, 0, 0);
+                        blinkLedOn = false;
+                    } else {
+                        writeToLed(ledR, ledG, ledB);
+                        blinkLedOn = true;
                     }
+                    lastWriteTime = System.currentTimeMillis();
                     break;
-                case STANDARD:
+                case SOLID:
                     writeToLed(ledR, ledG, ledB);
                     break;
             }
-        }
-        if (cameraLedChanged) {
-            cameraLedChanged = false;
-            writeToCameraLed(ledR, ledG, ledB);
         }
     }
 
@@ -238,12 +232,8 @@ public class LedManager extends Subsystem {
     public boolean testSubsystem() {
         // no checking performed
         System.out.println("Checking LED systems");
-        controlState = LedControlState.STANDARD;
+        controlState = ControlState.SOLID;
         setLedColor(MAX, 0, 0); // set red
-        testDelay();
-        setCameraLed(true); // turn on camera
-        testDelay();
-        setCameraLed(false);
         testDelay();
         setLedColor(0, MAX, 0); // set green
         testDelay();
@@ -274,14 +264,16 @@ public class LedManager extends Subsystem {
      */
     public enum RobotStatus {
         ENABLED(0, MAX, 0), // green
-        DISABLED(MAX, MAX / 5, 0), // orange
+        DISABLED(MAX, MAX / 4, 0), // orange
         ERROR(MAX, 0, 0), // red
         AUTONOMOUS(0, MAX, MAX), // cyan
         ENDGAME(0, 0, MAX), // blue
-        SEEN_TARGET(MAX, 0, MAX), // magenta
-        ON_TARGET(MAX, 0, 20), // deep magenta
-        DRIVETRAIN_FLIPPED(MAX, MAX, 0), // yellow,
-        MANUAL_TURRET(MAX, MAX, MAX), // white
+        CUBE(MAX, 0, 150), // magenta
+        RAGE(MAX, 5, 5), // deep red
+        CONE(MAX, 50, 0), // yellow,
+        ON_TARGET(MAX, MAX, MAX), // white
+        BALANCE(50, 50, MAX), // light blue
+        ZEROING_ELEVATOR(MAX, 0, 20), // deep magenta,
         OFF(0, 0, 0); // off
 
         final int red;
@@ -292,6 +284,12 @@ public class LedManager extends Subsystem {
             this.red = r;
             this.green = g;
             this.blue = b;
+        }
+
+        RobotStatus(Color color) {
+            this.red = (int) color.red * MAX;
+            this.green = (int) color.green * MAX;
+            this.blue = (int) color.blue * MAX;
         }
 
         public int getRed() {

@@ -25,6 +25,7 @@ public class PathUtil {
         kMaxVelocity = kMaxVel;
         kMaxAcceleration = kMaxAccel;
     }
+
     /**
      * Generates a trajectory when TrajectoryCalculator is not used
      *

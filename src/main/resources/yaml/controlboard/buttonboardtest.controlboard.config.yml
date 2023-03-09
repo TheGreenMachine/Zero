@@ -1,0 +1,25 @@
+driver:
+    rumble: false
+    joysticks:
+        left:
+            horizontal: strafe
+            vertical: throttle
+        right:
+            horizontal: rotation
+    axes:
+        leftTrigger: brakeMode
+        rightTrigger: slowMode
+    buttons:
+        leftBumper: intakeCube
+        rightBumper: intakeCone
+        start: zeroPose
+buttonboard:
+    upLeft: grid1 # farthest from opposing feeder
+    up: grid2 # coopertition
+    upRight: grid3 # closes to opposing feeder
+    left: node1 # cone set farthest from opposing feeder
+    center: node2 # cube set
+    right: node3 # cone set closest to opposing feeder
+    downLeft: level1 # low
+    down: level2 # mid
+    downRight: level3 # high

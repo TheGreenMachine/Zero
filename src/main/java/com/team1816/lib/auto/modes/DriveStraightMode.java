@@ -6,7 +6,8 @@ import com.team1816.lib.auto.actions.WaitAction;
 
 public class DriveStraightMode extends AutoMode {
 
-    public DriveStraightMode() {}
+    public DriveStraightMode() {
+    }
 
     @Override
     protected void routine() throws AutoModeEndedException {

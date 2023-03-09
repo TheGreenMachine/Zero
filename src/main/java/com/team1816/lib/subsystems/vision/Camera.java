@@ -14,7 +14,6 @@ import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.Timer;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -106,7 +105,6 @@ public class Camera extends Subsystem {
     public void setCameraEnabled(boolean cameraEnabled) {
         if (this.isImplemented()) {
             this.cameraEnabled = cameraEnabled;
-            led.setCameraLed(cameraEnabled);
         } else {
             System.out.println("Camera Not Implemented...");
         }
@@ -160,7 +158,7 @@ public class Camera extends Subsystem {
             p.cameraToTarget = bestTarget.getBestCameraToTarget(); // missing method in PhotonTrackedTarget
             targets.add(p);
         } else {
-            System.out.println("camera not returning points b/c camera not implemented");
+            //System.out.println("camera not returning points b/c camera not implemented");
         }
         return targets;
     }
@@ -220,11 +218,6 @@ public class Camera extends Subsystem {
      */
     @Override
     public boolean testSubsystem() {
-        if (isImplemented()) {
-            led.setCameraLed(true);
-            Timer.delay(2);
-            led.setCameraLed(false);
-        }
         return true;
     }
 

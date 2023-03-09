@@ -77,9 +77,9 @@ subsystems:
             maxRotVel: 14
             trackWidth: 19.75 # inches
             wheelbaseLength: 19.75 # inches
-            maxVelOpenLoop: 2.5 # meters/s (2.2)
-            maxVelPathFollowing: 2.5 # meters/s (2.2)
-            maxAccel: 1.5 # meters/s^ 2
+            maxVelOpenLoop: 2.2 # meters/s (3.6)
+            maxVelPathFollowing: 2.2 # meters/s (3.6)
+            maxAccel: 1.27 # meters/s^ 2
             isDemoMode: 0
             ## Auto Balance ##
             autoBalanceDivider: 40
@@ -93,8 +93,8 @@ subsystems:
         pidConfig:
             slot0: # rotation for stow pos
                 kP: 0.01
-                kI: 0
-                kD: 1.4
+                kI: 0.00002
+                kD: 1.2
                 kF: 0
                 allowableError: 1000
             slot1: # rotation at score + collect pos
@@ -124,7 +124,7 @@ subsystems:
             scoreDipAnglePosition: 55000
             minExtensionPosition: 20000
             midExtensionPosition: 120000
-            maxExtensionPosition: 300000
+            maxExtensionPosition: 295000
     collector:
         implemented: true
         solenoids:
@@ -136,20 +136,21 @@ subsystems:
                 kF: 0.0000899
         constants:
             ## Demands ##
-            cubeIntakePower: -0.10 # percent output voltage
+            cubeIntakePower: -0.40 # percent output voltage
             cubeOuttakePower: 0.25 # percent output voltage
-            coneIntakeVelocity: 600 # rpm
-            coneOuttakeVelocity: -600 # rpm
+            coneIntakeVelocity: 840 # rpm
+            coneOuttakeVelocity: -630 # rpm
     ledmanager:
-        implemented: false
-        canifier: -1
+        implemented: true
+        candle: 23
         constants:
             raveEnabled: 0
             raveSpeed: 0.05
             cameraLed: 1
-            maxLevel: 255
+            maxLevel: 150
+            ledStripCount: 30
     camera:
-        implemented: true
+        implemented: false
         constants:
             usingCamToUpdatePose: 0
 infrastructure:
@@ -160,12 +161,13 @@ infrastructure:
     ## Pneumatics Control ##
     compressorEnabled: true
     pcmIsRev: false
-    pcmId: 2
+    pcmId: 4
     ## Pigeon ##
     pigeonId: 32
     isPigeon2: true
 controlboard: example
 constants:
+    zeroingButton: 9 # channel of DIO port
     ## Drivetrain ##
     minAllowablePoseError: 0.1
     maxAllowablePoseError: 5
@@ -179,4 +181,4 @@ constants:
     EnableBucketTuning: 1
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .025 # seconds
-    resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
+    resetFactoryDefaults: 0 # whether motors get reset to factory default

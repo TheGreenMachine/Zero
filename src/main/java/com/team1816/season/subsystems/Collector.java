@@ -39,7 +39,7 @@ public class Collector extends Subsystem {
      * States
      */
     private STATE desiredState = STATE.STOP;
-    private GAME_ELEMENT currentlyHeldObject = GAME_ELEMENT.NOTHING;
+    private GAME_ELEMENT currentlyHeldObject = GAME_ELEMENT.NOTHING;    //remember, game_element and state enums
     private double rollerVelocity = 0;
     private boolean solenoidOutput = false;
     private boolean outputsChanged = false;
@@ -141,14 +141,14 @@ public class Collector extends Subsystem {
                     intakeMotor.set(ControlMode.PercentOutput, cubeIntakePower);
                 }
                 case OUTTAKE_CONE -> {
-                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                     intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.Velocity, coneOuttakeVelocity);
+//                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                 }
                 case OUTTAKE_CUBE -> {
-                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                     intakeSolenoid.set(false);
                     intakeMotor.set(ControlMode.PercentOutput, cubeOuttakePower);
+//                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                 }
             }
         }

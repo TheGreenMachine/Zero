@@ -2,8 +2,9 @@ package com.team1816.season.auto;
 
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.modes.*;
-import com.team1816.season.auto.modes.PlaceConeAutoBalanceMode;
-import edu.wpi.first.wpilibj.RobotState;
+import com.team1816.season.auto.modes.*;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -30,7 +31,6 @@ public class AutoModeManager {
      */
     private AutoMode autoMode;
     private static Thread autoModeThread;
-    private RobotState robotState1;
 
     /**
      * Instantiates and AutoModeManager with a default option and selective computation
@@ -79,7 +79,13 @@ public class AutoModeManager {
      */
     public boolean update() {
         DesiredAuto selectedAuto = autoModeChooser.getSelected();
-        Color selectedColor = sideChooser.getSelected();
+        Color selectedColor = Color.BLUE;
+        if (RobotBase.isSimulation()) {
+            selectedColor = sideChooser.getSelected();
+        } else if (RobotBase.isReal()) {
+            var dsAlliance = DriverStation.getAlliance();
+            selectedColor = (dsAlliance == DriverStation.Alliance.Red) ? Color.RED : Color.BLUE;
+        }
         boolean autoChanged = desiredAuto != selectedAuto;
         boolean colorChanged = desiredColor != selectedColor;
         // if auto has been changed, update selected auto mode + thread
@@ -155,13 +161,25 @@ public class AutoModeManager {
      * Enum for AutoModes
      */
     enum DesiredAuto {
-        // Test : 2020
+        // Test : 2020 Legacy
         DO_NOTHING,
         TUNE_DRIVETRAIN,
         LIVING_ROOM,
         DRIVE_STRAIGHT,
+
         // 2023
-        PLACE_CONE_AUTO_BALANCE
+        PLACE_CONE,
+        EXIT_COMMUNITY,
+        EXIT_BALANCE_FEEDER,
+        EXIT_BALANCE_MIDDLE,
+        EXIT_BALANCE_WALL,
+        PLACE_CONE_EXIT_COMMUNITY_FEEDER,
+        PLACE_CONE_EXIT_COMMUNITY_WALL,
+        PLACE_CONE_AUTO_BALANCE_FEEDER,
+        PLACE_CONE_AUTO_BALANCE_MIDDLE,
+        PLACE_CONE_AUTO_BALANCE_WALL,
+        DOUBLE_CONE_FEEDER,
+        DOUBLE_CONE_WALL
     }
 
     /**
@@ -179,8 +197,30 @@ public class AutoModeManager {
                 return new TuneDrivetrainMode();
             case LIVING_ROOM:
                 return (new LivingRoomMode(color));
-            case PLACE_CONE_AUTO_BALANCE:
-                return (new PlaceConeAutoBalanceMode(color));
+            case EXIT_COMMUNITY:
+                return (new NodeToExitCommunityMode(color));
+            case PLACE_CONE:
+                return (new PlaceConeMode());
+            case EXIT_BALANCE_FEEDER:
+                return (new ExitCommunityBalanceFeederMode(color));
+            case EXIT_BALANCE_MIDDLE:
+                return (new ExitCommunityBalanceMiddleMode(color));
+            case EXIT_BALANCE_WALL:
+                return (new ExitCommunityBalanceWallMode(color));
+            case PLACE_CONE_EXIT_COMMUNITY_FEEDER:
+                return (new ExitCommunityPlaceFeederMode(color));
+            case PLACE_CONE_EXIT_COMMUNITY_WALL:
+                return (new ExitCommunityPlaceWallMode(color));
+            case PLACE_CONE_AUTO_BALANCE_FEEDER:
+                return (new PlaceConeAutoBalanceFeederMode(color));
+            case PLACE_CONE_AUTO_BALANCE_MIDDLE:
+                return (new PlaceConeAutoBalanceMiddleMode(color));
+            case PLACE_CONE_AUTO_BALANCE_WALL:
+                return (new PlaceConeAutoBalanceWallMode(color));
+            case DOUBLE_CONE_FEEDER:
+                return (new DoublePlaceConeFeederMode(color));
+            case DOUBLE_CONE_WALL:
+                return (new DoublePlaceConeWallMode(color));
             default:
                 System.out.println("Defaulting to drive straight mode");
                 return new DriveStraightMode();

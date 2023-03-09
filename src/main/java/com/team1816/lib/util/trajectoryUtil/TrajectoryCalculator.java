@@ -1,16 +1,19 @@
 package com.team1816.lib.util.trajectoryUtil;
-import com.team1816.season.auto.paths.*;
-import com.team1816.lib.auto.paths.AutoPath;
-import com.team1816.lib.auto.paths.*;
+
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.team1816.lib.auto.paths.AutoPath;
+import com.team1816.lib.auto.paths.DriveStraightPath;
+import com.team1816.lib.auto.paths.LivingRoomPath;
+import com.team1816.lib.auto.paths.PathUtil;
+import com.team1816.lib.hardware.factory.RobotFactory;
+import com.team1816.season.auto.paths.*;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import org.apache.commons.io.FileUtils;
-import com.team1816.lib.hardware.factory.*;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,15 +32,26 @@ public class TrajectoryCalculator {
 
     /**
      * List of all AutoPaths that are to be calculated
+     *
      * @see AutoPath
      */
     private static final List<AutoPath> paths = List.of(
         new DriveStraightPath(),
-        new LivingRoomPath()
+        new LivingRoomPath(),
+        new ConeToNodeFeederPath(),
+        new ConeToNodeWallPath(),
+        new NodeToChargeStationFeederPath(),
+        new NodeToChargeStationMiddlePath(),
+        new NodeToChargeStationWallPath(),
+        new NodeToConeFeederPath(),
+        new NodeToConeFeederPath(),
+        new NodeToConeWallPath(),
+        new NodeToExitCommunityPath()
     );
 
     /**
      * Entry point of gradle task that calculates trajectories
+     *
      * @param args
      */
     public static void main(String[] args) {
@@ -51,19 +65,20 @@ public class TrajectoryCalculator {
                 factory.getConstant("drivetrain", "maxAccel", 4)
             );
             System.out.println("Calculating " + paths.size() + " Trajectories:");
-            for (AutoPath path: paths) {
+            for (AutoPath path : paths) {
                 calcAllTrajectoryFormats(robot, path);
                 System.out.println("\tCalculated " + path.getClass().getName());
             }
         }
     }
-    
+
     private static File getFile(String path) {
         return new File(System.getProperty("user.dir") + path);
     }
 
     /**
      * Calculates all formats of the trajectories associated with an AutoPath {standard, reflected, rotated}
+     *
      * @param path AutoPath
      */
     public static void calcAllTrajectoryFormats(String robotName, AutoPath path) {
@@ -90,6 +105,7 @@ public class TrajectoryCalculator {
 
     /**
      * Formats the class name in regex by matching characters
+     *
      * @param name class name
      * @return name
      */
@@ -100,7 +116,8 @@ public class TrajectoryCalculator {
 
     /**
      * Calculates the Trajectory using the waypoints provided in the AutoPath and PathUtil
-     * @param name path name
+     *
+     * @param name      path name
      * @param waypoints path waypoints
      * @see AutoPath
      * @see PathUtil
@@ -124,9 +141,10 @@ public class TrajectoryCalculator {
 
     /**
      * Calculates the headings associated with the AutoPath
-     * @param name path name
+     *
+     * @param name      path name
      * @param waypoints path waypoints
-     * @param headings path headings
+     * @param headings  path headings
      */
     public static void calcHeadings(String robotName, String name, List<Pose2d> waypoints, List<Rotation2d> headings) {
         if (headings == null) {
@@ -148,6 +166,7 @@ public class TrajectoryCalculator {
 
     /**
      * Loads the Trajectory states with the associated JSON storing it
+     *
      * @param name path name
      * @return Trajectory
      * @see Trajectory
@@ -157,7 +176,8 @@ public class TrajectoryCalculator {
         try {
             List<Trajectory.State> list = mapper.readValue(
                 getFile("/src/main/resources/trajectories/" + System.getenv("ROBOT_NAME") + "/" + name + ".json"),
-                new TypeReference<List<Trajectory.State>>() { }
+                new TypeReference<List<Trajectory.State>>() {
+                }
             );
             return new Trajectory(list);
         } catch (Exception e) {
@@ -174,7 +194,8 @@ public class TrajectoryCalculator {
         try {
             List<Rotation2d> list = mapper.readValue(
                 new File(System.getProperty("user.dir") + "/src/main/resources/trajectories/" + System.getenv("ROBOT_NAME") + "/" + name + ".json"),
-                new TypeReference<List<Rotation2d>>() { }
+                new TypeReference<List<Rotation2d>>() {
+                }
             );
             return list;
         } catch (Exception e) {

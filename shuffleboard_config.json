@@ -11,7 +11,7 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "3,0": {
+          "2,0": {
             "size": [
               7,
               4
@@ -20,6 +20,8 @@
               "_type": "Field",
               "_source0": "network_table:///SmartDashboard/Field",
               "_title": "SmartDashboard/Field",
+              "_glyph": 148,
+              "_showGlyph": false,
               "Game/Game": "A2022_Rapid_React",
               "Visuals/Robot Icon Size": 50.0,
               "Visuals/Show Outside Circles": false
@@ -33,7 +35,9 @@
             "content": {
               "_type": "Toggle Button",
               "_source0": "network_table:///SmartDashboard/Drive/Zero Sensors",
-              "_title": "SmartDashboard/Drive/Zero Sensors"
+              "_title": "SmartDashboard/Drive/Zero Sensors",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           }
         }
@@ -59,6 +63,8 @@
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Turret: Homing Location",
               "_title": "Turret Homed",
+              "_glyph": 148,
+              "_showGlyph": false,
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
@@ -72,6 +78,8 @@
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/HasBall:",
               "_title": "Has Ball",
+              "_glyph": 148,
+              "_showGlyph": false,
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
@@ -84,7 +92,9 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Camera Deviation",
-              "_title": "SmartDashboard/Camera Deviation"
+              "_title": "SmartDashboard/Camera Deviation",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           },
           "8,0": {
@@ -95,7 +105,9 @@
             "content": {
               "_type": "Network Table Tree",
               "_source0": "network_table:///SmartDashboard/Buckets",
-              "_title": "SmartDashboard/Buckets"
+              "_title": "SmartDashboard/Buckets",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           }
         }
@@ -120,7 +132,9 @@
             "content": {
               "_type": "ComboBox Chooser",
               "_source0": "network_table:///SmartDashboard/Auto mode",
-              "_title": "SmartDashboard/Auto mode"
+              "_title": "SmartDashboard/Auto mode",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           },
           "0,0": {
@@ -131,7 +145,9 @@
             "content": {
               "_type": "ComboBox Chooser",
               "_source0": "network_table:///SmartDashboard/Starting Position",
-              "_title": "SmartDashboard/Starting Position"
+              "_title": "SmartDashboard/Starting Position",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           },
           "2,1": {
@@ -142,7 +158,9 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/AutoModeSelected",
-              "_title": "SmartDashboard/AutoModeSelected"
+              "_title": "SmartDashboard/AutoModeSelected",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           },
           "2,0": {
@@ -153,7 +171,9 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/StartingPositionSelected",
-              "_title": "SmartDashboard/StartingPositionSelected"
+              "_title": "SmartDashboard/StartingPositionSelected",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           }
         }
@@ -179,6 +199,8 @@
               "_type": "Number Slider",
               "_source0": "network_table:///SmartDashboard/Calibration/HMIN",
               "_title": "HMIN",
+              "_glyph": 148,
+              "_showGlyph": false,
               "Slider Settings/Min": 1.0,
               "Slider Settings/Max": 180.0,
               "Slider Settings/Block increment": 1.0,
@@ -194,6 +216,8 @@
               "_type": "Number Slider",
               "_source0": "network_table:///SmartDashboard/Calibration/SMIN",
               "_title": "SMIN",
+              "_glyph": 148,
+              "_showGlyph": false,
               "Slider Settings/Min": 0.0,
               "Slider Settings/Max": 255.0,
               "Slider Settings/Block increment": 1.0,
@@ -209,6 +233,8 @@
               "_type": "Number Slider",
               "_source0": "network_table:///SmartDashboard/Calibration/VMIN",
               "_title": "VMIN",
+              "_glyph": 148,
+              "_showGlyph": false,
               "Slider Settings/Min": 1.0,
               "Slider Settings/Max": 255.0,
               "Slider Settings/Block increment": 1.0,
@@ -224,6 +250,8 @@
               "_type": "Number Slider",
               "_source0": "network_table:///SmartDashboard/Calibration/HMAX",
               "_title": "HMAX",
+              "_glyph": 148,
+              "_showGlyph": false,
               "Slider Settings/Min": 1.0,
               "Slider Settings/Max": 180.0,
               "Slider Settings/Block increment": 1.0,
@@ -239,6 +267,8 @@
               "_type": "Number Slider",
               "_source0": "network_table:///SmartDashboard/Calibration/SMAX",
               "_title": "SMAX",
+              "_glyph": 148,
+              "_showGlyph": false,
               "Slider Settings/Min": 1.0,
               "Slider Settings/Max": 255.0,
               "Slider Settings/Block increment": 1.0,
@@ -254,6 +284,8 @@
               "_type": "Number Slider",
               "_source0": "network_table:///SmartDashboard/Calibration/VMAX",
               "_title": "VMAX",
+              "_glyph": 148,
+              "_showGlyph": false,
               "Slider Settings/Min": 1.0,
               "Slider Settings/Max": 255.0,
               "Slider Settings/Block increment": 1.0,
@@ -268,7 +300,9 @@
             "content": {
               "_type": "Toggle Button",
               "_source0": "network_table:///SmartDashboard/Calibration/CalibrationCamera",
-              "_title": "Toggle Button"
+              "_title": "Toggle Button",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           },
           "5,1": {
@@ -280,6 +314,8 @@
               "_type": "Camera Stream",
               "_source0": "camera_server://Camera",
               "_title": "Camera",
+              "_glyph": 148,
+              "_showGlyph": false,
               "Crosshair/Show crosshair": false,
               "Crosshair/Crosshair color": "#FFFFFFFF",
               "Controls/Show controls": true,
@@ -299,6 +335,8 @@
               "_type": "Number Slider",
               "_source0": "network_table:///SmartDashboard/Calibration/EXPOSURE",
               "_title": "Exposure",
+              "_glyph": 148,
+              "_showGlyph": false,
               "Slider Settings/Min": 0.0,
               "Slider Settings/Max": 100.0,
               "Slider Settings/Block increment": 1.0,
@@ -313,7 +351,9 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Calibration/LINE",
-              "_title": "SmartDashboard/Calibration/LINE"
+              "_title": "SmartDashboard/Calibration/LINE",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           }
         }

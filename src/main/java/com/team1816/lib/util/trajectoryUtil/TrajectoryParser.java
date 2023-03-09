@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * Utility that parses trajectories calculated with the TrajectoryCalculator
+ *
  * @see TrajectoryCalculator
  */
 public class TrajectoryParser {
@@ -34,7 +35,8 @@ public class TrajectoryParser {
     public static Trajectory parseTrajectory(String name) {
         File file = new File(directory.getPath() + name + ".json");
         try {
-            List<Trajectory.State> trajectoryStates = mapper.readValue(file, new TypeReference<List<Trajectory.State>>(){});
+            List<Trajectory.State> trajectoryStates = mapper.readValue(file, new TypeReference<List<Trajectory.State>>() {
+            });
             var trajectory = new Trajectory(trajectoryStates);
             return trajectory;
         } catch (Exception e) {
@@ -50,7 +52,7 @@ public class TrajectoryParser {
      * @return trajectory
      */
     public static Trajectory parseReflectedTrajectory(String name) {
-        return parseTrajectory(name+"_Reflected");
+        return parseTrajectory(name + "_Reflected");
     }
 
     /**
@@ -60,7 +62,7 @@ public class TrajectoryParser {
      * @return trajectory
      */
     public static Trajectory parseRotatedTrajectory(String name) {
-        return parseTrajectory(name+"_Rotated");
+        return parseTrajectory(name + "_Rotated");
     }
 
     /**
@@ -74,7 +76,8 @@ public class TrajectoryParser {
         File file = new File(directory.getPath() + name + ".json");
         try {
             List<Rotation2d> trajectoryHeadings = mapper.readValue(
-                file, new TypeReference<List<Rotation2d>>() {}
+                file, new TypeReference<List<Rotation2d>>() {
+                }
             );
             return trajectoryHeadings;
         } catch (Exception e) {
@@ -91,7 +94,7 @@ public class TrajectoryParser {
      * @return trajectory headings
      */
     public static List<Rotation2d> parseReflectedTrajectoryHeadings(String name) {
-        return parseTrajectoryHeadings(name+"_Reflected");
+        return parseTrajectoryHeadings(name + "_Reflected");
     }
 
     /**
@@ -102,6 +105,6 @@ public class TrajectoryParser {
      * @return trajectory headings
      */
     public static List<Rotation2d> parseRotatedTrajectoryHeadings(String name) {
-        return parseTrajectoryHeadings(name+"_Rotated");
+        return parseTrajectoryHeadings(name + "_Rotated");
     }
 }

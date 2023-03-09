@@ -231,4 +231,9 @@ public class TrajectoryToTargetPath extends AutoPath {
             translatedChassisSpeeds
         );
     }
+
+    @Override
+    protected boolean isPrecalculated() {
+        return false;
+    }
 }

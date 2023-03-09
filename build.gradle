@@ -1,9 +1,8 @@
-import edu.wpi.first.gradlerio.deploy.roborio.RoboRIO
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2023.4.1"
+    id "edu.wpi.first.GradleRIO" version "2023.4.2"
     id 'org.jsonschema2dataclass' version '4.0.1'
 }
 
@@ -28,8 +27,7 @@ deploy {
                 // First part is artifact name, 2nd is artifact type
                 // getTargetTypeClass is a shortcut to get the class type using a string
 
-                frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
-                }
+                frcJava(getArtifactTypeClass('FRCJavaArtifact')) {}
 
                 // Static files artifact
                 frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
@@ -116,8 +114,7 @@ jsonSchema2Pojo {
     )
 }
 
-// Calculates Trajectories
-apply plugin: 'java';
+
 task calculateTrajectories(type: JavaExec) {
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
@@ -135,10 +132,8 @@ task calculateTrajectories(type: JavaExec) {
     main = "com.team1816.lib.util.trajectoryUtil.TrajectoryCalculator"
 }
 
-// Simulates robot with characterization alpha.config.yml
-task runAlpha(type: JavaExec) {
-    dependsOn tasks.named("calculateTrajectories")
 
+task runAlpha(type: JavaExec) {
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
     String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
@@ -155,7 +150,6 @@ task runAlpha(type: JavaExec) {
     jvmArgs "-Djava.library.path=${jniDir}"
 }
 
-// Simulates robot with characterization zero.config.yml
 task runZero(type: JavaExec) {
     dependsOn tasks.named("calculateTrajectories")
 
@@ -175,10 +169,7 @@ task runZero(type: JavaExec) {
     jvmArgs "-Djava.library.path=${jniDir}"
 }
 
-// Simulates robot with characterization zoffseason.config.yml
 task runZoffseason(type: JavaExec) {
-    dependsOn tasks.named("calculateTrajectories")
-
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
     String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
@@ -195,10 +186,8 @@ task runZoffseason(type: JavaExec) {
     jvmArgs "-Djava.library.path=${jniDir}"
 }
 
-// Simulates robot with characterization zodiac_pro.config.yml
-task runZodiac(type: JavaExec) {
-    dependsOn tasks.named("calculateTrajectories")
 
+task runZodiac(type: JavaExec) {
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
     String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
@@ -222,20 +211,6 @@ processResources {
     }
 }
 
-task deployInfo(type: Exec) {
-    Runtime r = Runtime.getRuntime();
-    PrintWriter writer = new PrintWriter("deploy.tmp", "UTF-8");
-    writer.println(new Scanner(r.exec("git symbolic-ref --short HEAD").getInputStream()).nextLine());
-    writer.println(new Scanner(r.exec("git rev-parse HEAD").getInputStream()).nextLine());
-    writer.println(new Date().toString());
-    writer.close();
-    commandLine "scp", "./deploy.tmp", "lvuser@10.18.16.2:/home/lvuser/version.info";
-    
-    doLast {
-        commandLine "rm", "deploy.tmp";
-    }
-}
-
 wrapper {
     gradleVersion = '7.2'
 }
@@ -247,10 +222,4 @@ wpi.java.configureTestTasks(test)
 
 compileJava {
     //dependsOn tasks.named("spotlessApply")
-}
-
-task fullDeploy() {
-    dependsOn tasks.named("calculateTrajectories")
-    dependsOn 'deploy'
-    dependsOn 'deployInfo'
 }
