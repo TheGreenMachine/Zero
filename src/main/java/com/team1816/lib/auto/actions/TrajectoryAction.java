@@ -11,7 +11,6 @@ import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -88,7 +87,7 @@ public class TrajectoryAction implements AutoAction {
                     drive::getPose,
                     new RamseteController(), //defaults of
                     new DifferentialDriveKinematics(
-                        Units.inchesToMeters(kDriveWheelTrackWidthInches)
+                        kDriveWheelTrackWidthMeters
                     ),
                     ((TankDrive) drive)::updateTrajectoryVelocities
                 );

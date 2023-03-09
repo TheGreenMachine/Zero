@@ -20,7 +20,7 @@ public class ExampleAutoPath extends AutoPath {
      * into a trajectory for use in AutoModes
      */
     @Override
-    protected List<Pose2d> getWaypoints() {
+    public List<Pose2d> getWaypoints() {
         // path looks like a deformed and mirrored C shape
         return List.of(
             new Pose2d(1.72, 0.49, Rotation2d.fromDegrees(0)),
@@ -39,7 +39,7 @@ public class ExampleAutoPath extends AutoPath {
      * in chezy path that includes this, you just have to eyeball where the robot should face using the simulator.
      */
     @Override
-    protected List<Rotation2d> getWaypointHeadings() {
+    public List<Rotation2d> getWaypointHeadings() {
         // this will make a SwerveDrive robot face the opponent alliance wall throughout the entire path
         return List.of(
             Rotation2d.fromDegrees(0),
@@ -51,12 +51,12 @@ public class ExampleAutoPath extends AutoPath {
     }
 
     @Override
-    protected List<Pose2d> getReflectedWaypoints() {
+    public List<Pose2d> getReflectedWaypoints() {
         return null;
     }
 
     @Override
-    protected List<Rotation2d> getReflectedWaypointHeadings() {
+    public List<Rotation2d> getReflectedWaypointHeadings() {
         return null;
     }
 
@@ -66,7 +66,7 @@ public class ExampleAutoPath extends AutoPath {
      * @return just make this return true - we're always using the app
      */
     @Override
-    protected boolean usingApp() {
+    protected boolean isPrecalculated() {
         return true;
-    } // TODO remove me :)
+    }
 }

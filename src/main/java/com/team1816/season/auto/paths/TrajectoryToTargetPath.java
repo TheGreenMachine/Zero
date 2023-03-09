@@ -31,7 +31,7 @@ public class TrajectoryToTargetPath extends AutoPath {
     }
 
     @Override
-    protected List<Pose2d> getWaypoints() {
+    public List<Pose2d> getWaypoints() {
         List<Pose2d> waypoints = new ArrayList<>();
         if (
             (target.getY() > Constants.chargeStationThresholdYMin && target.getY() < Constants.chargeStationThresholdYMax) &&
@@ -185,7 +185,7 @@ public class TrajectoryToTargetPath extends AutoPath {
     }
 
     @Override
-    protected List<Rotation2d> getWaypointHeadings() {
+    public List<Rotation2d> getWaypointHeadings() {
         List<Rotation2d> headings = new ArrayList<>();
         headings.add(robotState.fieldToVehicle.getRotation());
         if (robotState.allianceColor == Color.BLUE && robotState.fieldToVehicle.getRotation().getDegrees() < 0) {
@@ -211,7 +211,7 @@ public class TrajectoryToTargetPath extends AutoPath {
             translatedVelocity.getY(),
             robotState.deltaVehicle.omegaRadiansPerSecond
         );
-        return PathUtil.generateTrajectory(usingApp(), translatedChassisSpeeds, getWaypoints());
+        return PathUtil.generateTrajectory(translatedChassisSpeeds, getWaypoints());
     }
 
     @Override
@@ -226,7 +226,6 @@ public class TrajectoryToTargetPath extends AutoPath {
             robotState.deltaVehicle.omegaRadiansPerSecond
         );
         return PathUtil.generateHeadings(
-            usingApp(),
             getWaypoints(),
             getWaypointHeadings(),
             translatedChassisSpeeds
@@ -234,7 +233,7 @@ public class TrajectoryToTargetPath extends AutoPath {
     }
 
     @Override
-    protected boolean usingApp() {
-        return true;
+    protected boolean isPrecalculated() {
+        return false;
     }
 }

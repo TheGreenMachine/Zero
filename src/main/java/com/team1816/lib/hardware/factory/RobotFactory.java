@@ -64,6 +64,20 @@ public class RobotFactory {
         }
     }
 
+    public void loadConfig(String robotName) {
+        System.out.println("Loading Config for " + robotName);
+        try {
+            config =
+                YamlConfig.loadFrom(
+                    this.getClass()
+                        .getClassLoader()
+                        .getResourceAsStream("yaml/" + robotName + ".config.yml")
+                );
+        } catch (Exception e) {
+            DriverStation.reportError("Yaml Config error!", e.getStackTrace());
+        }
+    }
+
     public IGreenMotor getMotor(
         String subsystemName,
         String name,

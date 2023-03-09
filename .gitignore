@@ -9,5 +9,7 @@ simgui.json
 simgui-ds.json
 simgui-window.json
 bin/
-*.bag
+*.bag*
 Compiler
+src/main/resources/trajectories/**/*.json
+

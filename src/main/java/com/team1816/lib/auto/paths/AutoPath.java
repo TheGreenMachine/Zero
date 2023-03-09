@@ -38,10 +38,16 @@ public abstract class AutoPath {
      */
     boolean rotated;
 
+    /**
+     * State: contains information about whether the trajectory is generated with TrajectoryCalculator
+     */
+    boolean precalculated;
+
     public AutoPath() {
     }
 
     public AutoPath(Color color) {
+        setPrecalculated(false);
         if (Constants.fieldSymmetry == Symmetry.AXIS && color == Color.RED) {
             setReflected(true);
             setRotated(false);
@@ -73,18 +79,32 @@ public abstract class AutoPath {
     }
 
     /**
+     * Sets whether the trajectory is pre-calculated or generated
+     */
+    protected void setPrecalculated(boolean precalculated) {
+        this.precalculated = precalculated;
+    }
+
+    /**
+     * Returns whether the trajectory is pre-calculated
+     */
+    protected boolean isPrecalculated() {
+        return precalculated;
+    }
+
+    /**
      * Returns a list of Pose2d's that define the trajectory /path to be followed
      *
      * @return waypoints
      */
-    protected abstract List<Pose2d> getWaypoints();
+    public abstract List<Pose2d> getWaypoints();
 
     /**
      * Returns a list of Pose2d's that define the reflected trajectory/path to be followed
      *
      * @return waypoints
      */
-    protected List<Pose2d> getReflectedWaypoints() {
+    public List<Pose2d> getReflectedWaypoints() {
         List<Pose2d> waypoints = getWaypoints();
         List<Pose2d> reflectedWaypoints = new ArrayList<>();
         for (int i = 0; i < waypoints.size(); i++) {
@@ -99,7 +119,7 @@ public abstract class AutoPath {
      *
      * @return waypoints
      */
-    protected List<Pose2d> getRotatedWaypoints() {
+    public List<Pose2d> getRotatedWaypoints() {
         List<Pose2d> waypoints = getWaypoints();
         List<Pose2d> rotatedWaypoints = new ArrayList<>();
         for (int i = 0; i < waypoints.size(); i++) {
@@ -114,14 +134,14 @@ public abstract class AutoPath {
      *
      * @return waypointHeadings
      */
-    protected abstract List<Rotation2d> getWaypointHeadings();
+    public abstract List<Rotation2d> getWaypointHeadings();
 
     /**
      * Returns a list of Rotation2d's corresponding to the rotation respect to a reflected trajectory
      *
      * @return waypointHeadings
      */
-    protected List<Rotation2d> getReflectedWaypointHeadings() {
+    public List<Rotation2d> getReflectedWaypointHeadings() {
         List<Rotation2d> waypointHeadings = getWaypointHeadings();
         List<Rotation2d> reflectedWaypointHeadings = new ArrayList<>();
         for (int i = 0; i < waypointHeadings.size(); i++) {
@@ -136,7 +156,7 @@ public abstract class AutoPath {
      *
      * @return waypointHeadings
      */
-    protected List<Rotation2d> getRotatedWaypointHeadings() {
+    public List<Rotation2d> getRotatedWaypointHeadings() {
         List<Rotation2d> waypointHeadings = getWaypointHeadings();
         List<Rotation2d> rotatedWaypointHeadings = new ArrayList<>();
         for (int i = 0; i < waypointHeadings.size(); i++) {
@@ -147,14 +167,6 @@ public abstract class AutoPath {
     }
 
     /**
-     * Checks if the path was made using the CheesyPath web application.
-     * If false, the starting pose of the trajectory will be set to the default starting pose.
-     *
-     * @return boolean usingApp
-     */
-    protected abstract boolean usingApp();
-
-    /**
      * Returns the generated trajectory associated with the AutoPath
      *
      * @return trajectory
@@ -163,11 +175,11 @@ public abstract class AutoPath {
     public Trajectory getAsTrajectory() {
         if (trajectory == null) {
             if (!reflected && !rotated) {
-                trajectory = PathUtil.generateTrajectory(usingApp(), getWaypoints());
+                trajectory = PathUtil.generateTrajectory(getClass().getName(), getWaypoints(), isPrecalculated());
             } else if (reflected) {
-                trajectory = PathUtil.generateTrajectory(usingApp(), getReflectedWaypoints());
+                trajectory = PathUtil.generateTrajectory(getClass().getName() + "_Reversed", getReflectedWaypoints(), isPrecalculated());
             } else {
-                trajectory = PathUtil.generateTrajectory(usingApp(), getRotatedWaypoints());
+                trajectory = PathUtil.generateTrajectory(getClass().getName() + "_Rotated", getRotatedWaypoints(), isPrecalculated());
             }
         }
         return trajectory;
@@ -181,26 +193,30 @@ public abstract class AutoPath {
      */
     public List<Rotation2d> getAsTrajectoryHeadings() {
         if (headings == null) {
+            String name = getClass().getName() + "Headings";
             if (!reflected && !rotated) {
                 headings =
                     PathUtil.generateHeadings(
-                        usingApp(),
+                        name,
                         getWaypoints(),
-                        getWaypointHeadings()
+                        getWaypointHeadings(),
+                        isPrecalculated()
                     );
             } else if (reflected) {
                 headings =
                     PathUtil.generateHeadings(
-                        usingApp(),
+                        name + "_Reversed",
                         getReflectedWaypoints(),
-                        getReflectedWaypointHeadings()
+                        getReflectedWaypointHeadings(),
+                        isPrecalculated()
                     );
             } else {
                 headings =
                     PathUtil.generateHeadings(
-                        usingApp(),
+                        name + "_Rotated",
                         getRotatedWaypoints(),
-                        getRotatedWaypointHeadings()
+                        getRotatedWaypointHeadings(),
+                        isPrecalculated()
                     );
             }
         }

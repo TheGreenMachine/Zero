@@ -735,6 +735,15 @@ public class Robot extends TimedRobot {
             .getObject("Trajectory")
             .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
 
+        if (autoModeManager.update()) {
+            drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
+            robotState.field
+                .getObject("Trajectory")
+                .setTrajectory(
+                    autoModeManager.getSelectedAuto().getCurrentTrajectory()
+                );
+        }
+
         if (Constants.kIsLoggingAutonomous) {
             logger.updateTopics();
             logger.log();

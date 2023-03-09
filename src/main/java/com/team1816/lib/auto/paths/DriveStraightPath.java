@@ -21,7 +21,7 @@ public class DriveStraightPath extends AutoPath {
     }
 
     public DriveStraightPath() {
-        this(15);
+        this(5);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class DriveStraightPath extends AutoPath {
     }
 
     @Override
-    protected List<Pose2d> getReflectedWaypoints() {
+    public List<Pose2d> getReflectedWaypoints() {
         var waypoints = List.of(
             new Pose2d(Constants.fieldCenterX * 2 - 0.0, 0.0, Rotation2d.fromDegrees(180)),
             new Pose2d(Constants.fieldCenterX * 2 - (driveDistance), 0.0, Rotation2d.fromDegrees(180))
@@ -48,12 +48,7 @@ public class DriveStraightPath extends AutoPath {
     }
 
     @Override
-    protected List<Rotation2d> getReflectedWaypointHeadings() {
+    public List<Rotation2d> getReflectedWaypointHeadings() {
         return null;
-    }
-
-    @Override
-    public boolean usingApp() {
-        return false;
     }
 }

@@ -1,6 +1,6 @@
 package com.team1816.lib.auto.paths;
 
-import com.team1816.season.configuration.Constants;
+import com.team1816.lib.util.trajectoryUtil.TrajectoryCalculator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -18,23 +18,54 @@ public class PathUtil {
     /**
      * Constraints
      */
-    private static final double kMaxVelocity = kPathFollowingMaxVelMeters;
-    private static final double kMaxAccel = kPathFollowingMaxAccelMeters;
+    private static double kMaxVelocity = kPathFollowingMaxVelMeters;
+    private static double kMaxAcceleration = kPathFollowingMaxAccelMeters;
+
+    public static void setCalculationParameters(double kMaxVel, double kMaxAccel) {
+        kMaxVelocity = kMaxVel;
+        kMaxAcceleration = kMaxAccel;
+    }
+
+    /**
+     * Generates a trajectory when TrajectoryCalculator is not used
+     *
+     * @param pathName
+     * @param waypoints
+     * @return
+     */
+    public static Trajectory generateTrajectory(
+        String pathName,
+        List<Pose2d> waypoints
+    ) {
+        return generateTrajectory(pathName, waypoints, false);
+    }
 
     /**
      * Generates a trajectory based on a list of waypoints based on WPIlib's TrajectoryGenerator
      *
-     * @param usingApp
      * @param waypoints
+     * @param loadTrajectories
      * @return trajectory
      * @see com.team1816.lib.auto.modes.AutoMode
      * @see AutoPath
      * @see edu.wpi.first.math.trajectory.TrajectoryGenerator
      */
     public static Trajectory generateTrajectory(
-        boolean usingApp,
-        List<Pose2d> waypoints
+        String pathName,
+        List<Pose2d> waypoints,
+        boolean loadTrajectories
     ) {
+        pathName = TrajectoryCalculator.formatClassName(pathName);
+        if (loadTrajectories) {
+            var trajectory = TrajectoryCalculator.loadTrajectory(pathName);
+            if (!trajectory.equals(new Trajectory())) {
+                System.out.println("Loaded Trajectory: " + pathName);
+                return trajectory;
+            } else {
+                System.out.println("PathUtil Failed to Load Trajectory: " + pathName);
+            }
+        }
+        /* Inch to meter conversions for waypoints for trajectory calculations */
         List<Pose2d> waypointsMeters = new ArrayList<>();
         for (Pose2d pose2d : waypoints) {
             waypointsMeters.add(
@@ -46,7 +77,7 @@ public class PathUtil {
             );
         }
         /* Configures trajectory constraints */
-        TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAccel);
+        TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAcceleration);
         var baseTrajectory = edu.wpi.first.math.trajectory.TrajectoryGenerator.generateTrajectory(
             waypointsMeters,
             config
@@ -57,7 +88,6 @@ public class PathUtil {
     /**
      * Generates a trajectory based on a list of waypoints based on WPIlib's TrajectoryGenerator
      *
-     * @param usingApp
      * @param initial
      * @param waypoints
      * @return trajectory
@@ -66,10 +96,10 @@ public class PathUtil {
      * @see edu.wpi.first.math.trajectory.TrajectoryGenerator
      */
     public static Trajectory generateTrajectory(
-        boolean usingApp,
         ChassisSpeeds initial,
         List<Pose2d> waypoints
     ) {
+        /* Inch to meter conversions for waypoints for trajectory calculations */
         List<Pose2d> waypointsMeters = new ArrayList<>();
         for (Pose2d pose2d : waypoints) {
             waypointsMeters.add(
@@ -81,7 +111,7 @@ public class PathUtil {
             );
         }
         /* Configures trajectory constraints */
-        TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAccel);
+        TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAcceleration);
         config.setStartVelocity(initial.vxMetersPerSecond);
         config.setEndVelocity(0);
         var baseTrajectory = edu.wpi.first.math.trajectory.TrajectoryGenerator.generateTrajectory(
@@ -94,36 +124,40 @@ public class PathUtil {
     /**
      * Generates headings that can be transposed onto a trajectory with time calibration via a differential model
      *
-     * @param usingApp
      * @param waypoints
      * @param swerveHeadings
      * @return headings
      */
     public static List<Rotation2d> generateHeadings(
-        boolean usingApp,
+        String name,
         List<Pose2d> waypoints,
-        List<Rotation2d> swerveHeadings
+        List<Rotation2d> swerveHeadings,
+        boolean loadTrajectories
     ) {
+        name = TrajectoryCalculator.formatClassName(name);
+        if (loadTrajectories) {
+            var trajectoryHeadings = TrajectoryCalculator.loadTrajectoryHeadings(name);
+            if (trajectoryHeadings.size() > 0) {
+                System.out.println("Loaded Trajectory Headings: " + name);
+                return trajectoryHeadings;
+            } else {
+                System.out.println("PathUtil Failed to Load Trajectory Headings: " + name);
+            }
+        }
         if (waypoints == null || swerveHeadings == null) {
             return null;
         }
 
-        double startX = .5;
-        double startY = Constants.fieldCenterY;
-
         /* Trajectory is generated */
-        Trajectory trajectory = generateTrajectory(usingApp, waypoints);
+        Trajectory trajectory = generateTrajectory(name, waypoints);
         List<Pose2d> waypointsMeters = new ArrayList<>();
-        if (usingApp) {
-            startX = 0;
-            startY = 0;
-        }
+
         /* Inch to meter conversions */
         for (Pose2d pose2d : waypoints) {
             waypointsMeters.add(
                 new Pose2d(
-                    pose2d.getX() + startX,
-                    pose2d.getY() + startY,
+                    pose2d.getX(),
+                    pose2d.getY(),
                     pose2d.getRotation()
                 )
             );
@@ -154,11 +188,10 @@ public class PathUtil {
         ) {
             int iStart = waypointIndexes.get(nextCheckpoint - 1);
             int iEnd = waypointIndexes.get(nextCheckpoint);
-            double totalDHeading =
-                (
-                    swerveHeadings.get(nextCheckpoint).getDegrees() -
-                        swerveHeadings.get(nextCheckpoint - 1).getDegrees()
-                );
+            double totalDHeading = (
+                swerveHeadings.get(nextCheckpoint).getDegrees() -
+                    swerveHeadings.get(nextCheckpoint - 1).getDegrees()
+            );
             double timeBetweenWaypoints =
                 waypointTimes.get(nextCheckpoint) - waypointTimes.get(nextCheckpoint - 1);
             double dHeading = totalDHeading / timeBetweenWaypoints;
@@ -166,12 +199,9 @@ public class PathUtil {
             for (int i = iStart; i < iEnd; i++) {
                 generatedHeadings.add(
                     Rotation2d.fromDegrees(
-                        swerveHeadings.get(nextCheckpoint - 1).getDegrees() +
-                            dHeading *
-                                (
-                                    trajectory.getStates().get(i).timeSeconds -
-                                        waypointTimes.get(nextCheckpoint - 1)
-                                )
+                        swerveHeadings.get(nextCheckpoint - 1).getDegrees() + dHeading * (
+                            trajectory.getStates().get(i).timeSeconds - waypointTimes.get(nextCheckpoint - 1)
+                        )
                     )
                 );
             }
@@ -186,14 +216,12 @@ public class PathUtil {
     /**
      * Generates headings that can be transposed onto a trajectory with time calibration via a differential model
      *
-     * @param usingApp
      * @param waypoints
      * @param swerveHeadings
      * @param initial
      * @return headings
      */
     public static List<Rotation2d> generateHeadings(
-        boolean usingApp,
         List<Pose2d> waypoints,
         List<Rotation2d> swerveHeadings,
         ChassisSpeeds initial
@@ -202,22 +230,16 @@ public class PathUtil {
             return null;
         }
 
-        double startX = .5;
-        double startY = Constants.fieldCenterY;
-
         /* Trajectory is generated */
-        Trajectory trajectory = generateTrajectory(usingApp, initial, waypoints);
+        Trajectory trajectory = generateTrajectory(initial, waypoints);
         List<Pose2d> waypointsMeters = new ArrayList<>();
-        if (usingApp) {
-            startX = 0;
-            startY = 0;
-        }
+
         /* Inch to meter conversions */
         for (Pose2d pose2d : waypoints) {
             waypointsMeters.add(
                 new Pose2d(
-                    pose2d.getX() + startX,
-                    pose2d.getY() + startY,
+                    pose2d.getX(),
+                    pose2d.getY(),
                     pose2d.getRotation()
                 )
             );
