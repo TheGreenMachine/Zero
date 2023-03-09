@@ -6,17 +6,10 @@ import com.team1816.lib.hardware.components.ledManager.ILEDManager;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 
 import javax.inject.Singleton;
@@ -93,7 +86,7 @@ public class LedManager extends Subsystem {
         ledG = 0;
         ledB = 0;
 
-        if(RobotBase.isSimulation()){
+        if (RobotBase.isSimulation()) {
             colorWidget = Constants.kSimWindow.add("LEDColor", false);
             colorWidget.withPosition(0, 4);
             colorWidget.withProperties(Map.of("colorWhenFalse", "white"));
@@ -139,8 +132,8 @@ public class LedManager extends Subsystem {
         indicateStatus(defaultStatus, ControlState.SOLID);
     }
 
-    public void setLedControlState(ControlState controlState){
-        if(controlState != this.controlState){
+    public void setLedControlState(ControlState controlState) {
+        if (controlState != this.controlState) {
             this.controlState = controlState;
             outputsChanged = true;
         }
@@ -155,7 +148,7 @@ public class LedManager extends Subsystem {
         return period;
     }
 
-    public RobotStatus getCurrentControlStatus(){
+    public RobotStatus getCurrentControlStatus() {
         return controlStatus;
     }
 
@@ -168,8 +161,8 @@ public class LedManager extends Subsystem {
      */
     @Override
     public void readFromHardware() {
-        if(RobotBase.isSimulation()){
-           var color = ledManager.getLastColor();
+        if (RobotBase.isSimulation()) {
+            var color = ledManager.getLastColor();
             if (!Objects.equals(color.toHexString(), lastColor.toHexString())) {
                 // Choose "true" color based on color of wheel
                 colorWidget.withProperties(Map.of("colorWhenTrue", color.toHexString()));

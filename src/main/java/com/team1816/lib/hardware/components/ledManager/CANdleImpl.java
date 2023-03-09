@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.util.Color;
 public class CANdleImpl extends CANdle implements ILEDManager {
 
     private Color lastColor;
+
     /**
      * Instantiates a CANdle based on CAN-bus id and CAN-bus name
      *
@@ -49,7 +50,7 @@ public class CANdleImpl extends CANdle implements ILEDManager {
     }
 
     @Override
-    public ErrorCode setLEDs(int r, int g, int b, int w, int startIdx, int count){
+    public ErrorCode setLEDs(int r, int g, int b, int w, int startIdx, int count) {
         lastColor = new Color(r, g, b);
         return super.setLEDs(r, g, b, w, startIdx, count);
     }

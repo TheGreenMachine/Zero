@@ -377,7 +377,7 @@ public class Robot extends TimedRobot {
                         (pressed) -> {
                             if (!operatorLock) {
                                 collector.outtakeGamePiece(pressed);
-                                if(pressed){
+                                if (pressed) {
                                     ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET);
                                 } else {
                                     ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
@@ -667,7 +667,7 @@ public class Robot extends TimedRobot {
             } else {
                 // non-camera LEDs will flash red if robot periodic updates fail
                 if (faulted) {
-                    if(ledManager.getCurrentControlStatus() != LedManager.RobotStatus.ERROR){
+                    if (ledManager.getCurrentControlStatus() != LedManager.RobotStatus.ERROR) {
                         ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.ControlState.BLINK);
                     }
                     ledManager.writeToHardware();
@@ -699,7 +699,7 @@ public class Robot extends TimedRobot {
                 }
                 lastButton = zeroingButton.get();
 
-                if(ledManager.getCurrentControlStatus() == LedManager.RobotStatus.ZEROING_ELEVATOR){
+                if (ledManager.getCurrentControlStatus() == LedManager.RobotStatus.ZEROING_ELEVATOR) {
                     // only keep looping through write if zeroing elevator cus we need to update its blinking
                     ledManager.writeToHardware();
                 }

@@ -8,7 +8,6 @@ import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.AutoBalanceAction;
 import com.team1816.season.auto.paths.NodeToChargeStationFeederPath;
-import com.team1816.season.auto.paths.NodeToChargeStationMiddlePath;
 
 import java.util.List;
 

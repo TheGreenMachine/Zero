@@ -16,6 +16,7 @@ public class CanifierImpl extends CANifier implements ILEDManager {
 
 
     private Color lastColor;
+
     /**
      * Instantiates a Canifier based on its device ID
      *
