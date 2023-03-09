@@ -264,6 +264,13 @@ public class Robot extends TimedRobot {
 
             actionManager =
                 new ActionManager(
+                    // Test
+                    createAction(
+                        () -> controlBoard.getAsBool("updatePose"),
+                        () -> {
+                            orchestrator.updatePoseWithCamera();
+                        }
+                    ),
                     // Driver Gamepad
                     createAction(
                         () -> controlBoard.getAsBool("zeroPose"),

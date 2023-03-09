@@ -10,7 +10,7 @@ driver:
         x: toggleArmScoreCollect # remapped to back left button
         y: lockOperator # remapped to back right button
         a: midSlowMode # autoTarget
-        b: autoBalance
+        b: updatePose
     axes:
         leftTrigger: brakeMode
         rightTrigger: slowMode
