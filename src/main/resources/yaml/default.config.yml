@@ -96,9 +96,6 @@ constants:
     kTrackScrubFactor: 1.0
     verbose: 0 # 0 or 1
     ## Logging ##
-    logTeleOp: 0 # 0 or 1
-    logAuto: 1 # 0 or 1
-    badLogEnabled: 1 # 0 or 1
     ## General ##
     teleopFieldCentric: 1 # 0 or 1
     compressorEnabled: 0 # 0 or 1

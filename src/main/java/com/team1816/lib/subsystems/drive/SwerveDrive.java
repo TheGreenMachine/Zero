@@ -167,6 +167,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      */
     @Override
     public synchronized void readFromHardware() {
+        Double[] actualStates = new Double[8];
+        Double[] desiredStates = new Double[8];
         for (int i = 0; i < 4; i++) {
             // logging actual angle and velocity of swerve motors (azimuth & drive)
             swerveModules[i].update();
@@ -174,6 +176,16 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             actualModulePositions[i] = swerveModules[i].getActualPosition();
             // logging current temperatures of each module's drive motor
             motorTemperatures[i] = swerveModules[i].getMotorTemp();
+
+            if(Constants.kIsLoggingDrivetrain){
+                // populating double list with actState angles and speeds
+                actualStates[i*2] = actualModuleStates[i].angle.getRadians();
+                actualStates[i*2 + 1] = actualModuleStates[i].speedMetersPerSecond;
+
+                // populating double list with desState angles and speeds
+                desiredStates[i*2] = desiredModuleStates[i].angle.getRadians();
+                desiredStates[i*2 + 1] = desiredModuleStates[i].speedMetersPerSecond;
+            }
         }
         chassisSpeed = swerveKinematics.toChassisSpeeds(actualModuleStates);
 
@@ -183,6 +195,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
         swerveOdometry.update(actualHeading, actualModulePositions);
+
+        if(Constants.kIsLoggingDrivetrain){
+            SmartDashboard.putNumberArray("Drive/ActStates", actualStates);
+            SmartDashboard.putNumberArray("Drive/DesStates", desiredStates);
+        }
+
         updateRobotState();
     }
 

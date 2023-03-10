@@ -91,11 +91,9 @@ constants:
     ## Drivetrain Dimensions and Parameters ##
     maxAllowablePoseError: 0.1
     ## Logging Config ##
-    logTeleOp: 0
-    logAuto: 0
-    badLogEnabled: 0
+    logRobot: 0
+    logDrivetrain: 0
     configStatusFrames: 0
-    verbose: 0 # 0 or 1
     ## General ##
     kLooperDt: .020
     resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret

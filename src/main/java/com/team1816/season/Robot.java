@@ -1,6 +1,5 @@
 package com.team1816.season;
 
-import badlog.lib.BadLog;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
@@ -11,7 +10,6 @@ import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
-import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.modes.TrajectoryToTargetMode;
@@ -24,6 +22,7 @@ import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,11 +39,6 @@ public class Robot extends TimedRobot {
      */
     private final Looper enabledLoop;
     private final Looper disabledLoop;
-
-    /**
-     * Logger
-     */
-    private static BadLog logger;
 
     /**
      * Controls
@@ -160,13 +154,13 @@ public class Robot extends TimedRobot {
      * @return duration (ms)
      * @see Looper#getLastLoop()
      */
-    public Double getLastEnabledLoop() {
-        return enabledLoop.getLastLoop();
+    public Double getLastSubsystemLoop() {
+        return enabledLoop.isRunning() ? enabledLoop.getLastLoop() : disabledLoop.getLastLoop();
     }
 
     /**
      * Actions to perform when the robot has just begun being powered and is done booting up.
-     * Initializes the robot by injecting the controlboard, registering all subsystems, and setting up BadLogs.
+     * Initializes the robot by injecting the controlboard, and registering all subsystems.
      */
     @Override
     public void robotInit() {
@@ -180,8 +174,8 @@ public class Robot extends TimedRobot {
             // your subsystem, just add it alongside the drive, ledManager, and camera parameters :)
             subsystemManager.setSubsystems(drive, ledManager, camera, elevator, collector);
 
-            /** Register BadLogs */
-            if (Constants.kIsBadlogEnabled) {
+            /** Logging */
+            if (Constants.kLoggingRobot) {
                 var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
                 var robotName = System.getenv("ROBOT_NAME");
                 if (robotName == null) robotName = "default";
@@ -198,57 +192,7 @@ public class Robot extends TimedRobot {
                     }
                 }
                 var filePath = logFileDir + robotName + "_" + logFile + ".bag";
-                logger = BadLog.init(filePath);
-
-                BadLog.createTopic(
-                    "Timings/Looper",
-                    "ms",
-                    this::getLastEnabledLoop,
-                    "hide",
-                    "join:Timings"
-                );
-                BadLog.createTopic(
-                    "Timings/RobotLoop",
-                    "ms",
-                    this::getLastRobotLoop,
-                    "hide",
-                    "join:Timings"
-                );
-                BadLog.createTopic(
-                    "Timings/Timestamp",
-                    "s",
-                    Timer::getFPGATimestamp,
-                    "xaxis",
-                    "hide"
-                );
-//                BadLog.createTopic(
-//                    "Vision/Distance",
-//                    "inches",
-//                    robotState::getDistanceToGoal
-//                );
-                BadLog.createValue("Drivetrain PID", drive.pidToString());
-                DrivetrainLogger.init(drive);
-                BadLog.createTopic(
-                    "PDP/Current",
-                    "Amps",
-                    infrastructure.getPd()::getTotalCurrent
-                );
-                BadLog.createTopic(
-                    "Pigeon/Yaw",
-                    "degrees",
-                    infrastructure::getYaw
-                );
-                BadLog.createTopic(
-                    "Pigeon/Pitch",
-                    "degrees",
-                    infrastructure::getPitch
-                );
-                BadLog.createTopic(
-                    "Pigeon/Roll",
-                    "degrees",
-                    infrastructure::getRoll
-                );
-                logger.finishInitialization();
+                DataLogManager.start();
             }
 
             subsystemManager.registerEnabledLoops(enabledLoop);
@@ -647,7 +591,11 @@ public class Robot extends TimedRobot {
             subsystemManager.outputToSmartDashboard(); // update shuffleboard for subsystem values
             robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
-            Robot.dt = getLastEnabledLoop();
+            Robot.dt = getLastSubsystemLoop();
+            if(Constants.kLoggingRobot){
+                SmartDashboard.putNumber("Looper/Robot", getLastRobotLoop());
+                SmartDashboard.putNumber("Looper/Subsystems", dt);
+            }
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());
@@ -734,11 +682,6 @@ public class Robot extends TimedRobot {
         robotState.field
             .getObject("Trajectory")
             .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
-
-        if (Constants.kIsLoggingAutonomous) {
-            logger.updateTopics();
-            logger.log();
-        }
     }
 
     /**
@@ -750,17 +693,9 @@ public class Robot extends TimedRobot {
 
         try {
             manualControl();
-            //            if (orchestrator.needsVisionUpdate() || !robotState.isPoseUpdated) {
-            //                robotState.isPoseUpdated = false;
-            //                orchestrator.calculatePoseFromCamera();
-            //            }
         } catch (Throwable t) {
             faulted = true;
             throw t;
-        }
-        if (Constants.kIsLoggingTeleOp) {
-            logger.updateTopics();
-            logger.log();
         }
     }
 
