@@ -92,6 +92,18 @@ public abstract class Controller {
     }
 
     /**
+     * Toggles rumble on a generic controller, sets rumble type and intensity
+     *
+     * @param on
+     * @param rumbleType
+     * @param intensity [0-1]
+     */
+    public void setRumble(boolean on, GenericHID.RumbleType rumbleType, double intensity) {
+        mController.setRumble(rumbleType, on ? intensity : 0);
+    }
+
+
+    /**
      * Returns dpad outputs in a standardized integer format
      *
      * @return dpad

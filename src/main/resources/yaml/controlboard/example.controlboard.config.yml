@@ -19,7 +19,7 @@ driver:
         rightBumper: intakeCone
         start: zeroPose
 operator:
-    rumble: false
+    rumble: true
     dpad:
         up: extendStage
         down: descendStage

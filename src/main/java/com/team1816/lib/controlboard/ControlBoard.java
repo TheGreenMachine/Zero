@@ -17,8 +17,8 @@ public class ControlBoard implements IControlBoard {
     public static final int kOperatorGamepadPort = 1;
     public static final int kButtonBoardPort = 2;
 
-    private final Controller driverController;
-    private final Controller operatorController;
+    public final Controller driverController;
+    public final Controller operatorController;
 
     private final Controller buttonBoardController;
 
