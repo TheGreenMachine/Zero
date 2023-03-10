@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
+import com.team1816.season.Robot;
 
 /**
  * This class emulates the behaviour of a Motor that is not physically implemented on a robot
@@ -59,20 +60,19 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
         if (Mode == ControlMode.PercentOutput) {
             this.desiredDemand[0] = demand;
             this.desiredDemand[1] = demand * maxVelTicks100ms;
-            this.desiredDemand[2] = lastPos + demand * maxVelTicks100ms;
+            this.desiredDemand[2] = lastPos + demand * maxVelTicks100ms; // TODO this boof
         } else if (Mode == ControlMode.Velocity) {
             this.desiredDemand[0] = demand / maxVelTicks100ms;
             this.desiredDemand[1] = demand;
-            this.desiredDemand[2] = lastPos + demand;
+            this.desiredDemand[2] = lastPos + demand; // TODO this boof
         } else if (Mode == ControlMode.Position) {
-            this.desiredDemand[0] = demand / (demand - lastPos);
-            this.desiredDemand[1] = demand - lastPos;
+            this.desiredDemand[0] = (demand - lastPos) / Robot.dt / maxVelTicks100ms; // TODO this boof
+            this.desiredDemand[1] = (demand - lastPos) / Robot.dt; // TODO this boof
             this.desiredDemand[2] = demand;
         } else {
             System.out.println("no support for this Mode in GhostMotor!");
             return;
         }
-        controlMode = Mode;
 
         // setting actual output
         if (usingLimit) {
@@ -94,6 +94,17 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
                 actualOutput[i] = desiredDemand[i];
             }
         }
+
+        if (Math.abs(actualOutput[0]) > 1.0) {
+            System.out.println(
+                    "Motor " +
+                            name +
+                            "'s % output should be between -1.0 to 1.0 value:" +
+                            actualOutput[0]
+            );
+        }
+
+        controlMode = Mode;
     }
 
     @Override
@@ -183,7 +194,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public double getMotorOutputPercent() {
-        return 0;
+        lastPos = actualOutput[2];
+        return actualOutput[0];
     }
 
     @Override
@@ -267,22 +279,13 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public double getSelectedSensorPosition(int pidIdx) {
+        lastPos = actualOutput[2];
         return actualOutput[2];
     }
 
     @Override
     public double getSelectedSensorVelocity(int pidIdx) {
-        if (controlMode == ControlMode.PercentOutput) {
-            if (Math.abs(actualOutput[0]) > 1.0) {
-                System.out.println(
-                    "Motor " +
-                        name +
-                        "'s % output should be between -1.0 to 1.0 value:" +
-                        actualOutput[0]
-                );
-            }
-            return actualOutput[0] * maxVelTicks100ms;
-        }
+        lastPos = actualOutput[2];
         return actualOutput[1];
     }
 
@@ -712,7 +715,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode setQuadraturePosition(int newPosition) {
-        desiredDemand[0] = newPosition;
+        desiredDemand[2] = newPosition;
         return ErrorCode.OK;
     }
 

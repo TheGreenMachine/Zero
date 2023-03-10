@@ -7,6 +7,7 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.lib.util.simUtil.SingleJointedElevatorArmSim;
 import com.team1816.season.Robot;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
@@ -98,7 +99,7 @@ public class Elevator extends Subsystem {
             new SingleJointedArmSim(
                     DCMotor.getFalcon500(2),
                     kArmGearing,
-                    1,
+                    SingleJointedElevatorArmSim.estimateMOI((kElevatorMaxLength + kElevatorMinLength) / 2, kArmMass),
                     (kElevatorMaxLength + kElevatorMinLength) / 2,
                     0,
                     180,
@@ -108,6 +109,7 @@ public class Elevator extends Subsystem {
     private static final double kElevatorMinLength = 0.70; // meters
     private static final double kElevatorMaxLength = 1.25; // meters
     private static final double kArmGearing = 250; // meters
+    public static final double kArmMass = 13.60; // kg
 
     /**
      * Base constructor needed to instantiate a subsystem
@@ -256,19 +258,17 @@ public class Elevator extends Subsystem {
         }
 
         if(RobotBase.isSimulation()){
-            simArmSystem.setInput(Math.abs(extensionMotor.getSelectedSensorVelocity(0)) * RobotController.getBatteryVoltage());
+            simArmSystem.setInput(angleMotorMain.getMotorOutputPercent() * RobotController.getBatteryVoltage());
 
             RoboRioSim.setVInVoltage(
                     BatterySim.calculateDefaultBatteryLoadedVoltage(simArmSystem.getCurrentDrawAmps()));
+
+
             simArm.setLength(kElevatorMinLength + extensionMotor.getSelectedSensorPosition(0));
             simArm.setAngle(angleMotorMain.getSelectedSensorPosition(0));
             simArmSystem.update(Robot.dt);
         }
 
-//        if (hallEffectTriggered == zeroingHallEffect.get()) {
-//            zeroingHallEffectTriggerValue = actualAnglePosition;
-//        }
-//        hallEffectTriggered = !zeroingHallEffect.get();
 
         if (Math.abs(desiredAngleState.getAngle() - actualAnglePosition) < allowableAngleError * 2) {
             robotState.actualElevatorAngleState = desiredAngleState;
