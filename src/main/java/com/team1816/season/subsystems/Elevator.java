@@ -13,7 +13,11 @@ import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -87,22 +91,23 @@ public class Elevator extends Subsystem {
     private double zeroingHallEffectTriggerValue;
 
     // where ur drawing stuff
-    Mechanism2d elevatorCanvas = new Mechanism2d(3, 3);
-    // the mechanism root node
-    MechanismRoot2d root = elevatorCanvas.getRoot("climber", 2, 0);
-    // MechanismLigament2d objects represent each "section"/"stage" of the mechanism, and are based
-    // off the root node or another ligament object
-    MechanismLigament2d simArm = root.append(new MechanismLigament2d("elevator", kElevatorMinimumLength, 90));
-    private final ElevatorSim simArmSystem =
-            new ElevatorSim(
+    private Mechanism2d elevatorCanvas = new Mechanism2d(3, 3);
+    private MechanismRoot2d root = elevatorCanvas.getRoot("climber", 2, 0);
+    private MechanismLigament2d simArm = root.append(new MechanismLigament2d("elevator", kElevatorMinLength, 90));
+    private final SingleJointedArmSim simArmSystem =
+            new SingleJointedArmSim(
                     DCMotor.getFalcon500(2),
-                    Constants.kElevatorGearing,
-                    Constants.kCarriageMass,
-                    Constants.kElevatorDrumRadius,
-                    Constants.kMinElevatorHeightMeters,
-                    Constants.kMaxElevatorHeightMeters,
+                    kArmGearing,
+                    1,
+                    (kElevatorMaxLength + kElevatorMinLength) / 2,
+                    0,
+                    180,
                     true,
                     VecBuilder.fill(0.01));
+
+    private static final double kElevatorMinLength = 0.70; // meters
+    private static final double kElevatorMaxLength = 1.25; // meters
+    private static final double kArmGearing = 250; // meters
 
     /**
      * Base constructor needed to instantiate a subsystem
@@ -251,6 +256,12 @@ public class Elevator extends Subsystem {
         }
 
         if(RobotBase.isSimulation()){
+            simArmSystem.setInput(Math.abs(extensionMotor.getSelectedSensorVelocity(0)) * RobotController.getBatteryVoltage());
+
+            RoboRioSim.setVInVoltage(
+                    BatterySim.calculateDefaultBatteryLoadedVoltage(simArmSystem.getCurrentDrawAmps()));
+            simArm.setLength(kElevatorMinLength + extensionMotor.getSelectedSensorPosition(0));
+            simArm.setAngle(angleMotorMain.getSelectedSensorPosition(0));
             simArmSystem.update(Robot.dt);
         }
 
