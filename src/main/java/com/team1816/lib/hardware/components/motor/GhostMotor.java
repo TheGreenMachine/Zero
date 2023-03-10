@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.team1816.season.Robot;
+import edu.wpi.first.wpilibj.RobotController;
 
 /**
  * This class emulates the behaviour of a Motor that is not physically implemented on a robot
@@ -200,7 +201,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public double getMotorOutputVoltage() {
-        return 0;
+        return getMotorOutputPercent() * RobotController.getBatteryVoltage();
     }
 
     @Override

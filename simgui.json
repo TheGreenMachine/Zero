@@ -176,6 +176,9 @@
       "Shuffleboard": {
         "open": true
       },
+      "Simulation": {
+        "open": true
+      },
       "open": true
     },
     "SmartDashboard": {

@@ -13,6 +13,7 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -95,8 +96,8 @@ public class Elevator extends Subsystem {
     private Mechanism2d elevatorCanvas = new Mechanism2d(3, 3);
     private MechanismRoot2d root = elevatorCanvas.getRoot("climber", 2, 0);
     private MechanismLigament2d simArm = root.append(new MechanismLigament2d("elevator", kElevatorMinLength, 90));
-    private final SingleJointedArmSim simArmSystem =
-            new SingleJointedArmSim(
+    private final SingleJointedElevatorArmSim simArmSystem =
+            new SingleJointedElevatorArmSim(
                     DCMotor.getFalcon500(2),
                     kArmGearing,
                     SingleJointedElevatorArmSim.estimateMOI((kElevatorMaxLength + kElevatorMinLength) / 2, kArmMass),
@@ -258,15 +259,17 @@ public class Elevator extends Subsystem {
         }
 
         if(RobotBase.isSimulation()){
-            simArmSystem.setInput(angleMotorMain.getMotorOutputPercent() * RobotController.getBatteryVoltage());
+            double elevatorLength = kElevatorMinLength +
+                    (extensionMotor.getSelectedSensorPosition(0) / maxExtension * (kElevatorMaxLength - kElevatorMinLength));
 
-            RoboRioSim.setVInVoltage(
-                    BatterySim.calculateDefaultBatteryLoadedVoltage(simArmSystem.getCurrentDrawAmps()));
+//            simArmSystem.setInput(angleMotorMain.getMotorOutputVoltage());
+//            simArmSystem.setM_armLenMeters(elevatorLength);
+//            RoboRioSim.setVInVoltage(
+//                    BatterySim.calculateDefaultBatteryLoadedVoltage(simArmSystem.getCurrentDrawAmps()));
+//            simArmSystem.update(Robot.dt);
 
-
-            simArm.setLength(kElevatorMinLength + extensionMotor.getSelectedSensorPosition(0));
-            simArm.setAngle(angleMotorMain.getSelectedSensorPosition(0));
-            simArmSystem.update(Robot.dt);
+            simArm.setLength(elevatorLength);
+            simArm.setAngle(angleMotorMain.getSelectedSensorPosition(0) / (4 * angleQuarterPPR) * 360); // Units.radiansToDegrees(simArmSystem.getAngleRads())
         }
 
 
