@@ -4,6 +4,8 @@ import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.season.subsystems.Elevator;
 
+import static com.team1816.lib.subsystems.Subsystem.robotState;
+
 public class ElevatorAction implements AutoAction {
 
     private Elevator elevator;
@@ -31,7 +33,7 @@ public class ElevatorAction implements AutoAction {
 
     @Override
     public boolean isFinished() {
-        return true;
+        return robotState.actualElevatorAngleState == elevator.getDesiredAngleState() && robotState.actualElevatorExtensionState == elevator.getDesiredExtensionState();
     }
 
     @Override

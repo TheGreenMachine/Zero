@@ -267,7 +267,7 @@ public class LedManager extends Subsystem {
         DISABLED(MAX, MAX / 4, 0), // orange
         ERROR(MAX, 0, 0), // red
         AUTONOMOUS(0, MAX, MAX), // cyan
-        ENDGAME(0, 0, MAX), // blue
+        AUTO_SCORE(0, 0, MAX), // blue
         CUBE(MAX, 0, 150), // magenta
         RAGE(MAX, 5, 5), // deep red
         CONE(MAX, 50, 0), // yellow,
