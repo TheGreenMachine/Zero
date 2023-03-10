@@ -2,6 +2,7 @@ package com.team1816.lib.auto;
 
 import edu.wpi.first.math.geometry.Translation2d;
 
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,5 +51,18 @@ public class Polygon {
             j = i;
         }
         return contained;
+    }
+
+    /**
+     * Utilizes ray-casting to determine if a line intersects the polygon
+     */
+    public boolean intersects(Line2D line) {
+        for (int i = 0; i < vertices.size() - 1; i++) {
+            Line2D edge = new Line2D.Double(vertices.get(i).getX(), vertices.get(i).getY(), vertices.get(i+1).getX(), vertices.get(i+1).getY());
+            if (line.intersectsLine(edge)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
