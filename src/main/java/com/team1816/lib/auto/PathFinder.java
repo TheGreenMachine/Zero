@@ -16,11 +16,12 @@ public class PathFinder {
 
     /**
      * Initializes the PathFinder using cartesian poses of the target, robot, and grown obstacles
-     * @param target - target
-     * @param robot - current
+     *
+     * @param target    - target
+     * @param robot     - current
      * @param obstacles - grown obstacles
      */
-    public PathFinder (Pose2d target, Translation2d robot, List<Polygon> obstacles) {
+    public PathFinder(Pose2d target, Translation2d robot, List<Polygon> obstacles) {
         this.target = target;
         this.robot = robot;
         this.obstacles = obstacles;
@@ -28,9 +29,10 @@ public class PathFinder {
 
     /**
      * Returns the waypoints for the optimal path from the robot to the target utilizing a visibility graph and Dijkstra's algorithm
+     *
      * @return waypoints
      */
-    public List<Pose2d> getWaypoints () {
+    public List<Pose2d> getWaypoints() {
         List<Pose2d> waypoints = new ArrayList<>(); // returned for pathing
 
         List<Translation2d> points = new ArrayList<>(); // used for visibility graph
@@ -47,8 +49,8 @@ public class PathFinder {
             points.addAll(obstacle.getVertices());
         }
         // Generate the visibility graph
-        for (Translation2d i: points) { // initial
-            for (Translation2d f: points) { // final
+        for (Translation2d i : points) { // initial
+            for (Translation2d f : points) { // final
                 if (i.equals(f)) {
                     continue;
                 } else {
@@ -57,14 +59,14 @@ public class PathFinder {
                     Line2D edge = new Line2D.Double(i.getX(), i.getY(), f.getX(), f.getY());
 
                     // checks if line segment intersects the polygons
-                    for (Polygon o: obstacles) {  // n^2log(n)
+                    for (Polygon o : obstacles) {  // n^2log(n)
                         if (o.intersects(edge)) {
                             intersected = true;
                             break;
                         }
                     }
                     if (!intersected) {
-                        edges.add(new Translation2d[] {i, f});
+                        edges.add(new Translation2d[]{i, f});
                     }
                 }
             }
@@ -118,7 +120,7 @@ public class PathFinder {
         // Append waypoints (shortestPath in reverse)
         for (int i = shortestPath.size() - 1; i > 0; i--) {
             // look ahead to determine heading
-            var pointHeading = shortestPath.get(i-1).minus(shortestPath.get(i)).getAngle();
+            var pointHeading = shortestPath.get(i - 1).minus(shortestPath.get(i)).getAngle();
             waypoints.add(new Pose2d(shortestPath.get(i), pointHeading));
         }
         waypoints.add(target);
@@ -134,6 +136,7 @@ public class PathFinder {
         RouteNode(Translation2d current) {
             this(current, null, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         }
+
         RouteNode(Translation2d current, Translation2d previous, double routeScore, double estimatedRemainingScore) {
             this.current = current;
             this.previous = previous;
