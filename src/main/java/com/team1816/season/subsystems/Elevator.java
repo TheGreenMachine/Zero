@@ -7,8 +7,16 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.Robot;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -78,6 +86,23 @@ public class Elevator extends Subsystem {
     private boolean hallEffectTriggered; // not using this rn - turn on robot with arm all the way down for ~20 secs
     private double zeroingHallEffectTriggerValue;
 
+    // where ur drawing stuff
+    Mechanism2d elevatorCanvas = new Mechanism2d(3, 3);
+    // the mechanism root node
+    MechanismRoot2d root = elevatorCanvas.getRoot("climber", 2, 0);
+    // MechanismLigament2d objects represent each "section"/"stage" of the mechanism, and are based
+    // off the root node or another ligament object
+    MechanismLigament2d simArm = root.append(new MechanismLigament2d("elevator", kElevatorMinimumLength, 90));
+    private final ElevatorSim simArmSystem =
+            new ElevatorSim(
+                    DCMotor.getFalcon500(2),
+                    Constants.kElevatorGearing,
+                    Constants.kCarriageMass,
+                    Constants.kElevatorDrumRadius,
+                    Constants.kMinElevatorHeightMeters,
+                    Constants.kMaxElevatorHeightMeters,
+                    true,
+                    VecBuilder.fill(0.01));
 
     /**
      * Base constructor needed to instantiate a subsystem
@@ -223,6 +248,10 @@ public class Elevator extends Subsystem {
                 Math.sin(actualAnglePosition / angleQuarterPPR) *
                     ((actualExtensionPosition + extensionPPR) / 2 * extensionPPR)
                     * Constants.maxElevatorFeedForward;
+        }
+
+        if(RobotBase.isSimulation()){
+            simArmSystem.update(Robot.dt);
         }
 
 //        if (hallEffectTriggered == zeroingHallEffect.get()) {
