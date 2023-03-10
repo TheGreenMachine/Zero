@@ -3,6 +3,7 @@ package com.team1816.lib.auto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,6 +34,12 @@ public class PathFinder {
      * @return waypoints
      */
     public List<Pose2d> getWaypoints () {
+        List<Pose2d> waypoints = new ArrayList<>();
+        if (isSwerve) {
 
+        } else {
+
+        }
+        return waypoints;
     }
 }
