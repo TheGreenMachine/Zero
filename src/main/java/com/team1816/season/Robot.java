@@ -5,6 +5,7 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.controlboard.ActionManager;
+import com.team1816.lib.controlboard.ControlBoard;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
@@ -49,7 +50,7 @@ public class Robot extends TimedRobot {
     /**
      * Controls
      */
-    private IControlBoard controlBoard;
+    private ControlBoard controlBoard;
     private ActionManager actionManager;
 
     private final Infrastructure infrastructure;
@@ -172,7 +173,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         try {
             /** Register All Subsystems */
-            controlBoard = Injector.get(IControlBoard.class);
+            controlBoard = Injector.get(ControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
             // Remember to register our elevator and collector subsystems below!! The subsystem manager deals with calling
@@ -259,7 +260,7 @@ public class Robot extends TimedRobot {
             faulted = true; // elevator not zeroed on bootup - letting ppl know
 
             /** Register ControlBoard */
-            controlBoard = Injector.get(IControlBoard.class);
+            controlBoard = Injector.get(ControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
             actionManager =
@@ -369,6 +370,7 @@ public class Robot extends TimedRobot {
                             } else {
                                 operatorLock = false;
                             }
+                            controlBoard.operatorController.setRumble(pressed, GenericHID.RumbleType.kBothRumble, 1);
                         }
                     ),
                     // Operator Gamepad
