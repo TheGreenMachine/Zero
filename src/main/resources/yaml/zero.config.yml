@@ -173,7 +173,7 @@ infrastructure:
     isPigeon2: true
 controlboard: example
 constants:
-    zeroingButton: 0 # channel of DI port
+    zeroingButton: 9 # channel of DIO port
     ## Drivetrain ##
     minAllowablePoseError: 0.1
     maxAllowablePoseError: 5

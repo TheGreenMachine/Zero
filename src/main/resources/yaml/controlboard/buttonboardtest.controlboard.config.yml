@@ -6,10 +6,6 @@ driver:
             vertical: throttle
         right:
             horizontal: rotation
-    buttonpad:
-        x: autoCollect
-        a: autoTarget
-        b: autoBalance
     axes:
         leftTrigger: brakeMode
         rightTrigger: slowMode
@@ -17,22 +13,6 @@ driver:
         leftBumper: intakeCube
         rightBumper: intakeCone
         start: zeroPose
-operator:
-    rumble: false
-    dpad:
-        up: extendStage
-        down: descendStage
-    buttons:
-        leftBumper: bobDown
-        rightBumper: outtake
-    axes:
-        leftTrigger: armStow
-        rightTrigger: armCollect
-    buttonpad:
-        y: autoScoreMax
-        x: autoScoreMid
-        a: autoScoreMin
-        b: autoScoreRetract
 buttonboard:
     upLeft: grid1 # farthest from opposing feeder
     up: grid2 # coopertition
@@ -43,4 +23,3 @@ buttonboard:
     downLeft: level1 # low
     down: level2 # mid
     downRight: level3 # high
-demoMode: false

@@ -377,7 +377,7 @@ public class Robot extends TimedRobot {
                         (pressed) -> {
                             if (!operatorLock) {
                                 collector.outtakeGamePiece(pressed);
-                                if(pressed){
+                                if (pressed) {
                                     ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET);
                                 } else {
                                     ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
@@ -469,70 +469,70 @@ public class Robot extends TimedRobot {
                                 orchestrator.autoScore();
                             }
                         }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("grid1"),
+                        () -> {
+                            grid = 0;
+                            System.out.println("Grid changed to 0");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("grid2"),
+                        () -> {
+                            grid = 1;
+                            System.out.println("Grid changed to 1");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("grid3"),
+                        () -> {
+                            grid = 2;
+                            System.out.println("Grid changed to 2");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("node1"),
+                        () -> {
+                            node = 0;
+                            System.out.println("Node changed to 0");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("node2"),
+                        () -> {
+                            node = 1;
+                            System.out.println("Node changed to 1");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("node3"),
+                        () -> {
+                            node = 2;
+                            System.out.println("Node changed to 2");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("level1"),
+                        () -> {
+                            level = 0;
+                            System.out.println("Score level changed to Low");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("level2"),
+                        () -> {
+                            level = 1;
+                            System.out.println("Score level changed to Mid");
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("level3"),
+                        () -> {
+                            level = 2;
+                            System.out.println("Score level changed to High");
+                        }
                     )
-//                    createAction(
-//                        () -> controlBoard.getAsBool("grid1"),
-//                        () -> {
-//                            grid = 0;
-//                            System.out.println("Grid changed to 0");
-//                        }
-//                    ),
-//                    createAction(
-//                        () -> controlBoard.getAsBool("grid2"),
-//                        () -> {
-//                            grid = 1;
-//                            System.out.println("Grid changed to 1");
-//                        }
-//                    ),
-//                    createAction(
-//                        () -> controlBoard.getAsBool("grid3"),
-//                        () -> {
-//                            grid = 2;
-//                            System.out.println("Grid changed to 2");
-//                        }
-//                    ),
-//                    createAction(
-//                        () -> controlBoard.getAsBool("node1"),
-//                        () -> {
-//                            node = 0;
-//                            System.out.println("Node changed to 0");
-//                        }
-//                    ),
-//                    createAction(
-//                        () -> controlBoard.getAsBool("node2"),
-//                        () -> {
-//                            node = 1;
-//                            System.out.println("Node changed to 1");
-//                        }
-//                    ),
-//                    createAction(
-//                        () -> controlBoard.getAsBool("node3"),
-//                        () -> {
-//                            node = 2;
-//                            System.out.println("Node changed to 2");
-//                        }
-//                    ),
-//                    createAction(
-//                        () -> controlBoard.getAsBool("level1"),
-//                        () -> {
-//                            level = 0;
-//                            System.out.println("Score level changed to Low");
-//                        }
-//                    ),
-//                    createAction(
-//                        () -> controlBoard.getAsBool("level2"),
-//                        () -> {
-//                            level = 1;
-//                            System.out.println("Score level changed to Mid");
-//                        }
-//                    ),
-//                    createAction(
-//                        () -> controlBoard.getAsBool("level3"),
-//                        () -> {
-//                            level = 2;
-//                            System.out.println("Score level changed to High");
-//                        }
-//                    )
                 );
         } catch (Throwable t) {
             faulted = true;
@@ -667,7 +667,7 @@ public class Robot extends TimedRobot {
             } else {
                 // non-camera LEDs will flash red if robot periodic updates fail
                 if (faulted) {
-                    if(ledManager.getCurrentControlStatus() != LedManager.RobotStatus.ERROR){
+                    if (ledManager.getCurrentControlStatus() != LedManager.RobotStatus.ERROR) {
                         ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.ControlState.BLINK);
                     }
                     ledManager.writeToHardware();
@@ -699,7 +699,7 @@ public class Robot extends TimedRobot {
                 }
                 lastButton = zeroingButton.get();
 
-                if(ledManager.getCurrentControlStatus() == LedManager.RobotStatus.ZEROING_ELEVATOR){
+                if (ledManager.getCurrentControlStatus() == LedManager.RobotStatus.ZEROING_ELEVATOR) {
                     // only keep looping through write if zeroing elevator cus we need to update its blinking
                     ledManager.writeToHardware();
                 }
