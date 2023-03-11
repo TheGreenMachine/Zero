@@ -140,8 +140,8 @@ subsystems:
             ## Demands ##
             cubeIntakePower: -0.40 # percent output voltage
             cubeOuttakePower: 0.25 # percent output voltage
-            coneIntakeVelocity: 840 # rpm
-            coneOuttakeVelocity: -630 # rpm
+            coneIntakePower: -0.50
+            coneOuttakePower: 0.50
             stowPosition: -1
             scorePosition: -1
             shelfPosition: -1

@@ -32,8 +32,10 @@ public class Collector extends Subsystem {
      */
     public final double cubeIntakePower;
     public final double cubeOuttakePower;
-    public final double coneIntakeVelocity;
-    public final double coneOuttakeVelocity;
+
+    public final double coneIntakePower;
+
+    public final double coneOuttakePower;
 
     private static double pivotStowPosition;
 
@@ -73,10 +75,10 @@ public class Collector extends Subsystem {
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
         pivotMotor = factory.getMotor(NAME, "pivotMotor");
 
-        cubeIntakePower = factory.getConstant(NAME, "cubeIntakePower", 0.10); // TODO tune these
-        cubeOuttakePower = factory.getConstant(NAME, "cubeOuttakePower", -0.25); // TODO tune these
-        coneIntakeVelocity = factory.getConstant(NAME, "coneIntakeVelocity", -420); // TODO tune these
-        coneOuttakeVelocity = factory.getConstant(NAME, "coneOuttakeVelocity", 840); // TODO tune these
+        cubeIntakePower = factory.getConstant(NAME, "cubeIntakePower", -0.10); // TODO tune these
+        cubeOuttakePower = factory.getConstant(NAME, "cubeOuttakePower", 0.25); // TODO tune these
+        coneIntakePower = factory.getConstant(NAME, "coneIntakePower", -0.25); // TODO tune these
+        coneOuttakePower = factory.getConstant(NAME, "coneOuttakePower", 0.25); // TODO tune these
 
         pivotStowPosition = factory.getConstant(NAME, "stowPosition", 1000);
         pivotScorePosition = factory.getConstant(NAME, "scorePosition", 1000);
@@ -161,14 +163,14 @@ public class Collector extends Subsystem {
                 }
                 case INTAKE_CONE -> {
                     currentlyHeldObject = GAME_ELEMENT.CONE;
-                    intakeMotor.set(ControlMode.Velocity, coneIntakeVelocity);
+                    intakeMotor.set(ControlMode.PercentOutput, coneIntakePower);
                 }
                 case INTAKE_CUBE -> {
                     currentlyHeldObject = GAME_ELEMENT.CUBE;
                     intakeMotor.set(ControlMode.PercentOutput, cubeIntakePower);
                 }
                 case OUTTAKE_CONE -> {
-                    intakeMotor.set(ControlMode.Velocity, coneOuttakeVelocity);
+                    intakeMotor.set(ControlMode.PercentOutput, coneOuttakePower);
 //                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                 }
                 case OUTTAKE_CUBE -> {
