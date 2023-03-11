@@ -295,7 +295,6 @@ public class Robot extends TimedRobot {
                                     autoTargetThread = new Thread(mode::run);
                                     ledManager.indicateStatus(LedManager.RobotStatus.RAGE, LedManager.ControlState.BLINK);
                                     autoTargetThread.start();
-                                    System.out.println("Trajectory ended");
                                 }
                             } else {
                                 autoTargetThread.stop();
@@ -478,7 +477,6 @@ public class Robot extends TimedRobot {
                                         autoScoreThread = new Thread(mode::run);
                                         ledManager.indicateStatus(LedManager.RobotStatus.AUTO_SCORE, LedManager.ControlState.BLINK);
                                         autoScoreThread.start();
-                                        System.out.println("Auto Scoring ended");
                                     }
                                 } else {
                                     autoScoreThread.stop();
