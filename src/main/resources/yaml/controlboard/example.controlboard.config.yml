@@ -8,7 +8,7 @@ driver:
             horizontal: rotation
     buttonpad:
         x: toggleArmScoreCollect # remapped to back left button
-        y: lockOperator # remapped to back right button
+        y: shelfCollect # remapped to back right button
         a: midSlowMode # autoTarget
         b: autoBalance
     axes:

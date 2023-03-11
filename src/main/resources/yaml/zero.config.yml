@@ -125,7 +125,7 @@ subsystems:
             minExtensionPosition: 20000
             midExtensionPosition: 120000
             maxExtensionPosition: 295000
-            shelfExtensionPosition: #between mid and max
+            shelfExtensionPosition: 210000 #between mid and max
     collector:
         implemented: true
         sparkmaxes:

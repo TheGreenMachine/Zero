@@ -370,8 +370,12 @@ public class Robot extends TimedRobot {
                                 operatorLock = false;
                             }
                         }*/
-                        () -> {    //COME BACKKKKKKKK
-                            if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.SCORE || elevator.getDesiredExtensionState() != Elevator.EXTENSION_STATE.MAX)
+                        () -> {
+                            if (Elevator.isShelf){
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
+                            } else {
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.SHELF_COLLECT);
+                            }
                         }
                     ),
                     // Operator Gamepad

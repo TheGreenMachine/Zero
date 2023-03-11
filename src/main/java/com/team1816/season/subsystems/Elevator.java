@@ -40,6 +40,8 @@ public class Elevator extends Subsystem {
 
     private static double shelfExtension;
 
+    public static boolean isShelf;
+
     private AsyncTimer colPosTimer;
     private AsyncTimer stowExtensionTimer;
 
@@ -129,7 +131,9 @@ public class Elevator extends Subsystem {
         minExtension = factory.getConstant(NAME, "minExtensionPosition");
         midExtension = factory.getConstant(NAME, "midExtensionPosition");
         maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
-        shelfExtension = factory.getConstant(NAME, "shelfExtension");
+        shelfExtension = factory.getConstant(NAME, "shelfExtensionPosition");
+
+        isShelf = false;
 
         allowableAngleError = factory.getPidSlotConfig(NAME, "slot0").allowableError;
         allowableExtensionError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
@@ -239,6 +243,13 @@ public class Elevator extends Subsystem {
         if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError * 4) {
             robotState.actualElevatorExtensionState = desiredExtensionState;
         }
+
+        if (robotState.actualElevatorAngleState == ANGLE_STATE.SCORE &&
+            robotState.actualElevatorExtensionState == EXTENSION_STATE.SHELF_COLLECT) {
+            isShelf = true;
+        } else {
+            isShelf = false;
+        }
     }
 
     /**
@@ -314,6 +325,7 @@ public class Elevator extends Subsystem {
                             extensionMotor.set(ControlMode.Position, (minExtension));
                         }
                     }
+                    case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension));
                 }
             }
 //            System.out.println("extension = " + desiredExtensionState);
