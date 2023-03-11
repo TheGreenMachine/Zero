@@ -129,7 +129,7 @@ subsystems:
         implemented: true
         sparkmaxes:
             intakeMotor: 14
-            hingeMotor: -1
+            pivotMotor: 13
         pidConfig:
             slot0:  #intakeMotor
                 kF: 0.0000899
@@ -143,6 +143,9 @@ subsystems:
             coneOuttakeVelocity: -630 # rpm
             collectPosition: -1
             stowPosition: -1
+            scorePosition: -1
+            shelfPosition: -1
+            floorPosition: -1
     ledmanager:
         implemented: true
         candle: 23

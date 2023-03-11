@@ -35,22 +35,31 @@ public class Collector extends Subsystem {
     public final double coneIntakeVelocity;
     public final double coneOuttakeVelocity;
 
-    public final double collectPosition;
+    private static double pivotStowPosition;
 
-    public final double stowPosition;
+    private static double pivotFloorPosition;
+
+    private static double pivotShelfPosition;
+
+    private static double pivotScorePosition;
+
+    private static double allowablePivotError;
+
 
     /**
      * States
      */
     private ROLLER_STATE desiredRollerState = ROLLER_STATE.STOP;
 
-    private PIVOT_STATE  = PIVOT_STATE.STOW;
+    private PIVOT_STATE desiredPivotState = PIVOT_STATE.STOW;
     private GAME_ELEMENT currentlyHeldObject = GAME_ELEMENT.NOTHING;    //remember, game_element and state enums
     private double rollerVelocity = 0;
 
-    private double pivotPosition = 0;
+    private double actualPivotPosition = 0;
     private boolean solenoidOutput = false;
-    private boolean outputsChanged = false;
+    private boolean rollerOutputsChanged = false;
+
+    private boolean pivotOutputsChanged = false;
 
     /**
      * Base constructor needed to instantiate a collector
@@ -62,26 +71,31 @@ public class Collector extends Subsystem {
     public Collector(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
-        pivotMotor = factory.getMotor(NAME, "hingeMotor");
+        pivotMotor = factory.getMotor(NAME, "pivotMotor");
 
         cubeIntakePower = factory.getConstant(NAME, "cubeIntakePower", 0.10); // TODO tune these
         cubeOuttakePower = factory.getConstant(NAME, "cubeOuttakePower", -0.25); // TODO tune these
         coneIntakeVelocity = factory.getConstant(NAME, "coneIntakeVelocity", -420); // TODO tune these
         coneOuttakeVelocity = factory.getConstant(NAME, "coneOuttakeVelocity", 840); // TODO tune these
 
-        collectPosition = factory.getConstant(NAME, "collectPosition", 1000);
-        stowPosition = factory.getConstant(NAME, "stowPosition", 1000);
+        pivotStowPosition = factory.getConstant(NAME, "stowPosition", 1000);
+        pivotScorePosition = factory.getConstant(NAME, "scorePosition", 1000);
+        pivotShelfPosition = factory.getConstant(NAME, "shelfPosition", 1000);
+        pivotFloorPosition = factory.getConstant(NAME, "floorPosition", 1000);
+
+        allowablePivotError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
     }
 
     /**
      * Sets the desired state of the collector
      *
-     * @param desiredROLLERState STATE
+     * @param desiredRollerState STATE
      */
-    public void setDesiredState(ROLLER_STATE desiredROLLERState, PIVOT_STATE desiredPIVOTState) {
-        this.desiredRollerState = desiredROLLERState;
-        this. = desiredPIVOTState;
-        outputsChanged = true;
+    public void setDesiredState(ROLLER_STATE desiredRollerState, PIVOT_STATE desiredPivottate) {
+        this.desiredRollerState = desiredRollerState;
+        this.desiredPivotState = desiredPivotState;
+        rollerOutputsChanged = true;
+        pivotOutputsChanged = true;
     }
 
     /**
@@ -91,7 +105,7 @@ public class Collector extends Subsystem {
      */
     public void outtakeGamePiece(boolean outtaking) {
         if (outtaking) {
-            setDesiredState(currentlyHeldObject == GAME_ELEMENT.CONE ? ROLLER_STATE.OUTTAKE_CONE : ROLLER_STATE.OUTTAKE_CUBE, PIVOT_STATE.ENGAGED);
+            setDesiredState(currentlyHeldObject == GAME_ELEMENT.CONE ? ROLLER_STATE.OUTTAKE_CONE : ROLLER_STATE.OUTTAKE_CUBE, PIVOT_STATE.SCORE);
         } else {
             setDesiredState(ROLLER_STATE.STOP, PIVOT_STATE.STOW);
         }
@@ -113,7 +127,7 @@ public class Collector extends Subsystem {
         return rollerVelocity;
     }
 
-    public double getPivotPosition() { return pivotPosition; }
+    public double getActualPivotPosition() { return actualPivotPosition; }
 
     /**
      * Reads actual outputs from intake motor and solenoid
@@ -123,9 +137,12 @@ public class Collector extends Subsystem {
     @Override
     public void readFromHardware() {
         rollerVelocity = intakeMotor.getSelectedSensorVelocity(0);
-        pivotPosition = pivotMotor.getSelectedSensorPosition(0);
-        if (robotState.actualCollectorRollerState != desiredRollerState && pivotPosition - pivotPosition) {
+        actualPivotPosition = pivotMotor.getSelectedSensorPosition(0);
+        if (robotState.actualCollectorRollerState != desiredRollerState) {
             robotState.actualCollectorRollerState = desiredRollerState;
+        }
+        if (Math.abs(desiredPivotState.getPivotPosition() - actualPivotPosition) < allowablePivotError * 2) {
+            robotState.actualCollectorPivotState = desiredPivotState;
         }
     }
 
@@ -136,13 +153,11 @@ public class Collector extends Subsystem {
      */
     @Override
     public void writeToHardware() {
-        if (outputsChanged) {
-            outputsChanged = false;
-            pivotMotor.set(ControlMode.Velocity, 0);
+        if (rollerOutputsChanged) {
+            rollerOutputsChanged = false;
             switch (desiredRollerState) {
                 case STOP -> {
                     intakeMotor.set(ControlMode.Velocity, 0);
-                    pivotMotor.set(ControlMode.Position, )
                 }
                 case INTAKE_CONE -> {
                     currentlyHeldObject = GAME_ELEMENT.CONE;
@@ -159,6 +174,23 @@ public class Collector extends Subsystem {
                 case OUTTAKE_CUBE -> {
                     intakeMotor.set(ControlMode.PercentOutput, cubeOuttakePower);
 //                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
+                }
+            }
+        }
+        if (pivotOutputsChanged) {
+            pivotOutputsChanged = false;
+            switch (desiredPivotState) {
+                case STOW -> {
+                    pivotMotor.set(ControlMode.Position, pivotStowPosition);
+                }
+                case FLOOR -> {
+                    pivotMotor.set(ControlMode.Position, pivotFloorPosition);
+                }
+                case SCORE -> {
+                    pivotMotor.set(ControlMode.Position, pivotScorePosition);
+                }
+                case SHELF -> {
+                    pivotMotor.set(ControlMode.Position, pivotShelfPosition);
                 }
             }
         }
@@ -210,9 +242,19 @@ public class Collector extends Subsystem {
     }
 
     public enum PIVOT_STATE {
-        STOW,
-        FLOOR,
-        SHELF,
-        SCORE
+        STOW(pivotStowPosition),
+        FLOOR(pivotFloorPosition),
+        SHELF(pivotShelfPosition),
+        SCORE(pivotShelfPosition);
+
+        private final double pivot;
+
+        PIVOT_STATE(double pivot) {
+            this.pivot = pivot;
+        }
+
+        public double getPivotPosition() {
+            return pivot;
+        }
     }
 }
