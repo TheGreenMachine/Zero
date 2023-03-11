@@ -475,7 +475,7 @@ public class Robot extends TimedRobot {
                                         System.out.println("Auto Score action started!");
                                         AutoScoreMode mode = new AutoScoreMode(desireCube, level);
                                         autoScoreThread = new Thread(mode::run);
-                                        ledManager.indicateStatus(LedManager.RobotStatus.AUTO_SCORE, LedManager.ControlState.BLINK);
+                                        ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
                                         autoScoreThread.start();
                                     }
                                 } else {

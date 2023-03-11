@@ -282,7 +282,6 @@ public class Elevator extends Subsystem {
                     }
                 }
             }
-//            System.out.println("rotation = " + desiredAngleState);
         }
         if (extensionOutputsChanged) {
             extensionOutputsChanged = false;
@@ -313,7 +312,6 @@ public class Elevator extends Subsystem {
                     }
                 }
             }
-//            System.out.println("extension = " + desiredExtensionState);
         }
     }
 
