@@ -158,8 +158,8 @@ public class Elevator extends Subsystem {
             () -> {
                 // set it to go down until it hits rubber then just fight against the spring to stay down
                 // that way we're safer when retracting and have a buffer
-                extensionMotor.set(ControlMode.PercentOutput, -0.05);
-                System.out.println("slow rolling the extension motor");
+                // extensionMotor.set(ControlMode.PercentOutput, -0.05);
+                System.out.println("slow rolling the extension motor (why are we doing this?)");
             }
         );
 
