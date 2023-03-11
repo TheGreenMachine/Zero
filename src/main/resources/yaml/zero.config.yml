@@ -139,6 +139,8 @@ subsystems:
             cubeOuttakePower: 0.25 # percent output voltage
             coneIntakeVelocity: 840 # rpm
             coneOuttakeVelocity: -630 # rpm
+            collectPosition: -1
+            stowPosition: -1
     ledmanager:
         implemented: true
         candle: 23

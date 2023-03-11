@@ -8,18 +8,18 @@ public class CollectAction implements AutoAction {
 
     private Collector collector;
 
-    private Collector.STATE desiredState;
+    private Collector.ROLLER_STATE desiredROLLERState;
 
 
-    public CollectAction(Collector.STATE colState) {
+    public CollectAction(Collector.ROLLER_STATE colROLLERState) {
         collector = Injector.get(Collector.class);
-        this.desiredState = colState;
+        this.desiredROLLERState = colROLLERState;
     }
 
     @Override
     public void start() {
-        System.out.println("Setting collector to state: " + desiredState.name());
-        collector.setDesiredState(desiredState);
+        System.out.println("Setting collector to state: " + desiredROLLERState.name());
+        collector.setDesiredState(desiredROLLERState);
     }
 
     @Override

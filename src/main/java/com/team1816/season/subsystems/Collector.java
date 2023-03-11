@@ -3,7 +3,6 @@ package com.team1816.season.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
-import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 
@@ -26,7 +25,7 @@ public class Collector extends Subsystem {
      */
     private final IGreenMotor intakeMotor;
 
-    private final IGreenMotor hingeMotor;
+    private final IGreenMotor pivotMotor;
 
     /**
      * Properties
@@ -36,10 +35,16 @@ public class Collector extends Subsystem {
     public final double coneIntakeVelocity;
     public final double coneOuttakeVelocity;
 
+    public final double collectPosition;
+
+    public final double stowPosition;
+
     /**
      * States
      */
-    private STATE desiredState = STATE.STOP;
+    private ROLLER_STATE desiredROLLERState = ROLLER_STATE.STOP;
+
+    private PIVOT_STATE desiredPIVOTState = PIVOT_STATE.STOW;
     private GAME_ELEMENT currentlyHeldObject = GAME_ELEMENT.NOTHING;    //remember, game_element and state enums
     private double rollerVelocity = 0;
     private boolean solenoidOutput = false;
@@ -55,21 +60,25 @@ public class Collector extends Subsystem {
     public Collector(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
-        hingeMotor = factory.getMotor(NAME, "hingeMotor");
+        pivotMotor = factory.getMotor(NAME, "hingeMotor");
 
         cubeIntakePower = factory.getConstant(NAME, "cubeIntakePower", 0.10); // TODO tune these
         cubeOuttakePower = factory.getConstant(NAME, "cubeOuttakePower", -0.25); // TODO tune these
         coneIntakeVelocity = factory.getConstant(NAME, "coneIntakeVelocity", -420); // TODO tune these
         coneOuttakeVelocity = factory.getConstant(NAME, "coneOuttakeVelocity", 840); // TODO tune these
+
+        collectPosition = factory.getConstant(NAME, "collectPosition", 1000);
+        stowPosition = factory.getConstant(NAME, "stowPosition", 1000);
     }
 
     /**
      * Sets the desired state of the collector
      *
-     * @param desiredState STATE
+     * @param desiredROLLERState STATE
      */
-    public void setDesiredState(STATE desiredState) {
-        this.desiredState = desiredState;
+    public void setDesiredState(ROLLER_STATE desiredROLLERState, PIVOT_STATE desiredPIVOTState) {
+        this.desiredROLLERState = desiredROLLERState;
+        this.desiredPIVOTState = desiredPIVOTState;
         outputsChanged = true;
     }
 
@@ -80,9 +89,9 @@ public class Collector extends Subsystem {
      */
     public void outtakeGamePiece(boolean outtaking) {
         if (outtaking) {
-            setDesiredState(currentlyHeldObject == GAME_ELEMENT.CONE ? STATE.OUTTAKE_CONE : STATE.OUTTAKE_CUBE);
+            setDesiredState(currentlyHeldObject == GAME_ELEMENT.CONE ? ROLLER_STATE.OUTTAKE_CONE : ROLLER_STATE.OUTTAKE_CUBE, PIVOT_STATE.ENGAGED);
         } else {
-            setDesiredState(STATE.STOP);
+            setDesiredState(ROLLER_STATE.STOP, PIVOT_STATE.STOW);
         }
     }
 
@@ -110,8 +119,8 @@ public class Collector extends Subsystem {
     @Override
     public void readFromHardware() {
         rollerVelocity = intakeMotor.getSelectedSensorVelocity(0);
-        if (robotState.actualCollectorState != desiredState) {
-            robotState.actualCollectorState = desiredState;
+        if (robotState.actualCollectorROLLERState != desiredROLLERState) {
+            robotState.actualCollectorROLLERState = desiredROLLERState;
         }
     }
 
@@ -124,10 +133,11 @@ public class Collector extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
-            hingeMotor.set(ControlMode.Velocity, 0);
-            switch (desiredState) {
+            pivotMotor.set(ControlMode.Velocity, 0);
+            switch (desiredROLLERState) {
                 case STOP -> {
                     intakeMotor.set(ControlMode.Velocity, 0);
+                    pivotMotor.set(ControlMode.Position)
                 }
                 case INTAKE_CONE -> {
                     currentlyHeldObject = GAME_ELEMENT.CONE;
@@ -180,7 +190,7 @@ public class Collector extends Subsystem {
      */
 
     // should do exactly what it used to - just condensed the states into 5 instead of 3 separate for each enum
-    public enum STATE {
+    public enum ROLLER_STATE {
         STOP,
         INTAKE_CUBE,
         INTAKE_CONE,
@@ -192,5 +202,10 @@ public class Collector extends Subsystem {
         NOTHING,
         CUBE,
         CONE
+    }
+
+    public enum PIVOT_STATE {
+        STOW,
+        ENGAGED
     }
 }

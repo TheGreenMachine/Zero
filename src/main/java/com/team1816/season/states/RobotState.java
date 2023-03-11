@@ -52,7 +52,7 @@ public class RobotState {
     public Elevator.EXTENSION_STATE actualElevatorExtensionState = Elevator.EXTENSION_STATE.MIN;
     public Elevator.ANGLE_STATE actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
 
-    public Collector.STATE actualCollectorState = Collector.STATE.STOP;
+    public Collector.ROLLER_STATE actualCollectorROLLERState = Collector.ROLLER_STATE.STOP;
     public List<VisionPoint> visibleTargets = new ArrayList<>();
 
     /**
@@ -104,7 +104,7 @@ public class RobotState {
         triAxialAcceleration = new Double[]{0d, 0d, 0d};
         actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
         actualElevatorExtensionState = Elevator.EXTENSION_STATE.MIN;
-        actualCollectorState = Collector.STATE.STOP;
+        actualCollectorROLLERState = Collector.ROLLER_STATE.STOP;
         isPoseUpdated = true;
         visibleTargets.clear();
         drivetrainTemp = 0;

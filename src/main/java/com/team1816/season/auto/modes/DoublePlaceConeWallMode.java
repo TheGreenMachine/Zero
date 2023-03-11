@@ -56,9 +56,9 @@ public class DoublePlaceConeWallMode extends AutoMode {
                     trajectoryActions.get(0),
                     new SeriesAction(
                         new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
-                        new CollectAction(Collector.STATE.INTAKE_CONE),
+                        new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE),
                         new WaitAction(3),
-                        new CollectAction(Collector.STATE.STOP)
+                        new CollectAction(Collector.ROLLER_STATE.STOP)
                     )
                 ),
                 trajectoryActions.get(1),

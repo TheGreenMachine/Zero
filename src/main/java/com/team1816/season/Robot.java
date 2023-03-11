@@ -329,10 +329,10 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("intakeCone"),
                         (pressed) -> {
                             if (pressed) {
-                                collector.setDesiredState(Collector.STATE.INTAKE_CONE);
+                                collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE);
                                 ledManager.indicateStatus(LedManager.RobotStatus.CONE);
                             } else {
-                                collector.setDesiredState(Collector.STATE.STOP);
+                                collector.setDesiredState(Collector.ROLLER_STATE.STOP);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
                         }
@@ -341,10 +341,10 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("intakeCube"),
                         (pressed) -> {
                             if (pressed) {
-                                collector.setDesiredState(Collector.STATE.INTAKE_CUBE);
+                                collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE);
                                 ledManager.indicateStatus(LedManager.RobotStatus.CUBE);
                             } else {
-                                collector.setDesiredState(Collector.STATE.STOP);
+                                collector.setDesiredState(Collector.ROLLER_STATE.STOP);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
                         }
@@ -427,7 +427,7 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("armStow"),
                         () -> {
                             elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
-                            collector.setDesiredState(Collector.STATE.STOP);
+                            collector.setDesiredState(Collector.ROLLER_STATE.STOP);
                         }
                     ),
                     createAction(
