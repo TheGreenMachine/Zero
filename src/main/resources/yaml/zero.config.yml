@@ -128,20 +128,19 @@ subsystems:
     collector:
         implemented: true
         sparkmaxes:
-            intakeMotor: 14
             pivotMotor: 13
+            intakeMotor: 14
         pidConfig:
             slot0:  #intakeMotor
                 kF: 0.0000899
             slot1:  #pivotMotor
-                allowableError:
+                allowableError: 10
         constants:
             ## Demands ##
             cubeIntakePower: -0.40 # percent output voltage
             cubeOuttakePower: 0.25 # percent output voltage
             coneIntakeVelocity: 840 # rpm
             coneOuttakeVelocity: -630 # rpm
-            collectPosition: -1
             stowPosition: -1
             scorePosition: -1
             shelfPosition: -1

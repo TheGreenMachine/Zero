@@ -57,9 +57,9 @@ public class DoublePlaceConeFeederMode extends AutoMode {
                     trajectoryActions.get(0),
                     new SeriesAction(
                         new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
-                        new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE),
+                        new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR),
                         new WaitAction(3),
-                        new CollectAction(Collector.ROLLER_STATE.STOP)
+                        new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW)
                     )
                 ),
                 trajectoryActions.get(1),

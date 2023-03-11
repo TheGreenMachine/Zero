@@ -91,7 +91,7 @@ public class Collector extends Subsystem {
      *
      * @param desiredRollerState STATE
      */
-    public void setDesiredState(ROLLER_STATE desiredRollerState, PIVOT_STATE desiredPivottate) {
+    public void setDesiredState(ROLLER_STATE desiredRollerState, PIVOT_STATE desiredPivotState) {
         this.desiredRollerState = desiredRollerState;
         this.desiredPivotState = desiredPivotState;
         rollerOutputsChanged = true;
@@ -141,7 +141,7 @@ public class Collector extends Subsystem {
         if (robotState.actualCollectorRollerState != desiredRollerState) {
             robotState.actualCollectorRollerState = desiredRollerState;
         }
-        if (Math.abs(desiredPivotState.getPivotPosition() - actualPivotPosition) < allowablePivotError * 2) {
+        if (Math.abs(desiredPivotState.getPivotPosition() - actualPivotPosition) < allowablePivotError) {
             robotState.actualCollectorPivotState = desiredPivotState;
         }
     }
@@ -245,7 +245,7 @@ public class Collector extends Subsystem {
         STOW(pivotStowPosition),
         FLOOR(pivotFloorPosition),
         SHELF(pivotShelfPosition),
-        SCORE(pivotShelfPosition);
+        SCORE(pivotScorePosition);
 
         private final double pivot;
 
