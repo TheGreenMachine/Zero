@@ -132,20 +132,20 @@ subsystems:
             intakeMotor: 14
         pidConfig:
             slot0:  #intakeMotor
-                kF: 0.0000899
+                kF: 0.000109
             slot1:  #pivotMotor
                 kP: 0.025
                 allowableError: 10
         constants:
             ## Demands ##
-            cubeIntakePower: -0.40 # percent output voltage
-            cubeOuttakePower: 0.25 # percent output voltage
-            coneIntakePower: -0.50
-            coneOuttakePower: 0.50
+            cubeIntakePower: 0.40 # percent output voltage
+            cubeOuttakePower: -0.25 # percent output voltage
+            coneIntakePower: -0.70
+            coneOuttakePower: 0.70
             stowPosition: 0
-            scorePosition: 15
-            shelfPosition: 15
-            floorPosition: 10
+            scorePosition: -15
+            shelfPosition: -15
+            floorPosition: -10
     ledmanager:
         implemented: true
         candle: 23

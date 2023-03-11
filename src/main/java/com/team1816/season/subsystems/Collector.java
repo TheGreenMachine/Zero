@@ -5,6 +5,7 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -212,6 +213,10 @@ public class Collector extends Subsystem {
     @Override
     public void stop() {
 
+    }
+
+    public void outputToSmartDashboard() {
+        SmartDashboard.putNumber("Collector / Collector Pivot Position", actualPivotPosition);
     }
 
     /**

@@ -645,6 +645,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         try {
             subsystemManager.outputToSmartDashboard(); // update shuffleboard for subsystem values
+            collector.outputToSmartDashboard();
             robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
             Robot.dt = getLastEnabledLoop();
