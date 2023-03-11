@@ -134,6 +134,7 @@ subsystems:
             slot0:  #intakeMotor
                 kF: 0.0000899
             slot1:  #pivotMotor
+                kP: 0.075
                 allowableError: 10
         constants:
             ## Demands ##
