@@ -111,7 +111,7 @@ subsystems:
                 allowableError: 1000
         constants:
             ## Config ##
-            usingFeedForward: 0
+            usingFeedForward: 1
             ## Limits ##
             maxVelTicks100ms: 5000
             forwardExtensionLimit: 320000 # Out
