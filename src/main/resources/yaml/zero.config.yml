@@ -125,6 +125,7 @@ subsystems:
             minExtensionPosition: 20000
             midExtensionPosition: 120000
             maxExtensionPosition: 295000
+            shelfExtensionPosition: #between mid and max
     collector:
         implemented: true
         sparkmaxes:
@@ -140,12 +141,12 @@ subsystems:
             ## Demands ##
             cubeIntakePower: 0.50 # percent output voltage
             cubeOuttakePower: -0.55 # percent output voltage
-            coneIntakePower: -0.50
+            coneIntakePower: -0.70 #was -0.50
             coneOuttakePower: 0.50
             stowPosition: 0
             scorePosition: -16
             shelfPosition: -16
-            floorPosition: -12
+            floorPosition: -10 #was -12
     ledmanager:
         implemented: true
         candle: 23

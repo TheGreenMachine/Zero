@@ -38,6 +38,8 @@ public class Elevator extends Subsystem {
     private static double midExtension;
     private static double maxExtension;
 
+    private static double shelfExtension;
+
     private AsyncTimer colPosTimer;
     private AsyncTimer stowExtensionTimer;
 
@@ -127,6 +129,7 @@ public class Elevator extends Subsystem {
         minExtension = factory.getConstant(NAME, "minExtensionPosition");
         midExtension = factory.getConstant(NAME, "midExtensionPosition");
         maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
+        shelfExtension = factory.getConstant(NAME, "shelfExtension");
 
         allowableAngleError = factory.getPidSlotConfig(NAME, "slot0").allowableError;
         allowableExtensionError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
@@ -368,7 +371,9 @@ public class Elevator extends Subsystem {
     public enum EXTENSION_STATE {
         MIN(minExtension),
         MID(midExtension),
-        MAX(maxExtension);
+        MAX(maxExtension),
+
+        SHELF_COLLECT(shelfExtension);
 
         private final double extension;
 

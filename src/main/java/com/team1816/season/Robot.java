@@ -361,14 +361,17 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("lockOperator"),
-                        (pressed) -> {
+                    createAction(
+                        () -> controlBoard.getAsBool("shelfCollect"),   //USED TO BE lockOperator
+                        /*(pressed) -> {
                             if (pressed) {
                                 operatorLock = true;
                             } else {
                                 operatorLock = false;
                             }
+                        }*/
+                        () -> {    //COME BACKKKKKKKK
+                            if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.SCORE || elevator.getDesiredExtensionState() != Elevator.EXTENSION_STATE.MAX)
                         }
                     ),
                     // Operator Gamepad
