@@ -131,8 +131,10 @@ subsystems:
             intakeMotor: 14
             hingeMotor: -1
         pidConfig:
-            slot0:
+            slot0:  #intakeMotor
                 kF: 0.0000899
+            slot1:  #pivotMotor
+                allowableError:
         constants:
             ## Demands ##
             cubeIntakePower: -0.40 # percent output voltage

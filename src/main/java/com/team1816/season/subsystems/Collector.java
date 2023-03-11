@@ -42,11 +42,13 @@ public class Collector extends Subsystem {
     /**
      * States
      */
-    private ROLLER_STATE desiredROLLERState = ROLLER_STATE.STOP;
+    private ROLLER_STATE desiredRollerState = ROLLER_STATE.STOP;
 
-    private PIVOT_STATE desiredPIVOTState = PIVOT_STATE.STOW;
+    private PIVOT_STATE  = PIVOT_STATE.STOW;
     private GAME_ELEMENT currentlyHeldObject = GAME_ELEMENT.NOTHING;    //remember, game_element and state enums
     private double rollerVelocity = 0;
+
+    private double pivotPosition = 0;
     private boolean solenoidOutput = false;
     private boolean outputsChanged = false;
 
@@ -77,8 +79,8 @@ public class Collector extends Subsystem {
      * @param desiredROLLERState STATE
      */
     public void setDesiredState(ROLLER_STATE desiredROLLERState, PIVOT_STATE desiredPIVOTState) {
-        this.desiredROLLERState = desiredROLLERState;
-        this.desiredPIVOTState = desiredPIVOTState;
+        this.desiredRollerState = desiredROLLERState;
+        this. = desiredPIVOTState;
         outputsChanged = true;
     }
 
@@ -111,6 +113,8 @@ public class Collector extends Subsystem {
         return rollerVelocity;
     }
 
+    public double getPivotPosition() { return pivotPosition; }
+
     /**
      * Reads actual outputs from intake motor and solenoid
      *
@@ -119,8 +123,9 @@ public class Collector extends Subsystem {
     @Override
     public void readFromHardware() {
         rollerVelocity = intakeMotor.getSelectedSensorVelocity(0);
-        if (robotState.actualCollectorROLLERState != desiredROLLERState) {
-            robotState.actualCollectorROLLERState = desiredROLLERState;
+        pivotPosition = pivotMotor.getSelectedSensorPosition(0);
+        if (robotState.actualCollectorRollerState != desiredRollerState && pivotPosition - pivotPosition) {
+            robotState.actualCollectorRollerState = desiredRollerState;
         }
     }
 
@@ -134,10 +139,10 @@ public class Collector extends Subsystem {
         if (outputsChanged) {
             outputsChanged = false;
             pivotMotor.set(ControlMode.Velocity, 0);
-            switch (desiredROLLERState) {
+            switch (desiredRollerState) {
                 case STOP -> {
                     intakeMotor.set(ControlMode.Velocity, 0);
-                    pivotMotor.set(ControlMode.Position)
+                    pivotMotor.set(ControlMode.Position, )
                 }
                 case INTAKE_CONE -> {
                     currentlyHeldObject = GAME_ELEMENT.CONE;
@@ -206,6 +211,8 @@ public class Collector extends Subsystem {
 
     public enum PIVOT_STATE {
         STOW,
-        ENGAGED
+        FLOOR,
+        SHELF,
+        SCORE
     }
 }
