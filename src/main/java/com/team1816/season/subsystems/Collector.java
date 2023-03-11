@@ -1,9 +1,11 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -141,6 +143,7 @@ public class Collector extends Subsystem {
     public void readFromHardware() {
         rollerVelocity = intakeMotor.getSelectedSensorVelocity(0);
         actualPivotPosition = pivotMotor.getSelectedSensorPosition(0);
+
         if (robotState.actualCollectorRollerState != desiredRollerState) {
             robotState.actualCollectorRollerState = desiredRollerState;
         }
@@ -204,7 +207,14 @@ public class Collector extends Subsystem {
      */
     @Override
     public void zeroSensors() {
+        pivotMotor.setSelectedSensorPosition(0, 0, Constants.kCANTimeoutMs);
+    }
 
+    /**
+     * Sets the collector pivot to break
+     */
+    public void setBraking(boolean braking) {
+        pivotMotor.setNeutralMode(braking ? NeutralMode.Brake : NeutralMode.Coast);
     }
 
     /**
@@ -216,7 +226,8 @@ public class Collector extends Subsystem {
     }
 
     public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("Collector / Collector Pivot Position", actualPivotPosition);
+        SmartDashboard.putNumber("Collector/Collector Pivot Position", actualPivotPosition);
+        SmartDashboard.putNumber("Collector/Collector Roller Velocity", rollerVelocity);
     }
 
     /**

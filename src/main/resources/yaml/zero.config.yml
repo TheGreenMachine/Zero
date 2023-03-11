@@ -138,14 +138,14 @@ subsystems:
                 allowableError: 10
         constants:
             ## Demands ##
-            cubeIntakePower: 0.40 # percent output voltage
-            cubeOuttakePower: -0.25 # percent output voltage
-            coneIntakePower: -0.70
-            coneOuttakePower: 0.70
+            cubeIntakePower: 0.50 # percent output voltage
+            cubeOuttakePower: -0.55 # percent output voltage
+            coneIntakePower: -0.50
+            coneOuttakePower: 0.50
             stowPosition: 0
-            scorePosition: -15
-            shelfPosition: -15
-            floorPosition: -10
+            scorePosition: -16
+            shelfPosition: -16
+            floorPosition: -12
     ledmanager:
         implemented: true
         candle: 23

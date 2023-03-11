@@ -682,17 +682,20 @@ public class Robot extends TimedRobot {
                         faulted = false;
                         zeroing = true;
                         elevator.zeroSensors();
+                        collector.zeroSensors();
                         ledManager.indicateStatus(LedManager.RobotStatus.ZEROING_ELEVATOR, LedManager.ControlState.BLINK);
                         ledManager.writeToHardware();
                         infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
                     } else if (zeroing) { // ready
                         zeroing = false;
                         elevator.setBraking(true);
+                        collector.setBraking(true);
                         ledManager.indicateStatus(LedManager.RobotStatus.DISABLED, LedManager.ControlState.SOLID);
                         ledManager.writeToHardware();
                     } else { // needs zeroing
                         zeroing = null;
                         elevator.setBraking(false);
+                        collector.setBraking(false);
                         ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.ControlState.BLINK);
                         ledManager.writeToHardware();
                         faulted = true;
