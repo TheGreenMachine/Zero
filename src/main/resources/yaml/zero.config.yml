@@ -125,7 +125,7 @@ subsystems:
             collectAnglePosition: -1000
             scoreAnglePosition: 64000
             scoreDipAnglePosition: 55000
-            minExtensionPosition: 20000
+            minExtensionPosition: 10000
             midExtensionPosition: 120000
             maxExtensionPosition: 295000
             shelfExtensionPosition: 210000 #between mid and max
