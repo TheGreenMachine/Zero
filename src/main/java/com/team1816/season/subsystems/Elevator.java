@@ -210,12 +210,14 @@ public class Elevator extends Subsystem {
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
 
         if (usingFeedForward) {
-            angleOutputsChanged = true;
             angleFeedForward = Math.cos(actualAnglePosition / angleQuarterPPR) * Constants.maxArmFeedForward;
             extensionFeedForward =
                 Math.sin(actualAnglePosition / angleQuarterPPR) *
                     ((actualExtensionPosition + extensionPPR) / 2 * extensionPPR)
                     * Constants.maxArmFeedForward;
+            if (robotState.actualElevatorAngleState != desiredAngleState) {
+                angleOutputsChanged = true;
+            }
         }
 
         if (Math.abs(desiredAngleState.getAngle() - actualAnglePosition) < allowableAngleError * 2) {
