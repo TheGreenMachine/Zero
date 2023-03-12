@@ -8,21 +8,15 @@ import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.simUtil.SingleJointedElevatorArmSim;
-import com.team1816.season.Robot;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.BatterySim;
-import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -93,9 +87,9 @@ public class Elevator extends Subsystem {
     private double zeroingHallEffectTriggerValue;
 
     // where ur drawing stuff
-    private Mechanism2d elevatorCanvas = new Mechanism2d(3, 3);
-    private MechanismRoot2d root = elevatorCanvas.getRoot("climber", 2, 0);
-    private MechanismLigament2d simArm = root.append(new MechanismLigament2d("elevator", kElevatorMinLength, 90));
+    private final Mechanism2d mechCanvas = new Mechanism2d(3, 3);
+    private final MechanismRoot2d root = mechCanvas.getRoot("ElevatorArm", 1.25, 0.5);
+    private final MechanismLigament2d simArm = root.append(new MechanismLigament2d("elevator", kElevatorMinLength, 90));
     private final SingleJointedElevatorArmSim simArmSystem =
             new SingleJointedElevatorArmSim(
                     DCMotor.getFalcon500(2),
@@ -121,7 +115,6 @@ public class Elevator extends Subsystem {
     @Inject
     public Elevator(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
-
         // components
         this.angleMotorMain = factory.getMotor(NAME, "angleMotorMain");
         this.angleMotorFollower = factory.getFollowerMotor(NAME, "angleMotorFollower", angleMotorMain);
@@ -267,9 +260,10 @@ public class Elevator extends Subsystem {
 //            RoboRioSim.setVInVoltage(
 //                    BatterySim.calculateDefaultBatteryLoadedVoltage(simArmSystem.getCurrentDrawAmps()));
 //            simArmSystem.update(Robot.dt);
-
+            System.out.println("arm pos = " + angleMotorMain.getSelectedSensorPosition(0) + " , angle = " + (angleMotorMain.getSelectedSensorPosition(0) / (4 * angleQuarterPPR) * 360));
             simArm.setLength(elevatorLength);
             simArm.setAngle(angleMotorMain.getSelectedSensorPosition(0) / (4 * angleQuarterPPR) * 360); // Units.radiansToDegrees(simArmSystem.getAngleRads())
+            SmartDashboard.putData("Elevator Mech 2D", mechCanvas);
         }
 
 
