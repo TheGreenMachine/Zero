@@ -14,6 +14,7 @@ import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.season.auto.AutoModeManager;
+import com.team1816.season.auto.modes.AutoScoreMode;
 import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.DrivetrainTargets;
@@ -476,7 +477,24 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("autoScore"),
                         () -> {
                             if (!operatorLock) {
-                                orchestrator.autoScore();
+                                if (!runningAutoScore) {
+                                    runningAutoScore = true;
+                                    System.out.println("Auto Score action started!");
+                                    var desiredExtensionState = Elevator.EXTENSION_STATE.MIN;
+                                    if (level == 1) {
+                                        desiredExtensionState = Elevator.EXTENSION_STATE.MID;
+                                    } else if (level == 2) {
+                                        desiredExtensionState = Elevator.EXTENSION_STATE.MAX;
+                                    }
+                                    AutoScoreMode mode = new AutoScoreMode(robotState.actualGameElement, desiredExtensionState);
+                                    autoScoreThread = new Thread(mode::run);
+                                    ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
+                                    autoScoreThread.start();
+                                } else {
+                                    autoScoreThread.stop();
+                                    System.out.println("Stopped! Auto scoring cancelled!");
+                                    runningAutoScore = !runningAutoScore;
+                                }
                             }
                         }
                     ),
