@@ -1,14 +1,11 @@
 package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
-import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.Robot;
 import com.team1816.season.auto.actions.ScoreAction;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
-
-import java.util.List;
 
 public class AutoScoreMode extends AutoMode {
     private Collector.GAME_ELEMENT gameElement;

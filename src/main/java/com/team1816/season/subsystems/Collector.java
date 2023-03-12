@@ -132,7 +132,9 @@ public class Collector extends Subsystem {
         return rollerVelocity;
     }
 
-    public double getActualPivotPosition() { return actualPivotPosition; }
+    public double getActualPivotPosition() {
+        return actualPivotPosition;
+    }
 
     /**
      * Reads actual outputs from intake motor and solenoid

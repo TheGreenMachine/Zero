@@ -248,8 +248,7 @@ public class Elevator extends Subsystem {
                     }
                     case SCORE, SHELF_COLLECT ->
                         angleMotorMain.set(ControlMode.Position, (scoreAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case SCORE_DIP ->
-                        angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
+                    case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
                 }
             } else {
                 switch (desiredAngleState) {
