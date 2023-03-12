@@ -17,6 +17,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -101,6 +103,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     SwerveModulePosition[] actualModulePositions = new SwerveModulePosition[4];
     public double[] motorTemperatures = new double[4];
 
+    private DoubleArrayLogEntry desStatesLogger;
+    private DoubleArrayLogEntry actStatesLogger;
+
+
     /**
      * Instantiates a swerve drivetrain from base subsystem parameters
      *
@@ -134,6 +140,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 actualModulePositions
             );
 
+        if(Constants.kIsLoggingDrivetrain){
+            desStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(),"Swerve/DesStates");
+            actStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(),"Swerve/ActStates");
+        }
     }
 
     /** Read/Write Periodic */
@@ -167,8 +177,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      */
     @Override
     public synchronized void readFromHardware() {
-        Double[] actualStates = new Double[8];
-        Double[] desiredStates = new Double[8];
+        double[] actualStates = new double[8];
+        double[] desiredStates = new double[8];
         for (int i = 0; i < 4; i++) {
             // logging actual angle and velocity of swerve motors (azimuth & drive)
             swerveModules[i].update();
@@ -197,8 +207,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         swerveOdometry.update(actualHeading, actualModulePositions);
 
         if(Constants.kIsLoggingDrivetrain){
-            SmartDashboard.putNumberArray("Drive/ActStates", actualStates);
-            SmartDashboard.putNumberArray("Drive/DesStates", desiredStates);
+            desStatesLogger.append(desiredStates);
+            actStatesLogger.append(actualStates);
         }
 
         updateRobotState();

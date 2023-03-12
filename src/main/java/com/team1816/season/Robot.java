@@ -21,6 +21,8 @@ import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -89,6 +91,9 @@ public class Robot extends TimedRobot {
     public static double autoStart;
     public static double teleopStart;
 
+    private DoubleLogEntry robotLoop;
+    private DoubleLogEntry robotStateLoop;
+
     /**
      * Properties
      */
@@ -127,6 +132,10 @@ public class Robot extends TimedRobot {
         if (RobotBase.isReal()) {
             zeroingButton = new DigitalInput((int) factory.getConstant("zeroingButton", -1));
         }
+        if(Constants.kLoggingRobot){
+           robotLoop = new DoubleLogEntry(DataLogManager.getLog(),"Timings/Robot");
+           robotStateLoop = new DoubleLogEntry(DataLogManager.getLog(),"Timings/RobotState");
+        }
     }
 
     /**
@@ -145,7 +154,11 @@ public class Robot extends TimedRobot {
      * @return duration (ms)
      */
     public Double getLastRobotLoop() {
-        return (Timer.getFPGATimestamp() - loopStart) * 1000;
+        double dt = (Timer.getFPGATimestamp() - loopStart) * 1000;
+        if(Constants.kLoggingRobot){
+            robotLoop.append(dt);
+        }
+        return dt;
     }
 
     /**
@@ -155,7 +168,11 @@ public class Robot extends TimedRobot {
      * @see Looper#getLastLoop()
      */
     public Double getLastSubsystemLoop() {
-        return enabledLoop.isRunning() ? enabledLoop.getLastLoop() : disabledLoop.getLastLoop();
+        double dt = enabledLoop.isRunning() ? enabledLoop.getLastLoop() : disabledLoop.getLastLoop();
+        if(Constants.kLoggingRobot) {
+            robotStateLoop.append(dt);
+        }
+        return dt;
     }
 
     /**
@@ -193,6 +210,7 @@ public class Robot extends TimedRobot {
                 }
                 var filePath = logFileDir + robotName + "_" + logFile + ".bag";
                 DataLogManager.start();
+                DriverStation.startDataLog(DataLogManager.getLog(), false);
             }
 
             subsystemManager.registerEnabledLoops(enabledLoop);
@@ -642,6 +660,7 @@ public class Robot extends TimedRobot {
                         elevator.setBraking(false);
                         ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.ControlState.BLINK);
                         ledManager.writeToHardware();
+
                         faulted = true;
                     }
                 }
