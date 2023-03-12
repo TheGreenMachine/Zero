@@ -112,12 +112,15 @@ subsystems:
         constants:
             ## Config ##
             usingFeedForward: 1
+            extensionPPR: 300000
+            angleQuarterPPR: 131072 # 32 x 4096
             ## Limits ##
             maxVelTicks100ms: 5000
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
             forwardAngleLimit: 100000 # Elevator horizontal orientation
             reverseAngleLimit: -10000 # Elevator vertical orientation
+            ## Positions ##
             stowAnglePosition: 90000
             collectAnglePosition: -1000
             scoreAnglePosition: 64000

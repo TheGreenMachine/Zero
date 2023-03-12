@@ -117,8 +117,8 @@ public class Elevator extends Subsystem {
 
         usingFeedForward = factory.getConstant(NAME, "usingFeedForward") > 0;
         if (usingFeedForward) {
-            extensionPPR = factory.getConstant(NAME, "extensionPPR");
-            angleQuarterPPR = factory.getConstant(NAME, "angleQuarterPPR");
+            extensionPPR = factory.getConstant(NAME, "extensionPPR", 300000);
+            angleQuarterPPR = factory.getConstant(NAME, "angleQuarterPPR", 131072);
         }
 
         // constants

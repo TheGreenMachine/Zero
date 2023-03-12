@@ -330,14 +330,15 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("intakeCone"),
                         (pressed) -> {
                             if (pressed) {
-                                if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.STOW) {
+                                if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.STOW) { // collects from shelf
                                     elevator.setDesiredState(Elevator.ANGLE_STATE.SHELF_COLLECT, Elevator.EXTENSION_STATE.SHELF_COLLECT);
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.SHELF);
-                                } else if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.COLLECT) {
+                                } else if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.COLLECT) { // collects from floor
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR);
                                 }
-                                ledManager.indicateStatus(LedManager.RobotStatus.CONE);
+                                ledManager.indicateStatus(LedManager.RobotStatus.CONE); // indicates on LEDs
                             } else {
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
                                 collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
@@ -347,14 +348,15 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("intakeCube"),
                         (pressed) -> {
                             if (pressed) {
-                                if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.STOW) {
+                                if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.STOW) { // collects from shelf
                                     elevator.setDesiredState(Elevator.ANGLE_STATE.SHELF_COLLECT, Elevator.EXTENSION_STATE.SHELF_COLLECT);
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.SHELF);
-                                } else if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.COLLECT) {
+                                } else if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.COLLECT) { // collects from floor
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.FLOOR);
                                 }
-                                ledManager.indicateStatus(LedManager.RobotStatus.CUBE);
+                                ledManager.indicateStatus(LedManager.RobotStatus.CUBE); // indicates on LEDs
                             } else {
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
                                 collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
