@@ -210,7 +210,7 @@ public class Elevator extends Subsystem {
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
 
         if (usingFeedForward) {
-            angleFeedForward = Math.cos(actualAnglePosition / angleQuarterPPR) * Constants.maxArmFeedForward * (12 / infrastructure.getBusVoltage());
+            angleFeedForward = Math.cos(actualAnglePosition / angleQuarterPPR) * (actualExtensionPosition / minExtension) * Constants.maxArmFeedForward * (12 / infrastructure.getBusVoltage());
             extensionFeedForward =
                 Math.sin(actualAnglePosition / angleQuarterPPR) *
                     ((actualExtensionPosition + extensionPPR) / 4 * extensionPPR)

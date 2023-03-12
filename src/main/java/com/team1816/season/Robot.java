@@ -606,6 +606,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         disabledLoop.stop();
         ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
+        ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS);
 
         drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
 
@@ -624,6 +625,7 @@ public class Robot extends TimedRobot {
         try {
             disabledLoop.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.ENABLED);
+            ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
 
             infrastructure.startCompressor();
 
