@@ -210,11 +210,11 @@ public class Elevator extends Subsystem {
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
 
         if (usingFeedForward) {
-            angleFeedForward = Math.cos(actualAnglePosition / angleQuarterPPR) * Constants.maxElevatorFeedForward;
+            angleFeedForward = Math.cos(actualAnglePosition / angleQuarterPPR) * Constants.maxArmFeedForward;
             extensionFeedForward =
                 Math.sin(actualAnglePosition / angleQuarterPPR) *
                     ((actualExtensionPosition + extensionPPR) / 2 * extensionPPR)
-                    * Constants.maxElevatorFeedForward;
+                    * Constants.maxArmFeedForward;
         }
 
         if (Math.abs(desiredAngleState.getAngle() - actualAnglePosition) < allowableAngleError * 2) {
@@ -238,14 +238,18 @@ public class Elevator extends Subsystem {
                 switch (desiredAngleState) {
                     case STOW ->
                         angleMotorMain.set(ControlMode.Position, (stowAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case COLLECT ->
-                        angleMotorMain.set(ControlMode.Position, (collectAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case SCORE ->
+                    case COLLECT -> {
+                        colPosTimer.update();
+                        if (!colPosTimer.isCompleted()) {
+                            angleOutputsChanged = true;
+                        } else {
+                            colPosTimer.reset();
+                        }
+                    }
+                    case SCORE, SHELF_COLLECT ->
                         angleMotorMain.set(ControlMode.Position, (scoreAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
                     case SCORE_DIP ->
                         angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
-                    case SHELF_COLLECT ->
-                        angleMotorMain.set(ControlMode.Position, (shelfExtension), DemandType.ArbitraryFeedForward, angleFeedForward);
                 }
             } else {
                 switch (desiredAngleState) {
