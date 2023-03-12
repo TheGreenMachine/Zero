@@ -34,13 +34,12 @@ public class ElevatorAction implements AutoAction {
 
     @Override
     public boolean isFinished() {
-        System.out.println("Elevator action completed: elevator angle at " + desiredAngleState.name() + " and extension at " + desiredExtensionState.name());
-        return robotState.actualElevatorAngleState == desiredAngleState && robotState.actualElevatorExtensionState == desiredExtensionState;
 //        return true;
+        return robotState.actualElevatorAngleState == desiredAngleState && robotState.actualElevatorExtensionState == desiredExtensionState;
     }
 
     @Override
     public void done() {
-
+        System.out.println("Elevator action completed: elevator angle at " + desiredAngleState.name() + " and extension at " + desiredExtensionState.name());
     }
 }
