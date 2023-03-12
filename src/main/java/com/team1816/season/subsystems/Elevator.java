@@ -40,8 +40,6 @@ public class Elevator extends Subsystem {
 
     private static double shelfExtension;
 
-    public static boolean isShelf;
-
     private AsyncTimer colPosTimer;
     private AsyncTimer stowExtensionTimer;
 
@@ -133,8 +131,6 @@ public class Elevator extends Subsystem {
         maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
         shelfExtension = factory.getConstant(NAME, "shelfExtensionPosition");
 
-        isShelf = false;
-
         allowableAngleError = factory.getPidSlotConfig(NAME, "slot0").allowableError;
         allowableExtensionError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
 
@@ -150,18 +146,7 @@ public class Elevator extends Subsystem {
                 System.out.println("running collector into rubber w/ %out");
             }
         );
-        stowExtensionTimer = new AsyncTimer(
-            1.5,
-            () -> {
-                extensionMotor.set(ControlMode.Position, minExtension);
-            },
-            () -> {
-                // set it to go down until it hits rubber then just fight against the spring to stay down
-                // that way we're safer when retracting and have a buffer
-                // extensionMotor.set(ControlMode.PercentOutput, -0.05);
-                System.out.println("slow rolling the extension motor (why are we doing this?)");
-            }
-        );
+
 
 //        maxAngularVelocity = factory.getConstant(NAME, "maxAngularVelocity");
 //        maxAngularAcceleration = factory.getConstant(NAME, "maxAngularAcceleration");
@@ -232,23 +217,11 @@ public class Elevator extends Subsystem {
                     * Constants.maxElevatorFeedForward;
         }
 
-//        if (hallEffectTriggered == zeroingHallEffect.get()) {
-//            zeroingHallEffectTriggerValue = actualAnglePosition;
-//        }
-//        hallEffectTriggered = !zeroingHallEffect.get();
-
         if (Math.abs(desiredAngleState.getAngle() - actualAnglePosition) < allowableAngleError * 2) {
             robotState.actualElevatorAngleState = desiredAngleState;
         }
         if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError * 4) {
             robotState.actualElevatorExtensionState = desiredExtensionState;
-        }
-
-        if (robotState.actualElevatorAngleState == ANGLE_STATE.SCORE &&
-            robotState.actualElevatorExtensionState == EXTENSION_STATE.SHELF_COLLECT) {
-            isShelf = true;
-        } else {
-            isShelf = false;
         }
     }
 
@@ -269,7 +242,10 @@ public class Elevator extends Subsystem {
                         angleMotorMain.set(ControlMode.Position, (collectAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
                     case SCORE ->
                         angleMotorMain.set(ControlMode.Position, (scoreAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
+                    case SCORE_DIP ->
+                        angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
+                    case SHELF_COLLECT ->
+                        angleMotorMain.set(ControlMode.Position, (shelfExtension), DemandType.ArbitraryFeedForward, angleFeedForward);
                 }
             } else {
                 switch (desiredAngleState) {
@@ -286,7 +262,7 @@ public class Elevator extends Subsystem {
                             colPosTimer.reset();
                         }
                     }
-                    case SCORE -> {
+                    case SCORE, SHELF_COLLECT -> {
                         angleMotorMain.selectProfileSlot(collectScorePIDSlot, 0);
                         angleMotorMain.set(ControlMode.Position, (scoreAngle));
                     }
@@ -296,7 +272,6 @@ public class Elevator extends Subsystem {
                     }
                 }
             }
-//            System.out.println("rotation = " + desiredAngleState);
         }
         if (extensionOutputsChanged) {
             extensionOutputsChanged = false;
@@ -308,27 +283,17 @@ public class Elevator extends Subsystem {
                         extensionMotor.set(ControlMode.Position, (midExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
                     case MIN ->
                         extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                    case SHELF_COLLECT ->
+                        extensionMotor.set(ControlMode.Position, (shelfExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
                 }
             } else {
                 switch (desiredExtensionState) {
                     case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension));
                     case MID -> extensionMotor.set(ControlMode.Position, (midExtension));
-                    case MIN -> {
-                        if (desiredAngleState == ANGLE_STATE.STOW) {
-                            stowExtensionTimer.update();
-                            if (!stowExtensionTimer.isCompleted()) {
-                                extensionOutputsChanged = true;
-                            } else {
-                                stowExtensionTimer.reset();
-                            }
-                        } else {
-                            extensionMotor.set(ControlMode.Position, (minExtension));
-                        }
-                    }
+                    case MIN -> extensionMotor.set(ControlMode.Position, (minExtension));
                     case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension));
                 }
             }
-//            System.out.println("extension = " + desiredExtensionState);
         }
     }
 
@@ -366,7 +331,8 @@ public class Elevator extends Subsystem {
         STOW(stowAngle),
         COLLECT(collectAngle),
         SCORE(scoreAngle),
-        SCORE_DIP(scoreDipAngle);
+        SCORE_DIP(scoreDipAngle),
+        SHELF_COLLECT(scoreAngle);
 
         private final double angle;
 
@@ -384,7 +350,6 @@ public class Elevator extends Subsystem {
         MIN(minExtension),
         MID(midExtension),
         MAX(maxExtension),
-
         SHELF_COLLECT(shelfExtension);
 
         private final double extension;

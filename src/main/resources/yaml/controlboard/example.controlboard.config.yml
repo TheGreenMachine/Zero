@@ -8,7 +8,7 @@ driver:
             horizontal: rotation
     buttonpad:
         x: toggleArmScoreCollect # remapped to back left button
-        y: shelfCollect # remapped to back right button
+        y: lockOperator # remapped to back right button
         a: midSlowMode # autoTarget
         b: autoBalance
     axes:
@@ -30,8 +30,8 @@ operator:
         leftTrigger: armStow
         rightTrigger: armCollect
     buttonpad:
-        y: autoScoreMax
-        x: autoScoreMid
-        a: autoScoreMin
-        b: autoScoreRetract
+        y: extendMax
+        x: extendMid
+        a: extendMin
+        b: autoScore
 demoMode: false
