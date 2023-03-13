@@ -140,10 +140,10 @@ public class Elevator extends Subsystem {
         angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
 
         usingFeedForward = factory.getConstant(NAME, "usingFeedForward") > 0;
-        if (usingFeedForward) {
+//        if (usingFeedForward) {
             extensionPPR = factory.getConstant(NAME, "extensionPPR");
             angleQuarterPPR = factory.getConstant(NAME, "angleQuarterPPR");
-        }
+//        }
 
         // constants
         stowAngle = factory.getConstant(NAME, "stowAnglePosition");
@@ -260,7 +260,6 @@ public class Elevator extends Subsystem {
 //            RoboRioSim.setVInVoltage(
 //                    BatterySim.calculateDefaultBatteryLoadedVoltage(simArmSystem.getCurrentDrawAmps()));
 //            simArmSystem.update(Robot.dt);
-            System.out.println("arm pos = " + angleMotorMain.getSelectedSensorPosition(0) + " , angle = " + (angleMotorMain.getSelectedSensorPosition(0) / (4 * angleQuarterPPR) * 360));
             simArm.setLength(elevatorLength);
             simArm.setAngle(angleMotorMain.getSelectedSensorPosition(0) / (4 * angleQuarterPPR) * 360); // Units.radiansToDegrees(simArmSystem.getAngleRads())
             SmartDashboard.putData("Elevator Mech 2D", mechCanvas);

@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.team1816.season.Robot;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.wpilibj.RobotController;
 
 /**
@@ -67,8 +68,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
             this.desiredDemand[1] = demand;
             this.desiredDemand[2] = lastPos + demand; // TODO this boof
         } else if (Mode == ControlMode.Position) {
-            this.desiredDemand[0] = (demand - lastPos) / Robot.dt / maxVelTicks100ms; // TODO this boof
-            this.desiredDemand[1] = (demand - lastPos) / Robot.dt; // TODO this boof
+            this.desiredDemand[0] = (demand - lastPos) / Constants.kLooperDt / maxVelTicks100ms; // TODO this boof
+            this.desiredDemand[1] = (demand - lastPos) / Constants.kLooperDt; // TODO this boof
             this.desiredDemand[2] = demand;
         } else {
             System.out.println("no support for this Mode in GhostMotor!");

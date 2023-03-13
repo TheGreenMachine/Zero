@@ -125,6 +125,7 @@ subsystems:
             minExtensionPosition: 20000
             midExtensionPosition: 120000
             maxExtensionPosition: 295000
+            angleQuarterPPR: 134721
     collector:
         implemented: true
         solenoids:
