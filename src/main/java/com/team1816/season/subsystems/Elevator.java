@@ -254,7 +254,7 @@ public class Elevator extends Subsystem {
         if(Constants.kLoggingRobot){
             desArmPos.append(getDesiredAngleState().pos);
             actArmPos.append(actualAnglePosition);
-            armCurrentDraw.append(((LazyTalonFX)angleMotorMain).getStatorCurrent());
+//            armCurrentDraw.append(((LazyTalonFX)angleMotorMain).getStatorCurrent());
         }
     }
 
