@@ -92,6 +92,7 @@ public class Robot extends TimedRobot {
      */
     private double loopStart;
     public static double dt;
+    public static double robotDt;
     public static double autoStart;
     public static double teleopStart;
 
@@ -151,7 +152,7 @@ public class Robot extends TimedRobot {
      * @return duration (ms)
      */
     public Double getLastRobotLoop() {
-        return (Timer.getFPGATimestamp() - loopStart) * 1000;
+        return robotDt;
     }
 
     /**
@@ -648,6 +649,8 @@ public class Robot extends TimedRobot {
             robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
             Robot.dt = getLastEnabledLoop();
+            robotDt = (Timer.getFPGATimestamp() - loopStart) * 1000;
+            loopStart = Timer.getFPGATimestamp();
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());
@@ -659,7 +662,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledPeriodic() {
-        loopStart = Timer.getFPGATimestamp();
         try {
             if (RobotController.getUserButton()) {
                 drive.zeroSensors(Constants.kDefaultZeroingPose);
@@ -730,7 +732,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
-        loopStart = Timer.getFPGATimestamp();
         robotState.field
             .getObject("Trajectory")
             .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
@@ -746,7 +747,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-        loopStart = Timer.getFPGATimestamp();
 
         try {
             manualControl();

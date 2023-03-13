@@ -33,11 +33,11 @@ public class SwerveModule implements ISwerveModule {
      */
     public SwerveModuleState moduleState;
     public SwerveModulePosition modulePosition;
-    public double driveDemand;
-    public double driveActual;
+    public double driveDemandMPS;
+    public double driveActualMPS;
     public double drivePosition;
-    public double azimuthDemand;
-    public double azimuthActual;
+    public double azimuthDemandDeg;
+    public double azimuthActualDeg;
     public double motorTemp; // Drive Motor Temperature
 
     /**
@@ -128,19 +128,23 @@ public class SwerveModule implements ISwerveModule {
             desiredState,
             getActualState().angle
         );
-        driveDemand =
+        driveDemandMPS = desired_state.speedMetersPerSecond;
+        double driveDemandTP100MS =
             DriveConversions.metersPerSecondToTicksPer100ms(
                 desired_state.speedMetersPerSecond
             );
+        azimuthDemandDeg = desired_state.angle.getDegrees();
+        double azimuthDemandPos =
+                DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) +
+                        mModuleConfig.azimuthEncoderHomeOffset;
+
         if (!isOpenLoop) {
-            driveMotor.set(ControlMode.Velocity, driveDemand);
+            driveMotor.set(ControlMode.Velocity, driveDemandTP100MS);
         } else {
+            driveDemandMPS *= Drive.kOpenLoopMaxVelMeters;
             driveMotor.set(ControlMode.PercentOutput, desired_state.speedMetersPerSecond); // lying to it - speedMetersPerSecond passed in is actually percent output (1 to -1)
         }
-        azimuthDemand =
-            DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) +
-                mModuleConfig.azimuthEncoderHomeOffset;
-        azimuthMotor.set(ControlMode.Position, azimuthDemand);
+        azimuthMotor.set(ControlMode.Position, azimuthDemandPos);
     }
 
     /**
@@ -150,20 +154,20 @@ public class SwerveModule implements ISwerveModule {
      * @see this#getActualPosition()
      */
     public void update() {
-        driveActual =
+        driveActualMPS =
             DriveConversions.ticksToMeters(driveMotor.getSelectedSensorVelocity(0)) * 10;
-        azimuthActual =
+        azimuthActualDeg =
             DriveConversions.convertTicksToDegrees(
                 azimuthMotor.getSelectedSensorPosition(0) -
                     mModuleConfig.azimuthEncoderHomeOffset
             );
 
-        moduleState.speedMetersPerSecond = driveActual;
-        moduleState.angle = Rotation2d.fromDegrees(azimuthActual);
+        moduleState.speedMetersPerSecond = driveActualMPS;
+        moduleState.angle = Rotation2d.fromDegrees(azimuthActualDeg);
 
-        drivePosition += driveActual * Robot.dt / 1000;
+        drivePosition += driveActualMPS * Robot.dt / 1000;
         modulePosition.distanceMeters = drivePosition;
-        modulePosition.angle = Rotation2d.fromDegrees(azimuthActual);
+        modulePosition.angle = Rotation2d.fromDegrees(azimuthActualDeg);
 
         motorTemp = driveMotor.getTemperature(); // Celsius
     }
@@ -215,7 +219,7 @@ public class SwerveModule implements ISwerveModule {
      */
     @Override
     public double getDesiredAzimuth() {
-        return azimuthDemand;
+        return azimuthDemandDeg;
     }
 
     /**
@@ -225,7 +229,7 @@ public class SwerveModule implements ISwerveModule {
      */
     @Override
     public double getActualAzimuth() {
-        return azimuthActual;
+        return azimuthActualDeg;
     }
 
     /**
@@ -245,7 +249,7 @@ public class SwerveModule implements ISwerveModule {
      */
     @Override
     public double getDesiredDrive() {
-        return driveDemand;
+        return driveDemandMPS;
     }
 
     /**
@@ -255,7 +259,7 @@ public class SwerveModule implements ISwerveModule {
      */
     @Override
     public double getActualDrive() {
-        return driveActual;
+        return driveActualMPS;
     }
 
     /**

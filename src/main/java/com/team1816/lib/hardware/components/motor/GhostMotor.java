@@ -11,7 +11,12 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.team1816.season.Robot;
 import com.team1816.season.configuration.Constants;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
+
+import static java.lang.Double.NaN;
 
 /**
  * This class emulates the behaviour of a Motor that is not physically implemented on a robot
@@ -19,6 +24,7 @@ import edu.wpi.first.wpilibj.RobotController;
 public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     protected String name = "";
+
     /**
      * Characterization
      */
@@ -35,6 +41,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     private final double[] desiredDemand = new double[]{0, 0, 0}; // 0: %out, 1: vel, 2: pos
     private final double[] actualOutput = new double[]{0, 0, 0}; // 0: %out, 1: vel, 2: pos
     protected double lastPos = 0;
+
+    protected double lastUpdate = 0;
 
     public GhostMotor(int maxTickVel, int absInitOffset, String motorName) {
         this.absInitOffset = absInitOffset;
@@ -60,42 +68,67 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     private void processSet(ControlMode Mode, double demand) {
         // setting desired demand
         if (Mode == ControlMode.PercentOutput) {
-            this.desiredDemand[0] = demand;
-            this.desiredDemand[1] = demand * maxVelTicks100ms;
-            this.desiredDemand[2] = lastPos + demand * maxVelTicks100ms; // TODO this boof
+            desiredDemand[0] = demand;
+            desiredDemand[1] = NaN;
+            desiredDemand[2] = NaN;
         } else if (Mode == ControlMode.Velocity) {
-            this.desiredDemand[0] = demand / maxVelTicks100ms;
+            this.desiredDemand[0] = NaN;
             this.desiredDemand[1] = demand;
-            this.desiredDemand[2] = lastPos + demand; // TODO this boof
+            this.desiredDemand[2] = NaN;
         } else if (Mode == ControlMode.Position) {
-            this.desiredDemand[0] = (demand - lastPos) / Constants.kLooperDt / maxVelTicks100ms; // TODO this boof
-            this.desiredDemand[1] = (demand - lastPos) / Constants.kLooperDt; // TODO this boof
+            this.desiredDemand[0] = NaN;
+            this.desiredDemand[1] = NaN;
             this.desiredDemand[2] = demand;
         } else {
             System.out.println("no support for this Mode in GhostMotor!");
             return;
         }
+        controlMode = Mode;
+    }
+
+    private void updateActValues(){
+        // don't make unnecessary calculations if robot not in sim
+        if(RobotBase.isReal()){
+            return;
+        }
+
+        // whether motor needs to calculate new numbers - this
+        double timeNow = Timer.getFPGATimestamp();
+        double dtBetweenCallsMS = (timeNow - lastUpdate) * 1000;
+        if(dtBetweenCallsMS < Robot.dt){
+            lastUpdate = timeNow;
+            return;
+        }
+        lastUpdate = timeNow;
 
         // setting actual output
+        if(controlMode == ControlMode.PercentOutput){
+            actualOutput[0] = desiredDemand[0];
+            actualOutput[1] = desiredDemand[0] * maxVelTicks100ms;
+            actualOutput[2] = lastPos + (actualOutput[1] / 100 * dtBetweenCallsMS);
+        } else if (controlMode == ControlMode.Velocity){
+            actualOutput[0] = desiredDemand[1] / maxVelTicks100ms;
+            actualOutput[1] = desiredDemand[1];
+            actualOutput[2] = lastPos + (actualOutput[1] / 100 * dtBetweenCallsMS);
+        } else if(controlMode == ControlMode.Position){
+            actualOutput[0] = (desiredDemand[2] - lastPos) / dtBetweenCallsMS * 100 / maxVelTicks100ms;
+            actualOutput[1] = (desiredDemand[2] - lastPos) / dtBetweenCallsMS * 100;
+            actualOutput[2] = desiredDemand[2];
+        }
+
         if (usingLimit) {
-            if (desiredDemand[2] > fwdLimit) {
+            if (actualOutput[2] >= fwdLimit) {
                 actualOutput[0] = 0;
                 actualOutput[1] = 0;
                 actualOutput[2] = fwdLimit;
-            } else if (desiredDemand[2] < revLimit) {
+            } else if (actualOutput[2] <= revLimit) {
                 actualOutput[0] = 0;
                 actualOutput[1] = 0;
                 actualOutput[2] = revLimit;
-            } else {
-                for (int i = 0; i < 3; i++) {
-                    actualOutput[i] = desiredDemand[i];
-                }
-            }
-        } else {
-            for (int i = 0; i < 3; i++) {
-                actualOutput[i] = desiredDemand[i];
             }
         }
+
+        lastPos = actualOutput[2];
 
         if (Math.abs(actualOutput[0]) > 1.0) {
             System.out.println(
@@ -105,8 +138,6 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
                             actualOutput[0]
             );
         }
-
-        controlMode = Mode;
     }
 
     @Override
@@ -191,12 +222,12 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public double getBusVoltage() {
-        return 0;
+        return 12;
     }
 
     @Override
     public double getMotorOutputPercent() {
-        lastPos = actualOutput[2];
+        updateActValues();
         return actualOutput[0];
     }
 
@@ -281,13 +312,13 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public double getSelectedSensorPosition(int pidIdx) {
-        lastPos = actualOutput[2];
+        updateActValues();
         return actualOutput[2];
     }
 
     @Override
     public double getSelectedSensorVelocity(int pidIdx) {
-        lastPos = actualOutput[2];
+        updateActValues();
         return actualOutput[1];
     }
 
