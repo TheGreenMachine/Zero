@@ -130,7 +130,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
         lastPos = actualOutput[2];
 
-        if (Math.abs(actualOutput[0]) > 1.0) {
+        // % values will be wildly off when in pos mode cus we magically reach position within a single loop
+        if (controlMode != ControlMode.Position && Math.abs(actualOutput[0]) > 1.0) {
             System.out.println(
                     "Motor " +
                             name +
