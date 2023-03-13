@@ -82,8 +82,8 @@ subsystems:
             maxAccel: 1.27 # meters/s^ 2
             isDemoMode: 0
             ## Auto Balance ##
-            autoBalanceDivider: 40
-            autoBalanceThreshold: 2.5
+            autoBalanceDivider: 45
+            autoBalanceThreshold: 4  #was 2.5, then 3
     elevator:
         implemented: true
         falcons:

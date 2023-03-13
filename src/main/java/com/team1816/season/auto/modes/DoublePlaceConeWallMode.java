@@ -2,10 +2,7 @@ package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.Color;
-import com.team1816.lib.auto.actions.ParallelAction;
-import com.team1816.lib.auto.actions.SeriesAction;
-import com.team1816.lib.auto.actions.TrajectoryAction;
-import com.team1816.lib.auto.actions.WaitAction;
+import com.team1816.lib.auto.actions.*;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.CollectAction;
 import com.team1816.season.auto.actions.ElevatorAction;
@@ -14,6 +11,7 @@ import com.team1816.season.auto.paths.ConeToNodeWallPath;
 import com.team1816.season.auto.paths.NodeToConeWallPath;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
+import edu.wpi.first.math.geometry.Translation2d;
 
 import java.util.List;
 
@@ -55,6 +53,7 @@ public class DoublePlaceConeWallMode extends AutoMode {
                 new ParallelAction(
                     trajectoryActions.get(0),
                     new SeriesAction(
+                        new WaitAction(1),
                         new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
                         new CollectAction(Collector.STATE.INTAKE_CONE),
                         new WaitAction(3),
