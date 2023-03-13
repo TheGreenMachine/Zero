@@ -4,12 +4,14 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.controlboard.ActionManager;
+import com.team1816.lib.controlboard.ControlBoard;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
+import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.modes.TrajectoryToTargetMode;
@@ -21,6 +23,7 @@ import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.*;
@@ -731,6 +734,16 @@ public class Robot extends TimedRobot {
                 0,
                 robotState.fieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
+        } else if(((ControlBoard)controlBoard).driverController.getDPad() != -1) {
+            int dPadPOVToAngle = -((ControlBoard)controlBoard).driverController.getDPad();
+            SwerveModuleState[] dPadDrivingStates = new SwerveModuleState[]{
+                    new SwerveModuleState(1, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
+                    new SwerveModuleState(1, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
+                    new SwerveModuleState(1, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
+                    new SwerveModuleState(1, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation()))
+            };
+            // TODO make this not use set module states OR clean up swerveDrive in general :) - this works but is jank
+            ((SwerveDrive)drive).setModuleStates(dPadDrivingStates);
         } else {
             drive.setTeleopInputs(
                 -controlBoard.getAsDouble("throttle"),
