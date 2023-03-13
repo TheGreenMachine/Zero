@@ -80,6 +80,7 @@ subsystems:
             maxVelOpenLoop: 2.2 # meters/s (3.6)
             maxVelPathFollowing: 2.2 # meters/s (3.6)
             maxAccel: 1.27 # meters/s^ 2
+            dPadMoveSpeed: 0.75
             isDemoMode: 0
             ## Auto Balance ##
             autoBalanceDivider: 45

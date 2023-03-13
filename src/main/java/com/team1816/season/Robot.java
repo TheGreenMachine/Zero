@@ -111,6 +111,8 @@ public class Robot extends TimedRobot {
     public Elevator.ANGLE_STATE prevAngleState;
     private boolean operatorLock;
 
+    private double dPadMoveSpeed;
+
     /**
      * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
      */
@@ -139,6 +141,8 @@ public class Robot extends TimedRobot {
            robotLoop = new DoubleLogEntry(DataLogManager.getLog(),"Timings/Robot");
            robotStateLoop = new DoubleLogEntry(DataLogManager.getLog(),"Timings/RobotState");
         }
+
+        dPadMoveSpeed = factory.getConstant(Drive.NAME, "dPadMoveSpeed", 0);
     }
 
     /**
@@ -737,10 +741,10 @@ public class Robot extends TimedRobot {
         } else if(((ControlBoard)controlBoard).driverController.getDPad() != -1) {
             int dPadPOVToAngle = -((ControlBoard)controlBoard).driverController.getDPad();
             SwerveModuleState[] dPadDrivingStates = new SwerveModuleState[]{
-                    new SwerveModuleState(1, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
-                    new SwerveModuleState(1, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
-                    new SwerveModuleState(1, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
-                    new SwerveModuleState(1, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation()))
+                    new SwerveModuleState(dPadMoveSpeed, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
+                    new SwerveModuleState(dPadMoveSpeed, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
+                    new SwerveModuleState(dPadMoveSpeed, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
+                    new SwerveModuleState(dPadMoveSpeed, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation()))
             };
             // TODO make this not use set module states OR clean up swerveDrive in general :) - this works but is jank
             ((SwerveDrive)drive).setModuleStates(dPadDrivingStates);
