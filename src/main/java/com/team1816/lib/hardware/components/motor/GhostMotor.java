@@ -237,7 +237,6 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     }
 
     @Override
-    @Deprecated
     public double getOutputCurrent() {
         return 0;
     }

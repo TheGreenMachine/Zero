@@ -47,4 +47,9 @@ public class LazyTalonFX extends TalonFX implements IGreenMotor {
     public ErrorCode configAllSettings(BaseTalonConfiguration allConfigs, int timeoutMs) {
         return super.configAllSettings(allConfigs, timeoutMs);
     }
+
+    @Override
+    public double getOutputCurrent() {
+        return super.getStatorCurrent();
+    }
 }

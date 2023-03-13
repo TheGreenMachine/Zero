@@ -13,4 +13,6 @@ public interface IGreenMotor extends IMotorControllerEnhanced {
     ErrorCode configAllSettings(BaseTalonConfiguration allConfigs, int timeoutMs);
 
     ErrorCode configFactoryDefault(int timeoutMs);
+
+    double getOutputCurrent();
 }
