@@ -12,6 +12,7 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.season.auto.AutoModeManager;
+import com.team1816.season.auto.modes.AutoScoreMode;
 import com.team1816.season.auto.modes.TrajectoryToTargetMode;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.DrivetrainTargets;
@@ -101,7 +102,9 @@ public class Robot extends TimedRobot {
     private boolean faulted;
     private int grid = 0;
     private int node = 0;
-    private int level = 0;
+    private Elevator.EXTENSION_STATE level = Elevator.EXTENSION_STATE.MIN;
+
+    private boolean desireCube = true;
 
     public static boolean runningAutoTarget = false;
     public static boolean runningAutoScore = false;
@@ -254,7 +257,6 @@ public class Robot extends TimedRobot {
                                     autoTargetThread = new Thread(mode::run);
                                     ledManager.indicateStatus(LedManager.RobotStatus.RAGE, LedManager.ControlState.BLINK);
                                     autoTargetThread.start();
-                                    System.out.println("Trajectory ended");
                                 }
                             } else {
                                 autoTargetThread.stop();
@@ -293,6 +295,7 @@ public class Robot extends TimedRobot {
                             if (pressed) {
                                 collector.setDesiredState(Collector.STATE.INTAKE_CONE);
                                 ledManager.indicateStatus(LedManager.RobotStatus.CONE);
+                                desireCube = false;
                             } else {
                                 collector.setDesiredState(Collector.STATE.STOP);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
@@ -305,6 +308,7 @@ public class Robot extends TimedRobot {
                             if (pressed) {
                                 collector.setDesiredState(Collector.STATE.INTAKE_CUBE);
                                 ledManager.indicateStatus(LedManager.RobotStatus.CUBE);
+                                desireCube = true;
                             } else {
                                 collector.setDesiredState(Collector.STATE.STOP);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
@@ -401,7 +405,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("autoScoreMin"),
+                        () -> controlBoard.getAsBool("extendMin"),
                         () -> {
                             if (!operatorLock) {
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN);
@@ -409,7 +413,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("autoScoreMid"),
+                        () -> controlBoard.getAsBool("extendMid"),
                         () -> {
                             if (!operatorLock) {
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID);
@@ -417,7 +421,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("autoScoreMax"),
+                        () -> controlBoard.getAsBool("extendMax"),
                         () -> {
                             if (!operatorLock) {
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
@@ -425,12 +429,23 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("autoScoreRetract"),
+                        () -> controlBoard.getAsBool("autoScore"),
                         () -> {
                             if (!operatorLock) {
-                                orchestrator.autoScore();
+                                if (!runningAutoScore) {
+                                    runningAutoScore = true;
+                                        System.out.println("Auto Score action started!");
+                                        AutoScoreMode mode = new AutoScoreMode(desireCube, level);
+                                        autoScoreThread = new Thread(mode::run);
+                                        ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
+                                        autoScoreThread.start();
+                                    }
+                                } else {
+                                    autoScoreThread.stop();
+                                    System.out.println("Stopped! Auto scoring cancelled!");
+                                    runningAutoScore = !runningAutoScore;
+                                }
                             }
-                        }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("grid1"),
@@ -477,21 +492,21 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("level1"),
                         () -> {
-                            level = 0;
+                            level = Elevator.EXTENSION_STATE.MIN;
                             System.out.println("Score level changed to Low");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("level2"),
                         () -> {
-                            level = 1;
+                            level = Elevator.EXTENSION_STATE.MID;
                             System.out.println("Score level changed to Mid");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("level3"),
                         () -> {
-                            level = 2;
+                            level = Elevator.EXTENSION_STATE.MAX;
                             System.out.println("Score level changed to High");
                         }
                     )
