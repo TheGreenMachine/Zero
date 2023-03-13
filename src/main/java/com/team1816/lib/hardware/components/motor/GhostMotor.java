@@ -10,8 +10,6 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.team1816.season.Robot;
-import com.team1816.season.configuration.Constants;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -95,7 +93,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
         // whether motor needs to calculate new numbers - this
         double timeNow = Timer.getFPGATimestamp();
         double dtBetweenCallsMS = (timeNow - lastUpdate) * 1000;
-        if(dtBetweenCallsMS < Robot.dt){
+        if(dtBetweenCallsMS < Robot.looperDt){
             lastUpdate = timeNow;
             return;
         }

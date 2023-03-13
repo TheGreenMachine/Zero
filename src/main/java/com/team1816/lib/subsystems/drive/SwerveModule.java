@@ -165,7 +165,7 @@ public class SwerveModule implements ISwerveModule {
         moduleState.speedMetersPerSecond = driveActualMPS;
         moduleState.angle = Rotation2d.fromDegrees(azimuthActualDeg);
 
-        drivePosition += driveActualMPS * Robot.dt / 1000;
+        drivePosition += driveActualMPS * Robot.looperDt / 1000;
         modulePosition.distanceMeters = drivePosition;
         modulePosition.angle = Rotation2d.fromDegrees(azimuthActualDeg);
 

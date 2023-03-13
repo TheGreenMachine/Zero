@@ -22,10 +22,8 @@ import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -88,13 +86,13 @@ public class Robot extends TimedRobot {
      * Timing
      */
     private double loopStart;
-    public static double dt;
+    public static double looperDt;
     public static double robotDt;
     public static double autoStart;
     public static double teleopStart;
 
-    private DoubleLogEntry robotLoop;
-    private DoubleLogEntry robotStateLoop;
+    private DoubleLogEntry robotLoopLogger;
+    private DoubleLogEntry looperLogger;
 
     /**
      * Properties
@@ -137,8 +135,8 @@ public class Robot extends TimedRobot {
             zeroingButton = new DigitalInput((int) factory.getConstant("zeroingButton", -1));
         }
         if(Constants.kLoggingRobot){
-           robotLoop = new DoubleLogEntry(DataLogManager.getLog(),"Timings/Robot");
-           robotStateLoop = new DoubleLogEntry(DataLogManager.getLog(),"Timings/RobotState");
+           robotLoopLogger = new DoubleLogEntry(DataLogManager.getLog(),"Timings/Robot");
+           looperLogger = new DoubleLogEntry(DataLogManager.getLog(),"Timings/RobotState");
         }
     }
 
@@ -158,10 +156,7 @@ public class Robot extends TimedRobot {
      * @return duration (ms)
      */
     public Double getLastRobotLoop() {
-        if(Constants.kLoggingRobot){
-            robotLoop.append(robotDt);
-        }
-        return robotDt;
+        return (Timer.getFPGATimestamp() - loopStart) * 1000;
     }
 
     /**
@@ -172,9 +167,6 @@ public class Robot extends TimedRobot {
      */
     public Double getLastSubsystemLoop() {
         double dt = enabledLoop.isRunning() ? enabledLoop.getLastLoop() : disabledLoop.getLastLoop();
-        if(Constants.kLoggingRobot) {
-            robotStateLoop.append(dt);
-        }
         return dt;
     }
 
@@ -621,16 +613,19 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         try {
+            // updating loop timers
+            Robot.looperDt = getLastSubsystemLoop();
+            Robot.robotDt = getLastRobotLoop();
+            loopStart = Timer.getFPGATimestamp();
+
+            if(Constants.kLoggingRobot){
+                looperLogger.append(looperDt);
+                robotLoopLogger.append(robotDt);
+            }
+
             subsystemManager.outputToSmartDashboard(); // update shuffleboard for subsystem values
             robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
-            robotDt = (Timer.getFPGATimestamp() - loopStart) * 1000;
-            loopStart = Timer.getFPGATimestamp();
-            Robot.dt = getLastSubsystemLoop();
-            if(Constants.kLoggingRobot){
-                SmartDashboard.putNumber("Looper/Robot", getLastRobotLoop());
-                SmartDashboard.putNumber("Looper/Subsystems", dt);
-            }
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());

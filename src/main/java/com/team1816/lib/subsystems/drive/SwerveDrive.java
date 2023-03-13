@@ -342,9 +342,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         robotState.calculatedVehicleAccel =
             new ChassisSpeeds(
                 (cs.vxMetersPerSecond - robotState.deltaVehicle.vxMetersPerSecond) /
-                    Robot.dt,
+                    Robot.looperDt,
                 (cs.vyMetersPerSecond - robotState.deltaVehicle.vyMetersPerSecond) /
-                    Robot.dt,
+                    Robot.looperDt,
                 -9.80
             );
         robotState.deltaVehicle = cs;
