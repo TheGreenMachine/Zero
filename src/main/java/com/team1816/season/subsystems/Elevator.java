@@ -5,11 +5,14 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
+import com.team1816.lib.hardware.components.motor.LazyTalonFX;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.simUtil.SingleJointedElevatorArmSim;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -38,10 +41,10 @@ public class Elevator extends Subsystem {
     /**
      * Properties
      */
-    private static double stowAngle;
-    private static double collectAngle;
-    private static double scoreAngle;
-    private static double scoreDipAngle;
+    private static double stowPos;
+    private static double collectPos;
+    private static double scorePos;
+    private static double scoreDipPos;
     private static double minExtension;
     private static double midExtension;
     private static double maxExtension;
@@ -105,6 +108,11 @@ public class Elevator extends Subsystem {
     private static final double kElevatorMaxLength = 1.25; // meters
     private static final double kArmGearing = 250; // meters
     public static final double kArmMass = 13.60; // kg
+    // Logging
+    private DoubleLogEntry desArmPos;
+    private DoubleLogEntry actArmPos;
+    private DoubleLogEntry armCurrentDraw;
+
 
     /**
      * Base constructor needed to instantiate a subsystem
@@ -115,6 +123,7 @@ public class Elevator extends Subsystem {
     @Inject
     public Elevator(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
+
         // components
         this.angleMotorMain = factory.getMotor(NAME, "angleMotorMain");
         this.angleMotorFollower = factory.getFollowerMotor(NAME, "angleMotorFollower", angleMotorMain);
@@ -140,16 +149,14 @@ public class Elevator extends Subsystem {
         angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
 
         usingFeedForward = factory.getConstant(NAME, "usingFeedForward") > 0;
-//        if (usingFeedForward) {
-            extensionPPR = factory.getConstant(NAME, "extensionPPR");
-            angleQuarterPPR = factory.getConstant(NAME, "angleQuarterPPR");
-//        }
+        extensionPPR = factory.getConstant(NAME, "extensionPPR");
+        angleQuarterPPR = factory.getConstant(NAME, "angleQuarterPPR");
 
         // constants
-        stowAngle = factory.getConstant(NAME, "stowAnglePosition");
-        collectAngle = factory.getConstant(NAME, "collectAnglePosition");
-        scoreAngle = factory.getConstant(NAME, "scoreAnglePosition");
-        scoreDipAngle = factory.getConstant(NAME, "scoreDipAnglePosition");
+        stowPos = factory.getConstant(NAME, "stowAnglePosition");
+        collectPos = factory.getConstant(NAME, "collectAnglePosition");
+        scorePos = factory.getConstant(NAME, "scoreAnglePosition");
+        scoreDipPos = factory.getConstant(NAME, "scoreDipAnglePosition");
         minExtension = factory.getConstant(NAME, "minExtensionPosition");
         midExtension = factory.getConstant(NAME, "midExtensionPosition");
         maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
@@ -160,7 +167,7 @@ public class Elevator extends Subsystem {
         colPosTimer = new AsyncTimer(
             1,
             () -> {
-                angleMotorMain.set(ControlMode.Position, collectAngle);
+                angleMotorMain.set(ControlMode.Position, collectPos);
             },
             () -> {
                 // set it to go down until it hits rubber then just fight against the spring to stay down
@@ -187,6 +194,12 @@ public class Elevator extends Subsystem {
 //        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtendedAngularAcceleration");
 //        maxExtensionVelocity = factory.getConstant(NAME, "maxExtensionVelocity");
 //        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtensionAcceleration");
+
+        if(Constants.kLoggingRobot){
+            desArmPos = new DoubleLogEntry(DataLogManager.getLog(),"Elevator/desArmPos");
+            actArmPos = new DoubleLogEntry(DataLogManager.getLog(),"Elevator/actArmPos");
+            armCurrentDraw = new DoubleLogEntry(DataLogManager.getLog(),"Elevator/currentDraw");
+        }
     }
 
     /**
@@ -266,11 +279,17 @@ public class Elevator extends Subsystem {
         }
 
 
-        if (Math.abs(desiredAngleState.getAngle() - actualAnglePosition) < allowableAngleError * 2) {
+        if (Math.abs(desiredAngleState.getPos() - actualAnglePosition) < allowableAngleError * 2) {
             robotState.actualElevatorAngleState = desiredAngleState;
         }
         if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError * 4) {
             robotState.actualElevatorExtensionState = desiredExtensionState;
+        }
+
+        if(Constants.kLoggingRobot){
+            desArmPos.append(getDesiredAngleState().pos);
+            actArmPos.append(actualAnglePosition);
+            armCurrentDraw.append(((LazyTalonFX)angleMotorMain).getStatorCurrent());
         }
     }
 
@@ -286,18 +305,18 @@ public class Elevator extends Subsystem {
             if (usingFeedForward) {
                 switch (desiredAngleState) {
                     case STOW ->
-                        angleMotorMain.set(ControlMode.Position, (stowAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
+                        angleMotorMain.set(ControlMode.Position, (stowPos), DemandType.ArbitraryFeedForward, angleFeedForward);
                     case COLLECT ->
-                        angleMotorMain.set(ControlMode.Position, (collectAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
+                        angleMotorMain.set(ControlMode.Position, (collectPos), DemandType.ArbitraryFeedForward, angleFeedForward);
                     case SCORE ->
-                        angleMotorMain.set(ControlMode.Position, (scoreAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
+                        angleMotorMain.set(ControlMode.Position, (scorePos), DemandType.ArbitraryFeedForward, angleFeedForward);
+                    case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipPos));
                 }
             } else {
                 switch (desiredAngleState) {
                     case STOW -> {
                         angleMotorMain.selectProfileSlot(stowPIDSlot, 0);
-                        angleMotorMain.set(ControlMode.Position, (stowAngle));
+                        angleMotorMain.set(ControlMode.Position, (stowPos));
                     }
                     case COLLECT -> {
                         angleMotorMain.selectProfileSlot(collectScorePIDSlot, 0);
@@ -310,11 +329,11 @@ public class Elevator extends Subsystem {
                     }
                     case SCORE -> {
                         angleMotorMain.selectProfileSlot(collectScorePIDSlot, 0);
-                        angleMotorMain.set(ControlMode.Position, (scoreAngle));
+                        angleMotorMain.set(ControlMode.Position, (scorePos));
                     }
                     case SCORE_DIP -> {
                         angleMotorMain.selectProfileSlot(stowPIDSlot, 0);
-                        angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
+                        angleMotorMain.set(ControlMode.Position, (scoreDipPos));
                     }
                 }
             }
@@ -384,19 +403,19 @@ public class Elevator extends Subsystem {
      * Base enums
      **/
     public enum ANGLE_STATE {
-        STOW(stowAngle),
-        COLLECT(collectAngle),
-        SCORE(scoreAngle),
-        SCORE_DIP(scoreDipAngle);
+        STOW(stowPos),
+        COLLECT(collectPos),
+        SCORE(scorePos),
+        SCORE_DIP(scoreDipPos);
 
-        private final double angle;
+        private final double pos;
 
-        ANGLE_STATE(double angle) {
-            this.angle = angle;
+        ANGLE_STATE(double pos) {
+            this.pos = pos;
         }
 
-        public double getAngle() {
-            return angle;
+        public double getPos() {
+            return pos;
         }
 
     }

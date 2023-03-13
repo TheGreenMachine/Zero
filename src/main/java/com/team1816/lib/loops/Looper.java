@@ -111,4 +111,8 @@ public class Looper implements ILooper {
         if (!mRunning) return 0;
         return mDT * 1000; // Convert to ms
     }
+
+    public boolean isRunning() {
+        return mRunning;
+    }
 }

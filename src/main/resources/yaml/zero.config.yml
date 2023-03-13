@@ -173,9 +173,7 @@ constants:
     minAllowablePoseError: 0.1
     maxAllowablePoseError: 5
     ## Logging ##
-    logTeleOp: 1 # 0 or 1
-    logAuto: 1 # 0 or 1
-    badLogEnabled: 1 # 0 or 1
+    logRobot: 1 # 0 or 1
     logDrivetrain: 1
     configStatusFrames: 0 # 0 or 1
     ## General ##
