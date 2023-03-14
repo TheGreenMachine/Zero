@@ -8,10 +8,18 @@ import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.LazyTalonFX;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.lib.util.simUtil.SingleJointedElevatorArmSim;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -81,6 +89,25 @@ public class Elevator extends Subsystem {
     private boolean hallEffectTriggered; // not using this rn - turn on robot with arm all the way down for ~20 secs
     private double zeroingHallEffectTriggerValue;
 
+    // where ur drawing stuff
+    private final Mechanism2d mechCanvas = new Mechanism2d(3, 3);
+    private final MechanismRoot2d root = mechCanvas.getRoot("ElevatorArm", 1.25, 0.5);
+    private final MechanismLigament2d simArm = root.append(new MechanismLigament2d("elevator", kElevatorMinLength, 90));
+    private final SingleJointedElevatorArmSim simArmSystem =
+            new SingleJointedElevatorArmSim(
+                    DCMotor.getFalcon500(2),
+                    kArmGearing,
+                    SingleJointedElevatorArmSim.estimateMOI((kElevatorMaxLength + kElevatorMinLength) / 2, kArmMass),
+                    (kElevatorMaxLength + kElevatorMinLength) / 2,
+                    0,
+                    180,
+                    true,
+                    VecBuilder.fill(0.01));
+
+    private static final double kElevatorMinLength = 0.70; // meters
+    private static final double kElevatorMaxLength = 1.25; // meters
+    private static final double kArmGearing = 250; // meters
+    public static final double kArmMass = 13.60; // kg
     // Logging
     private DoubleLogEntry desArmPos;
     private DoubleLogEntry actArmPos;
@@ -122,10 +149,8 @@ public class Elevator extends Subsystem {
         angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
 
         usingFeedForward = factory.getConstant(NAME, "usingFeedForward") > 0;
-        if (usingFeedForward) {
-            extensionPPR = factory.getConstant(NAME, "extensionPPR");
-            angleQuarterPPR = factory.getConstant(NAME, "angleQuarterPPR");
-        }
+        extensionPPR = factory.getConstant(NAME, "extensionPPR");
+        angleQuarterPPR = factory.getConstant(NAME, "angleQuarterPPR");
 
         // constants
         stowPos = factory.getConstant(NAME, "stowAnglePosition");
@@ -239,10 +264,20 @@ public class Elevator extends Subsystem {
                     * Constants.maxElevatorFeedForward;
         }
 
-//        if (hallEffectTriggered == zeroingHallEffect.get()) {
-//            zeroingHallEffectTriggerValue = actualAnglePosition;
-//        }
-//        hallEffectTriggered = !zeroingHallEffect.get();
+        if(RobotBase.isSimulation()){
+            double elevatorLength = kElevatorMinLength +
+                    (extensionMotor.getSelectedSensorPosition(0) / maxExtension * (kElevatorMaxLength - kElevatorMinLength));
+
+//            simArmSystem.setInput(angleMotorMain.getMotorOutputVoltage());
+//            simArmSystem.setM_armLenMeters(elevatorLength);
+//            RoboRioSim.setVInVoltage(
+//                    BatterySim.calculateDefaultBatteryLoadedVoltage(simArmSystem.getCurrentDrawAmps()));
+//            simArmSystem.update(Robot.dt);
+            simArm.setLength(elevatorLength);
+            simArm.setAngle(angleMotorMain.getSelectedSensorPosition(0) / (4 * angleQuarterPPR) * 360); // Units.radiansToDegrees(simArmSystem.getAngleRads())
+            SmartDashboard.putData("Elevator Mech 2D", mechCanvas);
+        }
+
 
         if (Math.abs(desiredAngleState.getPos() - actualAnglePosition) < allowableAngleError * 2) {
             robotState.actualElevatorAngleState = desiredAngleState;
@@ -254,7 +289,7 @@ public class Elevator extends Subsystem {
         if(Constants.kLoggingRobot){
             desArmPos.append(getDesiredAngleState().pos);
             actArmPos.append(actualAnglePosition);
-//            armCurrentDraw.append(((LazyTalonFX)angleMotorMain).getStatorCurrent());
+            armCurrentDraw.append(angleMotorMain.getOutputCurrent());
         }
     }
 
@@ -302,7 +337,6 @@ public class Elevator extends Subsystem {
                     }
                 }
             }
-//            System.out.println("rotation = " + desiredAngleState);
         }
         if (extensionOutputsChanged) {
             extensionOutputsChanged = false;
@@ -333,7 +367,6 @@ public class Elevator extends Subsystem {
                     }
                 }
             }
-//            System.out.println("extension = " + desiredExtensionState);
         }
     }
 

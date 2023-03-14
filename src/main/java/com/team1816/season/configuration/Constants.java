@@ -84,7 +84,7 @@ public class Constants {
     /**
      * Elevator characterization
      */
-    public static final double maxElevatorFeedForward = 0.05;
+    public static final double maxElevatorFeedForward = 0.1;
 
     /**
      * Camera characterization

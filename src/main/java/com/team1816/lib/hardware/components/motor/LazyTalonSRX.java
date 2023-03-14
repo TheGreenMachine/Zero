@@ -65,4 +65,9 @@ public class LazyTalonSRX extends TalonSRX implements IGreenMotor, IMotorSensor 
     public ErrorCode setQuadraturePosition(int newPosition) {
         return sensors.setQuadraturePosition(newPosition, Constants.kLongCANTimeoutMs);
     }
+
+    @Override
+    public double getOutputCurrent() {
+        return super.getStatorCurrent();
+    }
 }

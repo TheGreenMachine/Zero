@@ -342,9 +342,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         robotState.calculatedVehicleAccel =
             new ChassisSpeeds(
                 (cs.vxMetersPerSecond - robotState.deltaVehicle.vxMetersPerSecond) /
-                    Robot.dt,
+                    Robot.looperDt,
                 (cs.vyMetersPerSecond - robotState.deltaVehicle.vyMetersPerSecond) /
-                    Robot.dt,
+                    Robot.looperDt,
                 -9.80
             );
         robotState.deltaVehicle = cs;
@@ -403,7 +403,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             Rotation2d[] azimuths = new Rotation2d[4];
 
             for (int i = 0; i < 4; i++) {
-                azimuths[i] = Rotation2d.fromDegrees(swerveModules[i].azimuthActual);
+                azimuths[i] = Rotation2d.fromDegrees(swerveModules[i].azimuthActualDeg);
             }
 
             signal = new SwerveDriveSignal(new double[]{0, 0, 0, 0}, azimuths, false);

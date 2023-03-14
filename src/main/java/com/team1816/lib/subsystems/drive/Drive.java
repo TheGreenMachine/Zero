@@ -68,8 +68,8 @@ public abstract class Drive
      */
     protected ControlState controlState = ControlState.OPEN_LOOP;
     protected Rotation2d actualHeading = Constants.EmptyRotation2d;
-    protected Rotation2d desiredHeading = new Rotation2d(); // only updated in trajectory following
-    protected Pose2d desiredPose = new Pose2d(); // only updated in trajectory following
+    protected Rotation2d desiredTrajectoryHeading = new Rotation2d(); // only updated in trajectory following
+    protected Pose2d desiredTrajectoryPose = new Pose2d(); // only updated in trajectory following
     protected ChassisSpeeds chassisSpeed = new ChassisSpeeds();
 
     protected boolean isBraking;
@@ -281,8 +281,8 @@ public abstract class Drive
         }
         if (trajectoryStartTime == 0) trajectoryStartTime = timestamp;
         // update desired pose from trajectory
-        desiredPose = trajectory.sample(timestamp - trajectoryStartTime).poseMeters;
-        desiredHeading = desiredPose.getRotation();
+        desiredTrajectoryPose = trajectory.sample(timestamp - trajectoryStartTime).poseMeters;
+        desiredTrajectoryHeading = desiredTrajectoryPose.getRotation();
     }
 
     /**
@@ -419,7 +419,7 @@ public abstract class Drive
      */
     @Override
     public double getDesiredHeadingDegrees() {
-        return desiredHeading.getDegrees();
+        return desiredTrajectoryHeading.getDegrees();
     }
 
     /**
@@ -459,7 +459,7 @@ public abstract class Drive
      */
     @Override
     public double getFieldDesiredXDisplacement() {
-        return desiredPose.getX() - startingPose.getX();
+        return desiredTrajectoryPose.getX() - startingPose.getX();
     }
 
     /**
@@ -469,7 +469,7 @@ public abstract class Drive
      */
     @Override
     public double getFieldDesiredYDisplacement() {
-        return desiredPose.getY() - startingPose.getY();
+        return desiredTrajectoryPose.getY() - startingPose.getY();
     }
 
     /**

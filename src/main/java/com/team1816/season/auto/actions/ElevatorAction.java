@@ -2,15 +2,19 @@ package com.team1816.season.auto.actions;
 
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.AutoAction;
+import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.season.subsystems.Elevator;
+import edu.wpi.first.wpilibj.RobotBase;
+
+import static com.team1816.lib.subsystems.Subsystem.robotState;
 
 public class ElevatorAction implements AutoAction {
 
     private Elevator elevator;
-
     private Elevator.ANGLE_STATE desiredAngleState;
-
     private Elevator.EXTENSION_STATE desiredExtensionState;
+
+    private AsyncTimer simWaitTimer = new AsyncTimer(0.5, null); // just waits .5 secs b4 completing action
 
     public ElevatorAction(Elevator.ANGLE_STATE angle, Elevator.EXTENSION_STATE extension) {
         elevator = Injector.get(Elevator.class);
@@ -22,16 +26,27 @@ public class ElevatorAction implements AutoAction {
     public void start() {
         System.out.println("Setting elevator to angle: " + desiredAngleState.name() + " and extension to: " + desiredExtensionState.name());
         elevator.setDesiredState(desiredAngleState, desiredExtensionState);
+
+        if(RobotBase.isSimulation()){
+            simWaitTimer.update();
+        }
     }
 
     @Override
     public void update() {
-
+        if(RobotBase.isSimulation()){
+            simWaitTimer.update();
+        }
     }
 
     @Override
     public boolean isFinished() {
-        return true;
+        if(RobotBase.isSimulation()){
+            return simWaitTimer.isCompleted();
+        }
+
+        return robotState.actualElevatorAngleState == elevator.getDesiredAngleState()
+        && robotState.actualElevatorExtensionState == elevator.getDesiredExtensionState();
     }
 
     @Override
