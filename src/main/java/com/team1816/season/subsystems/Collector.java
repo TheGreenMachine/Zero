@@ -221,6 +221,10 @@ public class Collector extends Subsystem {
         pivotMotor.setNeutralMode(braking ? NeutralMode.Brake : NeutralMode.Coast);
     }
 
+    public GAME_ELEMENT getCurrentGameElement(){
+        return currentGameElement;
+    }
+
     /**
      * Functionality: nonexistent
      */

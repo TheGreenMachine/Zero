@@ -303,7 +303,7 @@ public class Elevator extends Subsystem {
             if (usingFeedForward) {
                 switch (desiredAngleState) {
                     case STOW ->
-                        angleMotorMain.set(ControlMode.Position, (stowAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
+                        angleMotorMain.set(ControlMode.Position, (stowPos), DemandType.ArbitraryFeedForward, angleFeedForward);
                     case COLLECT -> {
                         colPosTimer.update();
                         if (!colPosTimer.isCompleted()) {
@@ -313,8 +313,8 @@ public class Elevator extends Subsystem {
                         }
                     }
                     case SCORE, SHELF_COLLECT ->
-                        angleMotorMain.set(ControlMode.Position, (scoreAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
+                        angleMotorMain.set(ControlMode.Position, (scorePos), DemandType.ArbitraryFeedForward, angleFeedForward);
+                    case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipPos));
                 }
             } else {
                 switch (desiredAngleState) {
@@ -400,7 +400,7 @@ public class Elevator extends Subsystem {
         STOW(stowPos),
         COLLECT(collectPos),
         SCORE(scorePos),
-        SCORE_DIP(scoreDipPos);
+        SCORE_DIP(scoreDipPos),
         SHELF_COLLECT(scorePos);
 
         private final double pos;
