@@ -49,6 +49,8 @@ public class Elevator extends Subsystem {
     private static double midExtension;
     private static double maxExtension;
 
+    private static double shelfExtension;
+
     private AsyncTimer colPosTimer;
     private AsyncTimer stowExtensionTimer;
 
@@ -160,6 +162,7 @@ public class Elevator extends Subsystem {
         minExtension = factory.getConstant(NAME, "minExtensionPosition");
         midExtension = factory.getConstant(NAME, "midExtensionPosition");
         maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
+        shelfExtension = factory.getConstant(NAME, "shelfExtensionPosition");
 
         allowableAngleError = factory.getPidSlotConfig(NAME, "slot0").allowableError;
         allowableExtensionError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
@@ -172,22 +175,11 @@ public class Elevator extends Subsystem {
             () -> {
                 // set it to go down until it hits rubber then just fight against the spring to stay down
                 // that way we don't need to be dead-on for the collect pos
-                angleMotorMain.set(ControlMode.PercentOutput, -0.07);   //(start -.08)i can go up to -0.1 if collecting too high
+                angleMotorMain.set(ControlMode.PercentOutput, -0.06);   //(start -.08)i can go up to -0.1 if collecting too high
                 System.out.println("running collector into rubber w/ %out");
             }
         );
-        stowExtensionTimer = new AsyncTimer(
-            1.5,
-            () -> {
-                extensionMotor.set(ControlMode.Position, minExtension);
-            },
-            () -> {
-                // set it to go down until it hits rubber then just fight against the spring to stay down
-                // that way we're safer when retracting and have a buffer
-                extensionMotor.set(ControlMode.PercentOutput, -0.05);
-                System.out.println("slow rolling the extension motor");
-            }
-        );
+
 
 //        maxAngularVelocity = factory.getConstant(NAME, "maxAngularVelocity");
 //        maxAngularAcceleration = factory.getConstant(NAME, "maxAngularAcceleration");
@@ -257,11 +249,17 @@ public class Elevator extends Subsystem {
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
 
         if (usingFeedForward) {
-            angleFeedForward = Math.cos(actualAnglePosition / angleQuarterPPR) * Constants.maxElevatorFeedForward;
+            angleFeedForward =
+                Math.cos(actualAnglePosition / angleQuarterPPR) *
+                    (actualExtensionPosition / minExtension) *
+                    Constants.maxArmFeedForward * (12 / infrastructure.getBusVoltage()); // calculates fixed voltage angular feed forward taking both systems into account
             extensionFeedForward =
                 Math.sin(actualAnglePosition / angleQuarterPPR) *
-                    ((actualExtensionPosition + extensionPPR) / 2 * extensionPPR)
-                    * Constants.maxElevatorFeedForward;
+                    ((actualExtensionPosition + extensionPPR) / 4 * extensionPPR) *
+                    Constants.maxArmFeedForward * (12 / infrastructure.getBusVoltage()); // calculates fixed voltage extension feed forward taking both systems into account
+            if (robotState.actualElevatorAngleState != desiredAngleState) {
+                angleOutputsChanged = true;
+            }
         }
 
         if(RobotBase.isSimulation()){
@@ -305,12 +303,18 @@ public class Elevator extends Subsystem {
             if (usingFeedForward) {
                 switch (desiredAngleState) {
                     case STOW ->
-                        angleMotorMain.set(ControlMode.Position, (stowPos), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case COLLECT ->
-                        angleMotorMain.set(ControlMode.Position, (collectPos), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case SCORE ->
-                        angleMotorMain.set(ControlMode.Position, (scorePos), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipPos));
+                        angleMotorMain.set(ControlMode.Position, (stowAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
+                    case COLLECT -> {
+                        colPosTimer.update();
+                        if (!colPosTimer.isCompleted()) {
+                            angleOutputsChanged = true;
+                        } else {
+                            colPosTimer.reset();
+                        }
+                    }
+                    case SCORE, SHELF_COLLECT ->
+                        angleMotorMain.set(ControlMode.Position, (scoreAngle), DemandType.ArbitraryFeedForward, angleFeedForward);
+                    case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipAngle));
                 }
             } else {
                 switch (desiredAngleState) {
@@ -327,7 +331,7 @@ public class Elevator extends Subsystem {
                             colPosTimer.reset();
                         }
                     }
-                    case SCORE -> {
+                    case SCORE, SHELF_COLLECT -> {
                         angleMotorMain.selectProfileSlot(collectScorePIDSlot, 0);
                         angleMotorMain.set(ControlMode.Position, (scorePos));
                     }
@@ -348,23 +352,15 @@ public class Elevator extends Subsystem {
                         extensionMotor.set(ControlMode.Position, (midExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
                     case MIN ->
                         extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                    case SHELF_COLLECT ->
+                        extensionMotor.set(ControlMode.Position, (shelfExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
                 }
             } else {
                 switch (desiredExtensionState) {
                     case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension));
                     case MID -> extensionMotor.set(ControlMode.Position, (midExtension));
-                    case MIN -> {
-                        if (desiredAngleState == ANGLE_STATE.STOW) {
-                            stowExtensionTimer.update();
-                            if (!stowExtensionTimer.isCompleted()) {
-                                extensionOutputsChanged = true;
-                            } else {
-                                stowExtensionTimer.reset();
-                            }
-                        } else {
-                            extensionMotor.set(ControlMode.Position, (minExtension));
-                        }
-                    }
+                    case MIN -> extensionMotor.set(ControlMode.Position, (minExtension));
+                    case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension));
                 }
             }
         }
@@ -405,6 +401,7 @@ public class Elevator extends Subsystem {
         COLLECT(collectPos),
         SCORE(scorePos),
         SCORE_DIP(scoreDipPos);
+        SHELF_COLLECT(scorePos);
 
         private final double pos;
 
@@ -421,7 +418,8 @@ public class Elevator extends Subsystem {
     public enum EXTENSION_STATE {
         MIN(minExtension),
         MID(midExtension),
-        MAX(maxExtension);
+        MAX(maxExtension),
+        SHELF_COLLECT(shelfExtension);
 
         private final double extension;
 

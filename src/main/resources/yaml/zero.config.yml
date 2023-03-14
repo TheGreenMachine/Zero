@@ -112,36 +112,45 @@ subsystems:
                 allowableError: 1000
         constants:
             ## Config ##
-            usingFeedForward: 0
+            usingFeedForward: 1
+            extensionPPR: 300000
+            angleQuarterPPR: 131072 # 32 x 4096
             ## Limits ##
             maxVelTicks100ms: 5000
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
             forwardAngleLimit: 100000 # Elevator horizontal orientation
             reverseAngleLimit: -10000 # Elevator vertical orientation
+            ## Positions ##
             stowAnglePosition: 90000
             collectAnglePosition: -1000
             scoreAnglePosition: 64000
             scoreDipAnglePosition: 55000
-            minExtensionPosition: 20000
+            minExtensionPosition: 10000
             midExtensionPosition: 120000
             maxExtensionPosition: 295000
-            angleQuarterPPR: 134721
+            shelfExtensionPosition: 210000 #between mid and max
     collector:
         implemented: true
-        solenoids:
-            intakeSolenoid: 7
         sparkmaxes:
+            pivotMotor: 13
             intakeMotor: 14
         pidConfig:
-            slot0:
-                kF: 0.0000899
+            slot0: #intakeMotor
+                kF: 0.000109
+            slot1: #pivotMotor
+                kP: 0.025
+                allowableError: 10
         constants:
             ## Demands ##
-            cubeIntakePower: -0.40 # percent output voltage
-            cubeOuttakePower: 0.25 # percent output voltage
-            coneIntakeVelocity: 840 # rpm
-            coneOuttakeVelocity: -630 # rpm
+            cubeIntakePower: 0.50 # percent output voltage
+            cubeOuttakePower: -0.55 # percent output voltage
+            coneIntakePower: -0.70 #was -0.50
+            coneOuttakePower: 0.50
+            stowPosition: 0
+            scorePosition: -16
+            shelfPosition: -16
+            floorPosition: -10 #was -12
     ledmanager:
         implemented: true
         candle: 23

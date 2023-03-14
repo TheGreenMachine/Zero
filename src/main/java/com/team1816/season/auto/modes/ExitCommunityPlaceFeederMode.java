@@ -8,6 +8,7 @@ import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.ScoreAction;
 import com.team1816.season.auto.paths.NodeToExitCommunityPath;
+import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class ExitCommunityPlaceFeederMode extends AutoMode {
         System.out.println("Running Place Cone Exit Community Mode");
         runAction(
             new SeriesAction(
-                new ScoreAction(false, Elevator.EXTENSION_STATE.MAX),
+                new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
                 new WaitAction(0.5),
                 trajectoryActions.get(0)
             )

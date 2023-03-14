@@ -7,16 +7,17 @@ import com.team1816.season.subsystems.Elevator;
 
 public class ScoreAction extends SeriesAction {
 
-    public ScoreAction(boolean isCube, Elevator.EXTENSION_STATE extension_state) {
+    public ScoreAction(Collector.GAME_ELEMENT gameElement, Elevator.EXTENSION_STATE extensionState) {
         super(
+            new WaitAction(.2),
             // extension to desired scoring level
-            new ElevatorAction(Elevator.ANGLE_STATE.SCORE, extension_state),
-            // dipping and dropping game piece
-            new ElevatorAction(Elevator.ANGLE_STATE.SCORE_DIP, extension_state),
-            new CollectAction(isCube ? Collector.STATE.OUTTAKE_CUBE : Collector.STATE.OUTTAKE_CONE),
+            new ElevatorAction(Elevator.ANGLE_STATE.SCORE, extensionState),
+//            new WaitAction(2),
+            // outtaking the game piece
+            new CollectAction(gameElement == Collector.GAME_ELEMENT.CUBE ? Collector.ROLLER_STATE.OUTTAKE_CUBE : Collector.ROLLER_STATE.OUTTAKE_CONE, Collector.PIVOT_STATE.SCORE),
             new WaitAction(.5),
             // resetting elevator / collector to starting states
-            new CollectAction(Collector.STATE.STOP),
+            new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW),
             new ElevatorAction(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN)
         );
     }

@@ -293,11 +293,16 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("intakeCone"),
                         (pressed) -> {
                             if (pressed) {
-                                collector.setDesiredState(Collector.STATE.INTAKE_CONE);
-                                ledManager.indicateStatus(LedManager.RobotStatus.CONE);
-                                desireCube = false;
+                                if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.STOW) { // collects from shelf
+                                    elevator.setDesiredState(Elevator.ANGLE_STATE.SHELF_COLLECT, Elevator.EXTENSION_STATE.SHELF_COLLECT);
+                                    collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.SHELF);
+                                } else if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.COLLECT) { // collects from floor
+                                    collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR);
+                                }
+                                ledManager.indicateStatus(LedManager.RobotStatus.CONE); // indicates on LEDs
                             } else {
-                                collector.setDesiredState(Collector.STATE.STOP);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
+                                collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
                         }
@@ -306,11 +311,16 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("intakeCube"),
                         (pressed) -> {
                             if (pressed) {
-                                collector.setDesiredState(Collector.STATE.INTAKE_CUBE);
-                                ledManager.indicateStatus(LedManager.RobotStatus.CUBE);
-                                desireCube = true;
+                                if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.STOW) { // collects from shelf
+                                    elevator.setDesiredState(Elevator.ANGLE_STATE.SHELF_COLLECT, Elevator.EXTENSION_STATE.SHELF_COLLECT);
+                                    collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.SHELF);
+                                } else if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.COLLECT) { // collects from floor
+                                    collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.FLOOR);
+                                }
+                                ledManager.indicateStatus(LedManager.RobotStatus.CUBE); // indicates on LEDs
                             } else {
-                                collector.setDesiredState(Collector.STATE.STOP);
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
+                                collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
                         }
@@ -393,7 +403,7 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("armStow"),
                         () -> {
                             elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
-                            collector.setDesiredState(Collector.STATE.STOP);
+                            collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
                         }
                     ),
                     createAction(
@@ -553,6 +563,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         disabledLoop.stop();
         ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
+        ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS);
 
         drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
 
@@ -571,6 +582,7 @@ public class Robot extends TimedRobot {
         try {
             disabledLoop.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.ENABLED);
+            ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
 
             infrastructure.startCompressor();
 
@@ -632,6 +644,7 @@ public class Robot extends TimedRobot {
             }
 
             subsystemManager.outputToSmartDashboard(); // update shuffleboard for subsystem values
+            collector.outputToSmartDashboard();
             robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
         } catch (Throwable t) {
@@ -666,17 +679,20 @@ public class Robot extends TimedRobot {
                         faulted = false;
                         zeroing = true;
                         elevator.zeroSensors();
+                        collector.zeroSensors();
                         ledManager.indicateStatus(LedManager.RobotStatus.ZEROING_ELEVATOR, LedManager.ControlState.BLINK);
                         ledManager.writeToHardware();
                         infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
                     } else if (zeroing) { // ready
                         zeroing = false;
                         elevator.setBraking(true);
+                        collector.setBraking(true);
                         ledManager.indicateStatus(LedManager.RobotStatus.DISABLED, LedManager.ControlState.SOLID);
                         ledManager.writeToHardware();
                     } else { // needs zeroing
                         zeroing = null;
                         elevator.setBraking(false);
+                        collector.setBraking(false);
                         ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.ControlState.BLINK);
                         ledManager.writeToHardware();
 
