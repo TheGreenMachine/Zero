@@ -93,6 +93,10 @@ public class TrajectoryToTargetPath extends AutoPath {
     protected List<Pose2d> getWaypoints() { // A* accelerated path routing
         List<Pose2d> waypoints = new ArrayList<>();
 
+        try {
+            waypoints = pathFinder.getWaypoints();
+        } catch (Exception ignored) {}
+
         if (
             (target.getY() > Constants.chargeStationThresholdYMin && target.getY() < Constants.chargeStationThresholdYMax) &&
                 (robotState.fieldToVehicle.getY() > Constants.chargeStationThresholdYMin && robotState.fieldToVehicle.getY() < Constants.chargeStationThresholdYMax)
@@ -241,6 +245,7 @@ public class TrajectoryToTargetPath extends AutoPath {
             waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
         }
         waypoints.add(target);
+
         return waypoints;
     }
 
