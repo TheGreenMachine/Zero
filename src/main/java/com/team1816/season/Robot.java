@@ -22,6 +22,7 @@ import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -775,13 +776,24 @@ public class Robot extends TimedRobot {
                 robotState.fieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
         } else if(((ControlBoard)controlBoard).driverController.getDPad() != -1) {
-            int dPadPOVToAngle = -((ControlBoard)controlBoard).driverController.getDPad();
-            SwerveModuleState[] dPadDrivingStates = new SwerveModuleState[]{
-                    new SwerveModuleState(dPadMoveSpeed, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
-                    new SwerveModuleState(dPadMoveSpeed, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
-                    new SwerveModuleState(dPadMoveSpeed, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
-                    new SwerveModuleState(dPadMoveSpeed, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation()))
-            };
+            int dPadPOVToAngle = ((ControlBoard)controlBoard).driverController.getDPad();
+            double strafe = 0;
+            double rotation = 0;
+            if(dPadPOVToAngle == 90) {
+                strafe = -dPadMoveSpeed;
+            } else if(dPadPOVToAngle == 270) {
+                strafe = -dPadMoveSpeed;
+            } else if(dPadPOVToAngle == 0){
+                rotation =
+                        dPadMoveSpeed / 2 *
+                        MathUtil.inputModulus(
+                            robotState.fieldToVehicle.getRotation().getDegrees(), 0,360
+                        ) > 180 ? -1 : 1;
+            }
+
+            SwerveModuleState[] dPadDrivingStates = SwerveDrive.swerveKinematics.toSwerveModuleStates(
+                ChassisSpeeds.fromFieldRelativeSpeeds(0.0, strafe, rotation, robotState.fieldToVehicle.getRotation())
+            );
             // TODO make this not use set module states OR clean up swerveDrive in general :) - this works but is jank
             ((SwerveDrive)drive).setModuleStates(dPadDrivingStates);
         } else {
