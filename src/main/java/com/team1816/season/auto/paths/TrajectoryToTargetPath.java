@@ -41,7 +41,7 @@ public class TrajectoryToTargetPath extends AutoPath {
                 new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax),
                 new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin),
                 new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin)
-            ); // red charge station
+            ); // blue charge station
         obstacles.add(obstacle1);
         obstacles.add(obstacle2);
 
@@ -66,7 +66,7 @@ public class TrajectoryToTargetPath extends AutoPath {
                 new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax),
                 new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin),
                 new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin)
-            ); // red charge station
+            ); // blue charge station
         obstacles.add(obstacle1);
         obstacles.add(obstacle2);
 
@@ -94,7 +94,7 @@ public class TrajectoryToTargetPath extends AutoPath {
         List<Pose2d> waypoints = new ArrayList<>();
 
         try {
-            waypoints = pathFinder.getWaypoints();
+            return pathFinder.getWaypoints();
         } catch (Exception ignored) {}
 
         if (
