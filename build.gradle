@@ -74,7 +74,6 @@ dependencies {
     nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
     simulationRelease wpi.sim.enableRelease()
 
-    implementation "com.github.dominikwin:badlog:v0.1.1"
     implementation 'org.yaml:snakeyaml:1.30'
     implementation 'gov.nist.math:jama:1.0.3'
     implementation 'com.google.inject:guice:5.1.0'

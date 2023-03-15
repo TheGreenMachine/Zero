@@ -50,7 +50,7 @@ public class LedManager extends Subsystem {
     private int ledG;
     private int ledB;
 
-    private final int period = 1000; // ms
+    private final int period = 400; // ms
     private long lastWriteTime = System.currentTimeMillis();
     private edu.wpi.first.wpilibj.util.Color lastColor = edu.wpi.first.wpilibj.util.Color.kWhite;
     private ControlState controlState = ControlState.SOLID;

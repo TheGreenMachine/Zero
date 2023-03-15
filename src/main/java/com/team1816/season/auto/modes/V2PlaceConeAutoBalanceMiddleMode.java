@@ -8,29 +8,40 @@ import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.AutoBalanceAction;
 import com.team1816.season.auto.actions.ScoreAction;
-import com.team1816.season.auto.paths.NodeToChargeStationFeederPath;
+import com.team1816.season.auto.paths.NodeToChargeStationMiddlePath;
+import com.team1816.season.auto.paths.V2NodeToChargeStationMiddlePath;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 
 import java.util.List;
 
-public class PlaceConeAutoBalanceFeederMode extends AutoMode {
-    //Does NOT exit community
-
-    public PlaceConeAutoBalanceFeederMode() {
-        super(List.of(new TrajectoryAction(new NodeToChargeStationFeederPath())));
+public class V2PlaceConeAutoBalanceMiddleMode extends AutoMode {
+    public V2PlaceConeAutoBalanceMiddleMode() {
+        super(
+            List.of(
+                new TrajectoryAction(
+                    new V2NodeToChargeStationMiddlePath()
+                )
+            )
+        );
     }
 
-    public PlaceConeAutoBalanceFeederMode(Color color) {
-        super(List.of(new TrajectoryAction(new NodeToChargeStationFeederPath(color))));
+    public V2PlaceConeAutoBalanceMiddleMode(Color color) {
+        super(
+            List.of(
+                new TrajectoryAction(
+                    new V2NodeToChargeStationMiddlePath(color)
+                )
+            )
+        );
     }
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Place Cone Balance Mode");
+        System.out.println("Running VERSION 2 PlaceConeAutoBalance Middle Mode");
         runAction(
             new SeriesAction(
-                new WaitAction(.25),
+                new WaitAction(0.25),
                 new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
                 new WaitAction(0.25),
                 trajectoryActions.get(0),
@@ -38,6 +49,5 @@ public class PlaceConeAutoBalanceFeederMode extends AutoMode {
                 new AutoBalanceAction()
             )
         );
-
     }
 }

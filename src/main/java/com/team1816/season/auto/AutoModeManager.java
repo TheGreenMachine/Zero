@@ -169,7 +169,7 @@ public class AutoModeManager {
 
         // 2023
         PLACE_CONE,
-        EXIT_COMMUNITY,
+        PLACE_CONE_EXIT_COMMUNITY,
         EXIT_BALANCE_FEEDER,
         EXIT_BALANCE_MIDDLE,
         EXIT_BALANCE_WALL,
@@ -178,6 +178,9 @@ public class AutoModeManager {
         PLACE_CONE_AUTO_BALANCE_FEEDER,
         PLACE_CONE_AUTO_BALANCE_MIDDLE,
         PLACE_CONE_AUTO_BALANCE_WALL,
+
+        V2_PLACE_CONE_AUTO_BALANCE_MIDDLE,
+
         DOUBLE_CONE_FEEDER,
         DOUBLE_CONE_WALL
     }
@@ -193,12 +196,12 @@ public class AutoModeManager {
         switch (mode) {
             case DO_NOTHING:
                 return new DoNothingMode();
-            case TUNE_DRIVETRAIN:
+            case TUNE_DRIVETRAIN: // comented for competition purposes
                 return new TuneDrivetrainMode();
             case LIVING_ROOM:
                 return (new LivingRoomMode(color));
-            case EXIT_COMMUNITY:
-                return (new NodeToExitCommunityMode(color));
+            case PLACE_CONE_EXIT_COMMUNITY:
+                return (new PlaceConeExitCommunityMode(color));
             case PLACE_CONE:
                 return (new PlaceConeMode());
             case EXIT_BALANCE_FEEDER:
@@ -217,6 +220,8 @@ public class AutoModeManager {
                 return (new PlaceConeAutoBalanceMiddleMode(color));
             case PLACE_CONE_AUTO_BALANCE_WALL:
                 return (new PlaceConeAutoBalanceWallMode(color));
+            case V2_PLACE_CONE_AUTO_BALANCE_MIDDLE:
+                return (new V2PlaceConeAutoBalanceMiddleMode(color));
             case DOUBLE_CONE_FEEDER:
                 return (new DoublePlaceConeFeederMode(color));
             case DOUBLE_CONE_WALL:

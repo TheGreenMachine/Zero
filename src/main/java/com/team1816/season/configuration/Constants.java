@@ -84,7 +84,7 @@ public class Constants {
     /**
      * Elevator characterization
      */
-    public static final double maxElevatorFeedForward = 0.05;
+    public static final double maxArmFeedForward = 0.075;
 
     /**
      * Camera characterization
@@ -92,13 +92,8 @@ public class Constants {
     public static final double kCameraMountingAngleY = 20; // degrees
     public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters
 
-    /**
-     * Badlog characterization
-     */
-    public static boolean kIsBadlogEnabled = factory.getConstant("badLogEnabled") > 0;
-    public static boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0 && kIsBadlogEnabled;
-    public static boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0 && kIsBadlogEnabled;
-    public static boolean kIsLoggingDrivetrain = factory.getConstant("logDrivetrain") > 0;
+    public static boolean kLoggingRobot = factory.getConstant("logRobot") > 0;
+    public static boolean kIsLoggingDrivetrain = factory.getConstant("logDrivetrain") > 0 && kLoggingRobot;
 
     public final boolean kUsePoseTrack =
         factory.getConstant("shooter", "usingPoseForSpeed", 0) > 0;

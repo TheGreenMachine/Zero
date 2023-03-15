@@ -16,13 +16,13 @@ public class TrajectoryToTargetMode extends AutoMode {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Trajectory To Target Mode");
+        System.out.println("Running Trajectory To Target Mode!");
         runAction(trajectoryActions.get(0));
     }
 
     public void done() {
         super.done();
         Robot.runningAutoTarget = false;
-
+        System.out.println("Trajectory To Target Mode Completed!");
     }
 }

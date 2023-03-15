@@ -71,24 +71,6 @@ public class Orchestrator {
     /**
      * Actions
      */
-    public void autoScore() {
-        System.out.println("Executing Auto Score Sequence!");
-        if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE || elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP) {
-            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
-            elevator.writeToHardware();
-            Timer.delay(0.10);
-            collector.outtakeGamePiece(true);
-            collector.writeToHardware();
-            Timer.delay(0.25);
-            collector.outtakeGamePiece(false);
-            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
-            Timer.delay(0.25);
-            elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
-            elevator.writeToHardware();
-            Timer.delay(0.75);
-            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
-        }
-    }
 
     /** Superseded Odometry Handling */
 
