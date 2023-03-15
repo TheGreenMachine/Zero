@@ -1,6 +1,7 @@
 package com.team1816.lib.auto;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import org.checkerframework.checker.units.qual.A;
 
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
@@ -18,7 +19,10 @@ public class Polygon {
     }
 
     public Polygon(Translation2d vertex1, Translation2d vertex2, Translation2d vertex3, Translation2d... vertices) {
-        ArrayList<Translation2d> vert = (ArrayList<Translation2d>) List.of(vertex1, vertex2, vertex3);
+        ArrayList<Translation2d> vert = new ArrayList<>();
+        vert.add(vertex1);
+        vert.add(vertex2);
+        vert.add(vertex3);
         vert.addAll(Arrays.asList(vertices));
         this.vertices = vert;
     }
@@ -60,7 +64,9 @@ public class Polygon {
     public boolean intersects(Line2D line) {
         for (int i = 0; i < vertices.size() - 1; i++) {
             Line2D edge = new Line2D.Double(vertices.get(i).getX(), vertices.get(i).getY(), vertices.get(i + 1).getX(), vertices.get(i + 1).getY());
-            if (line.intersectsLine(edge)) {
+            if (edge.getP1() == line.getP1() || edge.getP2() == line.getP1() || edge.getP1() == line.getP2() || edge.getP2() == line.getP2()) {
+                return false;
+            } else if (line.intersectsLine(edge)) {
                 return true;
             }
         }

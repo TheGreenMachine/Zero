@@ -2,6 +2,8 @@ package com.team1816.season.auto.paths;
 
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.PathFinder;
+import com.team1816.lib.auto.Polygon;
 import com.team1816.lib.auto.paths.AutoPath;
 import com.team1816.lib.auto.paths.PathUtil;
 import com.team1816.season.configuration.Constants;
@@ -19,20 +21,78 @@ public class TrajectoryToTargetPath extends AutoPath {
 
     public static RobotState robotState;
     private static Pose2d target;
+    private PathFinder pathFinder;
 
     public TrajectoryToTargetPath(Pose2d pose) {
         robotState = Injector.get(RobotState.class);
         target = pose;
+
+        List<Polygon> obstacles = new ArrayList<>();
+        var obstacle1 =
+            new Polygon(
+                new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMax),
+                new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMax),
+                new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMin),
+                new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMin)
+            ); // red charge station
+        var obstacle2 =
+            new Polygon(
+                new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMax),
+                new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax),
+                new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin),
+                new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin)
+            ); // red charge station
+        obstacles.add(obstacle1);
+        obstacles.add(obstacle2);
+
+        pathFinder = new PathFinder(target, robotState.fieldToVehicle.getTranslation(), obstacles);
     }
 
     public TrajectoryToTargetPath() {
         robotState = Injector.get(RobotState.class);
         new TrajectoryToTargetPath(robotState.target);
+
+        List<Polygon> obstacles = new ArrayList<>();
+        var obstacle1 =
+            new Polygon(
+                new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMax),
+                new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMax),
+                new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMin),
+                new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMin)
+            ); // red charge station
+        var obstacle2 =
+            new Polygon(
+                new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMax),
+                new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax),
+                new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin),
+                new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin)
+            ); // red charge station
+        obstacles.add(obstacle1);
+        obstacles.add(obstacle2);
+
+        pathFinder = new PathFinder(target, robotState.fieldToVehicle.getTranslation(), obstacles);
     }
 
     @Override
-    protected List<Pose2d> getWaypoints() {
+    protected List<Rotation2d> getWaypointHeadings() {
+        List<Rotation2d> headings = new ArrayList<>();
+        headings.add(robotState.fieldToVehicle.getRotation());
+        if (robotState.allianceColor == Color.BLUE && robotState.fieldToVehicle.getRotation().getDegrees() < 0) {
+            for (int i = 1; i < getWaypoints().size(); i++) {
+                headings.add(target.getRotation().times(-1)); // optimizes blue side wraparound
+            }
+        } else {
+            for (int i = 1; i < getWaypoints().size(); i++) {
+                headings.add(target.getRotation());
+            }
+        }
+        return headings;
+    }
+
+    @Override
+    protected List<Pose2d> getWaypoints() { // A* accelerated path routing
         List<Pose2d> waypoints = new ArrayList<>();
+
         if (
             (target.getY() > Constants.chargeStationThresholdYMin && target.getY() < Constants.chargeStationThresholdYMax) &&
                 (robotState.fieldToVehicle.getY() > Constants.chargeStationThresholdYMin && robotState.fieldToVehicle.getY() < Constants.chargeStationThresholdYMax)
@@ -182,22 +242,6 @@ public class TrajectoryToTargetPath extends AutoPath {
         }
         waypoints.add(target);
         return waypoints;
-    }
-
-    @Override
-    protected List<Rotation2d> getWaypointHeadings() {
-        List<Rotation2d> headings = new ArrayList<>();
-        headings.add(robotState.fieldToVehicle.getRotation());
-        if (robotState.allianceColor == Color.BLUE && robotState.fieldToVehicle.getRotation().getDegrees() < 0) {
-            for (int i = 1; i < getWaypoints().size(); i++) {
-                headings.add(target.getRotation().times(-1)); // optimizes blue side wraparound
-            }
-        } else {
-            for (int i = 1; i < getWaypoints().size(); i++) {
-                headings.add(target.getRotation());
-            }
-        }
-        return headings;
     }
 
     @Override

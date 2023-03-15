@@ -9,7 +9,7 @@ driver:
     buttonpad:
         x: toggleArmScoreCollect # remapped to back left button
         y: lockOperator # remapped to back right button
-        a: midSlowMode # autoTarget
+        a: autoTarget
         b: autoBalance
     axes:
         leftTrigger: brakeMode
