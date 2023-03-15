@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
-import com.team1816.lib.hardware.components.motor.LazyTalonFX;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.simUtil.SingleJointedElevatorArmSim;
@@ -41,15 +40,14 @@ public class Elevator extends Subsystem {
     /**
      * Properties
      */
-    private static double stowPos;
-    private static double collectPos;
-    private static double scorePos;
-    private static double scoreDipPos;
-    private static double minExtension;
-    private static double midExtension;
-    private static double maxExtension;
-
-    private static double shelfExtension;
+    public static final double stowPos = factory.getConstant(NAME, "stowAnglePosition");
+    public static final double collectPos = factory.getConstant(NAME, "collectAnglePosition");
+    public static final double scorePos = factory.getConstant(NAME, "scoreAnglePosition");
+    public static final double scoreDipPos = factory.getConstant(NAME, "scoreDipAnglePosition");
+    public static final double minExtension = factory.getConstant(NAME, "minExtensionPosition");
+    public static final double midExtension = factory.getConstant(NAME, "midExtensionPosition");
+    public static final double maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
+    public static final double shelfExtension = factory.getConstant(NAME, "shelfExtensionPosition");
 
     private AsyncTimer colPosTimer;
     private AsyncTimer stowExtensionTimer;
@@ -62,8 +60,8 @@ public class Elevator extends Subsystem {
     private static double maxExtendedAngularAcceleration; // rad/s^2
     private static double maxExtensionVelocity; // m/s
     private static double maxExtensionAcceleration; // m/s^2
-    private final int stowPIDSlot = 0;
-    private final int collectScorePIDSlot = 1;
+    private final int movingArmSlot = 0;
+    private final int lockedArmSlot = 1;
     private final int extensionPIDSlot = 2;
 
     private static double angleQuarterPPR;
@@ -132,7 +130,7 @@ public class Elevator extends Subsystem {
         this.extensionMotor = factory.getMotor(NAME, "extensionMotor");
 
 
-        double extensionPeakOutput = 0.56;
+        double extensionPeakOutput = 0.8;
         extensionMotor.configPeakOutputForward(extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.configPeakOutputReverse(-extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.configForwardSoftLimitEnable(true, Constants.kCANTimeoutMs);
@@ -142,7 +140,7 @@ public class Elevator extends Subsystem {
         extensionMotor.configClosedLoopPeakOutput(1, extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.selectProfileSlot(extensionPIDSlot, 0); // uses the system slot1 configuration for extension control
 
-        double angularPeakOutput = 0.56;
+        double angularPeakOutput = 1;
         angleMotorMain.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
         angleMotorMain.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
         angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
@@ -150,22 +148,15 @@ public class Elevator extends Subsystem {
         angleMotorFollower.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
         angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
 
+        angleMotorMain.configClosedloopRamp(0.2, Constants.kCANTimeoutMs);
+        extensionMotor.configClosedloopRamp(0.05, Constants.kCANTimeoutMs);
+
         usingFeedForward = factory.getConstant(NAME, "usingFeedForward") > 0;
         extensionPPR = factory.getConstant(NAME, "extensionPPR");
         angleQuarterPPR = factory.getConstant(NAME, "angleQuarterPPR");
 
-        // constants
-        stowPos = factory.getConstant(NAME, "stowAnglePosition");
-        collectPos = factory.getConstant(NAME, "collectAnglePosition");
-        scorePos = factory.getConstant(NAME, "scoreAnglePosition");
-        scoreDipPos = factory.getConstant(NAME, "scoreDipAnglePosition");
-        minExtension = factory.getConstant(NAME, "minExtensionPosition");
-        midExtension = factory.getConstant(NAME, "midExtensionPosition");
-        maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
-        shelfExtension = factory.getConstant(NAME, "shelfExtensionPosition");
-
         allowableAngleError = factory.getPidSlotConfig(NAME, "slot0").allowableError;
-        allowableExtensionError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
+        allowableExtensionError = factory.getPidSlotConfig(NAME, "slot2").allowableError;
 
         colPosTimer = new AsyncTimer(
             1,
@@ -276,8 +267,8 @@ public class Elevator extends Subsystem {
             SmartDashboard.putData("Elevator Mech 2D", mechCanvas);
         }
 
-
-        if (Math.abs(desiredAngleState.getPos() - actualAnglePosition) < allowableAngleError * 2) {
+        if (Math.abs(desiredAngleState.getPos() - actualAnglePosition) < allowableAngleError * 8) {
+            angleMotorMain.selectProfileSlot(lockedArmSlot, 0);
             robotState.actualElevatorAngleState = desiredAngleState;
         }
         if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError * 4) {
@@ -319,11 +310,11 @@ public class Elevator extends Subsystem {
             } else {
                 switch (desiredAngleState) {
                     case STOW -> {
-                        angleMotorMain.selectProfileSlot(stowPIDSlot, 0);
+                        angleMotorMain.selectProfileSlot(movingArmSlot, 0);
                         angleMotorMain.set(ControlMode.Position, (stowPos));
                     }
                     case COLLECT -> {
-                        angleMotorMain.selectProfileSlot(collectScorePIDSlot, 0);
+                        angleMotorMain.selectProfileSlot(movingArmSlot, 0);
                         colPosTimer.update();
                         if (!colPosTimer.isCompleted()) {
                             angleOutputsChanged = true;
@@ -332,11 +323,11 @@ public class Elevator extends Subsystem {
                         }
                     }
                     case SCORE, SHELF_COLLECT -> {
-                        angleMotorMain.selectProfileSlot(collectScorePIDSlot, 0);
+                        angleMotorMain.selectProfileSlot(movingArmSlot, 0);
                         angleMotorMain.set(ControlMode.Position, (scorePos));
                     }
                     case SCORE_DIP -> {
-                        angleMotorMain.selectProfileSlot(stowPIDSlot, 0);
+                        angleMotorMain.selectProfileSlot(movingArmSlot, 0);
                         angleMotorMain.set(ControlMode.Position, (scoreDipPos));
                     }
                 }

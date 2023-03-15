@@ -9,10 +9,8 @@ public class ScoreAction extends SeriesAction {
 
     public ScoreAction(Collector.GAME_ELEMENT gameElement, Elevator.EXTENSION_STATE extensionState) {
         super(
-            new WaitAction(.2),
             // extension to desired scoring level
             new ElevatorAction(Elevator.ANGLE_STATE.SCORE, extensionState),
-//            new WaitAction(2),
             // outtaking the game piece
             new CollectAction(gameElement == Collector.GAME_ELEMENT.CUBE ? Collector.ROLLER_STATE.OUTTAKE_CUBE : Collector.ROLLER_STATE.OUTTAKE_CONE, Collector.PIVOT_STATE.SCORE),
             new WaitAction(.5),

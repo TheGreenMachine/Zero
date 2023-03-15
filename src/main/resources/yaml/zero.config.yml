@@ -92,27 +92,27 @@ subsystems:
             angleMotorFollower: 7
             extensionMotor: 15
         pidConfig:
-            slot0: # rotation for stow pos
-                kP: 0.01
-                kI: 0.00002
-                kD: 1.2
-                kF: 0
-                allowableError: 1000
-            slot1: # rotation at score + collect pos
+            slot0: # slot for moving arm
                 kP: 0.02
+                kI: 0.00001
+                kD: 1.6
+                kF: 0
+                allowableError: 200
+            slot1: # slot when arm is locked in (reached position)
+                kP: 0.20
                 kI: 0.00002
                 kD: 1.4
                 kF: 0
-                allowableError: 1000
+                allowableError: 50
             slot2: # extension
-                kP: 0.15
+                kP: 0.4
                 kI: 0.001
-                kD: 2.25
+                kD: 3
                 kF: 0
-                allowableError: 1000
+                allowableError: 200
         constants:
             ## Config ##
-            usingFeedForward: 1
+            usingFeedForward: 0
             extensionPPR: 300000
             angleQuarterPPR: 131072 # 32 x 4096
             ## Limits ##
@@ -123,13 +123,13 @@ subsystems:
             reverseAngleLimit: -10000 # Elevator vertical orientation
             ## Positions ##
             stowAnglePosition: 90000
-            collectAnglePosition: -1000
+            collectAnglePosition: -2500
             scoreAnglePosition: 64000
             scoreDipAnglePosition: 55000
-            minExtensionPosition: 10000
+            minExtensionPosition: 20000
             midExtensionPosition: 120000
             maxExtensionPosition: 295000
-            shelfExtensionPosition: 210000 #between mid and max
+            shelfExtensionPosition: 150000 #between mid and max
     collector:
         implemented: true
         sparkmaxes:
@@ -149,8 +149,10 @@ subsystems:
             coneOuttakePower: 0.50
             stowPosition: 0
             scorePosition: -16
-            shelfPosition: -16
+            shelfPosition: -24
             floorPosition: -10 #was -12
+            ## Limits ##
+            intakeStallAmps: 30
     ledmanager:
         implemented: true
         candle: 23

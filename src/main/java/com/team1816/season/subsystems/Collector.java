@@ -2,6 +2,7 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
@@ -11,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.print.attribute.standard.MediaSize;
 
 /**
  * Represents a Collector with a solenoid and rollers powered by a motor to collect both a cone and a cube
@@ -87,6 +89,12 @@ public class Collector extends Subsystem {
         pivotScorePosition = factory.getConstant(NAME, "scorePosition", 1000);
         pivotShelfPosition = factory.getConstant(NAME, "shelfPosition", 1000);
         pivotFloorPosition = factory.getConstant(NAME, "floorPosition", 1000);
+
+        intakeMotor.configSupplyCurrentLimit(
+                new SupplyCurrentLimitConfiguration(
+                        true, factory.getConstant(NAME, "intakeStallAmps", 5), 0, 0),
+                Constants.kCANTimeoutMs
+        );
 
         allowablePivotError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
     }
@@ -167,7 +175,7 @@ public class Collector extends Subsystem {
             rollerOutputsChanged = false;
             switch (desiredRollerState) {
                 case STOP -> {
-                    intakeMotor.set(ControlMode.Velocity, 0);
+                    intakeMotor.set(ControlMode.PercentOutput, 0);
                 }
                 case INTAKE_CONE -> {
                     currentGameElement = GAME_ELEMENT.CONE;
@@ -179,11 +187,9 @@ public class Collector extends Subsystem {
                 }
                 case OUTTAKE_CONE -> {
                     intakeMotor.set(ControlMode.PercentOutput, coneOuttakePower);
-//                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                 }
                 case OUTTAKE_CUBE -> {
                     intakeMotor.set(ControlMode.PercentOutput, cubeOuttakePower);
-//                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                 }
             }
         }

@@ -48,8 +48,8 @@ public class ElevatorAction implements AutoAction {
             return simWaitTimer.isCompleted();
         }
 
-        return robotState.actualElevatorAngleState == elevator.getDesiredAngleState()
-        && robotState.actualElevatorExtensionState == elevator.getDesiredExtensionState();
+    return robotState.actualElevatorAngleState.equals(elevator.getDesiredAngleState())
+        && robotState.actualElevatorExtensionState.equals(elevator.getDesiredExtensionState());
     }
 
     @Override
