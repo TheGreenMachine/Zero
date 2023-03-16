@@ -361,15 +361,15 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    createAction(
+                    /*createAction(
                         () -> controlBoard.getAsBool("shelfCollect"),   //USED TO BE lockOperator
-                        /*(pressed) -> {
+                        ****************(pressed) -> {   COMMENT IN STARS
                             if (pressed) {
                                 operatorLock = true;
                             } else {
                                 operatorLock = false;
                             }
-                        }*/
+                        *****************
                         () -> {
                             if (Elevator.isShelf){
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
@@ -377,7 +377,7 @@ public class Robot extends TimedRobot {
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.SHELF_COLLECT);
                             }
                         }
-                    ),
+                    ),*/
                     // Operator Gamepad
                     createHoldAction(
                         () -> controlBoard.getAsBool("outtake"),
