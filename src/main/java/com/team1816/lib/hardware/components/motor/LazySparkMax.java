@@ -228,7 +228,7 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public double getSelectedSensorVelocity(int pidIdx) {
-        return encoder.getCountsPerRevolution();
+        return encoder.getVelocity();
     } // RPM
 
     @Override
