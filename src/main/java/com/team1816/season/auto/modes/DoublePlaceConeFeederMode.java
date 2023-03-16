@@ -51,7 +51,7 @@ public class DoublePlaceConeFeederMode extends AutoMode {
         System.out.println("Running Double Place Cone Mode");
         runAction(
             new SeriesAction(
-                new ScoreAction(false, Elevator.EXTENSION_STATE.MAX),
+                new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
                 new WaitAction(0.5),
                 new ParallelAction(
                     trajectoryActions.get(0),
@@ -64,7 +64,7 @@ public class DoublePlaceConeFeederMode extends AutoMode {
                 ),
                 trajectoryActions.get(1),
                 new WaitAction(0.25),
-                new ScoreAction(false, Elevator.EXTENSION_STATE.MAX),
+                new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
                 new WaitAction(0.5)
             )
         );

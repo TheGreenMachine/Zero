@@ -57,7 +57,7 @@ public class Collector extends Subsystem {
     private ROLLER_STATE desiredRollerState = ROLLER_STATE.STOP;
 
     private PIVOT_STATE desiredPivotState = PIVOT_STATE.STOW;
-    private GAME_ELEMENT currentlyHeldObject = GAME_ELEMENT.NOTHING;    //remember, game_element and state enums
+    private GAME_ELEMENT currentGameElement = GAME_ELEMENT.NOTHING;    //remember, game_element and state enums
     private double rollerVelocity = 0;
 
     private double actualPivotPosition = 0;
@@ -110,7 +110,7 @@ public class Collector extends Subsystem {
      */
     public void outtakeGamePiece(boolean outtaking) {
         if (outtaking) {
-            setDesiredState(currentlyHeldObject == GAME_ELEMENT.CONE ? ROLLER_STATE.OUTTAKE_CONE : ROLLER_STATE.OUTTAKE_CUBE, PIVOT_STATE.SCORE);
+            setDesiredState(currentGameElement == GAME_ELEMENT.CONE ? ROLLER_STATE.OUTTAKE_CONE : ROLLER_STATE.OUTTAKE_CUBE, PIVOT_STATE.SCORE);
         } else {
             setDesiredState(ROLLER_STATE.STOP, PIVOT_STATE.STOW);
         }
@@ -132,7 +132,9 @@ public class Collector extends Subsystem {
         return rollerVelocity;
     }
 
-    public double getActualPivotPosition() { return actualPivotPosition; }
+    public double getActualPivotPosition() {
+        return actualPivotPosition;
+    }
 
     /**
      * Reads actual outputs from intake motor and solenoid
@@ -143,6 +145,8 @@ public class Collector extends Subsystem {
     public void readFromHardware() {
         rollerVelocity = intakeMotor.getSelectedSensorVelocity(0);
         actualPivotPosition = pivotMotor.getSelectedSensorPosition(0);
+
+        robotState.actualGameElement = currentGameElement;
 
         if (robotState.actualCollectorRollerState != desiredRollerState) {
             robotState.actualCollectorRollerState = desiredRollerState;
@@ -166,19 +170,19 @@ public class Collector extends Subsystem {
                     intakeMotor.set(ControlMode.Velocity, 0);
                 }
                 case INTAKE_CONE -> {
-                    currentlyHeldObject = GAME_ELEMENT.CONE;
-                    intakeMotor.set(ControlMode.Velocity, coneIntakePower);
+                    currentGameElement = GAME_ELEMENT.CONE;
+                    intakeMotor.set(ControlMode.PercentOutput, coneIntakePower);
                 }
                 case INTAKE_CUBE -> {
-                    currentlyHeldObject = GAME_ELEMENT.CUBE;
-                    intakeMotor.set(ControlMode.Velocity, cubeIntakePower);
+                    currentGameElement = GAME_ELEMENT.CUBE;
+                    intakeMotor.set(ControlMode.PercentOutput, cubeIntakePower);
                 }
                 case OUTTAKE_CONE -> {
-                    intakeMotor.set(ControlMode.Velocity, coneOuttakePower);
+                    intakeMotor.set(ControlMode.PercentOutput, coneOuttakePower);
 //                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                 }
                 case OUTTAKE_CUBE -> {
-                    intakeMotor.set(ControlMode.Velocity, cubeOuttakePower);
+                    intakeMotor.set(ControlMode.PercentOutput, cubeOuttakePower);
 //                    currentlyHeldObject = GAME_ELEMENT.NOTHING;
                 }
             }
@@ -253,7 +257,7 @@ public class Collector extends Subsystem {
         OUTTAKE_CONE
     }
 
-    private enum GAME_ELEMENT {
+    public enum GAME_ELEMENT {
         NOTHING,
         CUBE,
         CONE

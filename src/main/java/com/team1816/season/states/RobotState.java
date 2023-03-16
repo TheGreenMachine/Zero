@@ -53,8 +53,8 @@ public class RobotState {
     public Elevator.ANGLE_STATE actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
 
     public Collector.ROLLER_STATE actualCollectorRollerState = Collector.ROLLER_STATE.STOP;
-
     public Collector.PIVOT_STATE actualCollectorPivotState = Collector.PIVOT_STATE.STOW;
+    public Collector.GAME_ELEMENT actualGameElement = Collector.GAME_ELEMENT.CUBE;
     public List<VisionPoint> visibleTargets = new ArrayList<>();
 
     /**

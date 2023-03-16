@@ -72,6 +72,7 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public void setNeutralMode(NeutralMode neutralMode) {
+//        motor.setIdleMode(neutralMode == NeutralMode.Brake ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast);
     }
 
     @Override

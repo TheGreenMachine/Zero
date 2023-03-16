@@ -112,17 +112,20 @@ subsystems:
         constants:
             ## Config ##
             usingFeedForward: 1
+            extensionPPR: 300000
+            angleQuarterPPR: 131072 # 32 x 4096
             ## Limits ##
             maxVelTicks100ms: 5000
             forwardExtensionLimit: 320000 # Out
             reverseExtensionLimit: 0 # In
             forwardAngleLimit: 100000 # Elevator horizontal orientation
             reverseAngleLimit: -10000 # Elevator vertical orientation
+            ## Positions ##
             stowAnglePosition: 90000
             collectAnglePosition: -1000
             scoreAnglePosition: 64000
             scoreDipAnglePosition: 55000
-            minExtensionPosition: 20000
+            minExtensionPosition: 10000
             midExtensionPosition: 120000
             maxExtensionPosition: 295000
             shelfExtensionPosition: 210000 #between mid and max
@@ -132,9 +135,9 @@ subsystems:
             pivotMotor: 13
             intakeMotor: 14
         pidConfig:
-            slot0:  #intakeMotor
+            slot0: #intakeMotor
                 kF: 0.000109
-            slot1:  #pivotMotor
+            slot1: #pivotMotor
                 kP: 0.025
                 allowableError: 10
         constants:
