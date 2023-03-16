@@ -139,10 +139,10 @@ subsystems:
                 allowableError: 10
         constants:
             ## Demands ##
-            cubeIntakePower: 0.50 # percent output voltage
-            cubeOuttakePower: -0.55 # percent output voltage
-            coneIntakePower: -0.70 #was -0.50
-            coneOuttakePower: 0.50
+            cubeIntakePower: 300 #0.50 # percent output voltage
+            cubeOuttakePower: -350 #-0.55 # percent output voltage
+            coneIntakePower: -450 #-0.70 #was -0.50
+            coneOuttakePower: 300#0.50
             stowPosition: 0
             scorePosition: -16
             shelfPosition: -16
