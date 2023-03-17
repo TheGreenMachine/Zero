@@ -91,9 +91,9 @@ public class Collector extends Subsystem {
         pivotFloorPosition = factory.getConstant(NAME, "floorPosition", 1000);
 
         intakeMotor.configSupplyCurrentLimit(
-                new SupplyCurrentLimitConfiguration(
-                        true, factory.getConstant(NAME, "intakeStallAmps", 5), 0, 0),
-                Constants.kCANTimeoutMs
+            new SupplyCurrentLimitConfiguration(
+                true, factory.getConstant(NAME, "intakeStallAmps", 5), 0, 0),
+            Constants.kCANTimeoutMs
         );
 
         allowablePivotError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
@@ -175,9 +175,9 @@ public class Collector extends Subsystem {
             rollerOutputsChanged = false;
             switch (desiredRollerState) {
                 case STOP -> {
-                    if(currentGameElement == GAME_ELEMENT.CUBE){
+                    if (currentGameElement == GAME_ELEMENT.CUBE) {
                         intakeMotor.set(ControlMode.PercentOutput, 0.05);
-                    } else if (currentGameElement == GAME_ELEMENT.CONE){
+                    } else if (currentGameElement == GAME_ELEMENT.CONE) {
                         intakeMotor.set(ControlMode.PercentOutput, -0.05);
                     } else {
                         intakeMotor.set(ControlMode.PercentOutput, 0);
@@ -235,7 +235,7 @@ public class Collector extends Subsystem {
         pivotMotor.setNeutralMode(braking ? NeutralMode.Brake : NeutralMode.Coast);
     }
 
-    public GAME_ELEMENT getCurrentGameElement(){
+    public GAME_ELEMENT getCurrentGameElement() {
         return currentGameElement;
     }
 

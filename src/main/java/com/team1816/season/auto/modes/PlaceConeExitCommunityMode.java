@@ -14,10 +14,11 @@ import java.util.List;
 
 public class PlaceConeExitCommunityMode extends AutoMode {
 
-    public PlaceConeExitCommunityMode(){
+    public PlaceConeExitCommunityMode() {
         super(List.of(new TrajectoryAction(new NodeToExitCommunityPath())));
     }
-    public PlaceConeExitCommunityMode(Color color){
+
+    public PlaceConeExitCommunityMode(Color color) {
         super(List.of(new TrajectoryAction(new NodeToExitCommunityPath(color))));
     }
 

@@ -144,9 +144,9 @@ public class Robot extends TimedRobot {
         if (RobotBase.isReal()) {
             zeroingButton = new DigitalInput((int) factory.getConstant("zeroingButton", -1));
         }
-        if(Constants.kLoggingRobot){
-           robotLoopLogger = new DoubleLogEntry(DataLogManager.getLog(),"Timings/Robot");
-           looperLogger = new DoubleLogEntry(DataLogManager.getLog(),"Timings/RobotState");
+        if (Constants.kLoggingRobot) {
+            robotLoopLogger = new DoubleLogEntry(DataLogManager.getLog(), "Timings/Robot");
+            looperLogger = new DoubleLogEntry(DataLogManager.getLog(), "Timings/RobotState");
         }
 
         dPadMoveSpeed = factory.getConstant(Drive.NAME, "dPadMoveSpeed", 0);
@@ -463,17 +463,17 @@ public class Robot extends TimedRobot {
                             System.out.println("autoscore");
                             if (!runningAutoScore) {
                                 runningAutoScore = true;
-                                    System.out.println("Auto Score action started!");
-                                    AutoScoreMode mode = new AutoScoreMode(collector.getCurrentGameElement(), elevator.getDesiredExtensionState());
-                                    autoScoreThread = new Thread(mode::run);
-                                    ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
-                                    autoScoreThread.start();
+                                System.out.println("Auto Score action started!");
+                                AutoScoreMode mode = new AutoScoreMode(collector.getCurrentGameElement(), elevator.getDesiredExtensionState());
+                                autoScoreThread = new Thread(mode::run);
+                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
+                                autoScoreThread.start();
                             } else {
                                 autoScoreThread.stop();
                                 System.out.println("Stopped! Auto scoring cancelled!");
                                 runningAutoScore = !runningAutoScore;
                             }
-                    }
+                        }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("grid1"),
@@ -551,10 +551,13 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         try {
-            if(autoScoreThread != null && autoScoreThread.isAlive()){
+            if (autoTargetThread != null && autoTargetThread.isAlive()) {
+                autoTargetThread.stop();
+            }
+            if (autoScoreThread != null && autoScoreThread.isAlive()) {
                 autoScoreThread.stop();
             }
-            if(autoAlignThread != null && autoAlignThread.isAlive()){
+            if (autoAlignThread != null && autoAlignThread.isAlive()) {
                 autoAlignThread.stop();
             }
 
@@ -663,7 +666,7 @@ public class Robot extends TimedRobot {
             Robot.robotDt = getLastRobotLoop();
             loopStart = Timer.getFPGATimestamp();
 
-            if(Constants.kLoggingRobot){
+            if (Constants.kLoggingRobot) {
                 looperLogger.append(looperDt);
                 robotLoopLogger.append(robotDt);
             }
@@ -789,30 +792,29 @@ public class Robot extends TimedRobot {
                 0,
                 robotState.fieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
-        } else if(((ControlBoard)controlBoard).driverController.getDPad() != -1) {
-            int dPadPOVToAngle = ((ControlBoard)controlBoard).driverController.getDPad();
+        } else if (((ControlBoard) controlBoard).driverController.getDPad() != -1) { // dpad bang-bang controller for fine alignment
+            int dPadPOVToAngle = ((ControlBoard) controlBoard).driverController.getDPad();
             double strafe = 0;
             double rotation = 0;
-            if(dPadPOVToAngle == 90) {
+            if (dPadPOVToAngle == 90) {
                 strafe = -dPadMoveSpeed;
-            } else if(dPadPOVToAngle == 270) {
+            } else if (dPadPOVToAngle == 270) {
                 strafe = dPadMoveSpeed;
-            } else if(dPadPOVToAngle == 0){
-                double rotval = MathUtil.inputModulus(
-                        robotState.fieldToVehicle.getRotation().getDegrees(), -180,180
+            } else if (dPadPOVToAngle == 0) {
+                double rotVal = MathUtil.inputModulus(
+                    robotState.fieldToVehicle.getRotation().getDegrees(), -180, 180
                 );
-                if((rotval < 45 && rotval > -45) || (rotval < -178 || rotval > 178)){
+                if ((rotVal < 45 && rotVal > -45) || (rotVal < -178 || rotVal > 178)) {
                     rotation = 0;
                 } else {
-                    rotation = 90 / rotval;
+                    rotation = 90 / rotVal;
                 }
             }
-
             SwerveModuleState[] dPadDrivingStates = SwerveDrive.swerveKinematics.toSwerveModuleStates(
                 ChassisSpeeds.fromFieldRelativeSpeeds(0.0, strafe, rotation, robotState.fieldToVehicle.getRotation())
             );
-            // TODO make this not use set module states OR clean up swerveDrive in general :) - this works but is jank
-            ((SwerveDrive)drive).setModuleStates(dPadDrivingStates);
+
+            ((SwerveDrive) drive).setModuleStates(dPadDrivingStates);
         } else {
             drive.setTeleopInputs(
                 -controlBoard.getAsDouble("throttle"),

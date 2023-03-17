@@ -14,7 +14,9 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.LinearSystemSim;
 
-/** Represents a simulated single jointed arm mechanism. */
+/**
+ * Represents a simulated single jointed arm mechanism.
+ */
 public class SingleJointedElevatorArmSim extends LinearSystemSim<N2, N1, N1> {
     // The gearbox for the arm.
     private final DCMotor m_gearbox;
@@ -37,54 +39,54 @@ public class SingleJointedElevatorArmSim extends LinearSystemSim<N2, N1, N1> {
     /**
      * Creates a simulated arm mechanism.
      *
-     * @param plant The linear system that represents the arm.
-     * @param gearbox The type of and number of motors in the arm gearbox.
-     * @param gearing The gearing of the arm (numbers greater than 1 represent reductions).
+     * @param plant           The linear system that represents the arm.
+     * @param gearbox         The type of and number of motors in the arm gearbox.
+     * @param gearing         The gearing of the arm (numbers greater than 1 represent reductions).
      * @param armLengthMeters The length of the arm.
-     * @param minAngleRads The minimum angle that the arm is capable of.
-     * @param maxAngleRads The maximum angle that the arm is capable of.
+     * @param minAngleRads    The minimum angle that the arm is capable of.
+     * @param maxAngleRads    The maximum angle that the arm is capable of.
      * @param simulateGravity Whether gravity should be simulated or not.
      */
     public SingleJointedElevatorArmSim(
-            LinearSystem<N2, N1, N1> plant,
-            DCMotor gearbox,
-            double gearing,
-            double armLengthMeters,
-            double minAngleRads,
-            double maxAngleRads,
-            boolean simulateGravity) {
+        LinearSystem<N2, N1, N1> plant,
+        DCMotor gearbox,
+        double gearing,
+        double armLengthMeters,
+        double minAngleRads,
+        double maxAngleRads,
+        boolean simulateGravity) {
         this(
-                plant,
-                gearbox,
-                gearing,
-                armLengthMeters,
-                minAngleRads,
-                maxAngleRads,
-                simulateGravity,
-                null);
+            plant,
+            gearbox,
+            gearing,
+            armLengthMeters,
+            minAngleRads,
+            maxAngleRads,
+            simulateGravity,
+            null);
     }
 
     /**
      * Creates a simulated arm mechanism.
      *
-     * @param plant The linear system that represents the arm.
-     * @param gearbox The type of and number of motors in the arm gearbox.
-     * @param gearing The gearing of the arm (numbers greater than 1 represent reductions).
-     * @param armLengthMeters The length of the arm.
-     * @param minAngleRads The minimum angle that the arm is capable of.
-     * @param maxAngleRads The maximum angle that the arm is capable of.
-     * @param simulateGravity Whether gravity should be simulated or not.
+     * @param plant              The linear system that represents the arm.
+     * @param gearbox            The type of and number of motors in the arm gearbox.
+     * @param gearing            The gearing of the arm (numbers greater than 1 represent reductions).
+     * @param armLengthMeters    The length of the arm.
+     * @param minAngleRads       The minimum angle that the arm is capable of.
+     * @param maxAngleRads       The maximum angle that the arm is capable of.
+     * @param simulateGravity    Whether gravity should be simulated or not.
      * @param measurementStdDevs The standard deviations of the measurements.
      */
     public SingleJointedElevatorArmSim(
-            LinearSystem<N2, N1, N1> plant,
-            DCMotor gearbox,
-            double gearing,
-            double armLengthMeters,
-            double minAngleRads,
-            double maxAngleRads,
-            boolean simulateGravity,
-            Matrix<N1, N1> measurementStdDevs) {
+        LinearSystem<N2, N1, N1> plant,
+        DCMotor gearbox,
+        double gearing,
+        double armLengthMeters,
+        double minAngleRads,
+        double maxAngleRads,
+        boolean simulateGravity,
+        Matrix<N1, N1> measurementStdDevs) {
         super(plant, measurementStdDevs);
         m_gearbox = gearbox;
         m_gearing = gearing;
@@ -97,57 +99,57 @@ public class SingleJointedElevatorArmSim extends LinearSystemSim<N2, N1, N1> {
     /**
      * Creates a simulated arm mechanism.
      *
-     * @param gearbox The type of and number of motors in the arm gearbox.
-     * @param gearing The gearing of the arm (numbers greater than 1 represent reductions).
+     * @param gearbox          The type of and number of motors in the arm gearbox.
+     * @param gearing          The gearing of the arm (numbers greater than 1 represent reductions).
      * @param jKgMetersSquared The moment of inertia of the arm, can be calculated from CAD software.
-     * @param armLengthMeters The length of the arm.
-     * @param minAngleRads The minimum angle that the arm is capable of.
-     * @param maxAngleRads The maximum angle that the arm is capable of.
-     * @param simulateGravity Whether gravity should be simulated or not.
+     * @param armLengthMeters  The length of the arm.
+     * @param minAngleRads     The minimum angle that the arm is capable of.
+     * @param maxAngleRads     The maximum angle that the arm is capable of.
+     * @param simulateGravity  Whether gravity should be simulated or not.
      */
     public SingleJointedElevatorArmSim(
-            DCMotor gearbox,
-            double gearing,
-            double jKgMetersSquared,
-            double armLengthMeters,
-            double minAngleRads,
-            double maxAngleRads,
-            boolean simulateGravity) {
+        DCMotor gearbox,
+        double gearing,
+        double jKgMetersSquared,
+        double armLengthMeters,
+        double minAngleRads,
+        double maxAngleRads,
+        boolean simulateGravity) {
         this(
-                gearbox,
-                gearing,
-                jKgMetersSquared,
-                armLengthMeters,
-                minAngleRads,
-                maxAngleRads,
-                simulateGravity,
-                null);
+            gearbox,
+            gearing,
+            jKgMetersSquared,
+            armLengthMeters,
+            minAngleRads,
+            maxAngleRads,
+            simulateGravity,
+            null);
     }
 
     /**
      * Creates a simulated arm mechanism.
      *
-     * @param gearbox The type of and number of motors in the arm gearbox.
-     * @param gearing The gearing of the arm (numbers greater than 1 represent reductions).
-     * @param jKgMetersSquared The moment of inertia of the arm; can be calculated from CAD software.
-     * @param armLengthMeters The length of the arm.
-     * @param minAngleRads The minimum angle that the arm is capable of.
-     * @param maxAngleRads The maximum angle that the arm is capable of.
-     * @param simulateGravity Whether gravity should be simulated or not.
+     * @param gearbox            The type of and number of motors in the arm gearbox.
+     * @param gearing            The gearing of the arm (numbers greater than 1 represent reductions).
+     * @param jKgMetersSquared   The moment of inertia of the arm; can be calculated from CAD software.
+     * @param armLengthMeters    The length of the arm.
+     * @param minAngleRads       The minimum angle that the arm is capable of.
+     * @param maxAngleRads       The maximum angle that the arm is capable of.
+     * @param simulateGravity    Whether gravity should be simulated or not.
      * @param measurementStdDevs The standard deviations of the measurements.
      */
     public SingleJointedElevatorArmSim(
-            DCMotor gearbox,
-            double gearing,
-            double jKgMetersSquared,
-            double armLengthMeters,
-            double minAngleRads,
-            double maxAngleRads,
-            boolean simulateGravity,
-            Matrix<N1, N1> measurementStdDevs) {
+        DCMotor gearbox,
+        double gearing,
+        double jKgMetersSquared,
+        double armLengthMeters,
+        double minAngleRads,
+        double maxAngleRads,
+        boolean simulateGravity,
+        Matrix<N1, N1> measurementStdDevs) {
         super(
-                LinearSystemId.createSingleJointedArmSystem(gearbox, jKgMetersSquared, gearing),
-                measurementStdDevs);
+            LinearSystemId.createSingleJointedArmSystem(gearbox, jKgMetersSquared, gearing),
+            measurementStdDevs);
         m_gearbox = gearbox;
         m_gearing = gearing;
         m_armLenMeters = armLengthMeters;
@@ -238,14 +240,14 @@ public class SingleJointedElevatorArmSim extends LinearSystemSim<N2, N1, N1> {
      * Calculates a rough estimate of the moment of inertia of an arm given its length and mass.
      *
      * @param lengthMeters The length of the arm.
-     * @param massKg The mass of the arm.
+     * @param massKg       The mass of the arm.
      * @return The calculated moment of inertia.
      */
     public static double estimateMOI(double lengthMeters, double massKg) {
         return 1.0 / 3.0 * massKg * lengthMeters * lengthMeters;
     }
 
-    public void setM_armLenMeters(double m_armLenMeters){
+    public void setM_armLenMeters(double m_armLenMeters) {
         this.m_armLenMeters = m_armLenMeters;
     }
 
@@ -253,8 +255,8 @@ public class SingleJointedElevatorArmSim extends LinearSystemSim<N2, N1, N1> {
      * Updates the state of the arm.
      *
      * @param currentXhat The current state estimate.
-     * @param u The system inputs (voltage).
-     * @param dtSeconds The time difference between controller updates.
+     * @param u           The system inputs (voltage).
+     * @param dtSeconds   The time difference between controller updates.
      */
     @Override
     protected Matrix<N2, N1> updateX(Matrix<N2, N1> currentXhat, Matrix<N1, N1> u, double dtSeconds) {
@@ -283,18 +285,18 @@ public class SingleJointedElevatorArmSim extends LinearSystemSim<N2, N1, N1> {
         //   f(x, u) = Ax + Bu + [0  3/2⋅g⋅cos(θ)/L]ᵀ
 
         Matrix<N2, N1> updatedXhat =
-                NumericalIntegration.rkdp(
-                        (Matrix<N2, N1> x, Matrix<N1, N1> _u) -> {
-                            Matrix<N2, N1> xdot = m_plant.getA().times(x).plus(m_plant.getB().times(_u));
-                            if (m_simulateGravity) {
-                                double alphaGrav = 3.0 / 2.0 * -9.8 * Math.cos(x.get(0, 0)) / m_armLenMeters;
-                                xdot = xdot.plus(VecBuilder.fill(0, alphaGrav));
-                            }
-                            return xdot;
-                        },
-                        currentXhat,
-                        u,
-                        dtSeconds);
+            NumericalIntegration.rkdp(
+                (Matrix<N2, N1> x, Matrix<N1, N1> _u) -> {
+                    Matrix<N2, N1> xdot = m_plant.getA().times(x).plus(m_plant.getB().times(_u));
+                    if (m_simulateGravity) {
+                        double alphaGrav = 3.0 / 2.0 * -9.8 * Math.cos(x.get(0, 0)) / m_armLenMeters;
+                        xdot = xdot.plus(VecBuilder.fill(0, alphaGrav));
+                    }
+                    return xdot;
+                },
+                currentXhat,
+                u,
+                dtSeconds);
 
         // We check for collision after updating xhat
         if (wouldHitLowerLimit(updatedXhat.get(0, 0))) {

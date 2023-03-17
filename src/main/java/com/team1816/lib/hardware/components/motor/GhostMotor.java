@@ -84,31 +84,31 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
         controlMode = Mode;
     }
 
-    private void updateActValues(){
+    private void updateActValues() {
         // don't make unnecessary calculations if robot not in sim
-        if(RobotBase.isReal()){
+        if (RobotBase.isReal()) {
             return;
         }
 
         // whether motor needs to calculate new numbers - this
         double timeNow = Timer.getFPGATimestamp();
         double dtBetweenCallsMS = (timeNow - lastUpdate) * 1000;
-        if(dtBetweenCallsMS < Robot.looperDt){
+        if (dtBetweenCallsMS < Robot.looperDt) {
             lastUpdate = timeNow;
             return;
         }
         lastUpdate = timeNow;
 
         // setting actual output
-        if(controlMode == ControlMode.PercentOutput){
+        if (controlMode == ControlMode.PercentOutput) {
             actualOutput[0] = desiredDemand[0];
             actualOutput[1] = desiredDemand[0] * maxVelTicks100ms;
             actualOutput[2] = lastPos + (actualOutput[1] / 100 * dtBetweenCallsMS);
-        } else if (controlMode == ControlMode.Velocity){
+        } else if (controlMode == ControlMode.Velocity) {
             actualOutput[0] = desiredDemand[1] / maxVelTicks100ms;
             actualOutput[1] = desiredDemand[1];
             actualOutput[2] = lastPos + (actualOutput[1] / 100 * dtBetweenCallsMS);
-        } else if(controlMode == ControlMode.Position){
+        } else if (controlMode == ControlMode.Position) {
             actualOutput[0] = (desiredDemand[2] - lastPos) / dtBetweenCallsMS * 100 / maxVelTicks100ms;
             actualOutput[1] = (desiredDemand[2] - lastPos) / dtBetweenCallsMS * 100;
             actualOutput[2] = desiredDemand[2];
@@ -131,10 +131,10 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
         // % values will be wildly off when in pos mode cus we magically reach position within a single loop
         if (controlMode != ControlMode.Position && Math.abs(actualOutput[0]) > 1.0) {
             System.out.println(
-                    "Motor " +
-                            name +
-                            "'s % output should be between -1.0 to 1.0 value:" +
-                            actualOutput[0]
+                "Motor " +
+                    name +
+                    "'s % output should be between -1.0 to 1.0 value:" +
+                    actualOutput[0]
             );
         }
     }

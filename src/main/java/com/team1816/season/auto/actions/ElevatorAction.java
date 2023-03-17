@@ -30,26 +30,26 @@ public class ElevatorAction implements AutoAction {
         System.out.println("Setting elevator to angle: " + desiredAngleState.name() + " and extension to: " + desiredExtensionState.name());
         elevator.setDesiredState(desiredAngleState, desiredExtensionState);
 
-        if(RobotBase.isSimulation()){
+        if (RobotBase.isSimulation()) {
             simWaitTimer.update();
         }
     }
 
     @Override
     public void update() {
-        if(RobotBase.isSimulation()){
+        if (RobotBase.isSimulation()) {
             simWaitTimer.update();
         }
     }
 
     @Override
     public boolean isFinished() {
-        if(RobotBase.isSimulation()){
+        if (RobotBase.isSimulation()) {
             return simWaitTimer.isCompleted();
         }
 
-    return robotState.actualElevatorAngleState.equals(elevator.getDesiredAngleState())
-        && robotState.actualElevatorExtensionState.equals(elevator.getDesiredExtensionState());
+        return robotState.actualElevatorAngleState.equals(elevator.getDesiredAngleState())
+            && robotState.actualElevatorExtensionState.equals(elevator.getDesiredExtensionState());
     }
 
     @Override

@@ -140,9 +140,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 actualModulePositions
             );
 
-        if(Constants.kIsLoggingDrivetrain){
-            desStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(),"Swerve/DesStates");
-            actStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(),"Swerve/ActStates");
+        if (Constants.kIsLoggingDrivetrain) {
+            desStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Swerve/DesStates");
+            actStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Swerve/ActStates");
         }
     }
 
@@ -187,14 +187,14 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             // logging current temperatures of each module's drive motor
             motorTemperatures[i] = swerveModules[i].getMotorTemp();
 
-            if(Constants.kIsLoggingDrivetrain){
+            if (Constants.kIsLoggingDrivetrain) {
                 // populating double list with actState angles and speeds
-                actualStates[i*2] = actualModuleStates[i].angle.getRadians();
-                actualStates[i*2 + 1] = actualModuleStates[i].speedMetersPerSecond;
+                actualStates[i * 2] = actualModuleStates[i].angle.getRadians();
+                actualStates[i * 2 + 1] = actualModuleStates[i].speedMetersPerSecond;
 
                 // populating double list with desState angles and speeds
-                desiredStates[i*2] = desiredModuleStates[i].angle.getRadians();
-                desiredStates[i*2 + 1] = desiredModuleStates[i].speedMetersPerSecond;
+                desiredStates[i * 2] = desiredModuleStates[i].angle.getRadians();
+                desiredStates[i * 2 + 1] = desiredModuleStates[i].speedMetersPerSecond;
             }
         }
         chassisSpeed = swerveKinematics.toChassisSpeeds(actualModuleStates);
@@ -206,7 +206,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         swerveOdometry.update(actualHeading, actualModulePositions);
 
-        if(Constants.kIsLoggingDrivetrain){
+        if (Constants.kIsLoggingDrivetrain) {
             desStatesLogger.append(desiredStates);
             actStatesLogger.append(actualStates);
         }

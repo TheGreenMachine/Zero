@@ -8,10 +8,10 @@ public class AlignAction extends SeriesAction {
 
     public AlignAction(Elevator.EXTENSION_STATE extensionState) {
         super(
-                // extension to desired scoring level
-                new ElevatorAction(Elevator.ANGLE_STATE.SCORE, extensionState),
-                // outtaking the game piece
-                new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.SCORE)
+            // extension to desired scoring level
+            new ElevatorAction(Elevator.ANGLE_STATE.SCORE, extensionState),
+            // outtaking the game piece
+            new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.SCORE)
         );
     }
 }
