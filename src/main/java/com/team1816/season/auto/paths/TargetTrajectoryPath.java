@@ -15,19 +15,19 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrajectoryToTargetPath extends AutoPath {
+public class TargetTrajectoryPath extends AutoPath {
 
     public static RobotState robotState;
     private static Pose2d target;
 
-    public TrajectoryToTargetPath(Pose2d pose) {
+    public TargetTrajectoryPath(Pose2d pose) {
         robotState = Injector.get(RobotState.class);
         target = pose;
     }
 
-    public TrajectoryToTargetPath() {
+    public TargetTrajectoryPath() {
         robotState = Injector.get(RobotState.class);
-        new TrajectoryToTargetPath(robotState.target);
+        new TargetTrajectoryPath(robotState.target);
     }
 
     @Override

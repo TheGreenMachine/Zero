@@ -14,9 +14,9 @@ import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.season.auto.AutoModeManager;
-import com.team1816.season.auto.modes.AutoAlignMode;
-import com.team1816.season.auto.modes.AutoScoreMode;
-import com.team1816.season.auto.modes.TrajectoryToTargetMode;
+import com.team1816.season.auto.commands.AlignElevatorCommand;
+import com.team1816.season.auto.commands.AutoScoreCommand;
+import com.team1816.season.auto.commands.TargetTrajectoryCommand;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.DrivetrainTargets;
 import com.team1816.season.states.Orchestrator;
@@ -27,7 +27,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.*;
 
@@ -87,7 +86,7 @@ public class Robot extends TimedRobot {
     private final AutoModeManager autoModeManager;
     private Thread autoTargetThread;
 
-    private Thread autoAlignThread;
+    private Thread alignElevatorThread;
     private Thread autoScoreThread;
 
     /**
@@ -256,8 +255,8 @@ public class Robot extends TimedRobot {
                                     System.out.println("Too close to target! can not start trajectory!");
                                 } else {
                                     System.out.println("Drive trajectory action started!");
-                                    TrajectoryToTargetMode mode = new TrajectoryToTargetMode();
-                                    autoTargetThread = new Thread(mode::run);
+                                    TargetTrajectoryCommand command = new TargetTrajectoryCommand();
+                                    autoTargetThread = new Thread(command::run);
                                     ledManager.indicateStatus(LedManager.RobotStatus.RAGE, LedManager.ControlState.BLINK);
                                     autoTargetThread.start();
                                 }
@@ -303,7 +302,7 @@ public class Robot extends TimedRobot {
                                 } else { // collects from floor
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR);
                                 }
-                                ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK); // indicates on LEDs
+                                ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK); // indicates on LEDs
                             } else {
                                 collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
@@ -410,12 +409,12 @@ public class Robot extends TimedRobot {
                             if (!runningAutoAlign) {
                                 runningAutoAlign = true;
                                 System.out.println("Auto align action started!");
-                                AutoAlignMode mode = new AutoAlignMode(Elevator.EXTENSION_STATE.MIN);
-                                autoAlignThread = new Thread(mode::run);
+                                AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MIN);
+                                alignElevatorThread = new Thread(command::run);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
-                                autoAlignThread.start();
+                                alignElevatorThread.start();
                             } else {
-                                autoAlignThread.stop();
+                                alignElevatorThread.stop();
                                 System.out.println("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
@@ -428,12 +427,12 @@ public class Robot extends TimedRobot {
                             if (!runningAutoAlign) {
                                 runningAutoAlign = true;
                                 System.out.println("Auto align action started!");
-                                AutoAlignMode mode = new AutoAlignMode(Elevator.EXTENSION_STATE.MID);
-                                autoAlignThread = new Thread(mode::run);
+                                AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MID);
+                                alignElevatorThread = new Thread(command::run);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
-                                autoAlignThread.start();
+                                alignElevatorThread.start();
                             } else {
-                                autoAlignThread.stop();
+                                alignElevatorThread.stop();
                                 System.out.println("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
@@ -446,12 +445,12 @@ public class Robot extends TimedRobot {
                             if (!runningAutoAlign) {
                                 runningAutoAlign = true;
                                 System.out.println("Auto align action started!");
-                                AutoAlignMode mode = new AutoAlignMode(Elevator.EXTENSION_STATE.MAX);
-                                autoAlignThread = new Thread(mode::run);
+                                AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MAX);
+                                alignElevatorThread = new Thread(command::run);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
-                                autoAlignThread.start();
+                                alignElevatorThread.start();
                             } else {
-                                autoAlignThread.stop();
+                                alignElevatorThread.stop();
                                 System.out.println("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
@@ -464,8 +463,8 @@ public class Robot extends TimedRobot {
                             if (!runningAutoScore) {
                                 runningAutoScore = true;
                                 System.out.println("Auto Score action started!");
-                                AutoScoreMode mode = new AutoScoreMode(collector.getCurrentGameElement(), elevator.getDesiredExtensionState());
-                                autoScoreThread = new Thread(mode::run);
+                                AutoScoreCommand command = new AutoScoreCommand(collector.getCurrentGameElement(), elevator.getDesiredExtensionState());
+                                autoScoreThread = new Thread(command::run);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
                                 autoScoreThread.start();
                             } else {
@@ -557,8 +556,8 @@ public class Robot extends TimedRobot {
             if (autoScoreThread != null && autoScoreThread.isAlive()) {
                 autoScoreThread.stop();
             }
-            if (autoAlignThread != null && autoAlignThread.isAlive()) {
-                autoAlignThread.stop();
+            if (alignElevatorThread != null && alignElevatorThread.isAlive()) {
+                alignElevatorThread.stop();
             }
 
             enabledLoop.stop();

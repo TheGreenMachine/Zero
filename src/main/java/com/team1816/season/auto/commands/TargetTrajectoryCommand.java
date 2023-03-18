@@ -1,17 +1,17 @@
-package com.team1816.season.auto.modes;
+package com.team1816.season.auto.commands;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.Robot;
-import com.team1816.season.auto.paths.TrajectoryToTargetPath;
+import com.team1816.season.auto.paths.TargetTrajectoryPath;
 
 import java.util.List;
 
-public class TrajectoryToTargetMode extends AutoMode {
+public class TargetTrajectoryCommand extends AutoMode {
 
-    public TrajectoryToTargetMode() {
-        super(List.of(new TrajectoryAction(new TrajectoryToTargetPath())));
+    public TargetTrajectoryCommand() {
+        super(List.of(new TrajectoryAction(new TargetTrajectoryPath())));
     }
 
     @Override

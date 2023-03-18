@@ -1,17 +1,18 @@
-package com.team1816.season.auto.modes;
+package com.team1816.season.auto.commands;
 
 import com.team1816.lib.auto.AutoModeEndedException;
+import com.team1816.lib.auto.commands.AutoCommand;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.Robot;
 import com.team1816.season.auto.actions.ScoreAction;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 
-public class AutoScoreMode extends AutoMode {
+public class AutoScoreCommand extends AutoCommand {
     private Collector.GAME_ELEMENT gameElement;
     private Elevator.EXTENSION_STATE extensionState;
 
-    public AutoScoreMode(Collector.GAME_ELEMENT gameElement, Elevator.EXTENSION_STATE extensionState) {
+    public AutoScoreCommand(Collector.GAME_ELEMENT gameElement, Elevator.EXTENSION_STATE extensionState) {
         this.gameElement = gameElement;
         this.extensionState = extensionState;
     }
