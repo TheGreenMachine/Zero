@@ -31,15 +31,15 @@ public class PlaceConeAutoBalanceWallMode extends AutoMode {
         System.out.println("Running Place Cone Balance Mode");
         runAction(
             new SeriesAction(
-                new WaitAction(0.25),
+                new WaitAction(0.05),
                 new ParallelAction(
                     new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
                     new SeriesAction(
-                        new WaitAction(3.5),
+                        new WaitAction(3),
                         trajectoryActions.get(0)
                     )
                 ),
-                new WaitAction(0.5),
+                new WaitAction(0.25),
                 new AutoBalanceAction()
             )
         );

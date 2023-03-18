@@ -83,7 +83,7 @@ subsystems:
             dPadMoveSpeed: 0.5
             isDemoMode: 0
             ## Auto Balance ##
-            autoBalanceDivider: 40
+            autoBalanceDivider: 50
             autoBalanceThreshold: 4  #was 2.5, then 3
     elevator:
         implemented: true
