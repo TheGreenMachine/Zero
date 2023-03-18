@@ -130,6 +130,9 @@ subsystems:
             midExtensionPosition: 120000
             maxExtensionPosition: 281000
             shelfExtensionPosition: 150000 #between mid and max
+            ## Offsets ##
+            cubeExtensionMaxOffset: 10000
+            cubeExtensionMidOffset: 5000
     collector:
         implemented: true
         sparkmaxes:

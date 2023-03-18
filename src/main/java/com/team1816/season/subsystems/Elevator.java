@@ -49,6 +49,9 @@ public class Elevator extends Subsystem {
     public static final double maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
     public static final double shelfExtension = factory.getConstant(NAME, "shelfExtensionPosition");
 
+    public static final double cubeExtensionMaxOffset = factory.getConstant("cubeExtensionMaxOffset");
+    public static final double cubeExtensionMidOffset = factory.getConstant("cubeExtensionMidOffset");
+
     private AsyncTimer colPosTimer;
     private AsyncTimer stowExtensionTimer;
 
@@ -298,11 +301,7 @@ public class Elevator extends Subsystem {
                         }
                     }
                     case SCORE, SHELF_COLLECT -> {
-                        if (robotState.actualGameElement == Collector.GAME_ELEMENT.CUBE) {
-                            angleMotorMain.set(ControlMode.Position, (scorePos + 6400), DemandType.ArbitraryFeedForward, angleFeedForward);
-                        } else {
-                            angleMotorMain.set(ControlMode.Position, (scorePos), DemandType.ArbitraryFeedForward, angleFeedForward);
-                        }
+                        angleMotorMain.set(ControlMode.Position, (scorePos), DemandType.ArbitraryFeedForward, angleFeedForward);
                     }
                 }
             } else {
@@ -339,18 +338,27 @@ public class Elevator extends Subsystem {
                     }
                 } else {
                     switch (desiredExtensionState) {
-                        case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension + 6400), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        case MID -> extensionMotor.set(ControlMode.Position, (midExtension + 3200), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension + 10000), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case MID -> extensionMotor.set(ControlMode.Position, (midExtension + 5000), DemandType.ArbitraryFeedForward, extensionFeedForward);
                         case MIN -> extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension + 4800), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension + 5000), DemandType.ArbitraryFeedForward, extensionFeedForward);
                     }
                 }
             } else {
-                switch (desiredExtensionState) {
-                    case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension));
-                    case MID -> extensionMotor.set(ControlMode.Position, (midExtension));
-                    case MIN -> extensionMotor.set(ControlMode.Position, (minExtension));
-                    case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension));
+                if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
+                    switch (desiredExtensionState) {
+                        case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension));
+                        case MID -> extensionMotor.set(ControlMode.Position, (midExtension));
+                        case MIN -> extensionMotor.set(ControlMode.Position, (minExtension));
+                        case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension));
+                    }
+                } else {
+                    switch (desiredExtensionState) {
+                        case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension + cubeExtensionMaxOffset));
+                        case MID -> extensionMotor.set(ControlMode.Position, (midExtension + cubeExtensionMidOffset));
+                        case MIN -> extensionMotor.set(ControlMode.Position, (minExtension));
+                        case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension + cubeExtensionMidOffset));
+                    }
                 }
             }
         }
