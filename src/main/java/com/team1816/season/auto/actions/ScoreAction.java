@@ -9,14 +9,18 @@ public class ScoreAction extends SeriesAction {
 
     public ScoreAction(Collector.GAME_ELEMENT gameElement, Elevator.EXTENSION_STATE extensionState) {
         super(
-            // extension to desired scoring level
-            new ElevatorAction(Elevator.ANGLE_STATE.SCORE, extensionState),
-            // outtaking the game piece
-            new CollectAction(gameElement == Collector.GAME_ELEMENT.CUBE ? Collector.ROLLER_STATE.OUTTAKE_CUBE : Collector.ROLLER_STATE.OUTTAKE_CONE, Collector.PIVOT_STATE.SCORE),
-            new WaitAction(.5),
-            // resetting elevator / collector to starting states
-            new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW),
-            new ElevatorAction(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN)
+            new SeriesAction(
+                // extension to desired scoring level
+                new ElevatorAction(Elevator.ANGLE_STATE.SCORE, extensionState),
+                // outtaking the game piece
+                new CollectAction(Collector.PIVOT_STATE.SCORE),
+                new WaitAction(.25),
+                new CollectAction(gameElement == Collector.GAME_ELEMENT.CUBE ? Collector.ROLLER_STATE.OUTTAKE_CUBE : Collector.ROLLER_STATE.OUTTAKE_CONE),
+                new WaitAction(.25),
+                // resetting elevator / collector to starting states
+                new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW),
+                new ElevatorAction(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN)
+            )
         );
     }
 }

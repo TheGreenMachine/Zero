@@ -105,9 +105,9 @@ subsystems:
                 kF: 0
                 allowableError: 50
             slot2: # extension
-                kP: 0.4
+                kP: 0.45
                 kI: 0.001
-                kD: 3
+                kD: 3.2
                 kF: 0
                 allowableError: 200
         constants:
@@ -124,11 +124,11 @@ subsystems:
             ## Positions ##
             stowAnglePosition: 90000
             collectAnglePosition: -2500
-            scoreAnglePosition: 66000
+            scoreAnglePosition: 60000
             scoreDipAnglePosition: 55000
-            minExtensionPosition: 20000
+            minExtensionPosition: 20000 # roughly 4800 ticks per inch
             midExtensionPosition: 120000
-            maxExtensionPosition: 320902
+            maxExtensionPosition: 280000
             shelfExtensionPosition: 150000 #between mid and max
     collector:
         implemented: true
@@ -140,7 +140,7 @@ subsystems:
                 kP: 0.001
             slot1: #pivotMotor
                 kP: 0.025
-                allowableError: 10
+                allowableError: 4
         constants:
             ## Demands ##
             cubeIntakePower: 0.50 # percent output voltage
