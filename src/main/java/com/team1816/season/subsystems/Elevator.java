@@ -297,8 +297,13 @@ public class Elevator extends Subsystem {
                             colPosTimer.reset();
                         }
                     }
-                    case SCORE, SHELF_COLLECT -> angleMotorMain.set(ControlMode.Position, (scorePos), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case SCORE_DIP -> angleMotorMain.set(ControlMode.Position, (scoreDipPos));
+                    case SCORE, SHELF_COLLECT -> {
+                        if (robotState.actualGameElement == Collector.GAME_ELEMENT.CUBE) {
+                            angleMotorMain.set(ControlMode.Position, (scorePos + 6400), DemandType.ArbitraryFeedForward, angleFeedForward);
+                        } else {
+                            angleMotorMain.set(ControlMode.Position, (scorePos), DemandType.ArbitraryFeedForward, angleFeedForward);
+                        }
+                    }
                 }
             } else {
                 switch (desiredAngleState) {
@@ -319,21 +324,26 @@ public class Elevator extends Subsystem {
                         angleMotorMain.selectProfileSlot(movingArmSlot, 0);
                         angleMotorMain.set(ControlMode.Position, (scorePos));
                     }
-                    case SCORE_DIP -> {
-                        angleMotorMain.selectProfileSlot(movingArmSlot, 0);
-                        angleMotorMain.set(ControlMode.Position, (scoreDipPos));
-                    }
                 }
             }
         }
         if (extensionOutputsChanged) {
             extensionOutputsChanged = false;
             if (usingFeedForward) {
-                switch (desiredExtensionState) {
-                    case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                    case MID -> extensionMotor.set(ControlMode.Position, (midExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                    case MIN -> extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                    case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
+                    switch (desiredExtensionState) {
+                        case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case MID -> extensionMotor.set(ControlMode.Position, (midExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case MIN -> extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                    }
+                } else {
+                    switch (desiredExtensionState) {
+                        case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension + 6400), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case MID -> extensionMotor.set(ControlMode.Position, (midExtension + 3200), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case MIN -> extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension + 4800), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                    }
                 }
             } else {
                 switch (desiredExtensionState) {
@@ -380,7 +390,6 @@ public class Elevator extends Subsystem {
         STOW(stowPos),
         COLLECT(collectPos),
         SCORE(scorePos),
-        SCORE_DIP(scoreDipPos),
         SHELF_COLLECT(scorePos);
 
         private final double pos;

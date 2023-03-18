@@ -355,16 +355,6 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("bobDown"),
-                        (pressed) -> {
-                            if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE && pressed) {
-                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
-                            } else if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP && !pressed) {
-                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
-                            }
-                        }
-                    ),
                     createAction(
                         () -> controlBoard.getAsBool("extendStage"),
                         () -> {

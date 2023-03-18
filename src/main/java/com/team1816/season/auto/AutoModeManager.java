@@ -169,6 +169,7 @@ public class AutoModeManager {
 
         // 2023
         PLACE_CONE,
+        PLACE_CUBE,
         PLACE_CONE_EXIT_COMMUNITY,
         EXIT_BALANCE_FEEDER,
         EXIT_BALANCE_MIDDLE,
@@ -204,6 +205,8 @@ public class AutoModeManager {
                 return (new PlaceConeExitCommunityMode(color));
             case PLACE_CONE:
                 return (new PlaceConeMode());
+            case PLACE_CUBE:
+                return (new PlaceCubeMode());
             case EXIT_BALANCE_FEEDER:
                 return (new ExitCommunityBalanceFeederMode(color));
             case EXIT_BALANCE_MIDDLE:

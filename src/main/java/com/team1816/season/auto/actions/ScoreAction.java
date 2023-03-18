@@ -11,7 +11,7 @@ public class ScoreAction extends SeriesAction {
         super(
             new SeriesAction(
                 // extension to desired scoring level
-                new ElevatorAction(Elevator.ANGLE_STATE.SCORE, extensionState),
+                new ElevatorAction(Elevator.ANGLE_STATE.SCORE, extensionState, gameElement),
                 // outtaking the game piece
                 new CollectAction(Collector.PIVOT_STATE.SCORE),
                 new WaitAction(.25),
