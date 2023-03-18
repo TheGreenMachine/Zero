@@ -228,7 +228,7 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public double getSelectedSensorVelocity(int pidIdx) {
-        return encoder.getCountsPerRevolution();
+        return encoder.getVelocity();
     } // RPM
 
     @Override
@@ -604,7 +604,7 @@ public class LazySparkMax implements IGreenMotor {
         SupplyCurrentLimitConfiguration currLimitCfg,
         int timeoutMs
     ) {
-        motor.setSmartCurrentLimit((int)currLimitCfg.currentLimit);
+        motor.setSmartCurrentLimit((int) currLimitCfg.currentLimit);
         return ErrorCode.OK;
     }
 

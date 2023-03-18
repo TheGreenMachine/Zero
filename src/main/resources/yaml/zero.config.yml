@@ -80,7 +80,7 @@ subsystems:
             maxVelOpenLoop: 2.2 # meters/s (3.6)
             maxVelPathFollowing: 2.2 # meters/s (3.6)
             maxAccel: 1.27 # meters/s^ 2
-            dPadMoveSpeed: 0.75
+            dPadMoveSpeed: 0.5
             isDemoMode: 0
             ## Auto Balance ##
             autoBalanceDivider: 45
@@ -124,11 +124,11 @@ subsystems:
             ## Positions ##
             stowAnglePosition: 90000
             collectAnglePosition: -2500
-            scoreAnglePosition: 64000
+            scoreAnglePosition: 66000
             scoreDipAnglePosition: 55000
             minExtensionPosition: 20000
             midExtensionPosition: 120000
-            maxExtensionPosition: 295000
+            maxExtensionPosition: 320902
             shelfExtensionPosition: 150000 #between mid and max
     collector:
         implemented: true
@@ -136,8 +136,8 @@ subsystems:
             pivotMotor: 13
             intakeMotor: 14
         pidConfig:
-            slot0: #intakeMotor
-                kF: 0.000109
+            slot0: #intakeMotor - only really works when locking motor max - min input is +/- 0.3 percent
+                kP: 0.001
             slot1: #pivotMotor
                 kP: 0.025
                 allowableError: 10
@@ -145,11 +145,11 @@ subsystems:
             ## Demands ##
             cubeIntakePower: 0.50 # percent output voltage
             cubeOuttakePower: -0.55 # percent output voltage
-            coneIntakePower: -0.70 #was -0.50
+            coneIntakePower: -1 #was -0.50
             coneOuttakePower: 0.50
             stowPosition: 0
-            scorePosition: -16
-            shelfPosition: -24
+            scorePosition: -28
+            shelfPosition: -22
             floorPosition: -10 #was -12
             ## Limits ##
             intakeStallAmps: 30

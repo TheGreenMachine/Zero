@@ -17,13 +17,13 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrajectoryToTargetPath extends AutoPath {
+public class TargetTrajectoryPath extends AutoPath {
 
     public static RobotState robotState;
     private static Pose2d target;
     private PathFinder pathFinder;
 
-    public TrajectoryToTargetPath(Pose2d pose) {
+    public TargetTrajectoryPath(Pose2d pose) {
         robotState = Injector.get(RobotState.class);
         target = pose;
 
@@ -48,9 +48,9 @@ public class TrajectoryToTargetPath extends AutoPath {
         pathFinder = new PathFinder(target, robotState.fieldToVehicle.getTranslation(), obstacles);
     }
 
-    public TrajectoryToTargetPath() {
+    public TargetTrajectoryPath() {
         robotState = Injector.get(RobotState.class);
-        new TrajectoryToTargetPath(robotState.target);
+        new TargetTrajectoryPath(robotState.target);
 
         List<Polygon> obstacles = new ArrayList<>();
         var obstacle1 =

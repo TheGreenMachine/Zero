@@ -220,8 +220,6 @@ public class AutoModeManager {
                 return (new PlaceConeAutoBalanceMiddleMode(color));
             case PLACE_CONE_AUTO_BALANCE_WALL:
                 return (new PlaceConeAutoBalanceWallMode(color));
-            case V2_PLACE_CONE_AUTO_BALANCE_MIDDLE:
-                return (new V2PlaceConeAutoBalanceMiddleMode(color));
             case DOUBLE_CONE_FEEDER:
                 return (new DoublePlaceConeFeederMode(color));
             case DOUBLE_CONE_WALL:

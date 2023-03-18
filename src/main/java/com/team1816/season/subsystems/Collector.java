@@ -91,9 +91,9 @@ public class Collector extends Subsystem {
         pivotFloorPosition = factory.getConstant(NAME, "floorPosition", 1000);
 
         intakeMotor.configSupplyCurrentLimit(
-                new SupplyCurrentLimitConfiguration(
-                        true, factory.getConstant(NAME, "intakeStallAmps", 5), 0, 0),
-                Constants.kCANTimeoutMs
+            new SupplyCurrentLimitConfiguration(
+                true, factory.getConstant(NAME, "intakeStallAmps", 5), 0, 0),
+            Constants.kCANTimeoutMs
         );
 
         allowablePivotError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
@@ -175,7 +175,13 @@ public class Collector extends Subsystem {
             rollerOutputsChanged = false;
             switch (desiredRollerState) {
                 case STOP -> {
-                    intakeMotor.set(ControlMode.PercentOutput, 0);
+                    if (currentGameElement == GAME_ELEMENT.CUBE) {
+                        intakeMotor.set(ControlMode.PercentOutput, 0.05);
+                    } else if (currentGameElement == GAME_ELEMENT.CONE) {
+                        intakeMotor.set(ControlMode.PercentOutput, -0.05);
+                    } else {
+                        intakeMotor.set(ControlMode.PercentOutput, 0);
+                    }
                 }
                 case INTAKE_CONE -> {
                     currentGameElement = GAME_ELEMENT.CONE;
@@ -186,9 +192,11 @@ public class Collector extends Subsystem {
                     intakeMotor.set(ControlMode.PercentOutput, cubeIntakePower);
                 }
                 case OUTTAKE_CONE -> {
+                    currentGameElement = GAME_ELEMENT.NOTHING;
                     intakeMotor.set(ControlMode.PercentOutput, coneOuttakePower);
                 }
                 case OUTTAKE_CUBE -> {
+                    currentGameElement = GAME_ELEMENT.NOTHING;
                     intakeMotor.set(ControlMode.PercentOutput, cubeOuttakePower);
                 }
             }
@@ -227,7 +235,7 @@ public class Collector extends Subsystem {
         pivotMotor.setNeutralMode(braking ? NeutralMode.Brake : NeutralMode.Coast);
     }
 
-    public GAME_ELEMENT getCurrentGameElement(){
+    public GAME_ELEMENT getCurrentGameElement() {
         return currentGameElement;
     }
 

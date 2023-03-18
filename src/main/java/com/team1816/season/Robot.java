@@ -14,18 +14,19 @@ import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.season.auto.AutoModeManager;
-import com.team1816.season.auto.modes.AutoScoreMode;
-import com.team1816.season.auto.modes.TrajectoryToTargetMode;
+import com.team1816.season.auto.commands.AlignElevatorCommand;
+import com.team1816.season.auto.commands.AutoScoreCommand;
+import com.team1816.season.auto.commands.TargetTrajectoryCommand;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.DrivetrainTargets;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.*;
 
@@ -84,6 +85,8 @@ public class Robot extends TimedRobot {
      */
     private final AutoModeManager autoModeManager;
     private Thread autoTargetThread;
+
+    private Thread alignElevatorThread;
     private Thread autoScoreThread;
 
     /**
@@ -109,11 +112,11 @@ public class Robot extends TimedRobot {
     private boolean desireCube = true;
 
     public static boolean runningAutoTarget = false;
+
+    public static boolean runningAutoAlign = false;
     public static boolean runningAutoScore = false;
     public static boolean runningAutoBalance = false;
     public Elevator.ANGLE_STATE prevAngleState;
-    private boolean operatorLock;
-
     private double dPadMoveSpeed;
 
     /**
@@ -140,9 +143,9 @@ public class Robot extends TimedRobot {
         if (RobotBase.isReal()) {
             zeroingButton = new DigitalInput((int) factory.getConstant("zeroingButton", -1));
         }
-        if(Constants.kLoggingRobot){
-           robotLoopLogger = new DoubleLogEntry(DataLogManager.getLog(),"Timings/Robot");
-           looperLogger = new DoubleLogEntry(DataLogManager.getLog(),"Timings/RobotState");
+        if (Constants.kLoggingRobot) {
+            robotLoopLogger = new DoubleLogEntry(DataLogManager.getLog(), "Timings/Robot");
+            looperLogger = new DoubleLogEntry(DataLogManager.getLog(), "Timings/RobotState");
         }
 
         dPadMoveSpeed = factory.getConstant(Drive.NAME, "dPadMoveSpeed", 0);
@@ -252,8 +255,8 @@ public class Robot extends TimedRobot {
                                     System.out.println("Too close to target! can not start trajectory!");
                                 } else {
                                     System.out.println("Drive trajectory action started!");
-                                    TrajectoryToTargetMode mode = new TrajectoryToTargetMode();
-                                    autoTargetThread = new Thread(mode::run);
+                                    TargetTrajectoryCommand command = new TargetTrajectoryCommand();
+                                    autoTargetThread = new Thread(command::run);
                                     ledManager.indicateStatus(LedManager.RobotStatus.RAGE, LedManager.ControlState.BLINK);
                                     autoTargetThread.start();
                                 }
@@ -293,17 +296,14 @@ public class Robot extends TimedRobot {
                         (pressed) -> {
                             if (pressed) {
                                 if (
-                                    robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.STOW ||
-                                    robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.SHELF_COLLECT
+                                    elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
                                 ) { // collects from shelf
-                                    elevator.setDesiredState(Elevator.ANGLE_STATE.SHELF_COLLECT, Elevator.EXTENSION_STATE.SHELF_COLLECT);
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.SHELF);
-                                } else if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.COLLECT) { // collects from floor
+                                } else { // collects from floor
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR);
                                 }
                                 ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK); // indicates on LEDs
                             } else {
-                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
                                 collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
@@ -314,17 +314,14 @@ public class Robot extends TimedRobot {
                         (pressed) -> {
                             if (pressed) {
                                 if (
-                                    robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.STOW ||
-                                    robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.SHELF_COLLECT
+                                    elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
                                 ) { // collects from shelf
-                                    elevator.setDesiredState(Elevator.ANGLE_STATE.SHELF_COLLECT, Elevator.EXTENSION_STATE.SHELF_COLLECT);
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.SHELF);
-                                } else if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.COLLECT) { // collects from floor
+                                } else { // collects from floor
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.FLOOR);
                                 }
                                 ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK); // indicates on LEDs
                             } else {
-                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
                                 collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
@@ -341,52 +338,42 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("lockOperator"),
+                        () -> controlBoard.getAsBool("shelfPos"),
                         (pressed) -> {
-                            if (pressed) {
-                                operatorLock = true;
-                            } else {
-                                operatorLock = false;
-                            }
+                            elevator.setDesiredState(Elevator.ANGLE_STATE.SHELF_COLLECT, Elevator.EXTENSION_STATE.SHELF_COLLECT);
                         }
                     ),
                     // Operator Gamepad
                     createHoldAction(
                         () -> controlBoard.getAsBool("outtake"),
                         (pressed) -> {
-                            if (!operatorLock) {
-                                collector.outtakeGamePiece(pressed);
-                                if (pressed) {
-                                    ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET);
-                                } else {
-                                    ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
-                                }
+                            collector.outtakeGamePiece(pressed);
+                            if (pressed) {
+                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET);
+                            } else {
+                                ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
                             }
                         }
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("bobDown"),
                         (pressed) -> {
-                            if (!operatorLock) {
-                                if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE && pressed) {
-                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
-                                } else if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP && !pressed) {
-                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
-                                }
+                            if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE && pressed) {
+                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
+                            } else if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP && !pressed) {
+                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
                             }
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("extendStage"),
                         () -> {
-                            if (!operatorLock) {
-                                Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
+                            Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
 
-                                if (extensionState == Elevator.EXTENSION_STATE.MIN) {
-                                    elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
-                                } else if (extensionState == Elevator.EXTENSION_STATE.MID) {
-                                    elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MAX);
-                                }
+                            if (extensionState == Elevator.EXTENSION_STATE.MIN) {
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
+                            } else if (extensionState == Elevator.EXTENSION_STATE.MID) {
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MAX);
                             }
                         }
                     ),
@@ -412,35 +399,60 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("armCollect"),
                         () -> {
-                            if (!operatorLock && elevator.getDesiredExtensionState() == Elevator.EXTENSION_STATE.MIN) {
-                                elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
-                            }
+                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("extendMin"),
                         () -> {
-                            if (!operatorLock) {
-                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN);
-                                collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.SCORE);
+                            System.out.println("extend min");
+                            if (!runningAutoAlign) {
+                                runningAutoAlign = true;
+                                System.out.println("Auto align action started!");
+                                AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MIN);
+                                alignElevatorThread = new Thread(command::run);
+                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
+                                alignElevatorThread.start();
+                            } else {
+                                alignElevatorThread.stop();
+                                System.out.println("Stopped! Auto align cancelled!");
+                                runningAutoAlign = !runningAutoAlign;
                             }
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("extendMid"),
                         () -> {
-                            if (!operatorLock) {
-                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID);
-                                collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.SCORE);
+                            System.out.println("extend mid");
+                            if (!runningAutoAlign) {
+                                runningAutoAlign = true;
+                                System.out.println("Auto align action started!");
+                                AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MID);
+                                alignElevatorThread = new Thread(command::run);
+                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
+                                alignElevatorThread.start();
+                            } else {
+                                alignElevatorThread.stop();
+                                System.out.println("Stopped! Auto align cancelled!");
+                                runningAutoAlign = !runningAutoAlign;
                             }
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("extendMax"),
                         () -> {
-                            if (!operatorLock) {
-                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
-                                collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.SCORE);
+                            System.out.println("extend max");
+                            if (!runningAutoAlign) {
+                                runningAutoAlign = true;
+                                System.out.println("Auto align action started!");
+                                AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MAX);
+                                alignElevatorThread = new Thread(command::run);
+                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
+                                alignElevatorThread.start();
+                            } else {
+                                alignElevatorThread.stop();
+                                System.out.println("Stopped! Auto align cancelled!");
+                                runningAutoAlign = !runningAutoAlign;
                             }
                         }
                     ),
@@ -448,21 +460,19 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("autoScore"),
                         () -> {
                             System.out.println("autoscore");
-                            if (!operatorLock) {
-                                if (!runningAutoScore) {
-                                    runningAutoScore = true;
-                                        System.out.println("Auto Score action started!");
-                                        AutoScoreMode mode = new AutoScoreMode(collector.getCurrentGameElement(), elevator.getDesiredExtensionState());
-                                        autoScoreThread = new Thread(mode::run);
-                                        ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
-                                        autoScoreThread.start();
-                                    }
-                                } else {
-                                    autoScoreThread.stop();
-                                    System.out.println("Stopped! Auto scoring cancelled!");
-                                    runningAutoScore = !runningAutoScore;
-                                }
+                            if (!runningAutoScore) {
+                                runningAutoScore = true;
+                                System.out.println("Auto Score action started!");
+                                AutoScoreCommand command = new AutoScoreCommand(collector.getCurrentGameElement(), elevator.getDesiredExtensionState());
+                                autoScoreThread = new Thread(command::run);
+                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
+                                autoScoreThread.start();
+                            } else {
+                                autoScoreThread.stop();
+                                System.out.println("Stopped! Auto scoring cancelled!");
+                                runningAutoScore = !runningAutoScore;
                             }
+                        }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("grid1"),
@@ -540,8 +550,14 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         try {
-            if(autoScoreThread != null && autoScoreThread.isAlive()){
+            if (autoTargetThread != null && autoTargetThread.isAlive()) {
+                autoTargetThread.stop();
+            }
+            if (autoScoreThread != null && autoScoreThread.isAlive()) {
                 autoScoreThread.stop();
+            }
+            if (alignElevatorThread != null && alignElevatorThread.isAlive()) {
+                alignElevatorThread.stop();
             }
 
             enabledLoop.stop();
@@ -595,6 +611,7 @@ public class Robot extends TimedRobot {
             ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
 
             infrastructure.startCompressor();
+            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
 
             teleopStart = Timer.getFPGATimestamp();
             enabledLoop.start();
@@ -648,7 +665,7 @@ public class Robot extends TimedRobot {
             Robot.robotDt = getLastRobotLoop();
             loopStart = Timer.getFPGATimestamp();
 
-            if(Constants.kLoggingRobot){
+            if (Constants.kLoggingRobot) {
                 looperLogger.append(looperDt);
                 robotLoopLogger.append(robotDt);
             }
@@ -774,16 +791,29 @@ public class Robot extends TimedRobot {
                 0,
                 robotState.fieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
-        } else if(((ControlBoard)controlBoard).driverController.getDPad() != -1) {
-            int dPadPOVToAngle = -((ControlBoard)controlBoard).driverController.getDPad();
-            SwerveModuleState[] dPadDrivingStates = new SwerveModuleState[]{
-                    new SwerveModuleState(dPadMoveSpeed, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
-                    new SwerveModuleState(dPadMoveSpeed, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
-                    new SwerveModuleState(dPadMoveSpeed, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation())),
-                    new SwerveModuleState(dPadMoveSpeed, Rotation2d.fromDegrees(dPadPOVToAngle).minus(robotState.fieldToVehicle.getRotation()))
-            };
-            // TODO make this not use set module states OR clean up swerveDrive in general :) - this works but is jank
-            ((SwerveDrive)drive).setModuleStates(dPadDrivingStates);
+        } else if (((ControlBoard) controlBoard).driverController.getDPad() != -1) { // dpad bang-bang controller for fine alignment
+            int dPadPOVToAngle = ((ControlBoard) controlBoard).driverController.getDPad();
+            double strafe = 0;
+            double rotation = 0;
+            if (dPadPOVToAngle == 90) {
+                strafe = -dPadMoveSpeed;
+            } else if (dPadPOVToAngle == 270) {
+                strafe = dPadMoveSpeed;
+            } else if (dPadPOVToAngle == 0) {
+                double rotVal = MathUtil.inputModulus(
+                    robotState.fieldToVehicle.getRotation().getDegrees(), -180, 180
+                );
+                if ((rotVal < 45 && rotVal > -45) || (rotVal < -178 || rotVal > 178)) {
+                    rotation = 0;
+                } else {
+                    rotation = 90 / rotVal;
+                }
+            }
+            SwerveModuleState[] dPadDrivingStates = SwerveDrive.swerveKinematics.toSwerveModuleStates(
+                ChassisSpeeds.fromFieldRelativeSpeeds(0.0, strafe, rotation, robotState.fieldToVehicle.getRotation())
+            );
+
+            ((SwerveDrive) drive).setModuleStates(dPadDrivingStates);
         } else {
             drive.setTeleopInputs(
                 -controlBoard.getAsDouble("throttle"),
