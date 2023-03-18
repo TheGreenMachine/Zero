@@ -50,6 +50,7 @@ public class DoublePlaceConeWallMode extends AutoMode {
         System.out.println("Running Double Place Cone Mode");
         runAction(
             new SeriesAction(
+                // placing first cone
                 new SeriesAction(
                     new WaitAction(.05),
                     new ParallelAction(
@@ -66,11 +67,13 @@ public class DoublePlaceConeWallMode extends AutoMode {
                         )
                     )
                 ),
+                // collecting second cone
                 new SeriesAction(
                     new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
                     new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR),
                     new WaitAction(1)
                 ),
+                // aligning
                 new ParallelAction(
                     trajectoryActions.get(1),
                     new SeriesAction(
@@ -78,6 +81,7 @@ public class DoublePlaceConeWallMode extends AutoMode {
                         new AlignAction(Elevator.EXTENSION_STATE.MAX, Elevator.EXTENSION_STATE.MIN.getExtension(), Elevator.EXTENSION_STATE.MID.getExtension())
                     )
                 ),
+                // scoring second cone
                 new WaitAction(0.25),
                 new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
                 new WaitAction(0.5)
