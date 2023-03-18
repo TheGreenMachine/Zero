@@ -78,12 +78,12 @@ subsystems:
             trackWidth: 19.75 # inches
             wheelbaseLength: 19.75 # inches
             maxVelOpenLoop: 2.2 # meters/s (3.6)
-            maxVelPathFollowing: 2.2 # meters/s (3.6)
-            maxAccel: 1.27 # meters/s^ 2
+            maxVelPathFollowing: 3.2 # meters/s (3.6)
+            maxAccel: 2.54 # meters/s^ 2
             dPadMoveSpeed: 0.5
             isDemoMode: 0
             ## Auto Balance ##
-            autoBalanceDivider: 45
+            autoBalanceDivider: 40
             autoBalanceThreshold: 4  #was 2.5, then 3
     elevator:
         implemented: true

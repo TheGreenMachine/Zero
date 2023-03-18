@@ -2,6 +2,7 @@ package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.actions.ParallelAction;
 import com.team1816.lib.auto.actions.SeriesAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
@@ -31,9 +32,13 @@ public class PlaceConeAutoBalanceWallMode extends AutoMode {
         runAction(
             new SeriesAction(
                 new WaitAction(0.25),
-                new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
-                new WaitAction(0.25),
-                trajectoryActions.get(0),
+                new ParallelAction(
+                    new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
+                    new SeriesAction(
+                        new WaitAction(3.5),
+                        trajectoryActions.get(0)
+                    )
+                ),
                 new WaitAction(0.5),
                 new AutoBalanceAction()
             )

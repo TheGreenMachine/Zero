@@ -2,13 +2,16 @@ package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.actions.ParallelAction;
 import com.team1816.lib.auto.actions.SeriesAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.AutoBalanceAction;
+import com.team1816.season.auto.actions.ElevatorAction;
 import com.team1816.season.auto.paths.NodeToChargeStationFeederPath;
 import com.team1816.season.auto.paths.NodeToChargeStationWallPath;
+import com.team1816.season.subsystems.Elevator;
 
 import java.util.List;
 
@@ -29,7 +32,10 @@ public class ExitCommunityBalanceWallMode extends AutoMode {
         runAction(
             new SeriesAction(
                 new WaitAction(.5),
-                trajectoryActions.get(0),
+                new ParallelAction(
+                    new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
+                    trajectoryActions.get(0)
+                ),
                 new AutoBalanceAction()
             )
         );
