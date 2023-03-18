@@ -3,10 +3,12 @@ package com.team1816.season.auto.actions;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.AutoAction;
+import com.team1816.lib.motion.profiles.MotionProfile;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.season.Robot;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -53,7 +55,9 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public boolean isFinished() {
-        return (Timer.getFPGATimestamp() - Robot.autoStart) > 14.8;
+        return (
+            Timer.getFPGATimestamp() - Robot.autoStart) > 14.8 ||
+            (Math.abs(infrastructure.getPitch()) < Constants.autoBalanceThresholdDegrees && Math.abs(infrastructure.getRoll()) < Constants.autoBalanceThresholdDegrees);
     }
 
     @Override

@@ -180,8 +180,6 @@ public class AutoModeManager {
         PLACE_CONE_AUTO_BALANCE_MIDDLE,
         PLACE_CONE_AUTO_BALANCE_WALL,
 
-        V2_PLACE_CONE_AUTO_BALANCE_MIDDLE,
-
         DOUBLE_CONE_FEEDER,
         DOUBLE_CONE_WALL
     }
