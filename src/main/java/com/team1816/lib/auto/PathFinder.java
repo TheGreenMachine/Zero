@@ -82,7 +82,7 @@ public class PathFinder {
         }
         // Dijkstra / A* for the shortest path
         Queue<Node> openNodes = new PriorityQueue<Node>();
-
+        // TODO: re-complete
 
         // Append waypoints (shortestPath in reverse)
         for (int i = shortestPath.size() - 1; i > 0; i--) {
