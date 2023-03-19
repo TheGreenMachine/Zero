@@ -8,8 +8,6 @@ import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.wpilibj.RobotBase;
 
-import static com.team1816.lib.subsystems.Subsystem.robotState;
-
 public class ElevatorAction implements AutoAction {
 
     private RobotState robotState;

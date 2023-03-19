@@ -1,7 +1,6 @@
 package com.team1816.lib.auto;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import org.checkerframework.checker.units.qual.A;
 
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
@@ -68,12 +67,12 @@ public class Polygon {
             }
         }
         double xIncrement = 0.01; // approximate resolution to check slopes
-        double yIncrement = (p2.getY() - p1.getY())/(p2.getX() - p1.getX()) * xIncrement;
+        double yIncrement = (p2.getY() - p1.getY()) / (p2.getX() - p1.getX()) * xIncrement;
 
-        for (int i = 0; i < Math.abs(p2.getX() - p1.getX())/(2*xIncrement); i++) {
+        for (int i = 0; i < Math.abs(p2.getX() - p1.getX()) / (2 * xIncrement); i++) {
             if (
                 this.contains(new Translation2d(p1.getX() + xIncrement * i, p1.getY() + yIncrement * i)) ||
-                this.contains(new Translation2d(p2.getX() - xIncrement * i, p2.getY() - yIncrement * i))
+                    this.contains(new Translation2d(p2.getX() - xIncrement * i, p2.getY() - yIncrement * i))
             ) {
                 return true;
             }

@@ -95,7 +95,8 @@ public class TargetTrajectoryPath extends AutoPath {
 
         try {
             return pathFinder.getWaypoints();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         if (
             (target.getY() > Constants.chargeStationThresholdYMin && target.getY() < Constants.chargeStationThresholdYMax) &&

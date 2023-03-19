@@ -3,7 +3,6 @@ package com.team1816.season.auto.actions;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.AutoAction;
-import com.team1816.lib.motion.profiles.MotionProfile;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
