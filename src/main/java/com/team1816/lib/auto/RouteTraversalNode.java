@@ -3,17 +3,17 @@ package com.team1816.lib.auto;
 import edu.wpi.first.math.geometry.Translation2d;
 import org.jetbrains.annotations.NotNull;
 
-public class RouteNode {
+public class RouteTraversalNode implements Comparable{
     private final Translation2d current;
     private Translation2d previous;
     private double routeScore;
     private double estimatedRemainingScore;
 
-    RouteNode(Translation2d current) {
+    RouteTraversalNode(Translation2d current) {
         this(current, null, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
     }
 
-    RouteNode(Translation2d current, Translation2d previous, double routeScore, double estimatedRemainingScore) {
+    RouteTraversalNode(Translation2d current, Translation2d previous, double routeScore, double estimatedRemainingScore) {
         this.current = current;
         this.previous = previous;
         this.routeScore = routeScore;
@@ -48,11 +48,11 @@ public class RouteNode {
         this.estimatedRemainingScore = estimatedRemainingScore;
     }
 
-    @NotNull
-    public int compareTo(@NotNull RouteNode other) {
-        if (this.estimatedRemainingScore > other.estimatedRemainingScore) {
+    @Override
+    public int compareTo(@NotNull Object other) {
+        if (this.estimatedRemainingScore > ((RouteTraversalNode) other).estimatedRemainingScore) {
             return 1;
-        } else if (this.estimatedRemainingScore < other.estimatedRemainingScore) {
+        } else if (this.estimatedRemainingScore < ((RouteTraversalNode) other).estimatedRemainingScore) {
             return -1;
         } else {
             return 0;

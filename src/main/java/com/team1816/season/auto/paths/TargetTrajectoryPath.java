@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TargetTrajectoryPath extends AutoPath {
@@ -74,28 +75,16 @@ public class TargetTrajectoryPath extends AutoPath {
     }
 
     @Override
-    protected List<Rotation2d> getWaypointHeadings() {
-        List<Rotation2d> headings = new ArrayList<>();
-        headings.add(robotState.fieldToVehicle.getRotation());
-        if (robotState.allianceColor == Color.BLUE && robotState.fieldToVehicle.getRotation().getDegrees() < 0) {
-            for (int i = 1; i < getWaypoints().size(); i++) {
-                headings.add(target.getRotation().times(-1)); // optimizes blue side wraparound
-            }
-        } else {
-            for (int i = 1; i < getWaypoints().size(); i++) {
-                headings.add(target.getRotation());
-            }
-        }
-        return headings;
-    }
-
-    @Override
     protected List<Pose2d> getWaypoints() { // A* accelerated path routing
         List<Pose2d> waypoints = new ArrayList<>();
 
         try {
-            return pathFinder.getWaypoints();
-        } catch (Exception ignored) {}
+            List<Pose2d> pfWaypoints = pathFinder.getWaypoints();
+            if (pfWaypoints.size() > 1)
+                return pfWaypoints;
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+        }
 
         if (
             (target.getY() > Constants.chargeStationThresholdYMin && target.getY() < Constants.chargeStationThresholdYMax) &&
@@ -247,6 +236,22 @@ public class TargetTrajectoryPath extends AutoPath {
         waypoints.add(target);
 
         return waypoints;
+    }
+
+    @Override
+    protected List<Rotation2d> getWaypointHeadings() {
+        List<Rotation2d> headings = new ArrayList<>();
+        headings.add(robotState.fieldToVehicle.getRotation());
+        if (robotState.allianceColor == Color.BLUE && robotState.fieldToVehicle.getRotation().getDegrees() < 0) {
+            for (int i = 1; i < getWaypoints().size(); i++) {
+                headings.add(target.getRotation().times(-1)); // optimizes blue side wraparound
+            }
+        } else {
+            for (int i = 1; i < getWaypoints().size(); i++) {
+                headings.add(target.getRotation());
+            }
+        }
+        return headings;
     }
 
     @Override

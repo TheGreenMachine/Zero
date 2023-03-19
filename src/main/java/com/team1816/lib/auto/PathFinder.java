@@ -2,6 +2,7 @@ package com.team1816.lib.auto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.geom.Line2D;
 import java.util.*;
@@ -39,7 +40,7 @@ public class PathFinder {
         List<Translation2d[]> edges = new ArrayList<>(); // used for visibility graph
 
         Map<Translation2d[], Double> cost = new HashMap<>(); // used for dijkstra's algorithm
-        Map<Translation2d, Double> distance = new HashMap<>(); // used for dijkstra's algorithm
+        Map<Translation2d, Double> distanceHeuristic = new HashMap<>(); // used for dijkstra's algorithm
         List<Translation2d> shortestPath = new ArrayList<>(); // used for dijkstra's algorithm
 
         // Populate the points
@@ -77,45 +78,11 @@ public class PathFinder {
         }
         // Determine distance heuristic
         for (int i = 0; i < points.size(); i++) {
-            distance.put(points.get(i), points.get(i).getDistance(target.getTranslation()));
+            distanceHeuristic.put(points.get(i), points.get(i).getDistance(target.getTranslation()));
         }
         // Dijkstra / A* for the shortest path
-        Queue<RouteNode> openNodes = new PriorityQueue<>();
-        Map<Translation2d, RouteNode> nodes = new HashMap<>();
-        RouteNode init = new RouteNode(robot, null, 0, distance.get(robot));
-        openNodes.add(init);
-        nodes.put(robot, init);
+        Queue<Node> openNodes = new PriorityQueue<Node>();
 
-        while (!openNodes.isEmpty()) {
-            RouteNode next = openNodes.poll();
-            // backtrack to determine path if destination reached
-            if (next.getCurrent().equals(target)) {
-                RouteNode current = next;
-                do {
-                    shortestPath.add(0, current.getCurrent());
-                    current = nodes.get(current.getPrevious());
-                } while (current != null); // starter init block break
-                break;
-            }
-            // otherwise continue
-            for (Translation2d nextSweptNode : nodes.keySet()) {
-                // sweep for next node from current head
-                if (nextSweptNode.equals(next.getCurrent())) {
-                    double newScore = next.getRouteScore() + nextSweptNode.getDistance(next.getCurrent());
-                    RouteNode nextNode = nodes.getOrDefault(nextSweptNode, new RouteNode(nextSweptNode));
-                    nodes.put(nextSweptNode, nextNode);
-
-                    if (nextNode.getRouteScore() > newScore) {
-                        nextNode.setPrevious(next.getCurrent());
-                        nextNode.setRouteScore(newScore);
-                        nextNode.setEstimatedRemainingScore(newScore + distance.get(nextSweptNode));
-
-                        // add next node to priority queue
-                        openNodes.add(nextNode);
-                    }
-                }
-            }
-        }
 
         // Append waypoints (shortestPath in reverse)
         for (int i = shortestPath.size() - 1; i > 0; i--) {
@@ -126,4 +93,99 @@ public class PathFinder {
         waypoints.add(target);
         return waypoints;
     }
+
+    public static class Node implements Comparable {
+        public Translation2d value;
+        public double cost; // lowest total cost to get to this node
+
+        public ArrayList<Node> neighbors;
+        public HashMap<Node, Double> neighborCost;
+        public double heuristic;
+
+
+        /**
+         * Calculates cost of all neighbors based on euclidian distance metric
+         */
+        public void calculateNeighborCost() {
+            for (Node n: neighbors) {
+                neighborCost.put(n, n.value.getDistance(this.value));
+            }
+        }
+
+        /**
+         * Returns the lowest cost to achieve the current node, 0 for start
+         */
+        public double getCost() {
+            return cost;
+        }
+
+        /**
+         * Returns the list of neighbors with respect to the current node
+         *
+         * @return neighbors
+         */
+        public ArrayList<Node> getNeighbors() {
+            return neighbors;
+        }
+
+        /**
+         * Returns the map of the cost of each neighbor node
+         *
+         * @return neighborCost
+         */
+        public HashMap<Node, Double> getNeighborCost() {
+            return neighborCost;
+        }
+
+        /**
+         * Returns the cost of a specific neighbor node
+         *
+         * @param n node
+         * @return cost
+         */
+        public double getNeighborCost(Node n) {
+            return neighborCost.get(n);
+        }
+
+        /**
+         * Returns if the node contains a specified neighbor n
+         *
+         * @param n neighbor
+         * @return true if neighbor exists
+         */
+        public boolean hasNeighbor(Node n) {
+            return neighbors.contains(n);
+        }
+
+        /**
+         * Ads a neighbor n to the list of neighbors associated with the node
+         *
+         * @param n neighbor
+         */
+        public void addNeighbor(Node n) {
+            neighbors.add(n);
+            calculateNeighborCost();
+        }
+
+        /**
+         * Returns the heuristic value (distance) of the current node
+         *
+         * @return heuristic
+         */
+        public double getHeuristic() {
+            return heuristic;
+        }
+
+        /**
+         * Compares this node to another node, positive if favorable
+         *
+         * @param o other node
+         * @return
+         */
+        @Override
+        public int compareTo(@NotNull Object o) {
+            return Double.compare(((Node) o).cost + ((Node) o).heuristic, this.cost + this.heuristic);
+        }
+    }
+
 }
