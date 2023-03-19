@@ -59,17 +59,32 @@ public class Polygon {
     }
 
     /**
-     * Utilizes ray-casting to determine if a line intersects the polygon
+     * Determines if a line between two points is contained by the polygon to any degree
      */
-    public boolean intersects(Line2D line) {
+    public boolean intersects(Translation2d p1, Translation2d p2) {
         for (int i = 0; i < vertices.size() - 1; i++) {
-            Line2D edge = new Line2D.Double(vertices.get(i).getX(), vertices.get(i).getY(), vertices.get(i + 1).getX(), vertices.get(i + 1).getY());
-            if (edge.getP1() == line.getP1() || edge.getP2() == line.getP1() || edge.getP1() == line.getP2() || edge.getP2() == line.getP2()) {
+            if ((p1 == vertices.get(i) && p2 == vertices.get(i + 1)) || (p2 == vertices.get(i) && p1 == vertices.get(i + 1))) {
                 return false;
-            } else if (line.intersectsLine(edge)) {
+            }
+        }
+        double xIncrement = 0.01; // approximate resolution to check slopes
+        double yIncrement = (p2.getY() - p1.getY())/(p2.getX() - p1.getX()) * xIncrement;
+
+        for (int i = 0; i < Math.abs(p2.getX() - p1.getX())/(2*xIncrement); i++) {
+            if (
+                this.contains(new Translation2d(p1.getX() + xIncrement * i, p1.getY() + yIncrement * i)) ||
+                this.contains(new Translation2d(p2.getX() - xIncrement * i, p2.getY() - yIncrement * i))
+            ) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Utilizes ray-casting to determine if a line intersects the polygon
+     */
+    public boolean intersects(Line2D line) {
+        return intersects(new Translation2d(line.getX1(), line.getY1()), new Translation2d(line.getX2(), line.getY2()));
     }
 }
