@@ -112,6 +112,26 @@ public class Collector extends Subsystem {
     }
 
     /**
+     * Sets the desired roller state of the collector
+     *
+     * @param desiredRollerState STATE
+     */
+    public void setDesiredRollerState(ROLLER_STATE desiredRollerState) {
+        this.desiredRollerState = desiredRollerState;
+        rollerOutputsChanged = true;
+    }
+
+    /**
+     * Sets the desired pivot state of the collector
+     *
+     * @param desiredPivotState STATE
+     */
+    public void setDesiredPivotState(PIVOT_STATE desiredPivotState) {
+        this.desiredPivotState = desiredPivotState;
+        pivotOutputsChanged = true;
+    }
+
+    /**
      * Sets the collector to outtake a game piece
      *
      * @param outtaking boolean
@@ -235,8 +255,31 @@ public class Collector extends Subsystem {
         pivotMotor.setNeutralMode(braking ? NeutralMode.Brake : NeutralMode.Coast);
     }
 
+    /**
+     * Returns the currently held game element
+     *
+     * @return game element
+     */
     public GAME_ELEMENT getCurrentGameElement() {
         return currentGameElement;
+    }
+
+    /**
+     * Returns the desired roller state
+     *
+     * @return desired roller state
+     */
+    public ROLLER_STATE getDesiredRollerState() {
+        return desiredRollerState;
+    }
+
+    /**
+     * Returns the desired pivot state
+     *
+     * @return desired pivot state
+     */
+    public PIVOT_STATE getDesiredPivotState() {
+        return desiredPivotState;
     }
 
     /**

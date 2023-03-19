@@ -20,8 +20,8 @@ public class NodeToChargeStationWallPath extends AutoPath {
     protected List<Pose2d> getWaypoints() {
         return List.of(
             new Pose2d(1.70, 0.61, Rotation2d.fromDegrees(0)),
-            new Pose2d(6.76, 1.55, Rotation2d.fromDegrees(36)),
-            new Pose2d(3.79, 2.32, Rotation2d.fromDegrees(180))
+            new Pose2d(5.81, 1.55, Rotation2d.fromDegrees(36)),
+            new Pose2d(3.08, 2.32, Rotation2d.fromDegrees(180))
         );
     }
 

@@ -4,6 +4,7 @@ import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.season.states.RobotState;
+import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -23,6 +24,15 @@ public class ElevatorAction implements AutoAction {
         elevator = Injector.get(Elevator.class);
         desiredAngleState = angle;
         desiredExtensionState = extension;
+    }
+
+    public ElevatorAction(Elevator.ANGLE_STATE angle, Elevator.EXTENSION_STATE extension, Collector.GAME_ELEMENT game_element) {
+        robotState = Injector.get(RobotState.class);
+        elevator = Injector.get(Elevator.class);
+        desiredAngleState = angle;
+        desiredExtensionState = extension;
+
+        robotState.actualGameElement = game_element;
     }
 
     @Override
