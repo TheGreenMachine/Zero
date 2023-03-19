@@ -18,13 +18,13 @@ public class AutoScoreCommand extends AutoCommand {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Auto Score Mode!");
+        System.out.println("Running Auto Score Command!");
         runAction(new ScoreAction(gameElement, extensionState));
     }
 
     public void done() {
         super.done();
         Robot.runningAutoScore = false;
-        System.out.println("Auto Score Mode Completed!");
+        System.out.println("Auto Score Mode Command!");
     }
 }
