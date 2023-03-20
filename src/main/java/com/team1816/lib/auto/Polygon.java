@@ -41,6 +41,9 @@ public class Polygon {
      * @return true if point is contained by polygon
      */
     public boolean contains(Translation2d point) {
+        if (vertices.contains(point))
+            return false;
+
         boolean contained = false;
 
         for (int i = 0, j = vertices.size() - 1; i < vertices.size(); i++) {
@@ -61,15 +64,23 @@ public class Polygon {
      * Determines if a line between two points is contained by the polygon to any degree
      */
     public boolean intersects(Translation2d p1, Translation2d p2) {
-        for (int i = 0; i < vertices.size() - 1; i++) {
-            if ((p1 == vertices.get(i) && p2 == vertices.get(i + 1)) || (p2 == vertices.get(i) && p1 == vertices.get(i + 1))) {
+        for (int i = 0; i < vertices.size(); i++) {
+            if (((p1 == vertices.get(i) && p2 == vertices.get((i + 1) % vertices.size())) || (p2 == vertices.get(i) && p1 == vertices.get((i + 1) % vertices.size())))) {
                 return false;
             }
         }
-        double xIncrement = 0.01; // approximate resolution to check slopes
-        double yIncrement = (p2.getY() - p1.getY()) / (p2.getX() - p1.getX()) * xIncrement;
 
-        for (int i = 0; i < Math.abs(p2.getX() - p1.getX()) / (2 * xIncrement); i++) {
+        double xIncrement, yIncrement;
+
+        if (Math.abs(p2.getX()-p1.getX()) < Math.abs(p2.getY() - p1.getY())) {
+            xIncrement = 0.01 * Math.signum(p2.getX() - p1.getX()); // approximate resolution to check slopes NOTE: might need to reduce resolution for finer calculations
+            yIncrement = (p2.getY() - p1.getY()) / (p2.getX() - p1.getX()) * Math.abs(xIncrement) * Math.signum(p2.getY() - p1.getY());
+        } else {
+            yIncrement = 0.01 * Math.signum(p2.getY() - p1.getY()); // approximate resolution to check slopes NOTE: might need to reduce resolution for finer calculations
+            xIncrement = (p2.getX() - p1.getX()) / (p2.getY() - p1.getY()) * Math.abs(yIncrement) * Math.signum(p2.getX() - p1.getX());
+        }
+
+        for (int i = 0; i < Math.max(Math.abs((p2.getX() - p1.getX()) / (2 * xIncrement)), Math.abs((p2.getY() - p1.getY()) / (2 * yIncrement))); i++) {
             if (
                 this.contains(new Translation2d(p1.getX() + xIncrement * i, p1.getY() + yIncrement * i)) ||
                     this.contains(new Translation2d(p2.getX() - xIncrement * i, p2.getY() - yIncrement * i))

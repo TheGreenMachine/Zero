@@ -1,6 +1,7 @@
 package com.team1816.season.configuration;
 
 import com.google.inject.Singleton;
+import com.team1816.lib.auto.Polygon;
 import com.team1816.lib.auto.Symmetry;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.season.Robot;
@@ -107,5 +108,24 @@ public class Constants {
     public static final double autoBalanceThresholdDegrees = factory.getConstant("drivetrain", "autoBalanceThreshold", 2);
     public static final double autoBalanceDivider = factory.getConstant("drivetrain", "autoBalanceDivider", 30);
 
+    /**
+     * Pathfinder characterization
+     */
+    public static final Polygon blueChargeStation = new Polygon(
+        new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMax),
+        new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax),
+        new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin),
+        new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin)
+    );
+    public static final Polygon redChargeStation = new Polygon(
+        new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMax),
+        new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMax),
+        new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMin),
+        new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMin)
+    );
+
+    /**
+     * Simulation
+     */
     public static final ShuffleboardTab kSimWindow = Shuffleboard.getTab("Simulation");
 }

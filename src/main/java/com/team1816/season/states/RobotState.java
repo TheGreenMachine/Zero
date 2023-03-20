@@ -2,6 +2,8 @@ package com.team1816.season.states;
 
 import com.google.inject.Singleton;
 import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.PathFinder;
+import com.team1816.lib.auto.Polygon;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
@@ -56,6 +58,12 @@ public class RobotState {
     public Collector.PIVOT_STATE actualCollectorPivotState = Collector.PIVOT_STATE.STOW;
     public Collector.GAME_ELEMENT actualGameElement = Collector.GAME_ELEMENT.CUBE;
     public List<VisionPoint> visibleTargets = new ArrayList<>();
+
+    /**
+     * Functional pathing states
+     */
+    public PathFinder pathFinder = new PathFinder();
+
 
     /**
      * Initializes RobotState and field
