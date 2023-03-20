@@ -132,10 +132,22 @@ public class PathFinder {
             }
 
             // Dijkstra / A* for the shortest path
-            Queue<Node> curNodes = new PriorityQueue<Node>();
-            curNodes.add(r);
-            // TODO: re-complete
+            Queue<Node> boundaryNodes = new PriorityQueue<Node>();
+            boundaryNodes.add(r); // start node
+            while (!boundaryNodes.isEmpty()) {
+                // Escape condition
+                Node pole = boundaryNodes.poll(); // highest priority node to be explored (lowest compared value)
+                if (pole.equals(t)) { // goal found
+                    while (pole.previous != null) { // backtrack
+                        shortestPath.add(pole.value); // reverse order
+                        pole = pole.previous;
+                    }
+                    break;
+                }
+                // Search
+                // TODO: re-complete
 
+            }
         }
         // Append waypoints (shortestPath in reverse)
         for (int i = shortestPath.size() - 1; i > 0; i--) {
