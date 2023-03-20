@@ -359,6 +359,13 @@ public abstract class Drive
     }
 
     /**
+     * Returns whether the drivetrain is in midSlowMode
+     */
+    public boolean getMidSlowMode() {
+        return isMidSlowMode;
+    }
+
+    /**
      * Sets the drivetrain to normalize gyroscopic pitch and yaw with gradient of maximal descent
      *
      * @param balancing - boolean
