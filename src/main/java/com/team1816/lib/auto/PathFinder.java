@@ -83,7 +83,7 @@ public class PathFinder {
         }
 
         // Dijkstra / A* for the shortest path
-        Queue<Node> openNodes = new PriorityQueue<Node>();
+        Queue<Node> curNodes = new PriorityQueue<Node>();
         // TODO: re-complete
 
 
@@ -215,14 +215,14 @@ public class PathFinder {
         }
 
         /**
-         * Compares this node to another node, positive if favorable
+         * Compares this node to another node
          *
          * @param o other node
          * @return compared value
          */
         @Override
         public int compareTo(@NotNull Object o) {
-            return Double.compare(((Node) o).cost + ((Node) o).heuristic, this.cost + this.heuristic);
+            return Double.compare((this.cost + this.heuristic), (((Node) o).cost + ((Node) o).heuristic));
         }
     }
 }
