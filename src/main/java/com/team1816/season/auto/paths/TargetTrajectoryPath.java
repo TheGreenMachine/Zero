@@ -15,7 +15,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TargetTrajectoryPath extends AutoPath {
@@ -80,11 +79,10 @@ public class TargetTrajectoryPath extends AutoPath {
 
         try {
             List<Pose2d> pfWaypoints = pathFinder.getWaypoints();
-            if (pfWaypoints.size() > 1)
-                return pfWaypoints;
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-        }
+            if (pfWaypoints.size() > 1) {
+                return pathFinder.getWaypoints();
+            }
+        } catch (Exception ignored) {}
 
         if (
             (target.getY() > Constants.chargeStationThresholdYMin && target.getY() < Constants.chargeStationThresholdYMax) &&

@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.print.attribute.standard.MediaSize;
 
 /**
  * Represents a Collector with a solenoid and rollers powered by a motor to collect both a cone and a cube

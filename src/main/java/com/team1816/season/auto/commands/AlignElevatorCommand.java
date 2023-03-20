@@ -2,7 +2,6 @@ package com.team1816.season.auto.commands;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.commands.AutoCommand;
-import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.Robot;
 import com.team1816.season.auto.actions.AlignAction;
 import com.team1816.season.subsystems.Elevator;
@@ -16,7 +15,7 @@ public class AlignElevatorCommand extends AutoCommand {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Auto Score Mode!");
+        System.out.println("Running Auto Score Command!");
         if (extensionState == Elevator.EXTENSION_STATE.MAX) {
             runAction(new AlignAction(extensionState, 0, Elevator.EXTENSION_STATE.MIN.getExtension()));
         } else {
@@ -27,6 +26,6 @@ public class AlignElevatorCommand extends AutoCommand {
     public void done() {
         super.done();
         Robot.runningAutoAlign = false;
-        System.out.println("Auto Score Mode Completed!");
+        System.out.println("Auto Score Command Completed!");
     }
 }
