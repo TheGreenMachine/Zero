@@ -14,6 +14,9 @@ public class PathFinder {
     private Translation2d robot;
     private List<Polygon> obstacles;
 
+    private List<Translation2d> points = new ArrayList<>(); // static optimization
+    private Map<Translation2d, Node> nodeMap = new HashMap<>(); // static optimization
+
     /**
      * Initializes the PathFinder using cartesian poses of the target, robot, and grown obstacles
      *
@@ -25,6 +28,28 @@ public class PathFinder {
         this.target = target;
         this.robot = robot;
         this.obstacles = obstacles;
+
+        for (Polygon obstacle : obstacles) {
+            points.addAll(obstacle.getVertices());
+            for (Translation2d v: obstacle.getVertices()) {
+                Node n = new Node(v);
+                nodeMap.put(v, n);
+            }
+        }
+        // static visibility graph
+        for (Translation2d i : points) { // initial
+            for (Translation2d f : points) { // final
+                a: if (!i.equals(f)) {
+                    // checks if line segment intersects the polygons
+                    for (Polygon o : obstacles) {  // n^2log(n)
+                        if (o.intersects(i, f)) {
+                            break a;
+                        }
+                    }
+                    nodeMap.get(i).addNeighbor(nodeMap.get(f));
+                }
+            }
+        }
     }
 
     /**
@@ -36,10 +61,8 @@ public class PathFinder {
         List<Pose2d> waypoints = new ArrayList<>(); // returned for pathing
 
         List<Translation2d> points = new ArrayList<>(); // used for visibility graph
-        Map<Translation2d, Node> nodeMap = new HashMap<>(); // used for visibility graph
+        Map<Translation2d, Node> nodeMap = this.nodeMap; // used for visibility graph
 
-        Map<Translation2d[], Double> cost = new HashMap<>(); // used for dijkstra's algorithm
-        Map<Translation2d, Double> distanceHeuristic = new HashMap<>(); // used for dijkstra's algorithm
         List<Translation2d> shortestPath = new ArrayList<>(); // used for dijkstra's algorithm
 
         // Populates list of points and nodes
@@ -49,44 +72,36 @@ public class PathFinder {
         points.add(robot);
         Node r = new Node(robot);
         nodeMap.put(robot, r);
-        for (Polygon obstacle : obstacles) {
-            points.addAll(obstacle.getVertices());
-            for (Translation2d v: obstacle.getVertices()) {
-                Node n = new Node(v);
-                nodeMap.put(v, n);
-            }
-        }
         // Generate the visibility graph
         for (Translation2d i : points) { // initial
-            for (Translation2d f : points) { // final
-                if (!i.equals(f)) {
-                    // declares line segment as Line2D
-                    boolean intersected = false;
-
+            for (Translation2d f : nodeMap.keySet()) { // final
+                a: if (!i.equals(f)) {
                     // checks if line segment intersects the polygons
                     for (Polygon o : obstacles) {  // n^2log(n)
                         if (o.intersects(i, f)) {
-                            intersected = true;
-                            break;
+                            break a;
                         }
                     }
-                    if (!intersected) {
-                        nodeMap.get(i).addNeighbor(nodeMap.get(f));
-                    }
+                    nodeMap.get(i).addNeighbor(nodeMap.get(f));
                 }
             }
         }
-        // Determine distance heuristic and neighbor cost for each node
-        for (Translation2d p : nodeMap.keySet()) {
-            nodeMap.get(p).calculateNeighborCost();
-            nodeMap.get(p).calculateDistanceHeuristic(t);
+        if (r.hasNeighbor(t)) { // Heuristic optimization: Direct path exists
+            shortestPath.add(t.value);
+            shortestPath.add(r.value);
+        } else {
+            // Determine distance heuristic and neighbor cost for each node
+            for (Translation2d p : nodeMap.keySet()) {
+                nodeMap.get(p).calculateNeighborCost();
+                nodeMap.get(p).calculateDistanceHeuristic(t);
+            }
+
+            // Dijkstra / A* for the shortest path
+            Queue<Node> curNodes = new PriorityQueue<Node>();
+            curNodes.add(r);
+            // TODO: re-complete
+
         }
-
-        // Dijkstra / A* for the shortest path
-        Queue<Node> curNodes = new PriorityQueue<Node>();
-        // TODO: re-complete
-
-
         // Append waypoints (shortestPath in reverse)
         for (int i = shortestPath.size() - 1; i > 0; i--) {
             // look ahead to determine heading
