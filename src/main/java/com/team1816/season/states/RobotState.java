@@ -2,6 +2,8 @@ package com.team1816.season.states;
 
 import com.google.inject.Singleton;
 import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.PathFinder;
+import com.team1816.lib.auto.Polygon;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
@@ -56,6 +58,27 @@ public class RobotState {
     public Collector.PIVOT_STATE actualCollectorPivotState = Collector.PIVOT_STATE.STOW;
     public Collector.GAME_ELEMENT actualGameElement = Collector.GAME_ELEMENT.CUBE;
     public List<VisionPoint> visibleTargets = new ArrayList<>();
+
+    /**
+     * Functional pathing states
+     */
+    public PathFinder pathFinder = new PathFinder(
+        List.of( // static and dynamic obstacles
+            new Polygon(
+                new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMax),
+                new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMax),
+                new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMin),
+                new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMin)
+            ), // red charge station
+            new Polygon(
+                new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMax),
+                new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax),
+                new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin),
+                new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin)
+            ) // blue charge station        )
+        )
+    );
+
 
     /**
      * Initializes RobotState and field

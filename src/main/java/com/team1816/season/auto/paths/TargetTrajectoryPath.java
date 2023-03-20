@@ -21,56 +21,24 @@ public class TargetTrajectoryPath extends AutoPath {
 
     public static RobotState robotState;
     private static Pose2d target;
-    private PathFinder pathFinder;
+    private final PathFinder pathFinder;
 
     public TargetTrajectoryPath(Pose2d pose) {
         robotState = Injector.get(RobotState.class);
         target = pose;
 
-        List<Polygon> obstacles = new ArrayList<>();
-        var obstacle1 =
-            new Polygon(
-                new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMax),
-                new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMax),
-                new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMin),
-                new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMin)
-            ); // red charge station
-        var obstacle2 =
-            new Polygon(
-                new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMax),
-                new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax),
-                new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin),
-                new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin)
-            ); // blue charge station
-        obstacles.add(obstacle1);
-        obstacles.add(obstacle2);
-
-        pathFinder = new PathFinder(target, robotState.fieldToVehicle.getTranslation(), obstacles);
+        pathFinder = robotState.pathFinder;
+        pathFinder.setRobot(robotState.fieldToVehicle);
+        pathFinder.setTarget(target);
     }
 
     public TargetTrajectoryPath() {
         robotState = Injector.get(RobotState.class);
         new TargetTrajectoryPath(robotState.target);
 
-        List<Polygon> obstacles = new ArrayList<>();
-        var obstacle1 =
-            new Polygon(
-                new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMax),
-                new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMax),
-                new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMin),
-                new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMin)
-            ); // red charge station
-        var obstacle2 =
-            new Polygon(
-                new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMax),
-                new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax),
-                new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin),
-                new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin)
-            ); // blue charge station
-        obstacles.add(obstacle1);
-        obstacles.add(obstacle2);
-
-        pathFinder = new PathFinder(target, robotState.fieldToVehicle.getTranslation(), obstacles);
+        pathFinder = robotState.pathFinder;
+        pathFinder.setRobot(robotState.fieldToVehicle);
+        pathFinder.setTarget(target);
     }
 
     @Override

@@ -20,6 +20,38 @@ public class PathFinder {
     /**
      * Initializes the PathFinder using cartesian poses of the target, robot, and grown obstacles
      *
+     * @param obstacles - grown obstacles
+     */
+    public PathFinder(List<Polygon> obstacles) {
+        this.obstacles = obstacles;
+
+        for (Polygon obstacle : obstacles) {
+            points.addAll(obstacle.getVertices());
+            for (Translation2d v : obstacle.getVertices()) {
+                Node n = new Node(v);
+                nodeMap.put(v, n);
+            }
+        }
+        // static visibility graph
+        for (Translation2d i : points) { // initial
+            for (Translation2d f : points) { // final
+                a:
+                if (!i.equals(f)) {
+                    // checks if line segment intersects the polygons
+                    for (Polygon o : obstacles) {  // n^2log(n)
+                        if (o.intersects(i, f)) {
+                            break a;
+                        }
+                    }
+                    nodeMap.get(i).addNeighbor(nodeMap.get(f));
+                }
+            }
+        }
+    }
+
+    /**
+     * Initializes the PathFinder using cartesian poses of the target, robot, and grown obstacles
+     *
      * @param target    - target
      * @param robot     - current
      * @param obstacles - grown obstacles
