@@ -275,9 +275,15 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
                     ),
-                    createHoldAction(
+//                    createHoldAction(
+//                        () -> controlBoard.getAsBool("midSlowMode"),
+//                        drive::setMidSlowMode
+//                    ),
+                    createAction(
                         () -> controlBoard.getAsBool("midSlowMode"),
-                        drive::setMidSlowMode
+                        () -> {
+                            drive.setMidSlowMode(!drive.getMidSlowMode());
+                        }
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("autoBalance"),
