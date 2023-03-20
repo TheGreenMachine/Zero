@@ -2,6 +2,8 @@ package com.team1816.season.states;
 
 import com.google.inject.Singleton;
 import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.PathFinder;
+import com.team1816.lib.auto.Polygon;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
@@ -52,8 +54,16 @@ public class RobotState {
     public Elevator.EXTENSION_STATE actualElevatorExtensionState = Elevator.EXTENSION_STATE.MIN;
     public Elevator.ANGLE_STATE actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
 
-    public Collector.STATE actualCollectorState = Collector.STATE.STOP;
+    public Collector.ROLLER_STATE actualCollectorRollerState = Collector.ROLLER_STATE.STOP;
+    public Collector.PIVOT_STATE actualCollectorPivotState = Collector.PIVOT_STATE.STOW;
+    public Collector.GAME_ELEMENT actualGameElement = Collector.GAME_ELEMENT.CUBE;
     public List<VisionPoint> visibleTargets = new ArrayList<>();
+
+    /**
+     * Functional pathing states
+     */
+    public PathFinder pathFinder = new PathFinder();
+
 
     /**
      * Initializes RobotState and field
@@ -104,7 +114,8 @@ public class RobotState {
         triAxialAcceleration = new Double[]{0d, 0d, 0d};
         actualElevatorAngleState = Elevator.ANGLE_STATE.STOW;
         actualElevatorExtensionState = Elevator.EXTENSION_STATE.MIN;
-        actualCollectorState = Collector.STATE.STOP;
+        actualCollectorRollerState = Collector.ROLLER_STATE.STOP;
+        actualCollectorPivotState = Collector.PIVOT_STATE.STOW;
         isPoseUpdated = true;
         visibleTargets.clear();
         drivetrainTemp = 0;

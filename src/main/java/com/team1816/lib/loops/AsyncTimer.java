@@ -63,7 +63,9 @@ public class AsyncTimer {
         } else {
             if (Timer.getFPGATimestamp() >= startTime + duration) {
                 completed = true;
-                endAction.run();
+                if (endAction != null) {
+                    endAction.run();
+                }
             }
         }
     }

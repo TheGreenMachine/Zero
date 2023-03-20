@@ -1,8 +1,10 @@
 package com.team1816.season.auto;
 
 import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.PathFinder;
 import com.team1816.lib.auto.modes.*;
 import com.team1816.season.auto.modes.*;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -10,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.List;
 
 /**
  * An integrated and optimized manager for autonomous mode selection and configuration
@@ -105,6 +108,12 @@ public class AutoModeManager {
         desiredColor = selectedColor;
         robotState.allianceColor = desiredColor;
 
+        if (robotState.allianceColor == Color.BLUE)  {
+            robotState.pathFinder = new PathFinder(List.of(Constants.blueChargeStation));
+        } else {
+            robotState.pathFinder = new PathFinder(List.of(Constants.redChargeStation));
+        }
+
         return autoChanged || colorChanged;
     }
 
@@ -169,7 +178,8 @@ public class AutoModeManager {
 
         // 2023
         PLACE_CONE,
-        EXIT_COMMUNITY,
+        PLACE_CUBE,
+        PLACE_CONE_EXIT_COMMUNITY,
         EXIT_BALANCE_FEEDER,
         EXIT_BALANCE_MIDDLE,
         EXIT_BALANCE_WALL,
@@ -178,6 +188,7 @@ public class AutoModeManager {
         PLACE_CONE_AUTO_BALANCE_FEEDER,
         PLACE_CONE_AUTO_BALANCE_MIDDLE,
         PLACE_CONE_AUTO_BALANCE_WALL,
+
         DOUBLE_CONE_FEEDER,
         DOUBLE_CONE_WALL
     }
@@ -193,14 +204,16 @@ public class AutoModeManager {
         switch (mode) {
             case DO_NOTHING:
                 return new DoNothingMode();
-            case TUNE_DRIVETRAIN:
+            case TUNE_DRIVETRAIN: // comented for competition purposes
                 return new TuneDrivetrainMode();
             case LIVING_ROOM:
                 return (new LivingRoomMode(color));
-            case EXIT_COMMUNITY:
-                return (new NodeToExitCommunityMode(color));
+            case PLACE_CONE_EXIT_COMMUNITY:
+                return (new PlaceConeExitCommunityMode(color));
             case PLACE_CONE:
                 return (new PlaceConeMode());
+            case PLACE_CUBE:
+                return (new PlaceCubeMode());
             case EXIT_BALANCE_FEEDER:
                 return (new ExitCommunityBalanceFeederMode(color));
             case EXIT_BALANCE_MIDDLE:

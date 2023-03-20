@@ -56,6 +56,13 @@ public class Infrastructure {
     }
 
     /**
+     * Returns the input voltage / bus voltage
+     */
+    public double getBusVoltage() {
+        return pd.getVoltage();
+    }
+
+    /**
      * Starts the compressor. Not used now because the compressor turns on by default once the robot is enabled.
      */
     public void startCompressor() {

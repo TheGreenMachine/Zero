@@ -2,7 +2,6 @@ package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.Color;
-import com.team1816.lib.auto.actions.ParallelAction;
 import com.team1816.lib.auto.actions.SeriesAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
@@ -51,24 +50,27 @@ public class DoublePlaceConeFeederMode extends AutoMode {
         System.out.println("Running Double Place Cone Mode");
         runAction(
             new SeriesAction(
-                new ScoreAction(false, Elevator.EXTENSION_STATE.MAX),
-                new WaitAction(0.5),
-                new ParallelAction(
-                    trajectoryActions.get(0),
+                new SeriesAction(
+                    new WaitAction(.05),
+                    new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
                     new SeriesAction(
-                        new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
-                        new CollectAction(Collector.STATE.INTAKE_CONE),
                         new WaitAction(3),
-                        new CollectAction(Collector.STATE.STOP)
+                        trajectoryActions.get(0)
                     )
+                ),
+                new WaitAction(0.5),
+                new SeriesAction(
+                    new WaitAction(1.3),
+                    new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
+                    new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR),
+                    new WaitAction(3),
+                    new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW)
                 ),
                 trajectoryActions.get(1),
                 new WaitAction(0.25),
-                new ScoreAction(false, Elevator.EXTENSION_STATE.MAX),
+                new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
                 new WaitAction(0.5)
             )
         );
     }
-
-
 }

@@ -2,6 +2,7 @@ package com.team1816.season.auto.paths;
 
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.PathFinder;
 import com.team1816.lib.auto.paths.AutoPath;
 import com.team1816.lib.auto.paths.PathUtil;
 import com.team1816.season.configuration.Constants;
@@ -15,24 +16,43 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrajectoryToTargetPath extends AutoPath {
+public class TargetTrajectoryPath extends AutoPath {
 
     public static RobotState robotState;
     private static Pose2d target;
+    private PathFinder pathFinder;
 
-    public TrajectoryToTargetPath(Pose2d pose) {
+    public TargetTrajectoryPath(Pose2d pose) {
         robotState = Injector.get(RobotState.class);
         target = pose;
+
+        pathFinder = robotState.pathFinder;
+        pathFinder.setRobot(robotState.fieldToVehicle);
+        pathFinder.setTarget(target);
     }
 
-    public TrajectoryToTargetPath() {
+    public TargetTrajectoryPath() {
         robotState = Injector.get(RobotState.class);
-        new TrajectoryToTargetPath(robotState.target);
+        new TargetTrajectoryPath(robotState.target);
+
+//        pathFinder = robotState.pathFinder;
+//        pathFinder.setRobot(robotState.fieldToVehicle);
+//        pathFinder.setTarget(target);
     }
 
     @Override
-    protected List<Pose2d> getWaypoints() {
+    protected List<Pose2d> getWaypoints() { // A* accelerated path routing
         List<Pose2d> waypoints = new ArrayList<>();
+
+        try {
+            waypoints = pathFinder.getWaypoints();
+            if (waypoints.size() > 1) {
+                return waypoints;
+            } else {
+                waypoints.clear();
+            }
+        } catch (Exception ignored) {}
+
         if (
             (target.getY() > Constants.chargeStationThresholdYMin && target.getY() < Constants.chargeStationThresholdYMax) &&
                 (robotState.fieldToVehicle.getY() > Constants.chargeStationThresholdYMin && robotState.fieldToVehicle.getY() < Constants.chargeStationThresholdYMax)
@@ -181,6 +201,7 @@ public class TrajectoryToTargetPath extends AutoPath {
             waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
         }
         waypoints.add(target);
+
         return waypoints;
     }
 

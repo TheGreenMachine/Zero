@@ -5,6 +5,9 @@
         "header": {
           "open": true
         }
+      },
+      "window": {
+        "visible": false
       }
     }
   },
@@ -77,6 +80,7 @@
       "/SmartDashboard/Alliance color": "String Chooser",
       "/SmartDashboard/Auto mode": "String Chooser",
       "/SmartDashboard/Demo Mode": "String Chooser",
+      "/SmartDashboard/Elevator Mech 2D": "Mechanism2d",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Robot color": "String Chooser",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
@@ -86,6 +90,11 @@
     },
     "windows": {
       "/SmartDashboard/Auto mode": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Elevator Mech 2D": {
         "window": {
           "visible": true
         }
@@ -174,6 +183,9 @@
     },
     "Shuffleboard": {
       "Shuffleboard": {
+        "open": true
+      },
+      "Simulation": {
         "open": true
       },
       "open": true

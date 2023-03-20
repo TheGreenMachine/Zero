@@ -1,17 +1,13 @@
 package com.team1816.lib.subsystems;
 
-import badlog.lib.BadLog;
 import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.season.Robot;
-import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-
-import java.util.function.Supplier;
 
 /**
  * The Subsystem abstract class, which serves as a basic framework for all robot subsystems. Each subsystem outputs
@@ -90,37 +86,6 @@ public abstract class Subsystem implements Sendable {
      * @return true if tests passed
      */
     public abstract boolean testSubsystem();
-
-    /**
-     * Creates a BadLog topic for the subsystem
-     *
-     * @param topicName String
-     * @param unit      String
-     * @param supplier  Supplier
-     * @param attrs     String Attributes
-     */
-    public void createBadLogTopic(
-        String topicName,
-        String unit,
-        Supplier<Double> supplier,
-        String... attrs
-    ) {
-        if (factory.getSubsystem(name).implemented && Constants.kIsBadlogEnabled) {
-            BadLog.createTopic(topicName, unit, supplier, attrs);
-        }
-    }
-
-    /**
-     * Creates a BadLog value for the subsystem
-     *
-     * @param badLogName String
-     * @param value      String
-     */
-    public void createBadLogValue(String badLogName, String value) {
-        if (factory.getSubsystem(name).implemented && Constants.kIsBadlogEnabled) {
-            BadLog.createValue(badLogName, value);
-        }
-    }
 
     /**
      * Initializes a SmartDashboard / ShuffleBoard SendableBuilder to convey subsystem information

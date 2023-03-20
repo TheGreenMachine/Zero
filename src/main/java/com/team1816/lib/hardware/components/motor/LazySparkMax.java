@@ -72,6 +72,7 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public void setNeutralMode(NeutralMode neutralMode) {
+        motor.setIdleMode(neutralMode == NeutralMode.Brake ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast);
     }
 
     @Override
@@ -227,7 +228,7 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public double getSelectedSensorVelocity(int pidIdx) {
-        return encoder.getCountsPerRevolution();
+        return encoder.getVelocity();
     } // RPM
 
     @Override
@@ -603,7 +604,8 @@ public class LazySparkMax implements IGreenMotor {
         SupplyCurrentLimitConfiguration currLimitCfg,
         int timeoutMs
     ) {
-        return null;
+        motor.setSmartCurrentLimit((int) currLimitCfg.currentLimit);
+        return ErrorCode.OK;
     }
 
     @Override

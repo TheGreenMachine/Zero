@@ -1,6 +1,7 @@
 package com.team1816.season.configuration;
 
 import com.google.inject.Singleton;
+import com.team1816.lib.auto.Polygon;
 import com.team1816.lib.auto.Symmetry;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.season.Robot;
@@ -84,7 +85,7 @@ public class Constants {
     /**
      * Elevator characterization
      */
-    public static final double maxElevatorFeedForward = 0.05;
+    public static final double maxArmFeedForward = 0.075;
 
     /**
      * Camera characterization
@@ -92,13 +93,8 @@ public class Constants {
     public static final double kCameraMountingAngleY = 20; // degrees
     public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters
 
-    /**
-     * Badlog characterization
-     */
-    public static boolean kIsBadlogEnabled = factory.getConstant("badLogEnabled") > 0;
-    public static boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0 && kIsBadlogEnabled;
-    public static boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0 && kIsBadlogEnabled;
-    public static boolean kIsLoggingDrivetrain = factory.getConstant("logDrivetrain") > 0;
+    public static boolean kLoggingRobot = factory.getConstant("logRobot") > 0;
+    public static boolean kIsLoggingDrivetrain = factory.getConstant("logDrivetrain") > 0 && kLoggingRobot;
 
     public final boolean kUsePoseTrack =
         factory.getConstant("shooter", "usingPoseForSpeed", 0) > 0;
@@ -112,5 +108,24 @@ public class Constants {
     public static final double autoBalanceThresholdDegrees = factory.getConstant("drivetrain", "autoBalanceThreshold", 2);
     public static final double autoBalanceDivider = factory.getConstant("drivetrain", "autoBalanceDivider", 30);
 
+    /**
+     * Pathfinder characterization
+     */
+    public static final Polygon blueChargeStation = new Polygon(
+        new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMax),
+        new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax),
+        new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin),
+        new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin)
+    );
+    public static final Polygon redChargeStation = new Polygon(
+        new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMax),
+        new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMax),
+        new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMin),
+        new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMin)
+    );
+
+    /**
+     * Simulation
+     */
     public static final ShuffleboardTab kSimWindow = Shuffleboard.getTab("Simulation");
 }

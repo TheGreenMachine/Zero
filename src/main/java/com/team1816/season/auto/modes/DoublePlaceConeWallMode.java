@@ -7,6 +7,7 @@ import com.team1816.lib.auto.actions.SeriesAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
+import com.team1816.season.auto.actions.AlignAction;
 import com.team1816.season.auto.actions.CollectAction;
 import com.team1816.season.auto.actions.ElevatorAction;
 import com.team1816.season.auto.actions.ScoreAction;
@@ -45,25 +46,46 @@ public class DoublePlaceConeWallMode extends AutoMode {
         );
     }
 
+
     @Override
     protected void routine() throws AutoModeEndedException {
         System.out.println("Running Double Place Cone Mode");
         runAction(
             new SeriesAction(
-                new ScoreAction(false, Elevator.EXTENSION_STATE.MAX),
-                new WaitAction(0.5),
-                new ParallelAction(
-                    trajectoryActions.get(0),
-                    new SeriesAction(
-                        new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
-                        new CollectAction(Collector.STATE.INTAKE_CONE),
-                        new WaitAction(3),
-                        new CollectAction(Collector.STATE.STOP)
+                // placing first cone
+                new SeriesAction(
+                    new WaitAction(.05),
+                    new ParallelAction(
+                        new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
+                        new SeriesAction(
+                            new WaitAction(3),
+                            new ParallelAction(
+                                trajectoryActions.get(0),
+                                new SeriesAction(
+                                    new WaitAction(1),
+                                    new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN)
+                                )
+                            )
+                        )
                     )
                 ),
-                trajectoryActions.get(1),
+                // collecting second cone
+                new SeriesAction(
+                    new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
+                    new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR),
+                    new WaitAction(1)
+                ),
+                // aligning
+                new ParallelAction(
+                    trajectoryActions.get(1),
+                    new SeriesAction(
+                        new WaitAction(1),
+                        new AlignAction(Elevator.EXTENSION_STATE.MAX, Elevator.EXTENSION_STATE.MIN.getExtension(), Elevator.EXTENSION_STATE.MID.getExtension())
+                    )
+                ),
+                // scoring second cone
                 new WaitAction(0.25),
-                new ScoreAction(false, Elevator.EXTENSION_STATE.MAX),
+                new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
                 new WaitAction(0.5)
             )
         );

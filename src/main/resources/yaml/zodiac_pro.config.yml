@@ -164,9 +164,8 @@ constants:
     # drivetrain misc
     maxAllowablePoseError: 0.1
     ## Logging ##
-    logTeleOp: 1 # 0 or 1
-    logAuto: 1 # 0 or 1
-    badLogEnabled: 1 # 0 or 1
+    logRobot: 0
+    logDrivetrain: 0 # 0 or 1
     configStatusFrames: 0 # 0 or 1
     verbose: 0 # 0 or 1
     ## General ##

@@ -19,7 +19,7 @@ public class ConeToNodeWallPath extends AutoPath {
     @Override
     protected List<Pose2d> getWaypoints() {
         return List.of(
-            new Pose2d(7.2, 1.10, Rotation2d.fromDegrees(180)),
+            new Pose2d(6.2, 1.30, Rotation2d.fromDegrees(180)),
             new Pose2d(2.9, 0.61, Rotation2d.fromDegrees(180)),
             new Pose2d(1.7, 2.05, Rotation2d.fromDegrees(180))
         );

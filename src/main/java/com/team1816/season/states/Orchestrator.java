@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.Timer;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -71,24 +70,6 @@ public class Orchestrator {
     /**
      * Actions
      */
-    public void autoScore() {
-        System.out.println("Executing Auto Score Sequence!");
-        if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE || elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SCORE_DIP) {
-            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE_DIP);
-            elevator.writeToHardware();
-            Timer.delay(0.10);
-            collector.outtakeGamePiece(true);
-            collector.writeToHardware();
-            Timer.delay(0.25);
-            collector.outtakeGamePiece(false);
-            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SCORE);
-            Timer.delay(0.25);
-            elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
-            elevator.writeToHardware();
-            Timer.delay(0.75);
-            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
-        }
-    }
 
     /** Superseded Odometry Handling */
 
