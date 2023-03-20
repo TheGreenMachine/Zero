@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.geom.Line2D;
 import java.util.*;
 
 /**
@@ -60,16 +59,13 @@ public class PathFinder {
         // Generate the visibility graph
         for (Translation2d i : points) { // initial
             for (Translation2d f : points) { // final
-                if (i.equals(f)) {
-                    continue;
-                } else {
+                if (!i.equals(f)) {
                     // declares line segment as Line2D
                     boolean intersected = false;
-                    Line2D edge = new Line2D.Double(i.getX(), i.getY(), f.getX(), f.getY());
 
                     // checks if line segment intersects the polygons
                     for (Polygon o : obstacles) {  // n^2log(n)
-                        if (o.intersects(edge)) {
+                        if (o.intersects(i, f)) {
                             intersected = true;
                             break;
                         }
@@ -118,7 +114,6 @@ public class PathFinder {
          * Base constructor to initialize a node
          */
         public Node() {
-
         }
 
         /**
@@ -230,5 +225,4 @@ public class PathFinder {
             return Double.compare(((Node) o).cost + ((Node) o).heuristic, this.cost + this.heuristic);
         }
     }
-
 }
