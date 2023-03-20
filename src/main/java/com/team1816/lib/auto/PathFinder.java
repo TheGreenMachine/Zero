@@ -37,17 +37,25 @@ public class PathFinder {
         List<Pose2d> waypoints = new ArrayList<>(); // returned for pathing
 
         List<Translation2d> points = new ArrayList<>(); // used for visibility graph
-        List<Translation2d[]> edges = new ArrayList<>(); // used for visibility graph
+        Map<Translation2d, Node> nodeMap = new HashMap<>(); // used for visibility graph
 
         Map<Translation2d[], Double> cost = new HashMap<>(); // used for dijkstra's algorithm
         Map<Translation2d, Double> distanceHeuristic = new HashMap<>(); // used for dijkstra's algorithm
         List<Translation2d> shortestPath = new ArrayList<>(); // used for dijkstra's algorithm
 
-        // Populate the points
+        // Populates list of points and nodes
         points.add(target.getTranslation());
+        Node t = new Node(target.getTranslation());
+        nodeMap.put(target.getTranslation(), t);
         points.add(robot);
+        Node r = new Node(robot);
+        nodeMap.put(robot, r);
         for (Polygon obstacle : obstacles) {
             points.addAll(obstacle.getVertices());
+            for (Translation2d v: obstacle.getVertices()) {
+                Node n = new Node(v);
+                nodeMap.put(v, n);
+            }
         }
         // Generate the visibility graph
         for (Translation2d i : points) { // initial
@@ -67,22 +75,21 @@ public class PathFinder {
                         }
                     }
                     if (!intersected) {
-                        edges.add(new Translation2d[]{i, f});
+                        nodeMap.get(i).addNeighbor(nodeMap.get(f));
                     }
                 }
             }
         }
-        // Determine linear cost
-        for (int i = 0; i < edges.size(); i++) {
-            cost.put(edges.get(i), edges.get(i)[0].getDistance(edges.get(i)[1]));
+        // Determine distance heuristic and neighbor cost for each node
+        for (Translation2d p : nodeMap.keySet()) {
+            nodeMap.get(p).calculateNeighborCost();
+            nodeMap.get(p).calculateDistanceHeuristic(t);
         }
-        // Determine distance heuristic
-        for (int i = 0; i < points.size(); i++) {
-            distanceHeuristic.put(points.get(i), points.get(i).getDistance(target.getTranslation()));
-        }
+
         // Dijkstra / A* for the shortest path
         Queue<Node> openNodes = new PriorityQueue<Node>();
         // TODO: re-complete
+
 
         // Append waypoints (shortestPath in reverse)
         for (int i = shortestPath.size() - 1; i > 0; i--) {
@@ -95,13 +102,42 @@ public class PathFinder {
     }
 
     public static class Node implements Comparable {
+        // A-star properties
         public Translation2d value;
-        public double cost; // lowest total cost to get to this node
-
-        public ArrayList<Node> neighbors;
-        public HashMap<Node, Double> neighborCost;
+        public double cost; // cost from start node
         public double heuristic;
 
+        // Graph properties
+        public List<Node> neighbors = new ArrayList<>();
+        public Map<Node, Double> neighborCost = new HashMap<>();
+
+        // Tree properties
+        public Node previous; // null for start node at the end
+
+        /**
+         * Base constructor to initialize a node
+         */
+        public Node() {
+
+        }
+
+        /**
+         * Base constructor to initialize a node
+         */
+        public Node(Translation2d value) {
+            this.value = value;
+        }
+
+        /**
+         * Base constructor to initialize a node
+         */
+        public Node(Translation2d value, double cost, double heuristic, ArrayList<Node> neighbors, HashMap<Node, Double> neighborCost) {
+            this.value = value;
+            this.cost = cost;
+            this.heuristic = heuristic;
+            this.neighbors = neighbors;
+            this.neighborCost = neighborCost;
+        }
 
         /**
          * Calculates cost of all neighbors based on euclidian distance metric
@@ -110,6 +146,13 @@ public class PathFinder {
             for (Node n: neighbors) {
                 neighborCost.put(n, n.value.getDistance(this.value));
             }
+        }
+
+        /**
+         * Calculates euclidean distance metric to another node
+         */
+        public void calculateDistanceHeuristic(Node n) {
+            this.heuristic = this.value.getDistance(n.value);
         }
 
         /**
@@ -124,7 +167,7 @@ public class PathFinder {
          *
          * @return neighbors
          */
-        public ArrayList<Node> getNeighbors() {
+        public List<Node> getNeighbors() {
             return neighbors;
         }
 
@@ -133,7 +176,7 @@ public class PathFinder {
          *
          * @return neighborCost
          */
-        public HashMap<Node, Double> getNeighborCost() {
+        public Map<Node, Double> getNeighborCost() {
             return neighborCost;
         }
 
@@ -180,7 +223,7 @@ public class PathFinder {
          * Compares this node to another node, positive if favorable
          *
          * @param o other node
-         * @return
+         * @return compared value
          */
         @Override
         public int compareTo(@NotNull Object o) {
