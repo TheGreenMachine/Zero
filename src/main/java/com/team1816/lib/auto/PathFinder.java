@@ -31,7 +31,7 @@ public class PathFinder {
 
         for (Polygon obstacle : obstacles) {
             points.addAll(obstacle.getVertices());
-            for (Translation2d v: obstacle.getVertices()) {
+            for (Translation2d v : obstacle.getVertices()) {
                 Node n = new Node(v);
                 nodeMap.put(v, n);
             }
@@ -39,7 +39,8 @@ public class PathFinder {
         // static visibility graph
         for (Translation2d i : points) { // initial
             for (Translation2d f : points) { // final
-                a: if (!i.equals(f)) {
+                a:
+                if (!i.equals(f)) {
                     // checks if line segment intersects the polygons
                     for (Polygon o : obstacles) {  // n^2log(n)
                         if (o.intersects(i, f)) {
@@ -75,14 +76,16 @@ public class PathFinder {
         // Generate the visibility graph
         for (Translation2d i : points) { // initial
             for (Translation2d f : nodeMap.keySet()) { // final
-                a: if (!i.equals(f)) {
+                a:
+                if (!i.equals(f)) {
                     // checks if line segment intersects the polygons
                     for (Polygon o : obstacles) {  // n^2log(n)
                         if (o.intersects(i, f)) {
                             break a;
                         }
                     }
-                    nodeMap.get(i).addNeighbor(nodeMap.get(f));
+                    nodeMap.get(i).addNeighbor(nodeMap.get(f)); // two-way non-overwritten connection
+                    nodeMap.get(f).addNeighbor(nodeMap.get(i)); // two-way non-overwritten connection
                 }
             }
         }
@@ -153,7 +156,7 @@ public class PathFinder {
          * Calculates cost of all neighbors based on euclidian distance metric
          */
         public void calculateNeighborCost() {
-            for (Node n: neighbors) {
+            for (Node n : neighbors) {
                 neighborCost.put(n, n.value.getDistance(this.value));
             }
         }
