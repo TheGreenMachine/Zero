@@ -69,8 +69,16 @@ public class Polygon {
                 return false;
             }
         }
-        double xIncrement = 0.01 * Math.signum(p2.getX() - p1.getX()); // approximate resolution to check slopes NOTE: might need to reduce resolution for finer calculations
-        double yIncrement = (p2.getY() - p1.getY()) / (p2.getX() - p1.getX()) * Math.abs(xIncrement) * Math.signum(p2.getY() - p1.getY());
+
+        double xIncrement, yIncrement;
+
+        if (Math.abs(p2.getX()-p1.getX()) < Math.abs(p2.getY() - p1.getY())) {
+            xIncrement = 0.01 * Math.signum(p2.getX() - p1.getX()); // approximate resolution to check slopes NOTE: might need to reduce resolution for finer calculations
+            yIncrement = (p2.getY() - p1.getY()) / (p2.getX() - p1.getX()) * Math.abs(xIncrement) * Math.signum(p2.getY() - p1.getY());
+        } else {
+            yIncrement = 0.01 * Math.signum(p2.getY() - p1.getY()); // approximate resolution to check slopes NOTE: might need to reduce resolution for finer calculations
+            xIncrement = (p2.getX() - p1.getX()) / (p2.getY() - p1.getY()) * Math.abs(yIncrement) * Math.signum(p2.getX() - p1.getX());
+        }
 
         for (int i = 0; i < Math.max(Math.abs((p2.getX() - p1.getX()) / (2 * xIncrement)), Math.abs((p2.getY() - p1.getY()) / (2 * yIncrement))); i++) {
             if (

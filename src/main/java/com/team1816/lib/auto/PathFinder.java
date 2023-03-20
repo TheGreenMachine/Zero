@@ -115,6 +115,14 @@ public class PathFinder {
         return waypoints;
     }
 
+    public void setRobot(Pose2d robot) {
+        this.robot = robot.getTranslation();
+    }
+
+    public void setTarget(Pose2d target) {
+        this.target = target;
+    }
+
     public static class Node implements Comparable {
         // A-star properties
         public Translation2d value;
