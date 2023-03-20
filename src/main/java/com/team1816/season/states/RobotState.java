@@ -62,22 +62,7 @@ public class RobotState {
     /**
      * Functional pathing states
      */
-    public PathFinder pathFinder = new PathFinder(
-        List.of( // static and dynamic obstacles
-            new Polygon(
-                new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMax),
-                new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMax),
-                new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMin),
-                new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMin)
-            ), // red charge station
-            new Polygon(
-                new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMax),
-                new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax),
-                new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin),
-                new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin)
-            ) // blue charge station        )
-        )
-    );
+    public PathFinder pathFinder = new PathFinder();
 
 
     /**

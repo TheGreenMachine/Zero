@@ -3,7 +3,6 @@ package com.team1816.season.auto.paths;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.PathFinder;
-import com.team1816.lib.auto.Polygon;
 import com.team1816.lib.auto.paths.AutoPath;
 import com.team1816.lib.auto.paths.PathUtil;
 import com.team1816.season.configuration.Constants;
@@ -21,7 +20,7 @@ public class TargetTrajectoryPath extends AutoPath {
 
     public static RobotState robotState;
     private static Pose2d target;
-    private final PathFinder pathFinder;
+    private PathFinder pathFinder;
 
     public TargetTrajectoryPath(Pose2d pose) {
         robotState = Injector.get(RobotState.class);
@@ -36,9 +35,9 @@ public class TargetTrajectoryPath extends AutoPath {
         robotState = Injector.get(RobotState.class);
         new TargetTrajectoryPath(robotState.target);
 
-        pathFinder = robotState.pathFinder;
-        pathFinder.setRobot(robotState.fieldToVehicle);
-        pathFinder.setTarget(target);
+//        pathFinder = robotState.pathFinder;
+//        pathFinder.setRobot(robotState.fieldToVehicle);
+//        pathFinder.setTarget(target);
     }
 
     @Override
@@ -46,9 +45,11 @@ public class TargetTrajectoryPath extends AutoPath {
         List<Pose2d> waypoints = new ArrayList<>();
 
         try {
-            List<Pose2d> pfWaypoints = pathFinder.getWaypoints();
-            if (pfWaypoints.size() > 1) {
-                return pathFinder.getWaypoints();
+            waypoints = pathFinder.getWaypoints();
+            if (waypoints.size() > 1) {
+                return waypoints;
+            } else {
+                waypoints.clear();
             }
         } catch (Exception ignored) {}
 

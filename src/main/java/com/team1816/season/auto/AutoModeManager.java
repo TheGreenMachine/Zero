@@ -1,8 +1,10 @@
 package com.team1816.season.auto;
 
 import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.PathFinder;
 import com.team1816.lib.auto.modes.*;
 import com.team1816.season.auto.modes.*;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -10,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.List;
 
 /**
  * An integrated and optimized manager for autonomous mode selection and configuration
@@ -104,6 +107,12 @@ public class AutoModeManager {
         desiredAuto = selectedAuto;
         desiredColor = selectedColor;
         robotState.allianceColor = desiredColor;
+
+        if (robotState.allianceColor == Color.BLUE)  {
+            robotState.pathFinder = new PathFinder(List.of(Constants.blueChargeStation));
+        } else {
+            robotState.pathFinder = new PathFinder(List.of(Constants.redChargeStation));
+        }
 
         return autoChanged || colorChanged;
     }

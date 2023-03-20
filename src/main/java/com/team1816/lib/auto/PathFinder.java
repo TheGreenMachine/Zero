@@ -12,10 +12,19 @@ import java.util.*;
 public class PathFinder {
     private Pose2d target;
     private Translation2d robot;
-    private List<Polygon> obstacles;
+    private final List<Polygon> obstacles;
 
     private List<Translation2d> points = new ArrayList<>(); // static optimization
     private Map<Translation2d, Node> nodeMap = new HashMap<>(); // static optimization
+
+    private List<Pose2d> waypoints;
+
+    /**
+     * Initializes the PathFinder
+     */
+    public PathFinder() {
+        obstacles = new ArrayList<>();
+    }
 
     /**
      * Initializes the PathFinder using cartesian poses of the target, robot, and grown obstacles
@@ -86,11 +95,9 @@ public class PathFinder {
     }
 
     /**
-     * Returns the waypoints for the optimal path from the robot to the target utilizing a visibility graph and Dijkstra's algorithm
-     *
-     * @return waypoints
+     * Calculates the waypoints for the optimal path from the robot to the target utilizing a visibility graph and Dijkstra's algorithm
      */
-    public List<Pose2d> getWaypoints() {
+    public void calculateWaypoints() {
         List<Pose2d> waypoints = new ArrayList<>(); // returned for pathing
 
         List<Translation2d> points = new ArrayList<>(); // used for visibility graph
@@ -133,6 +140,7 @@ public class PathFinder {
 
             // Dijkstra / A* for the shortest path
             Queue<Node> boundaryNodes = new PriorityQueue<Node>();
+            r.cost = 0;
             boundaryNodes.add(r); // start node
             while (!boundaryNodes.isEmpty()) {
                 // Escape condition
@@ -145,9 +153,19 @@ public class PathFinder {
                     break;
                 }
                 // Search
-                // TODO: re-complete
-
+                for (int i = 0; i < pole.neighbors.size(); i++) {
+                    double cost = pole.cost + pole.getNeighborCost(pole.neighbors.get(i));
+                    if (cost < pole.getNeighbors().get(i).cost) {
+                        pole.getNeighbors().get(i).cost = Math.min(pole.getNeighbors().get(i).cost, cost);
+                        pole.getNeighbors().get(i).previous = pole;
+                        pole.getNeighbors().get(i).neighbors.remove(pole);
+                        boundaryNodes.add(pole.getNeighbors().get(i));
+                    }
+                }
             }
+        }
+        if (!shortestPath.get(shortestPath.size() - 1).equals(robot)) { // root edge handling
+            shortestPath.add(robot);
         }
         // Append waypoints (shortestPath in reverse)
         for (int i = shortestPath.size() - 1; i > 0; i--) {
@@ -156,21 +174,35 @@ public class PathFinder {
             waypoints.add(new Pose2d(shortestPath.get(i), pointHeading));
         }
         waypoints.add(target);
+        this.waypoints = waypoints;
+    }
+
+    /**
+     * Returns generated waypoints from the path finder
+     *
+     * @return waypoints
+     */
+    public List<Pose2d> getWaypoints () {
+        if (waypoints == null) {
+            calculateWaypoints();
+        }
         return waypoints;
     }
 
     public void setRobot(Pose2d robot) {
         this.robot = robot.getTranslation();
+        this.waypoints = null;
     }
 
     public void setTarget(Pose2d target) {
         this.target = target;
+        this.waypoints = null;
     }
 
     public static class Node implements Comparable {
         // A-star properties
         public Translation2d value;
-        public double cost; // cost from start node
+        public double cost = 0xFFFF; // cost from start node
         public double heuristic;
 
         // Graph properties
@@ -178,7 +210,7 @@ public class PathFinder {
         public Map<Node, Double> neighborCost = new HashMap<>();
 
         // Tree properties
-        public Node previous; // null for start node at the end
+        public Node previous = null; // null for start node at the end
 
         /**
          * Base constructor to initialize a node
