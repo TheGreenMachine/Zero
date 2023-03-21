@@ -124,7 +124,7 @@ subsystems:
             ## Positions ##
             stowAnglePosition: 90000
             collectAnglePosition: -2500
-            scoreAnglePosition: 60000
+            scoreAnglePosition: 66000
             scoreDipAnglePosition: 55000
             minExtensionPosition: 20000 # roughly 4800 ticks per inch
             midExtensionPosition: 120000
@@ -166,7 +166,7 @@ subsystems:
             maxLevel: 150
             ledStripCount: 30
     camera:
-        implemented: false
+        implemented: true
         constants:
             usingCamToUpdatePose: 0
 infrastructure:
