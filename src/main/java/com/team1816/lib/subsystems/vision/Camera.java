@@ -93,7 +93,7 @@ public class Camera extends Subsystem {
         }
         PhotonCamera.setVersionCheckEnabled(false);
         if (cameraEnabled) {
-            cam = new PhotonCamera("IMX219");
+            cam = new PhotonCamera("snakeyes"); // TODO verify
         }
     }
 
