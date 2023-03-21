@@ -146,7 +146,7 @@ subsystems:
                 allowableError: 4
         constants:
             ## Demands ##
-            cubeIntakePower: 0.50 # percent output voltage
+            cubeIntakePower: 0.70 # percent output voltage
             cubeOuttakePower: -0.45 # percent output voltage
             coneIntakePower: -1 #was -0.50
             coneOuttakePower: 0.65

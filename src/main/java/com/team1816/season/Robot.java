@@ -16,6 +16,7 @@ import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.commands.AlignElevatorCommand;
 import com.team1816.season.auto.commands.AutoScoreCommand;
+import com.team1816.season.auto.commands.TargetAlignCommand;
 import com.team1816.season.auto.commands.TargetTrajectoryCommand;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.DrivetrainTargets;
@@ -89,6 +90,8 @@ public class Robot extends TimedRobot {
     private Thread alignElevatorThread;
     private Thread autoScoreThread;
 
+    private Thread autoTargetAlignThread;
+
     /**
      * Timing
      */
@@ -112,6 +115,7 @@ public class Robot extends TimedRobot {
     private boolean desireCube = true;
 
     public static boolean runningAutoTarget = false;
+    public static boolean runningAutoTargetAlign = false;
 
     public static boolean runningAutoAlign = false;
     public static boolean runningAutoScore = false;
@@ -264,6 +268,37 @@ public class Robot extends TimedRobot {
                                 autoTargetThread.stop();
                                 System.out.println("Stopped! driving to trajectory canceled!");
                                 runningAutoTarget = !runningAutoTarget;
+                            }
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("autoTargetAlign"),
+                        () -> {
+                            if (robotState.allianceColor == Color.BLUE) {
+                                robotState.target = DrivetrainTargets.blueTargets.get(grid * 3 + node);
+                            } else {
+                                robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
+                            }
+                            if (!runningAutoTargetAlign) {
+                                runningAutoTargetAlign = true;
+                                orchestrator.updatePoseWithCamera();
+                                double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
+                                if (distance < Constants.kMinTrajectoryDistance) {
+                                    System.out.println("Distance to target is " + distance + " m");
+                                    System.out.println("Too close to target! can not start trajectory!");
+                                    AlignElevatorCommand command = new AlignElevatorCommand(level);
+                                    autoTargetAlignThread = new Thread(command::run);
+                                } else {
+                                    System.out.println("Drive trajectory action started!");
+                                    TargetAlignCommand command = new TargetAlignCommand(level);
+                                    autoTargetAlignThread = new Thread(command::run);
+                                }
+                                ledManager.indicateStatus(LedManager.RobotStatus.RAGE, LedManager.ControlState.BLINK);
+                                autoTargetAlignThread.start();
+                            } else {
+                                autoTargetAlignThread.stop();
+                                System.out.println("Stopped! driving to trajectory canceled!");
+                                runningAutoTargetAlign = !runningAutoTargetAlign;
                             }
                         }
                     ),
