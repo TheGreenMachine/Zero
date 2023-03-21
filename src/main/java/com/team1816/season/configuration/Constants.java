@@ -62,8 +62,8 @@ public class Constants {
     );
 
     public static final Translation2d kCameraMountingOffset = new Translation2d(
-        -0.1,
-        0.05
+        0.20,
+        0.19
     );
     public static final Translation2d kTurretMountingOffset = new Translation2d(
         -0.12065,
