@@ -61,9 +61,13 @@ public class Constants {
         EmptyRotation2d
     );
 
+    public static final Translation2d kCameraMountingOffset = new Translation2d(
+        -0.1,
+        0.05
+    );
     public static final Translation2d kTurretMountingOffset = new Translation2d(
-        -.12065,
-        .13335
+        -0.12065,
+        0.13335
     );
     public static final double chargeStationThresholdXMinBlue = 2.4;
     public static final double chargeStationThresholdXMaxBlue = 5.0;

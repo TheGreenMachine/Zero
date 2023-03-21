@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.util.visionUtil.VisionPoint;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
@@ -91,8 +92,13 @@ public class Orchestrator {
             new Transform2d(
                 new Translation2d(X, Y),
                 robotState.getLatestFieldToCamera().rotateBy(Rotation2d.fromDegrees(180))
-            )
-        ); // inverse axis angle
+            ) // inverse axis angle
+        ).plus(
+            new Transform2d(
+                Constants.kCameraMountingOffset.rotateBy(robotState.fieldToVehicle.getRotation()).unaryMinus(),
+                Constants.EmptyRotation2d
+            ) // camera offset angle
+        );
         System.out.println("Updated Pose: " + p);
         return p;
     }
