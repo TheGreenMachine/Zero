@@ -10,10 +10,7 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.*;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -83,19 +80,14 @@ public class Orchestrator {
      * @see VisionPoint
      */
     public Pose2d calculateSingleTargetTranslation(VisionPoint target) {
-        Pose2d targetPos = new Pose2d(
-            FieldConfig.fieldTargets2023.get(target.id).getX(),
-            FieldConfig.fieldTargets2023.get(target.id).getY(),
-            new Rotation2d()
-        );
+        Pose3d targetPos = FieldConfig.fieldTargets2023.get(target.id);
+
         double X = target.getX(), Y = target.getY();
-        if (target.id <= 4) {
-            X *= -1; // hacky way of accounting for april tag orientation TODO: fix later
-            Y *= -1;
-        }
-        Pose2d p = targetPos.plus(
+        Translation2d targetTranslation = new Translation2d(X, Y).rotateBy(targetPos.getRotation().toRotation2d());
+
+        Pose2d p = targetPos.toPose2d().plus(
             new Transform2d(
-                new Translation2d(X, Y),
+                targetTranslation,
                 robotState.getLatestFieldToCamera().unaryMinus().rotateBy(Rotation2d.fromDegrees(180))
             ) // inverse axis angle
         ).plus(
