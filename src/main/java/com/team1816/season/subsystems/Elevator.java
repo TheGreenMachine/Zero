@@ -283,7 +283,8 @@ public class Elevator extends Subsystem {
             angleOutputsChanged = false;
             if (usingFeedForward) {
                 switch (desiredAngleState) {
-                    case STOW -> angleMotorMain.set(ControlMode.Position, (stowPos), DemandType.ArbitraryFeedForward, angleFeedForward);
+                    case STOW ->
+                        angleMotorMain.set(ControlMode.Position, (stowPos), DemandType.ArbitraryFeedForward, angleFeedForward);
                     case COLLECT -> {
                         colPosTimer.update();
                         if (!colPosTimer.isCompleted()) {
@@ -323,17 +324,25 @@ public class Elevator extends Subsystem {
             if (usingFeedForward) {
                 if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
                     switch (desiredExtensionState) {
-                        case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        case MID -> extensionMotor.set(ControlMode.Position, (midExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        case MIN -> extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case MAX ->
+                            extensionMotor.set(ControlMode.Position, (maxExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case MID ->
+                            extensionMotor.set(ControlMode.Position, (midExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case MIN ->
+                            extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case SHELF_COLLECT ->
+                            extensionMotor.set(ControlMode.Position, (shelfExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
                     }
                 } else {
                     switch (desiredExtensionState) {
-                        case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension + 10000), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        case MID -> extensionMotor.set(ControlMode.Position, (midExtension + 5000), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        case MIN -> extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
-                        case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension + 5000), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case MAX ->
+                            extensionMotor.set(ControlMode.Position, (maxExtension + 10000), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case MID ->
+                            extensionMotor.set(ControlMode.Position, (midExtension + 5000), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case MIN ->
+                            extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                        case SHELF_COLLECT ->
+                            extensionMotor.set(ControlMode.Position, (shelfExtension + 5000), DemandType.ArbitraryFeedForward, extensionFeedForward);
                     }
                 }
             } else {
@@ -349,7 +358,8 @@ public class Elevator extends Subsystem {
                         case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension + cubeExtensionMaxOffset));
                         case MID -> extensionMotor.set(ControlMode.Position, (midExtension + cubeExtensionMidOffset));
                         case MIN -> extensionMotor.set(ControlMode.Position, (minExtension));
-                        case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension + cubeExtensionMidOffset));
+                        case SHELF_COLLECT ->
+                            extensionMotor.set(ControlMode.Position, (shelfExtension + cubeExtensionMidOffset));
                     }
                 }
             }

@@ -108,7 +108,7 @@ public class AutoModeManager {
         desiredColor = selectedColor;
         robotState.allianceColor = desiredColor;
 
-        if (robotState.allianceColor == Color.BLUE)  {
+        if (robotState.allianceColor == Color.BLUE) {
             robotState.pathFinder = new PathFinder(List.of(Constants.blueChargeStation));
         } else {
             robotState.pathFinder = new PathFinder(List.of(Constants.redChargeStation));
@@ -183,14 +183,15 @@ public class AutoModeManager {
         EXIT_BALANCE_FEEDER,
         EXIT_BALANCE_MIDDLE,
         EXIT_BALANCE_WALL,
-        PLACE_CONE_EXIT_COMMUNITY_FEEDER,
-        PLACE_CONE_EXIT_COMMUNITY_WALL,
         PLACE_CONE_AUTO_BALANCE_FEEDER,
         PLACE_CONE_AUTO_BALANCE_MIDDLE,
         PLACE_CONE_AUTO_BALANCE_WALL,
 
         DOUBLE_CONE_FEEDER,
-        DOUBLE_CONE_WALL
+        DOUBLE_CONE_WALL,
+
+        TRIPLE_CONE_FEEDER,
+        TRIPLE_CONE_WALL
     }
 
     /**
@@ -220,10 +221,6 @@ public class AutoModeManager {
                 return (new ExitCommunityBalanceMiddleMode(color));
             case EXIT_BALANCE_WALL:
                 return (new ExitCommunityBalanceWallMode(color));
-            case PLACE_CONE_EXIT_COMMUNITY_FEEDER:
-                return (new ExitCommunityPlaceFeederMode(color));
-            case PLACE_CONE_EXIT_COMMUNITY_WALL:
-                return (new ExitCommunityPlaceWallMode(color));
             case PLACE_CONE_AUTO_BALANCE_FEEDER:
                 return (new PlaceConeAutoBalanceFeederMode(color));
             case PLACE_CONE_AUTO_BALANCE_MIDDLE:
@@ -234,6 +231,10 @@ public class AutoModeManager {
                 return (new DoublePlaceConeFeederMode(color));
             case DOUBLE_CONE_WALL:
                 return (new DoublePlaceConeWallMode(color));
+            case TRIPLE_CONE_FEEDER:
+                return (new TriplePlaceConeFeederMode(color));
+            case TRIPLE_CONE_WALL:
+                return (new TriplePlaceConeWallMode(color));
             default:
                 System.out.println("Defaulting to drive straight mode");
                 return new DriveStraightMode();

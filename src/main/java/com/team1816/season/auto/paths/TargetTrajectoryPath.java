@@ -51,7 +51,8 @@ public class TargetTrajectoryPath extends AutoPath {
             } else {
                 waypoints.clear();
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         if (
             (target.getY() > Constants.chargeStationThresholdYMin && target.getY() < Constants.chargeStationThresholdYMax) &&

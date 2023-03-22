@@ -79,7 +79,7 @@ subsystems:
             wheelbaseLength: 19.75 # inches
             maxVelOpenLoop: 3.2 # meters/s (3.6)
             maxVelPathFollowing: 3.2 # meters/s (3.6)
-            maxAccel: 2.54 # meters/s^ 2
+            maxAccel: 2.64 # meters/s^ 2
             dPadMoveSpeed: 0.5
             isDemoMode: 0
             ## Auto Balance ##
