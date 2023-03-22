@@ -27,13 +27,13 @@ public class FieldConfig {
             put(1, new Pose3d(new Translation3d(15.453, 1.282, 0.470), new Rotation3d())); // Red Edge Grid
             put(2, new Pose3d(new Translation3d(15.453, 2.959, 0.470), new Rotation3d())); // Red Co-Op Grid
             put(3, new Pose3d(new Translation3d(15.453, 4.635, 0.470), new Rotation3d())); // Red Feeder Edge Grid
-            put(4, new Pose3d(new Translation3d(16.106, 7.626, 0.700), new Rotation3d())); // Blue Feeder Station
+            put(4, new Pose3d(new Translation3d(16.106, 7.126, 0.700), new Rotation3d())); // Blue Feeder Station
 
             /* Blue Alliance Side */
-            put(5, new Pose3d(new Translation3d(0.354, 6.960, 0.700), new Rotation3d())); // Red Feeder Station
+            put(5, new Pose3d(new Translation3d(0.354, 7.126, 0.700), new Rotation3d())); // Red Feeder Station
             put(6, new Pose3d(new Translation3d(1.007, 4.635, 0.470), new Rotation3d())); // Blue Feeder Edge Grid
             put(7, new Pose3d(new Translation3d(1.007, 2.959, 0.470), new Rotation3d())); // Blue Co-Op Grid
-            put(8, new Pose3d(new Translation3d(1.007, 7.626, 0.470), new Rotation3d())); // Blue Edge Grid
+            put(8, new Pose3d(new Translation3d(1.007, 1.282, 0.470), new Rotation3d())); // Blue Edge Grid
 
             /* Test */
             put(51, new Pose3d(new Translation3d(Constants.fieldCenterX, Constants.fieldCenterY, 0.1), new Rotation3d()));

@@ -2,6 +2,7 @@ package com.team1816.season.states;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.auto.Color;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.util.visionUtil.VisionPoint;
@@ -88,10 +89,14 @@ public class Orchestrator {
             new Rotation2d()
         );
         double X = target.getX(), Y = target.getY();
+        if (target.id <= 4) {
+            X *= -1; // hacky way of accounting for april tag orientation TODO: fix later
+            Y *= -1;
+        }
         Pose2d p = targetPos.plus(
             new Transform2d(
                 new Translation2d(X, Y),
-                robotState.getLatestFieldToCamera().rotateBy(Rotation2d.fromDegrees(180))
+                robotState.getLatestFieldToCamera().unaryMinus().rotateBy(Rotation2d.fromDegrees(180))
             ) // inverse axis angle
         ).plus(
             new Transform2d(

@@ -9,7 +9,7 @@ driver:
     buttonpad:
         x: toggleArmScoreCollect # remapped to back left button
         y: shelfPos # remapped to back right button
-        a: midSlowMode # autoTarget
+        a: autoTarget # midSlowMode # autoTarget
         b: autoBalance
     axes:
         leftTrigger: brakeMode
@@ -24,7 +24,7 @@ operator:
         up: extendStage
         down: descendStage
     buttons:
-        leftBumper: bobDown
+        leftBumper: updatePoseWithCamera
         rightBumper: outtake
     axes:
         leftTrigger: armStow
