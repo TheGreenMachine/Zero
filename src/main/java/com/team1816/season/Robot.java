@@ -261,7 +261,7 @@ public class Robot extends TimedRobot {
                                     System.out.println("Drive trajectory action started!");
                                     TargetTrajectoryCommand command = new TargetTrajectoryCommand();
                                     autoTargetThread = new Thread(command::run);
-                                    ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS, LedManager.ControlState.BLINK);
+                                    ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS, LedManager.ControlState.FAST_BLINK);
                                     autoTargetThread.start();
                                 }
                             } else {
@@ -294,7 +294,7 @@ public class Robot extends TimedRobot {
                                     TargetAlignCommand command = new TargetAlignCommand(level);
                                     autoTargetAlignThread = new Thread(command::run);
                                 }
-                                ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS, LedManager.ControlState.BLINK);
+                                ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS, LedManager.ControlState.FAST_BLINK);
                                 autoTargetAlignThread.start();
                             } else {
                                 autoTargetAlignThread.stop();
@@ -326,10 +326,10 @@ public class Robot extends TimedRobot {
                         (pressed) -> {
                             if (pressed) {
                                 drive.setAutoBalance(true);
-                                ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.BLINK);
+                                ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.FAST_BLINK);
                             } else {
                                 drive.setAutoBalance(false);
-                                ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
+                                ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.SOLID);
                             }
                         }
                     ),
