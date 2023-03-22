@@ -13,6 +13,7 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.vision.Camera;
+import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.commands.AlignElevatorCommand;
 import com.team1816.season.auto.commands.AutoScoreCommand;
@@ -26,6 +27,9 @@ import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -594,6 +598,9 @@ public class Robot extends TimedRobot {
             }
             if (alignElevatorThread != null && alignElevatorThread.isAlive()) {
                 alignElevatorThread.stop();
+            }
+            if (autoTargetAlignThread != null && autoTargetAlignThread.isAlive()) {
+                autoTargetAlignThread.stop();
             }
 
             enabledLoop.stop();

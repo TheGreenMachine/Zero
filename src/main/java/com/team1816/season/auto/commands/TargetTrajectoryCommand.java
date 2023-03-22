@@ -18,7 +18,6 @@ public class TargetTrajectoryCommand extends AutoCommand {
         super(List.of(new TrajectoryAction(new TargetTrajectoryPath())));
         ledManager = Injector.get(LedManager.class);
     }
-
     @Override
     protected void routine() throws AutoModeEndedException {
         System.out.println("Running Trajectory To Command Mode!");

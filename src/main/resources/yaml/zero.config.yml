@@ -181,7 +181,7 @@ infrastructure:
     ## Pigeon ##
     pigeonId: 32
     isPigeon2: true
-controlboard: example
+controlboard: aleph1
 constants:
     zeroingButton: 9 # channel of DIO port
     ## Drivetrain ##

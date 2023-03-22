@@ -79,22 +79,26 @@ public class Orchestrator {
      * @see VisionPoint
      */
     public Pose2d calculateSingleTargetTranslation(VisionPoint target) {
-        Pose3d targetPos = FieldConfig.fieldTargets2023.get(target.id);
+        Pose2d targetPos = FieldConfig.fieldTargets2023.get(target.id).toPose2d();
 
         double X = target.getX(), Y = target.getY();
-        Translation2d targetTranslation = new Translation2d(X, Y).rotateBy(targetPos.getRotation().toRotation2d());
 
-        Pose2d p = targetPos.toPose2d().plus(
+        Translation2d cameraToTarget = new Translation2d(X, Y).rotateBy(robotState.getLatestFieldToCamera());
+        Translation2d robotToTarget = cameraToTarget.plus(
+            Constants.kCameraMountingOffset.getTranslation().rotateBy(
+                robotState.fieldToVehicle.getRotation()
+            )
+        );
+        Translation2d targetToRobot = robotToTarget.unaryMinus();
+
+        Translation2d targetTranslation = targetToRobot.rotateBy(targetPos.getRotation());
+        Pose2d p = targetPos.plus(
             new Transform2d(
                 targetTranslation,
-                robotState.getLatestFieldToCamera().unaryMinus().rotateBy(Rotation2d.fromDegrees(180))
-            ) // inverse axis angle
-        ).plus(
-            new Transform2d(
-                Constants.kCameraMountingOffset.rotateBy(robotState.fieldToVehicle.getRotation()).unaryMinus(),
-                Constants.EmptyRotation2d
-            ) // camera offset angle
-        );
+                targetPos.getRotation().rotateBy(Rotation2d.fromDegrees(180))
+            )
+        ); // inverse axis angle
+
         System.out.println("Updated Pose: " + p);
         return p;
     }

@@ -2,6 +2,8 @@ package com.team1816.lib.util.visionUtil;
 
 import edu.wpi.first.math.geometry.Transform3d;
 
+import javax.xml.crypto.dsig.Transform;
+
 /**
  * A lightweight fiducial marker identification utility
  */
@@ -15,6 +17,12 @@ public class VisionPoint {
     public VisionPoint() {
         id = 0;
         cameraToTarget = new Transform3d();
+        weight = 0;
+    }
+
+    public VisionPoint(int i, Transform3d targetTransform) {
+        id = i;
+        cameraToTarget = targetTransform;
         weight = 0;
     }
 

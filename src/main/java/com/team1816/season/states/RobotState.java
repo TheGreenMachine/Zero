@@ -137,7 +137,7 @@ public class RobotState {
      * @see Orchestrator#calculateSingleTargetTranslation(VisionPoint) ()
      */
     public Rotation2d getLatestFieldToCamera() {
-        return fieldToVehicle.getRotation();
+        return fieldToVehicle.getRotation().plus(Constants.kCameraMountingOffset.getRotation());
     }
 
     /**
