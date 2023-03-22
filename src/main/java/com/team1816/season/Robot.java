@@ -261,11 +261,12 @@ public class Robot extends TimedRobot {
                                     System.out.println("Drive trajectory action started!");
                                     TargetTrajectoryCommand command = new TargetTrajectoryCommand();
                                     autoTargetThread = new Thread(command::run);
-                                    ledManager.indicateStatus(LedManager.RobotStatus.RAGE, LedManager.ControlState.BLINK);
+                                    ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS, LedManager.ControlState.BLINK);
                                     autoTargetThread.start();
                                 }
                             } else {
                                 autoTargetThread.stop();
+                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.SOLID);
                                 System.out.println("Stopped! driving to trajectory canceled!");
                                 runningAutoTarget = !runningAutoTarget;
                             }
@@ -293,7 +294,7 @@ public class Robot extends TimedRobot {
                                     TargetAlignCommand command = new TargetAlignCommand(level);
                                     autoTargetAlignThread = new Thread(command::run);
                                 }
-                                ledManager.indicateStatus(LedManager.RobotStatus.RAGE, LedManager.ControlState.BLINK);
+                                ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS, LedManager.ControlState.BLINK);
                                 autoTargetAlignThread.start();
                             } else {
                                 autoTargetAlignThread.stop();

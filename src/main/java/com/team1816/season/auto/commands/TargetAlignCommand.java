@@ -8,6 +8,7 @@ import com.team1816.lib.auto.actions.SeriesAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitUntilInsideRegion;
 import com.team1816.lib.auto.commands.AutoCommand;
+import com.team1816.lib.subsystems.LedManager;
 import com.team1816.season.Robot;
 import com.team1816.season.auto.actions.AlignAction;
 import com.team1816.season.auto.paths.TargetTrajectoryPath;
@@ -19,12 +20,15 @@ import edu.wpi.first.math.geometry.Translation2d;
 import java.util.List;
 
 public class TargetAlignCommand extends AutoCommand {
-    private Elevator.EXTENSION_STATE extensionState;
+
     private static RobotState robotState;
+    private static LedManager ledManager;
+    private Elevator.EXTENSION_STATE extensionState;
 
     public TargetAlignCommand(Elevator.EXTENSION_STATE extension) {
         super(List.of(new TrajectoryAction(new TargetTrajectoryPath())));
         robotState = Injector.get(RobotState.class);
+        ledManager = Injector.get(LedManager.class);
         extensionState = extension;
     }
 
@@ -65,6 +69,7 @@ public class TargetAlignCommand extends AutoCommand {
     public void done() {
         super.done();
         Robot.runningAutoTargetAlign = false;
+        ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.SOLID);
         System.out.println("Trajectory To Target Command Completed!");
     }
 }
