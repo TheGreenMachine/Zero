@@ -6,11 +6,17 @@ driver:
             vertical: throttle
         right:
             horizontal: rotation
+    buttonpad:
+        x: toggleArmScoreCollect # remapped to back left button
+        y: shelfPos # remapped to back right button
+        a: midSlowMode # autoTarget
+        b: autoBalance
     axes:
         leftTrigger: brakeMode
         rightTrigger: slowMode
     buttons:
-        leftBumper: autoBalance
+        leftBumper: intakeCube
+        rightBumper: intakeCone
         start: zeroPose
 operator:
     rumble: false
@@ -18,24 +24,14 @@ operator:
         up: extendStage
         down: descendStage
     buttons:
-        leftBumper: bobDown
+        leftBumper: updatePoseWithCamera
         rightBumper: outtake
-        start: lowerElevatorAngles
     axes:
-        leftTrigger: intakeCube
-        rightTrigger: intakeCone
+        leftTrigger: armStow
+        rightTrigger: armCollect
     buttonpad:
-        y: stowPosition
-        a: collectPosition
-        b: scorePosition
-buttonboard:
-    upLeft: empty
-    up: empty
-    upRight: empty
-    left: empty
-    center: empty
-    right: empty
-    downLeft: empty
-    down: empty
-    downRight: empty
+        y: extendMax
+        x: extendMid
+        a: extendMin
+        b: autoScore
 demoMode: false

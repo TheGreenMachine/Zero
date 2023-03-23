@@ -413,7 +413,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 (isDemoMode ? strafe * demoModeMultiplier : strafe),
                 (isDemoMode ? rotation * demoModeMultiplier : rotation),
                 isSlowMode,
-                !isMidSlowMode,
+                isMidSlowMode,
                 true,
                 false
             );

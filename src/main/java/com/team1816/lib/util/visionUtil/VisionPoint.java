@@ -18,6 +18,12 @@ public class VisionPoint {
         weight = 0;
     }
 
+    public VisionPoint(int i, Transform3d targetTransform) {
+        id = i;
+        cameraToTarget = targetTransform;
+        weight = 0;
+    }
+
     public double getX() {
         return cameraToTarget.getX();
     }

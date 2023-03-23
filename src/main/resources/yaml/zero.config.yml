@@ -79,7 +79,7 @@ subsystems:
             wheelbaseLength: 19.75 # inches
             maxVelOpenLoop: 3.2 # meters/s (3.6)
             maxVelPathFollowing: 3.2 # meters/s (3.6)
-            maxAccel: 2.54 # meters/s^ 2
+            maxAccel: 2.64 # meters/s^ 2
             dPadMoveSpeed: 0.5
             isDemoMode: 0
             ## Auto Balance ##
@@ -124,7 +124,7 @@ subsystems:
             ## Positions ##
             stowAnglePosition: 90000
             collectAnglePosition: -2500
-            scoreAnglePosition: 60000
+            scoreAnglePosition: 66000
             scoreDipAnglePosition: 55000
             minExtensionPosition: 20000 # roughly 4800 ticks per inch
             midExtensionPosition: 120000
@@ -146,7 +146,7 @@ subsystems:
                 allowableError: 4
         constants:
             ## Demands ##
-            cubeIntakePower: 0.50 # percent output voltage
+            cubeIntakePower: 0.70 # percent output voltage
             cubeOuttakePower: -0.45 # percent output voltage
             coneIntakePower: -1 #was -0.50
             coneOuttakePower: 0.65
@@ -166,7 +166,7 @@ subsystems:
             maxLevel: 150
             ledStripCount: 30
     camera:
-        implemented: false
+        implemented: true
         constants:
             usingCamToUpdatePose: 0
 infrastructure:
@@ -181,7 +181,7 @@ infrastructure:
     ## Pigeon ##
     pigeonId: 32
     isPigeon2: true
-controlboard: example
+controlboard: aleph1
 constants:
     zeroingButton: 9 # channel of DIO port
     ## Drivetrain ##

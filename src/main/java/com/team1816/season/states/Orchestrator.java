@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.util.visionUtil.VisionPoint;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
@@ -81,18 +82,26 @@ public class Orchestrator {
      * @see VisionPoint
      */
     public Pose2d calculateSingleTargetTranslation(VisionPoint target) {
-        Pose2d targetPos = new Pose2d(
-            FieldConfig.fieldTargets2023.get(target.id).getX(),
-            FieldConfig.fieldTargets2023.get(target.id).getY(),
-            new Rotation2d()
-        );
+        Pose2d targetPos = FieldConfig.fieldTargets2023.get(target.id).toPose2d();
+
         double X = target.getX(), Y = target.getY();
+
+        Translation2d cameraToTarget = new Translation2d(X, Y).rotateBy(robotState.getLatestFieldToCamera());
+        Translation2d robotToTarget = cameraToTarget.plus(
+            Constants.kCameraMountingOffset.getTranslation().rotateBy(
+                robotState.fieldToVehicle.getRotation()
+            )
+        );
+        Translation2d targetToRobot = robotToTarget.unaryMinus();
+
+        Translation2d targetTranslation = targetToRobot.rotateBy(targetPos.getRotation());
         Pose2d p = targetPos.plus(
             new Transform2d(
-                new Translation2d(X, Y),
-                robotState.getLatestFieldToCamera().rotateBy(Rotation2d.fromDegrees(180))
+                targetTranslation,
+                targetPos.getRotation().rotateBy(Rotation2d.fromDegrees(180))
             )
         ); // inverse axis angle
+
         System.out.println("Updated Pose: " + p);
         return p;
     }

@@ -61,9 +61,14 @@ public class Constants {
         EmptyRotation2d
     );
 
+    public static final Pose2d kCameraMountingOffset = new Pose2d(
+        0.20,
+        0.19,
+        Constants.EmptyRotation2d
+    );
     public static final Translation2d kTurretMountingOffset = new Translation2d(
-        -.12065,
-        .13335
+        -0.12065,
+        0.13335
     );
     public static final double chargeStationThresholdXMinBlue = 2.4;
     public static final double chargeStationThresholdXMaxBlue = 5.0;
@@ -78,7 +83,7 @@ public class Constants {
     public static final double gravitationalAccelerationConstant = 9.8d;
     public static double kMaxAccelDiffThreshold = 2d; // m/s^2
     public static double kMaxBalancingVelocity = 0.2; // m/s
-    public static double kMinTrajectoryDistance = 0.05; // m
+    public static double kMinTrajectoryDistance = 0.064; // m
     public static double kMaxProximityThresholdCentimeters = 25; // cm
     public static double preTargetDistance = 0.4; // m
 

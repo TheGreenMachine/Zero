@@ -3,7 +3,6 @@ package com.team1816.season.states;
 import com.google.inject.Singleton;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.PathFinder;
-import com.team1816.lib.auto.Polygon;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
@@ -138,7 +137,7 @@ public class RobotState {
      * @see Orchestrator#calculateSingleTargetTranslation(VisionPoint) ()
      */
     public Rotation2d getLatestFieldToCamera() {
-        return fieldToTurret.getRotation();
+        return fieldToVehicle.getRotation().plus(Constants.kCameraMountingOffset.getRotation());
     }
 
     /**

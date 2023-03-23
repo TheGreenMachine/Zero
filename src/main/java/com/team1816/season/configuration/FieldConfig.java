@@ -24,16 +24,16 @@ public class FieldConfig {
              */
 
             /* Red Alliance Side */
-            put(1, new Pose3d(new Translation3d(15.43, 1.132, 0.470), new Rotation3d())); // Red Edge Grid
-            put(2, new Pose3d(new Translation3d(15.43, 4.482, 0.470), new Rotation3d())); // Red Co-Op Grid
-            put(3, new Pose3d(new Translation3d(15.43, 2.808, 0.470), new Rotation3d())); // Red Feeder Edge Grid
-            put(4, new Pose3d(new Translation3d(16.09, 6.782, 0.700), new Rotation3d())); // Blue Feeder Station
+            put(1, new Pose3d(new Translation3d(15.514, 1.072, 0.470), new Rotation3d(0, 0, Math.PI))); // Red Edge Grid
+            put(2, new Pose3d(new Translation3d(15.514, 2.748, 0.470), new Rotation3d(0, 0, Math.PI))); // Red Co-Op Grid
+            put(3, new Pose3d(new Translation3d(15.514, 4.424, 0.470), new Rotation3d(0, 0, Math.PI))); // Red Feeder Edge Grid
+            put(4, new Pose3d(new Translation3d(16.178, 6.750, 0.700), new Rotation3d(0, 0, Math.PI))); // Blue Feeder Station
 
             /* Blue Alliance Side */
-            put(5, new Pose3d(new Translation3d(0.310, 6.782, 0.700), new Rotation3d())); // Red Feeder Station
-            put(6, new Pose3d(new Translation3d(0.970, 4.482, 0.470), new Rotation3d())); // Blue Feeder Edge Grid
-            put(7, new Pose3d(new Translation3d(0.970, 2.808, 0.470), new Rotation3d())); // Blue Co-Op Grid
-            put(8, new Pose3d(new Translation3d(0.970, 1.132, 0.470), new Rotation3d())); // Blue Edge Grid
+            put(5, new Pose3d(new Translation3d(0.361, 6.750, 0.700), new Rotation3d(0, 0, 0))); // Red Feeder Station
+            put(6, new Pose3d(new Translation3d(1.027, 4.424, 0.470), new Rotation3d(0, 0, 0))); // Blue Feeder Edge Grid
+            put(7, new Pose3d(new Translation3d(1.027, 2.748, 0.470), new Rotation3d(0, 0, 0))); // Blue Co-Op Grid
+            put(8, new Pose3d(new Translation3d(1.027, 1.072, 0.470), new Rotation3d(0, 0, 0))); // Blue Edge Grid
 
             /* Test */
             put(51, new Pose3d(new Translation3d(Constants.fieldCenterX, Constants.fieldCenterY, 0.1), new Rotation3d()));

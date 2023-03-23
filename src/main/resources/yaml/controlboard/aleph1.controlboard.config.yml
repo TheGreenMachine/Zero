@@ -7,8 +7,9 @@ driver:
         right:
             horizontal: rotation
     buttonpad:
-        x: autoCollect
-        a: autoTarget
+        x: toggleArmScoreCollect # remapped to back left button
+        y: shelfPos # remapped to back right button
+        a: autoTarget # autoTargetAlign
         b: autoBalance
     axes:
         leftTrigger: brakeMode
@@ -19,20 +20,14 @@ driver:
         start: zeroPose
 operator:
     rumble: false
-    dpad:
-        up: extendStage
-        down: descendStage
     buttons:
-        leftBumper: bobDown
+        leftBumper: updatePoseWithCamera
         rightBumper: outtake
     axes:
         leftTrigger: armStow
         rightTrigger: armCollect
     buttonpad:
-        y: autoScoreMax
-        x: autoScoreMid
-        a: autoScoreMin
-        b: autoScoreRetract
+        b: autoScore
 buttonboard:
     upLeft: grid1 # farthest from opposing feeder
     up: grid2 # coopertition

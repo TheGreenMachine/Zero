@@ -51,7 +51,8 @@ public class TargetTrajectoryPath extends AutoPath {
             } else {
                 waypoints.clear();
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         if (
             (target.getY() > Constants.chargeStationThresholdYMin && target.getY() < Constants.chargeStationThresholdYMax) &&
@@ -198,6 +199,7 @@ public class TargetTrajectoryPath extends AutoPath {
                 }
             }
         } else {
+            Rotation2d angle = new Translation2d(target.getX() - robotState.fieldToVehicle.getX(), target.getY() - robotState.fieldToVehicle.getY()).getAngle();
             waypoints.add(new Pose2d(robotState.fieldToVehicle.getTranslation(), target.getRotation()));
         }
         waypoints.add(target);

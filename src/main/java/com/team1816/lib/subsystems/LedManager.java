@@ -50,9 +50,9 @@ public class LedManager extends Subsystem {
     private int ledG;
     private int ledB;
 
-    private final int period = 400; // ms
+    private final int period = 500; // ms
     private long lastWriteTime = System.currentTimeMillis();
-    private edu.wpi.first.wpilibj.util.Color lastColor = edu.wpi.first.wpilibj.util.Color.kWhite;
+    private final edu.wpi.first.wpilibj.util.Color lastColor = edu.wpi.first.wpilibj.util.Color.kWhite;
     private ControlState controlState = ControlState.SOLID;
     private RobotStatus defaultStatus = RobotStatus.DISABLED;
     private RobotStatus controlStatus = RobotStatus.DISABLED;
@@ -67,6 +67,7 @@ public class LedManager extends Subsystem {
      */
     public enum ControlState {
         RAVE,
+        FAST_BLINK,
         BLINK,
         SOLID,
     }
@@ -176,6 +177,9 @@ public class LedManager extends Subsystem {
         if (controlState == ControlState.BLINK && System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
             outputsChanged = true;
         }
+        if (controlState == ControlState.FAST_BLINK && System.currentTimeMillis() >= lastWriteTime + (period / 8)) {
+            outputsChanged = true;
+        }
         if (outputsChanged) {
 //            System.out.println(controlState);
             outputsChanged = false;
@@ -190,7 +194,7 @@ public class LedManager extends Subsystem {
                         raveHue += RAVE_SPEED;
                     }
                     break;
-                case BLINK:
+                case FAST_BLINK, BLINK:
                     if (blinkLedOn) {
                         writeToLed(0, 0, 0);
                         blinkLedOn = false;

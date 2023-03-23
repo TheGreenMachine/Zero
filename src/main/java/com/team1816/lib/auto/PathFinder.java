@@ -182,7 +182,7 @@ public class PathFinder {
      *
      * @return waypoints
      */
-    public List<Pose2d> getWaypoints () {
+    public List<Pose2d> getWaypoints() {
         if (waypoints == null) {
             calculateWaypoints();
         }
