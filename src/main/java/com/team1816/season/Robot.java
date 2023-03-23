@@ -248,7 +248,7 @@ public class Robot extends TimedRobot {
                             if (robotState.allianceColor == Color.BLUE) {
                                 robotState.target = DrivetrainTargets.blueTargets.get(grid * 3 + node);
                             } else {
-                                robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
+                                robotState.target = DrivetrainTargets.redTargets.get((3 - grid) * 3 + (3 - node));
                             }
                             if (!runningAutoTarget) {
                                 runningAutoTarget = true;
@@ -278,7 +278,7 @@ public class Robot extends TimedRobot {
                             if (robotState.allianceColor == Color.BLUE) {
                                 robotState.target = DrivetrainTargets.blueTargets.get(grid * 3 + node);
                             } else {
-                                robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
+                                robotState.target = DrivetrainTargets.redTargets.get((3 - grid) * 3 + (3 - node));
                             }
                             if (!runningAutoTargetAlign) {
                                 runningAutoTargetAlign = true;
