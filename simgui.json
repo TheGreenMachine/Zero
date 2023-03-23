@@ -103,15 +103,15 @@
         "April Tags": {
           "arrows": false,
           "color": [
-            0.8354430198669434,
-            0.0,
+            0.8,
+            0.2,
             1.0,
             255.0
           ],
-          "length": 0.25,
+          "length": 0.05,
           "style": "Box/Image",
-          "weight": 2.0,
-          "width": 0.25
+          "weight": 2.5,
+          "width": 0.35
         },
         "EstimatedRobot": {
           "arrowColor": [
