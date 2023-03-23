@@ -110,7 +110,7 @@ public class Robot extends TimedRobot {
     private boolean faulted;
     private int grid = 0;
     private int node = 0;
-    private Elevator.EXTENSION_STATE level = Elevator.EXTENSION_STATE.MAX;
+    private Elevator.EXTENSION_STATE level = Elevator.EXTENSION_STATE.MIN;
 
     private boolean desireCube = true;
 
