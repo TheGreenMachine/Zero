@@ -395,7 +395,11 @@ public class Robot extends TimedRobot {
                         (pressed) -> {
                             collector.outtakeGamePiece(pressed);
                             if (pressed) {
-                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET);
+                                if (robotState.actualGameElement == Collector.GAME_ELEMENT.CUBE) {
+                                    ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK);
+                                } else {
+                                    ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK);
+                                }
                             } else {
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
                             }
