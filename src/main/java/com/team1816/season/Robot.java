@@ -344,9 +344,11 @@ public class Robot extends TimedRobot {
                                 } else { // collects from floor
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR);
                                 }
+                                drive.setMidSlowMode(true);
                                 ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK); // indicates on LEDs
                             } else {
                                 collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
+                                drive.setMidSlowMode(false);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
                         }
@@ -362,9 +364,11 @@ public class Robot extends TimedRobot {
                                 } else { // collects from floor
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.FLOOR);
                                 }
+                                drive.setMidSlowMode(true);
                                 ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK); // indicates on LEDs
                             } else {
                                 collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
+                                drive.setMidSlowMode(false);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
                         }
