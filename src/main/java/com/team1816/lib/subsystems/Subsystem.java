@@ -6,6 +6,7 @@ import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.season.Robot;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.util.datalog.DataLogEntry;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
@@ -32,6 +33,13 @@ public abstract class Subsystem implements Sendable {
     public static RobotState robotState;
 
     public static Infrastructure infrastructure;
+
+
+    /**
+     * Logging
+     */
+    protected DataLogEntry desStatesLogger;
+    protected DataLogEntry actStatesLogger;
 
     /**
      * Base parameters needed to instantiate a subsystem

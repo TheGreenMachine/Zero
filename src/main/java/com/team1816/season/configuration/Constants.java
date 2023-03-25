@@ -99,7 +99,7 @@ public class Constants {
     public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters
 
     public static boolean kLoggingRobot = factory.getConstant("logRobot") > 0;
-    public static boolean kIsLoggingDrivetrain = factory.getConstant("logDrivetrain") > 0 && kLoggingRobot;
+    public static boolean kLoggingDrivetrain = factory.getConstant("logDrivetrain") > 0 && kLoggingRobot;
 
     public final boolean kUsePoseTrack =
         factory.getConstant("shooter", "usingPoseForSpeed", 0) > 0;

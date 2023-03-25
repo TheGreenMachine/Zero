@@ -103,9 +103,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     SwerveModulePosition[] actualModulePositions = new SwerveModulePosition[4];
     public double[] motorTemperatures = new double[4];
 
-    private DoubleArrayLogEntry desStatesLogger;
-    private DoubleArrayLogEntry actStatesLogger;
-
 
     /**
      * Instantiates a swerve drivetrain from base subsystem parameters
@@ -140,9 +137,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 actualModulePositions
             );
 
-        if (Constants.kIsLoggingDrivetrain) {
-            desStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Swerve/DesStates");
-            actStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Swerve/ActStates");
+        if (Constants.kLoggingDrivetrain) {
+            desStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Drivetrain/Swerve/DesStates");
+            actStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Drivetrain/Swerve/ActStates");
         }
     }
 
@@ -187,7 +184,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             // logging current temperatures of each module's drive motor
             motorTemperatures[i] = swerveModules[i].getMotorTemp();
 
-            if (Constants.kIsLoggingDrivetrain) {
+            if (Constants.kLoggingDrivetrain) {
                 // populating double list with actState angles and speeds
                 actualStates[i * 2] = actualModuleStates[i].angle.getRadians();
                 actualStates[i * 2 + 1] = actualModuleStates[i].speedMetersPerSecond;
@@ -206,9 +203,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         swerveOdometry.update(actualHeading, actualModulePositions);
 
-        if (Constants.kIsLoggingDrivetrain) {
-            desStatesLogger.append(desiredStates);
-            actStatesLogger.append(actualStates);
+        if (Constants.kLoggingDrivetrain) {
+            ((DoubleArrayLogEntry) desStatesLogger).append(desiredStates);
+            ((DoubleArrayLogEntry) actStatesLogger).append(actualStates);
         }
 
         updateRobotState();
@@ -353,6 +350,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         robotState.drivetrainTemp = motorTemperatures[0];
 
         robotState.vehicleToFloorProximityCentimeters = infrastructure.getMaximumProximity();
+
+        if (Constants.kLoggingDrivetrain) {
+            drivetrainPoseLogger.append(new double[]{robotState.fieldToVehicle.getX(), robotState.fieldToVehicle.getY(), robotState.fieldToVehicle.getRotation().getRadians()});
+            drivetrainChassisSpeedsLogger.append(new double[]{robotState.deltaVehicle.vxMetersPerSecond, robotState.deltaVehicle.vyMetersPerSecond, robotState.deltaVehicle.omegaRadiansPerSecond});
+        }
     }
 
     /** Open Loop control */

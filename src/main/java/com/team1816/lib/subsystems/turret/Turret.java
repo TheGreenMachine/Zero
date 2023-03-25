@@ -16,6 +16,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -128,6 +130,11 @@ public class Turret extends Subsystem implements PidProvider {
         turretMotor.configReverseSoftLimitThreshold(kRevLimit, Constants.kCANTimeoutMs); // Reverse = MIN
         turretMotor.overrideLimitSwitchesEnable(true);
         turretMotor.overrideSoftLimitsEnable(true);
+
+        if (Constants.kLoggingRobot) {
+            desStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Turret/DesiredPosition");
+            actStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Turret/ActualPosition");
+        }
     }
 
     /**
@@ -365,6 +372,11 @@ public class Turret extends Subsystem implements PidProvider {
                     .getTranslation(),
                 robotState.fieldToVehicle.getRotation().plus(robotState.vehicleToTurret)
             );
+
+        if (Constants.kLoggingRobot) {
+            ((DoubleLogEntry) desStatesLogger).append(followingPos);
+            ((DoubleLogEntry) actStatesLogger).append(getActualPosTicks());
+        }
     }
 
     /**

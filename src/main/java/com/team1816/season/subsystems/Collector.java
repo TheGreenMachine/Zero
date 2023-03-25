@@ -8,6 +8,8 @@ import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
@@ -55,17 +57,21 @@ public class Collector extends Subsystem {
     /**
      * States
      */
-    private ROLLER_STATE desiredRollerState = ROLLER_STATE.STOP;
+    private GAME_ELEMENT currentGameElement = GAME_ELEMENT.NOTHING;
 
+    private ROLLER_STATE desiredRollerState = ROLLER_STATE.STOP;
     private PIVOT_STATE desiredPivotState = PIVOT_STATE.STOW;
-    private GAME_ELEMENT currentGameElement = GAME_ELEMENT.NOTHING;    //remember, game_element and state enums
     private double rollerVelocity = 0;
 
     private double actualPivotPosition = 0;
-    private boolean solenoidOutput = false;
     private boolean rollerOutputsChanged = false;
-
     private boolean pivotOutputsChanged = false;
+
+    /**
+     * Logging
+     */
+    private DoubleLogEntry rollerCurrentDraw;
+    private DoubleLogEntry pivotCurrentDraw;
 
     /**
      * Base constructor needed to instantiate a collector
@@ -96,6 +102,13 @@ public class Collector extends Subsystem {
         );
 
         allowablePivotError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
+
+        if (Constants.kLoggingRobot) {
+            desStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Collector/desiredPivotPosition");
+            actStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Collector/actualPivotPosition");
+            rollerCurrentDraw = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/currentDraw");
+            pivotCurrentDraw = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/currentDraw");
+        }
     }
 
     /**
@@ -144,15 +157,6 @@ public class Collector extends Subsystem {
     }
 
     /**
-     * Returns the actual output of the solenoid
-     *
-     * @return 1 if firing, 0 otherwise
-     */
-    public double getSolenoidOutput() {
-        return solenoidOutput ? 1 : 0;
-    }
-
-    /**
      * Returns the roller output
      */
     public double getRollerVelocity() {
@@ -180,6 +184,14 @@ public class Collector extends Subsystem {
         }
         if (Math.abs(desiredPivotState.getPivotPosition() - actualPivotPosition) < allowablePivotError) {
             robotState.actualCollectorPivotState = desiredPivotState;
+        }
+
+        if (Constants.kLoggingRobot) {
+            ((DoubleLogEntry) desStatesLogger).append(desiredPivotState.getPivotPosition());
+            ((DoubleLogEntry) actStatesLogger).append(actualPivotPosition);
+
+            rollerCurrentDraw.append(intakeMotor.getOutputCurrent());
+            pivotCurrentDraw.append(pivotMotor.getOutputCurrent());
         }
     }
 
