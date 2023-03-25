@@ -47,6 +47,14 @@ public abstract class AutoMode {
      * @see DriveStraightMode
      */
     protected AutoMode() {
+        robotState = Injector.get(RobotState.class);
+
+        if (robotState.allianceColor == Color.BLUE) {
+            initialPose = new Pose2d(0,0, Rotation2d.fromDegrees(180));
+        } else {
+            initialPose = new Pose2d(0,0, Rotation2d.fromDegrees(0));
+        }
+
     }
 
     /**
@@ -62,7 +70,7 @@ public abstract class AutoMode {
         this.trajectoryActions = trajectoryActions;
         boolean isSwerve = Injector.get(DriveFactory.class).getInstance() instanceof SwerveDrive;
 
-        if (trajectoryActions.size() == 0) {
+        if (trajectoryActions.isEmpty()) {
             if (robotState.allianceColor == Color.BLUE) {
                 initialPose = new Pose2d(0,0, Rotation2d.fromDegrees(180));
             } else {
