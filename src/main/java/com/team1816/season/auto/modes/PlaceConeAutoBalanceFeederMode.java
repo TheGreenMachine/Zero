@@ -2,11 +2,13 @@ package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.actions.ParallelAction;
 import com.team1816.lib.auto.actions.SeriesAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.AutoBalanceAction;
+import com.team1816.season.auto.actions.ElevatorAction;
 import com.team1816.season.auto.actions.ScoreAction;
 import com.team1816.season.auto.paths.NodeToChargeStationFeederPath;
 import com.team1816.season.subsystems.Collector;
@@ -32,9 +34,12 @@ public class PlaceConeAutoBalanceFeederMode extends AutoMode {
             new SeriesAction(
                 new WaitAction(.05),
                 new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
-                new SeriesAction(
-                    new WaitAction(3),
-                    trajectoryActions.get(0)
+                new ParallelAction(
+                    new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
+                    new SeriesAction(
+                        new WaitAction(4),
+                        trajectoryActions.get(0)
+                    )
                 ),
                 new WaitAction(0.25),
                 new AutoBalanceAction()
