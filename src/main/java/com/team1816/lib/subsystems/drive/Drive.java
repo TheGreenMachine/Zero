@@ -17,7 +17,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -172,6 +174,12 @@ public abstract class Drive
     );
 
     /**
+     * Logging
+     */
+    protected DoubleArrayLogEntry drivetrainPoseLogger;
+    protected DoubleArrayLogEntry drivetrainChassisSpeedsLogger;
+
+    /**
      * Instantiates the Drive with base subsystem parameters and accounts for DemoMode
      *
      * @param lm  LEDManager
@@ -198,6 +206,11 @@ public abstract class Drive
             }
             demoModeChooser.setDefaultOption(DemoMode.SLOW.name(), DemoMode.SLOW);
             demoModeMultiplier = 0.25;
+        }
+
+        if (Constants.kLoggingDrivetrain) {
+            drivetrainPoseLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Drivetrain/Pose");
+            drivetrainChassisSpeedsLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Drivetrain/ChassisSpeeds");
         }
     }
 

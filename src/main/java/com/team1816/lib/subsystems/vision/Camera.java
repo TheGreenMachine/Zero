@@ -36,7 +36,7 @@ public class Camera extends Subsystem {
      * Constants
      */
     private static final String NAME = "camera";
-    private final double CAMERA_HEIGHT_METERS = 0.7493;
+    private final double CAMERA_HEIGHT_METERS = 0.15;
 
     /**
      * State
@@ -64,10 +64,13 @@ public class Camera extends Subsystem {
                     "ZED",
                     90,
                     60,
-                    Constants.kCameraMountingAngleY,
-                    Constants.EmptyTransform2d,
+                    Constants.kCameraMountingOffset.getRotation().getDegrees(),
+                    new Transform2d(
+                        Constants.kCameraMountingOffset.getTranslation(),
+                        Constants.EmptyRotation2d
+                    ),
                     CAMERA_HEIGHT_METERS,
-                    9000,
+                    25,
                     3840,
                     1080,
                     0
@@ -129,8 +132,8 @@ public class Camera extends Subsystem {
                 .setPose(
                     robotState.fieldToVehicle.transformBy(
                         new Transform2d(
-                            robotState.fieldToVehicle,
-                            robotState.getFieldToTurretPos()
+                            Constants.kCameraMountingOffset.getTranslation(),
+                            Constants.EmptyRotation2d
                         )
                     )
                 );

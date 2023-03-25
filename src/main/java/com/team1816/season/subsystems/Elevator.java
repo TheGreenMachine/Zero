@@ -84,9 +84,9 @@ public class Elevator extends Subsystem {
     private boolean hallEffectTriggered; // not using this rn - turn on robot with arm all the way down for ~20 secs
     private double zeroingHallEffectTriggerValue;
 
-    // Logging
-    private DoubleLogEntry desArmPos;
-    private DoubleLogEntry actArmPos;
+    /**
+     * Logging
+     */
     private DoubleLogEntry armCurrentDraw;
 
 
@@ -155,8 +155,8 @@ public class Elevator extends Subsystem {
 //        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtensionAcceleration");
 
         if (Constants.kLoggingRobot) {
-            desArmPos = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/desArmPos");
-            actArmPos = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/actArmPos");
+            desStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/desiredArmPosition");
+            actStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/actualArmPosition");
             armCurrentDraw = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/currentDraw");
         }
     }
@@ -266,8 +266,8 @@ public class Elevator extends Subsystem {
         }
 
         if (Constants.kLoggingRobot) {
-            desArmPos.append(getDesiredAngleState().pos);
-            actArmPos.append(actualAnglePosition);
+            ((DoubleLogEntry) desStatesLogger).append(getDesiredAngleState().pos);
+            ((DoubleLogEntry) actStatesLogger).append(actualAnglePosition);
             armCurrentDraw.append(angleMotorMain.getOutputCurrent());
         }
     }

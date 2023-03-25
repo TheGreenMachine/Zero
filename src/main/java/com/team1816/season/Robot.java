@@ -246,7 +246,7 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("autoTarget"),
                         () -> {
                             if (robotState.allianceColor == Color.BLUE) {
-                                robotState.target = DrivetrainTargets.blueTargets.get(grid * 3 + node);
+                                robotState.target = DrivetrainTargets.blueTargets.get((2 - grid) * 3 + (2 - node));
                             } else {
                                 robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
                             }
@@ -276,7 +276,7 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("autoTargetAlign"),
                         () -> {
                             if (robotState.allianceColor == Color.BLUE) {
-                                robotState.target = DrivetrainTargets.blueTargets.get(grid * 3 + node);
+                                robotState.target = DrivetrainTargets.blueTargets.get((2 - grid) * 3 + (2 - node));
                             } else {
                                 robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
                             }
@@ -286,7 +286,7 @@ public class Robot extends TimedRobot {
                                 double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
                                 if (distance < Constants.kMinTrajectoryDistance) {
                                     System.out.println("Distance to target is " + distance + " m");
-                                    System.out.println("Too close to target! can not start trajectory!");
+                                    System.out.println("Too close to target! can not start trajectory! setting elevator extension to: " + level.name());
                                     AlignElevatorCommand command = new AlignElevatorCommand(level);
                                     autoTargetAlignThread = new Thread(command::run);
                                 } else {
@@ -344,9 +344,11 @@ public class Robot extends TimedRobot {
                                 } else { // collects from floor
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR);
                                 }
+                                drive.setMidSlowMode(true);
                                 ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK); // indicates on LEDs
                             } else {
                                 collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
+                                drive.setMidSlowMode(false);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
                         }
@@ -362,9 +364,11 @@ public class Robot extends TimedRobot {
                                 } else { // collects from floor
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.FLOOR);
                                 }
+                                drive.setMidSlowMode(true);
                                 ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK); // indicates on LEDs
                             } else {
                                 collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
+                                drive.setMidSlowMode(false);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                             }
                         }
@@ -395,10 +399,10 @@ public class Robot extends TimedRobot {
                         (pressed) -> {
                             collector.outtakeGamePiece(pressed);
                             if (pressed) {
-                                if (robotState.actualGameElement == Collector.GAME_ELEMENT.CUBE) {
-                                    ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK);
-                                } else {
+                                if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
                                     ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK);
+                                } else if (robotState.actualGameElement == Collector.GAME_ELEMENT.CUBE) {
+                                    ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK);
                                 }
                             } else {
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);

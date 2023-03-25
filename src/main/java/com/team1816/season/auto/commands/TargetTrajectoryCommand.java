@@ -21,7 +21,7 @@ public class TargetTrajectoryCommand extends AutoCommand {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Trajectory To Command Mode!");
+        System.out.println("Running Target Trajectory Command!");
         runAction(trajectoryActions.get(0));
     }
 
@@ -29,6 +29,6 @@ public class TargetTrajectoryCommand extends AutoCommand {
         super.done();
         Robot.runningAutoTarget = false;
         ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.SOLID);
-        System.out.println("Trajectory To Target Command Completed!");
+        System.out.println("Target Trajectory Command Completed!");
     }
 }

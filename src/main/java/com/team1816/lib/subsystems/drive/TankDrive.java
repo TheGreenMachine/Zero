@@ -22,6 +22,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
 
 import static com.team1816.lib.util.driveUtil.DriveConversions.*;
@@ -117,6 +119,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                 leftActualDistance,
                 rightActualDistance
             );
+
+        if (Constants.kLoggingDrivetrain) {
+            desStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Drivetrain/Tank/DesStates");
+            actStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Drivetrain/Tank/ActStates");
+        }
     }
 
     /**
@@ -191,6 +198,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
         tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
+
+        if (Constants.kLoggingDrivetrain) {
+            ((DoubleArrayLogEntry) desStatesLogger).append(new double[]{leftVelDemand, rightVelDemand});
+            ((DoubleArrayLogEntry) actStatesLogger).append(new double[]{leftActualVelocity, rightActualVelocity});
+        }
+
         updateRobotState();
     }
 
@@ -284,6 +297,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         robotState.deltaVehicle = cs;
 
         robotState.vehicleToFloorProximityCentimeters = infrastructure.getMaximumProximity();
+
+        if (Constants.kLoggingDrivetrain) {
+            drivetrainPoseLogger.append(new double[]{robotState.fieldToVehicle.getX(), robotState.fieldToVehicle.getY(), robotState.fieldToVehicle.getRotation().getRadians()});
+            drivetrainChassisSpeedsLogger.append(new double[]{robotState.deltaVehicle.vxMetersPerSecond, robotState.deltaVehicle.vyMetersPerSecond, robotState.deltaVehicle.omegaRadiansPerSecond});
+        }
     }
 
     /** Open loop control */
