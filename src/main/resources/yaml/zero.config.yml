@@ -83,7 +83,7 @@ subsystems:
             dPadMoveSpeed: 0.5
             isDemoMode: 0
             ## Auto Balance ##
-            autoBalanceDivider: 50
+            autoBalanceDivider: 75
             autoBalanceThreshold: 4  #was 2.5, then 3
     elevator:
         implemented: true
@@ -134,7 +134,7 @@ subsystems:
             cubeExtensionMaxOffset: 10000
             cubeExtensionMidOffset: 5000
     collector:
-        implemented: true
+        implemented: false #TODO impliment
         sparkmaxes:
             pivotMotor: 13
             intakeMotor: 14

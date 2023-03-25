@@ -64,7 +64,7 @@ public class DoublePlaceConeWallMode extends AutoMode {
                                 new SeriesAction(
                                     new WaitAction(1),
                                     new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
-                                    new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR)
+                                    new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.STOW)
                                 )
                             )
                         )
@@ -78,6 +78,7 @@ public class DoublePlaceConeWallMode extends AutoMode {
                 ),
                 // aligning
                 new ParallelAction(
+                    new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.STOW),
                     trajectoryActions.get(1),
                     new SeriesAction(
                         new WaitAction(1),
