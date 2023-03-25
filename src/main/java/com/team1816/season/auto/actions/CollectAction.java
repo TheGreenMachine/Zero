@@ -67,6 +67,9 @@ public class CollectAction implements AutoAction {
 
     @Override
     public boolean isFinished() {
+        if (!collector.isImplemented()) {
+            return true;
+        }
         return robotState.actualCollectorPivotState.equals(collector.getDesiredPivotState());
     }
 
