@@ -3,11 +3,14 @@ package com.team1816.lib.auto.modes;
 import com.team1816.lib.DriveFactory;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.AutoModeEndedException;
+import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.season.configuration.Constants;
+import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -18,6 +21,8 @@ import java.util.List;
  * Actions can be implemented in the routine and can be performed  (which are routines that do actions).
  */
 public abstract class AutoMode {
+
+    private static RobotState robotState;
 
     private static final long looperDtInMS = (long) (Constants.kLooperDt * 1000);
 
@@ -42,6 +47,14 @@ public abstract class AutoMode {
      * @see DriveStraightMode
      */
     protected AutoMode() {
+        robotState = Injector.get(RobotState.class);
+
+        if (robotState.allianceColor == Color.BLUE) {
+            initialPose = new Pose2d(0,0, Rotation2d.fromDegrees(180));
+        } else {
+            initialPose = new Pose2d(0,0, Rotation2d.fromDegrees(0));
+        }
+
     }
 
     /**
@@ -51,12 +64,24 @@ public abstract class AutoMode {
      * @see TrajectoryAction
      */
     protected AutoMode(List<TrajectoryAction> trajectoryActions) {
+        robotState = Injector.get(RobotState.class);
+
+
         this.trajectoryActions = trajectoryActions;
         boolean isSwerve = Injector.get(DriveFactory.class).getInstance() instanceof SwerveDrive;
-        if (trajectoryActions.get(0).getTrajectoryHeadings() != null && isSwerve) {
-            initialPose = new Pose2d(trajectoryActions.get(0).getTrajectory().getInitialPose().getTranslation(), trajectoryActions.get(0).getTrajectoryHeadings().get(0));
+
+        if (trajectoryActions.isEmpty()) {
+            if (robotState.allianceColor == Color.BLUE) {
+                initialPose = new Pose2d(0,0, Rotation2d.fromDegrees(180));
+            } else {
+                initialPose = new Pose2d(0,0, Rotation2d.fromDegrees(0));
+            }
         } else {
-            initialPose = trajectoryActions.get(0).getTrajectory().getInitialPose();
+            if (trajectoryActions.get(0).getTrajectoryHeadings() != null && isSwerve) {
+                initialPose = new Pose2d(trajectoryActions.get(0).getTrajectory().getInitialPose().getTranslation(), trajectoryActions.get(0).getTrajectoryHeadings().get(0));
+            } else {
+                initialPose = trajectoryActions.get(0).getTrajectory().getInitialPose();
+            }
         }
     }
 
