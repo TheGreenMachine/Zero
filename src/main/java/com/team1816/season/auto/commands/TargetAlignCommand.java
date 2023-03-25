@@ -34,7 +34,7 @@ public class TargetAlignCommand extends AutoCommand {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Trajectory To Command Mode!");
+        System.out.println("Running Target Align Command!");
         if (robotState.allianceColor == Color.BLUE) {
             runAction(
                 new ParallelAction(
@@ -43,7 +43,7 @@ public class TargetAlignCommand extends AutoCommand {
                         new WaitUntilInsideRegion(
                             new Translation2d(0, 0),
                             new Translation2d(3.0, Constants.fieldCenterY * 2),
-                            "Blue Safe Region"
+                            "Blue Placement Region"
                         ),
                         new AlignAction(extensionState, 0, 0)
                     )
@@ -57,7 +57,7 @@ public class TargetAlignCommand extends AutoCommand {
                         new WaitUntilInsideRegion(
                             new Translation2d(13.23, 0),
                             new Translation2d(Constants.fieldCenterX * 2, Constants.fieldCenterY * 2),
-                            "Red Safe Region"
+                            "Red Placement Region"
                         ),
                         new AlignAction(extensionState, 0, 0)
                     )
@@ -70,6 +70,6 @@ public class TargetAlignCommand extends AutoCommand {
         super.done();
         Robot.runningAutoTargetAlign = false;
         ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.SOLID);
-        System.out.println("Trajectory To Target Command Completed!");
+        System.out.println("Target Align Command Completed!");
     }
 }

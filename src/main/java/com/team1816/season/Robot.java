@@ -286,7 +286,7 @@ public class Robot extends TimedRobot {
                                 double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
                                 if (distance < Constants.kMinTrajectoryDistance) {
                                     System.out.println("Distance to target is " + distance + " m");
-                                    System.out.println("Too close to target! can not start trajectory!");
+                                    System.out.println("Too close to target! can not start trajectory! setting elevator extension to: " + level.name());
                                     AlignElevatorCommand command = new AlignElevatorCommand(level);
                                     autoTargetAlignThread = new Thread(command::run);
                                 } else {
