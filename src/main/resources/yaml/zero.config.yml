@@ -134,7 +134,7 @@ subsystems:
             cubeExtensionMaxOffset: 10000
             cubeExtensionMidOffset: 5000
     collector:
-        implemented: false #TODO impliment
+        implemented: false #TODO implement
         sparkmaxes:
             pivotMotor: 13
             intakeMotor: 14
