@@ -299,6 +299,8 @@ public class Robot extends TimedRobot {
                             } else {
                                 autoTargetAlignThread.stop();
                                 System.out.println("Stopped! driving to trajectory canceled!");
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
+                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.SOLID);
                                 runningAutoTargetAlign = !runningAutoTargetAlign;
                             }
                         }
