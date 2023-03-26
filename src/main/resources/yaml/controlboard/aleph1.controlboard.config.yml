@@ -24,7 +24,11 @@ operator:
         leftBumper: updatePoseWithCamera
         rightBumper: outtake
     buttonpad:
-        b: autoScore
+        buttonpad:
+            y: extendMax
+            x: extendMid
+            a: extendMin
+            b: autoScore
 buttonboard:
     upLeft: grid1 # farthest from opposing feeder
     up: grid2 # coopertition
