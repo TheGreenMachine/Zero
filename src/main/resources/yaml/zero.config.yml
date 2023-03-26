@@ -78,8 +78,8 @@ subsystems:
             trackWidth: 19.75 # inches
             wheelbaseLength: 19.75 # inches
             maxVelOpenLoop: 3.2 # meters/s (3.6)
-            maxVelPathFollowing: 3.2 # meters/s (3.6)
-            maxAccel: 2.64 # meters/s^ 2
+            maxVelPathFollowing: 2 # meters/s (3.6)
+            maxAccel: 1.27 # meters/s^2 (2.54)
             dPadMoveSpeed: 0.5
             isDemoMode: 0
             ## Auto Balance ##

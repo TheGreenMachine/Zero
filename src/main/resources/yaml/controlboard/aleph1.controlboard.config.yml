@@ -23,9 +23,6 @@ operator:
     buttons:
         leftBumper: updatePoseWithCamera
         rightBumper: outtake
-    axes:
-        leftTrigger: armStow
-        rightTrigger: armCollect
     buttonpad:
         b: autoScore
 buttonboard:
