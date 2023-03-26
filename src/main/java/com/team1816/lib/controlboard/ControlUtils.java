@@ -1,5 +1,6 @@
 package com.team1816.lib.controlboard;
 
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.lib.util.team254.LatchedBoolean;
 import com.team1816.season.Robot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -23,17 +24,17 @@ public class ControlUtils implements Controller.Factory {
         var hid = new Joystick(port);
         var axisCount = hid.getAxisCount();
         if (axisCount <= 3 && RobotBase.isSimulation()) {
-            System.out.println("    Using Wasd Controller for port: " + port);
+            GreenLogger.log("    Using Wasd Controller for port: " + port);
             return new WasdController(port);
         } else if (axisCount == 4) {
-            System.out.println("    Using Logitech Controller for port: " + port);
+            GreenLogger.log("    Using Logitech Controller for port: " + port);
             return new LogitechController(port);
         } else {
             if (port == ControlBoard.kButtonBoardPort) { // reserved button board port
-                System.out.println("    Using ButtonBoard Controller for port: " + port);
+                GreenLogger.log("    Using ButtonBoard Controller for port: " + port);
                 return new ButtonboardController(port);
             } else {
-                System.out.println("    Using XboxController Controller for port: " + port);
+                GreenLogger.log("    Using XboxController Controller for port: " + port);
                 return new XboxController(port);
             }
         }

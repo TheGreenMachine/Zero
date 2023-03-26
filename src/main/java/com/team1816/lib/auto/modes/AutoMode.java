@@ -7,6 +7,7 @@ import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -105,7 +106,7 @@ public abstract class AutoMode {
      * Starts the AutoMode and relevant actions
      */
     private void start() {
-        System.out.println("Starting " + this.getClass().getName());
+        GreenLogger.log("Starting " + this.getClass().getName());
         needsStop = false;
     }
 
@@ -120,7 +121,7 @@ public abstract class AutoMode {
      * Standard cleanup end-procedure
      */
     protected void done() {
-        System.out.println(this.getClass().getName() + " Done");
+        GreenLogger.log(this.getClass().getName() + " Done");
     }
 
     /**

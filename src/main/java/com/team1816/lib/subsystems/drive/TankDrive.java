@@ -11,6 +11,7 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.util.EnhancedMotorChecker;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.lib.util.team254.CheesyDriveHelper;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
@@ -217,7 +218,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      */
     @Override
     public void zeroSensors(Pose2d pose) {
-        System.out.println("Zeroing drive sensors!");
+        GreenLogger.log("Zeroing drive sensors!");
 
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
         resetEncoders();
@@ -315,7 +316,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public synchronized void setOpenLoop(DriveSignal signal) {
         if (controlState != ControlState.OPEN_LOOP) {
-            System.out.println("switching to open loop");
+            GreenLogger.log("switching to open loop");
             controlState = ControlState.OPEN_LOOP;
             leftErrorClosedLoop = 0;
             rightErrorClosedLoop = 0;
@@ -432,7 +433,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public synchronized void setBraking(boolean braking) {
         if (isBraking != braking) {
-            System.out.println("braking: " + braking);
+            GreenLogger.log("braking: " + braking);
             isBraking = braking;
 
             if (braking) {
@@ -571,7 +572,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
         boolean checkPigeon = infrastructure.getPigeon() == null;
 
-        System.out.println(leftSide && rightSide && checkPigeon);
+        GreenLogger.log(leftSide && rightSide && checkPigeon);
         if (leftSide && rightSide && checkPigeon) {
             ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
         } else {

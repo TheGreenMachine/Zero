@@ -13,6 +13,7 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.vision.Camera;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.commands.AlignElevatorCommand;
 import com.team1816.season.auto.commands.AutoScoreCommand;
@@ -255,10 +256,10 @@ public class Robot extends TimedRobot {
                                 orchestrator.updatePoseWithCamera();
                                 double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
                                 if (distance < Constants.kMinTrajectoryDistance) {
-                                    System.out.println("Distance to target is " + distance + " m");
-                                    System.out.println("Too close to target! can not start trajectory!");
+                                    GreenLogger.log("Distance to target is " + distance + " m");
+                                    GreenLogger.log("Too close to target! can not start trajectory!");
                                 } else {
-                                    System.out.println("Drive trajectory action started!");
+                                    GreenLogger.log("Drive trajectory action started!");
                                     TargetTrajectoryCommand command = new TargetTrajectoryCommand();
                                     autoTargetThread = new Thread(command::run);
                                     ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS, LedManager.ControlState.FAST_BLINK);
@@ -267,7 +268,7 @@ public class Robot extends TimedRobot {
                             } else {
                                 autoTargetThread.stop();
                                 ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.SOLID);
-                                System.out.println("Stopped! driving to trajectory canceled!");
+                                GreenLogger.log("Stopped! driving to trajectory canceled!");
                                 runningAutoTarget = !runningAutoTarget;
                             }
                         }
@@ -285,12 +286,12 @@ public class Robot extends TimedRobot {
                                 orchestrator.updatePoseWithCamera();
                                 double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
                                 if (distance < Constants.kMinTrajectoryDistance) {
-                                    System.out.println("Distance to target is " + distance + " m");
-                                    System.out.println("Too close to target! can not start trajectory! setting elevator extension to: " + level.name());
+                                    GreenLogger.log("Distance to target is " + distance + " m");
+                                    GreenLogger.log("Too close to target! can not start trajectory! setting elevator extension to: " + level.name());
                                     AlignElevatorCommand command = new AlignElevatorCommand(level);
                                     autoTargetAlignThread = new Thread(command::run);
                                 } else {
-                                    System.out.println("Drive trajectory action started!");
+                                    GreenLogger.log("Drive trajectory action started!");
                                     TargetAlignCommand command = new TargetAlignCommand(level);
                                     autoTargetAlignThread = new Thread(command::run);
                                 }
@@ -298,7 +299,7 @@ public class Robot extends TimedRobot {
                                 autoTargetAlignThread.start();
                             } else {
                                 autoTargetAlignThread.stop();
-                                System.out.println("Stopped! driving to trajectory canceled!");
+                                GreenLogger.log("Stopped! driving to trajectory canceled!");
                                 elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.SOLID);
                                 runningAutoTargetAlign = !runningAutoTargetAlign;
@@ -451,17 +452,17 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("extendMin"),
                         () -> {
-                            System.out.println("extend min");
+                            GreenLogger.log("extend min");
                             if (!runningAutoAlign) {
                                 runningAutoAlign = true;
-                                System.out.println("Auto align action started!");
+                                GreenLogger.log("Auto align action started!");
                                 AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MIN);
                                 alignElevatorThread = new Thread(command::run);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
                                 alignElevatorThread.start();
                             } else {
                                 alignElevatorThread.stop();
-                                System.out.println("Stopped! Auto align cancelled!");
+                                GreenLogger.log("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
                         }
@@ -469,17 +470,17 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("extendMid"),
                         () -> {
-                            System.out.println("extend mid");
+                            GreenLogger.log("extend mid");
                             if (!runningAutoAlign) {
                                 runningAutoAlign = true;
-                                System.out.println("Auto align action started!");
+                                GreenLogger.log("Auto align action started!");
                                 AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MID);
                                 alignElevatorThread = new Thread(command::run);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
                                 alignElevatorThread.start();
                             } else {
                                 alignElevatorThread.stop();
-                                System.out.println("Stopped! Auto align cancelled!");
+                                GreenLogger.log("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
                         }
@@ -487,17 +488,17 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("extendMax"),
                         () -> {
-                            System.out.println("extend max");
+                            GreenLogger.log("extend max");
                             if (!runningAutoAlign) {
                                 runningAutoAlign = true;
-                                System.out.println("Auto align action started!");
+                                GreenLogger.log("Auto align action started!");
                                 AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MAX);
                                 alignElevatorThread = new Thread(command::run);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
                                 alignElevatorThread.start();
                             } else {
                                 alignElevatorThread.stop();
-                                System.out.println("Stopped! Auto align cancelled!");
+                                GreenLogger.log("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
                         }
@@ -505,17 +506,17 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("autoScore"),
                         () -> {
-                            System.out.println("autoscore");
+                            GreenLogger.log("autoscore");
                             if (!runningAutoScore) {
                                 runningAutoScore = true;
-                                System.out.println("Auto Score action started!");
+                                GreenLogger.log("Auto Score action started!");
                                 AutoScoreCommand command = new AutoScoreCommand(collector.getCurrentGameElement(), elevator.getDesiredExtensionState());
                                 autoScoreThread = new Thread(command::run);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
                                 autoScoreThread.start();
                             } else {
                                 autoScoreThread.stop();
-                                System.out.println("Stopped! Auto scoring cancelled!");
+                                GreenLogger.log("Stopped! Auto scoring cancelled!");
                                 runningAutoScore = !runningAutoScore;
                             }
                         }
@@ -524,63 +525,63 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("grid1"),
                         () -> {
                             grid = 0;
-                            System.out.println("Grid changed to 0");
+                            GreenLogger.log("Grid changed to 0");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("grid2"),
                         () -> {
                             grid = 1;
-                            System.out.println("Grid changed to 1");
+                            GreenLogger.log("Grid changed to 1");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("grid3"),
                         () -> {
                             grid = 2;
-                            System.out.println("Grid changed to 2");
+                            GreenLogger.log("Grid changed to 2");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("node1"),
                         () -> {
                             node = 0;
-                            System.out.println("Node changed to 0");
+                            GreenLogger.log("Node changed to 0");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("node2"),
                         () -> {
                             node = 1;
-                            System.out.println("Node changed to 1");
+                            GreenLogger.log("Node changed to 1");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("node3"),
                         () -> {
                             node = 2;
-                            System.out.println("Node changed to 2");
+                            GreenLogger.log("Node changed to 2");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("level1"),
                         () -> {
                             level = Elevator.EXTENSION_STATE.MIN;
-                            System.out.println("Score level changed to Low");
+                            GreenLogger.log("Score level changed to Low");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("level2"),
                         () -> {
                             level = Elevator.EXTENSION_STATE.MID;
-                            System.out.println("Score level changed to Mid");
+                            GreenLogger.log("Score level changed to Mid");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("level3"),
                         () -> {
                             level = Elevator.EXTENSION_STATE.MAX;
-                            System.out.println("Score level changed to High");
+                            GreenLogger.log("Score level changed to High");
                         }
                     )
                 );
@@ -691,7 +692,7 @@ public class Robot extends TimedRobot {
             ledManager.indicateStatus(LedManager.RobotStatus.DISABLED, LedManager.ControlState.BLINK);
 
             if (subsystemManager.testSubsystems()) {
-                System.out.println("ALL SYSTEMS PASSED");
+                GreenLogger.log("ALL SYSTEMS PASSED");
                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
             } else {
                 System.err.println("CHECK ABOVE OUTPUT SOME SYSTEMS FAILED!!!");
@@ -725,7 +726,7 @@ public class Robot extends TimedRobot {
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
         } catch (Throwable t) {
             faulted = true;
-            System.out.println(t.getMessage());
+            GreenLogger.log(t.getMessage());
         }
     }
 
@@ -791,6 +792,7 @@ public class Robot extends TimedRobot {
                     .setTrajectory(
                         autoModeManager.getSelectedAuto().getCurrentTrajectory()
                     );
+
             }
 
             if (drive.isDemoMode()) { // Demo-mode

@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.lib.util.visionUtil.GreenSimVisionSystem;
 import com.team1816.lib.util.visionUtil.GreenSimVisionTarget;
 import com.team1816.lib.util.visionUtil.VisionPoint;
@@ -109,7 +110,7 @@ public class Camera extends Subsystem {
         if (this.isImplemented()) {
             this.cameraEnabled = cameraEnabled;
         } else {
-            System.out.println("Camera Not Implemented...");
+            GreenLogger.log("Camera Not Implemented...");
         }
     }
 
@@ -161,7 +162,7 @@ public class Camera extends Subsystem {
             p.cameraToTarget = bestTarget.getBestCameraToTarget(); // missing method in PhotonTrackedTarget
             targets.add(p);
         } else {
-            //System.out.println("camera not returning points b/c camera not implemented");
+            //GreenLogger.log("camera not returning points b/c camera not implemented");
         }
         return targets;
     }

@@ -5,6 +5,7 @@ import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.commands.AutoCommand;
 import com.team1816.lib.subsystems.LedManager;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.Robot;
 import com.team1816.season.auto.paths.TargetTrajectoryPath;
 
@@ -21,7 +22,7 @@ public class TargetTrajectoryCommand extends AutoCommand {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Target Trajectory Command!");
+        GreenLogger.log("Running Target Trajectory Command!");
         runAction(trajectoryActions.get(0));
     }
 
@@ -29,6 +30,6 @@ public class TargetTrajectoryCommand extends AutoCommand {
         super.done();
         Robot.runningAutoTarget = false;
         ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.SOLID);
-        System.out.println("Target Trajectory Command Completed!");
+        GreenLogger.log("Target Trajectory Command Completed!");
     }
 }

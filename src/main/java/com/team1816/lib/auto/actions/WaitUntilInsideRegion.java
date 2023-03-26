@@ -1,6 +1,7 @@
 package com.team1816.lib.auto.actions;
 
 import com.team1816.lib.Injector;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -96,6 +97,6 @@ public class WaitUntilInsideRegion implements AutoAction {
      */
     @Override
     public void done() {
-        System.out.println("INSIDE DESIRED REGION: " + name);
+        GreenLogger.log("INSIDE DESIRED REGION: " + name);
     }
 }

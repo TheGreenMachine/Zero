@@ -5,6 +5,7 @@ import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.drive.TankDrive;
+import com.team1816.lib.util.logUtil.GreenLogger;
 
 /**
  * Decides between drivetrain type based on factory constants. Allows for differential / swerve duality.
@@ -26,7 +27,7 @@ public class DriveFactory implements Drive.Factory {
             } else {
                 mDrive = Injector.get(TankDrive.class);
             }
-            System.out.println("Created " + mDrive.getClass().getSimpleName());
+            GreenLogger.log("Created " + mDrive.getClass().getSimpleName());
         }
         return mDrive;
     }

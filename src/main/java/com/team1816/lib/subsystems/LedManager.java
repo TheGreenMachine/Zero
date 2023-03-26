@@ -3,6 +3,7 @@ package com.team1816.lib.subsystems;
 import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.ledManager.ILEDManager;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.networktables.GenericEntry;
@@ -181,7 +182,7 @@ public class LedManager extends Subsystem {
             outputsChanged = true;
         }
         if (outputsChanged) {
-//            System.out.println(controlState);
+//            GreenLogger.log(controlState);
             outputsChanged = false;
             switch (controlState) {
                 case RAVE:
@@ -235,7 +236,7 @@ public class LedManager extends Subsystem {
     @Override
     public boolean testSubsystem() {
         // no checking performed
-        System.out.println("Checking LED systems");
+        GreenLogger.log("Checking LED systems");
         controlState = ControlState.SOLID;
         setLedColor(MAX, 0, 0); // set red
         testDelay();

@@ -5,6 +5,7 @@ import com.team1816.lib.auto.paths.AutoPath;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.drive.TankDrive;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.RamseteController;
@@ -113,7 +114,7 @@ public class TrajectoryAction implements AutoAction {
                     ((SwerveDrive) drive)::setModuleStates
                 );
         } else {
-            System.out.println(
+            GreenLogger.log(
                 " oh man oh god I'm neither swerve nor tank! " + drive.toString()
             );
             command = null;
@@ -148,7 +149,7 @@ public class TrajectoryAction implements AutoAction {
      */
     @Override
     public void start() {
-        System.out.println(
+        GreenLogger.log(
             "Starting trajectory! (seconds = " + trajectory.getTotalTimeSeconds() + ")"
         );
         drive.startTrajectory(trajectory, headings);

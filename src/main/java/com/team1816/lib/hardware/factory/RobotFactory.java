@@ -20,6 +20,7 @@ import com.team1816.lib.hardware.components.sensor.GhostProximitySensor;
 import com.team1816.lib.hardware.components.sensor.IProximitySensor;
 import com.team1816.lib.hardware.components.sensor.ProximitySensor;
 import com.team1816.lib.subsystems.drive.SwerveModule;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -120,7 +121,7 @@ public class RobotFactory {
                     subsystem
                 );
         } else {
-            System.out.println(
+            GreenLogger.log(
                 "Created " +
                     motor.getClass().getSimpleName() +
                     " id:" +
@@ -357,7 +358,7 @@ public class RobotFactory {
             if (subsystem == null) {
                 subsystem = new SubsystemConfig();
                 subsystem.implemented = false;
-                System.out.println("Subsystem not defined: " + subsystemName);
+                GreenLogger.log("Subsystem not defined: " + subsystemName);
             }
             return subsystem;
         }
@@ -479,10 +480,10 @@ public class RobotFactory {
         if (!isHardwareValid(id)) {
             pigeon = new GhostPigeonIMU(id);
         } else if (config.infrastructure.isPigeon2) {
-            System.out.println("Using Pigeon 2 for id: " + id);
+            GreenLogger.log("Using Pigeon 2 for id: " + id);
             pigeon = new Pigeon2Impl(id, config.infrastructure.canivoreBusName);
         } else {
-            System.out.println("Using old Pigeon for id: " + id);
+            GreenLogger.log("Using old Pigeon for id: " + id);
             pigeon = new PigeonIMUImpl(id);
         }
         if (getConstant("resetFactoryDefaults") > 0) {
@@ -499,10 +500,10 @@ public class RobotFactory {
         }
         int id = config.infrastructure.proximitySensors.getOrDefault(name, -1);
         if (id < 0) {
-            System.out.println("Incorrect Name: Proximity sensor not found, using ghost!");
+            GreenLogger.log("Incorrect Name: Proximity sensor not found, using ghost!");
             return new GhostProximitySensor();
         }
-        System.out.println("Creating Proximity Sensor: " + name + " at port: " + id);
+        GreenLogger.log("Creating Proximity Sensor: " + name + " at port: " + id);
         return new ProximitySensor(name, config.infrastructure.proximitySensors.get(name));
     }
 
@@ -524,7 +525,7 @@ public class RobotFactory {
         String subsystemName,
         String componentName
     ) {
-        System.out.println(
+        GreenLogger.log(
             "  " +
                 type +
                 " \"" +

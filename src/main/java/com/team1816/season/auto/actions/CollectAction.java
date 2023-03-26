@@ -3,6 +3,7 @@ package com.team1816.season.auto.actions;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.lib.subsystems.LedManager;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.Collector;
 
@@ -52,11 +53,11 @@ public class CollectAction implements AutoAction {
             ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET);
         }
         if (desiredRollerState != null) {
-            System.out.println("Setting collector to state: " + desiredRollerState.name());
+            GreenLogger.log("Setting collector to state: " + desiredRollerState.name());
             collector.setDesiredRollerState(desiredRollerState);
         }
         if (desiredPivotState != null) {
-            System.out.println("Setting collector to state: " + desiredPivotState.name());
+            GreenLogger.log("Setting collector to state: " + desiredPivotState.name());
             collector.setDesiredPivotState(desiredPivotState);
         }
     }

@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
@@ -84,7 +85,7 @@ public class LazyVictorSPX extends VictorSPX implements IGreenMotor {
 
     @Override
     public ErrorCode configAllSettings(BaseTalonConfiguration allConfigs, int timeoutMs) {
-        System.out.println(
+        GreenLogger.log(
             "WARNING: configAllSettings not implemented in LazyVictorSPX!"
         );
         return ErrorCode.OK;

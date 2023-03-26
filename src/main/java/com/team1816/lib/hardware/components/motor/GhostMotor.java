@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.Robot;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
@@ -78,7 +79,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
             this.desiredDemand[1] = NaN;
             this.desiredDemand[2] = demand;
         } else {
-            System.out.println("no support for this Mode in GhostMotor!");
+            GreenLogger.log("no support for this Mode in GhostMotor!");
             return;
         }
         controlMode = Mode;

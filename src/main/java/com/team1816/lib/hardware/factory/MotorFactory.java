@@ -6,6 +6,7 @@ import com.ctre.phoenix.sensors.*;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.SubsystemConfig;
 import com.team1816.lib.hardware.components.motor.*;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import edu.wpi.first.wpilibj.RobotBase;
 
 import java.util.Map;
@@ -74,7 +75,7 @@ public class MotorFactory {
             -1, // never can have a remote sensor on Follower,
             canBus
         );
-        System.out.println(
+        GreenLogger.log(
             "Slaving talon on " + id + " to talon on " + main.getDeviceID()
         );
         talon.follow(main);
@@ -119,7 +120,7 @@ public class MotorFactory {
         IGreenMotor main
     ) {
         final IGreenMotor victor = createVictor(id, name);
-        System.out.println(
+        GreenLogger.log(
             "Slaving victor on " + id + " to talon on " + main.getDeviceID()
         );
         victor.follow(main);
@@ -220,7 +221,7 @@ public class MotorFactory {
 
         // for newly attached motors only
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
-            System.out.println("Resetting motor factory defaults");
+            GreenLogger.log("Resetting motor factory defaults");
             motor.configFactoryDefault(kTimeoutMs);
             motorConfig.forwardSoftLimitThreshold = FORWARD_SOFT_LIMIT;
             motorConfig.forwardSoftLimitEnable = ENABLE_SOFT_LIMIT;
@@ -271,13 +272,13 @@ public class MotorFactory {
 
         boolean invertMotor = subsystem.invertMotor.contains(name);
         if (invertMotor) {
-            System.out.println("        Inverting " + name + " with ID " + id);
+            GreenLogger.log("        Inverting " + name + " with ID " + id);
         }
         motor.setInverted(invertMotor);
 
         boolean invertSensorPhase = subsystem.invertSensorPhase.contains(name);
         if (invertSensorPhase) {
-            System.out.println(
+            GreenLogger.log(
                 "       Inverting sensor phase of " + name + " with ID " + id
             );
         }

@@ -6,6 +6,7 @@ import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.Robot;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
@@ -42,7 +43,7 @@ public class AutoBalanceAction implements AutoAction {
 
         isSwerve = drive instanceof SwerveDrive;
 
-        System.out.println("Initiating auto balance!");
+        GreenLogger.log("Initiating auto balance!");
         ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.BLINK);
         drive.autoBalance(new ChassisSpeeds());
     }
@@ -61,7 +62,7 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public void done() {
-        System.out.println("Drivetrain is Balanced!");
+        GreenLogger.log("Drivetrain is Balanced!");
         ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.SOLID);
         drive.setBraking(true);
     }

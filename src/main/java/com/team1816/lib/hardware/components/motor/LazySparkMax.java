@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.team1816.lib.util.logUtil.GreenLogger;
 
 /**
  * This class is a thin wrapper around the CANSparkMax that reduces CAN bus / CPU overhead.
@@ -565,7 +566,7 @@ public class LazySparkMax implements IGreenMotor {
     }
 
     public void setSensorPhase(boolean isInverted) {
-        System.out.println("missing op for inverting a Rev motor!");
+        GreenLogger.log("missing op for inverting a Rev motor!");
     }
 
     public int getDeviceID() {
@@ -585,7 +586,7 @@ public class LazySparkMax implements IGreenMotor {
         } else if (controlMode == ControlMode.Position) {
             return CANSparkMax.ControlType.kPosition;
         } else {
-            System.out.println("spark motor not set to a control mode!");
+            GreenLogger.log("spark motor not set to a control mode!");
             return CANSparkMax.ControlType.kDutyCycle; // what should be default?
         }
     }
@@ -690,13 +691,13 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public ErrorCode configAllSettings(BaseTalonConfiguration allConfigs, int timeoutMs) {
-        System.out.println("WARNING: configAllSettings not working for sparkMax motors!");
+        GreenLogger.log("WARNING: configAllSettings not working for sparkMax motors!");
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configFactoryDefault(int timeoutMs) {
-        System.out.println(
+        GreenLogger.log(
             "WARNING: configFactoryDefault not working for sparkMax motors!"
         );
         return ErrorCode.OK;

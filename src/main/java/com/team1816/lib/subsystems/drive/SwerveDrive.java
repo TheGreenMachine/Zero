@@ -6,6 +6,7 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.PidProvider;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.lib.util.team254.SwerveDriveHelper;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
@@ -222,7 +223,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (headingsList == null) {
             return Constants.EmptyRotation2d;
         } else if (trajectoryIndex > headingsList.size() - 1) {
-            //System.out.println("heck the headings aren't long enough");
+            //GreenLogger.log("heck the headings aren't long enough");
             return Constants.EmptyRotation2d;
         }
         if (
@@ -231,7 +232,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 trajectoryIndex == 0
         ) trajectoryIndex++;
         if (trajectoryIndex >= headingsList.size()) {
-            System.out.println(headingsList.get(headingsList.size() - 1) + " = max");
+            GreenLogger.log(headingsList.get(headingsList.size() - 1) + " = max");
             return headingsList.get(headingsList.size() - 1);
         }
         double timeBetweenPoints =
@@ -368,7 +369,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public void setOpenLoop(DriveSignal signal) {
         if (controlState != ControlState.OPEN_LOOP) {
-            System.out.println("switching to open loop");
+            GreenLogger.log("switching to open loop");
             controlState = ControlState.OPEN_LOOP;
         }
         SwerveModuleState[] desiredStatesSignal = new SwerveModuleState[4];
@@ -487,7 +488,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      */
     @Override
     public void zeroSensors(Pose2d pose) {
-        System.out.println("Zeroing drive sensors!");
+        GreenLogger.log("Zeroing drive sensors!");
 
         // resetting ACTUAL module states
         for (int i = 0; i < 4; i++) {

@@ -10,6 +10,7 @@ import com.team1816.lib.hardware.components.motor.IMotorSensor;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -173,7 +174,7 @@ public class Turret extends Subsystem implements PidProvider {
             var sensor = ((IMotorSensor) turretMotor);
             var sensorVal = sensor.getPulseWidthPosition() % kAbsPPR;
             sensor.setQuadraturePosition(sensorVal);
-            System.out.println("zeroing turret at " + sensorVal);
+            GreenLogger.log("zeroing turret at " + sensorVal);
         } else {
             if (resetEncPos) {
                 turretMotor.setSelectedSensorPosition(
@@ -203,7 +204,7 @@ public class Turret extends Subsystem implements PidProvider {
         if (this.controlMode != controlMode) {
             outputsChanged = true;
             this.controlMode = controlMode;
-            System.out.println("turret controlMode: " + this.controlMode);
+            GreenLogger.log("turret controlMode: " + this.controlMode);
         }
     }
 
@@ -242,7 +243,7 @@ public class Turret extends Subsystem implements PidProvider {
      */
     public synchronized void setTurretAngle(double angle) {
         setControlMode(ControlMode.POSITION);
-        System.out.println("setting turret angle: " + angle);
+        GreenLogger.log("setting turret angle: " + angle);
         setDesiredPos(convertTurretDegreesToTicks(angle));
         followingPos = desiredPos;
     }
@@ -354,7 +355,7 @@ public class Turret extends Subsystem implements PidProvider {
         turretVelocity = sensorVel;
 
         if (turretMotor.hasResetOccurred()) {
-            System.out.println("turretMotor lost its position!");
+            GreenLogger.log("turretMotor lost its position!");
             led.setDefaultStatus(LedManager.RobotStatus.ERROR);
             lostEncPos = true;
         }
@@ -617,13 +618,13 @@ public class Turret extends Subsystem implements PidProvider {
         Timer.delay(2);
         var ticks = getActualPosTicks();
         var diff = Math.abs(ticks - kFwdLimit);
-        System.out.println(" + TICKS: " + ticks + "  ERROR: " + diff);
+        GreenLogger.log(" + TICKS: " + ticks + "  ERROR: " + diff);
         passed = diff <= 50;
         turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput, -.2);
         Timer.delay(2);
         ticks = getActualPosTicks();
         diff = Math.abs(ticks - kRevLimit);
-        System.out.println(" - TICKS: " + ticks + "  ERROR: " + diff);
+        GreenLogger.log(" - TICKS: " + ticks + "  ERROR: " + diff);
         passed = passed & diff <= 50;
         turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput, 0);
         return passed;

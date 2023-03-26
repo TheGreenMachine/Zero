@@ -9,6 +9,7 @@ import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitUntilInsideRegion;
 import com.team1816.lib.auto.commands.AutoCommand;
 import com.team1816.lib.subsystems.LedManager;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.Robot;
 import com.team1816.season.auto.actions.AlignAction;
 import com.team1816.season.auto.paths.TargetTrajectoryPath;
@@ -34,7 +35,7 @@ public class TargetAlignCommand extends AutoCommand {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Target Align Command!");
+        GreenLogger.log("Running Target Align Command!");
         if (robotState.allianceColor == Color.BLUE) {
             runAction(
                 new ParallelAction(
@@ -70,6 +71,6 @@ public class TargetAlignCommand extends AutoCommand {
         super.done();
         Robot.runningAutoTargetAlign = false;
         ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.SOLID);
-        System.out.println("Target Align Command Completed!");
+        GreenLogger.log("Target Align Command Completed!");
     }
 }

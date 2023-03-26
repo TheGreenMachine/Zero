@@ -70,6 +70,7 @@ public class Collector extends Subsystem {
     /**
      * Logging
      */
+    private DoubleLogEntry rollerVelocityLogger;
     private DoubleLogEntry rollerCurrentDraw;
     private DoubleLogEntry pivotCurrentDraw;
 
@@ -104,8 +105,9 @@ public class Collector extends Subsystem {
         allowablePivotError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
 
         if (Constants.kLoggingRobot) {
-            desStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Collector/desiredPivotPosition");
-            actStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Collector/actualPivotPosition");
+            rollerVelocityLogger = new DoubleLogEntry(DataLogManager.getLog(), "Collector/Roller/actualRollerVelocity");
+            desStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Collector/Pivot/desiredPivotPosition");
+            actStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Collector/Pivot/actualPivotPosition");
             rollerCurrentDraw = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/currentDraw");
             pivotCurrentDraw = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/currentDraw");
         }
@@ -187,6 +189,8 @@ public class Collector extends Subsystem {
         }
 
         if (Constants.kLoggingRobot) {
+            rollerVelocityLogger.append(rollerVelocity);
+
             ((DoubleLogEntry) desStatesLogger).append(desiredPivotState.getPivotPosition());
             ((DoubleLogEntry) actStatesLogger).append(actualPivotPosition);
 

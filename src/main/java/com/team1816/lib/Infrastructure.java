@@ -7,6 +7,7 @@ import com.team1816.lib.hardware.components.gyro.Pigeon2Impl;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.hardware.components.sensor.IProximitySensor;
 import com.team1816.lib.hardware.factory.RobotFactory;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
@@ -90,7 +91,7 @@ public class Infrastructure {
      * @param angle Rotation2d
      */
     public void resetPigeon(Rotation2d angle) {
-        System.out.println("resetting Pigeon");
+        GreenLogger.log("resetting Pigeon");
         if (pigeon instanceof Pigeon2Impl) {
             ((Pigeon2Impl) pigeon).configMountPose(angle.getDegrees(), 0, 0);
         }

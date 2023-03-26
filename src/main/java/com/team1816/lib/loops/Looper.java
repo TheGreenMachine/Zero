@@ -1,6 +1,7 @@
 package com.team1816.lib.loops;
 
 import com.team1816.lib.subsystems.SubsystemLooper;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.Robot;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -75,7 +76,7 @@ public class Looper implements ILooper {
     public synchronized void start() {
         synchronized (mTaskRunningLock) {
             if (!mRunning) {
-                System.out.println("Starting loops");
+                GreenLogger.log("Starting loops");
                 mTimestamp = Timer.getFPGATimestamp();
                 mStart = mTimestamp;
                 for (Loop loop : mLoops) {
@@ -92,7 +93,7 @@ public class Looper implements ILooper {
     public synchronized void stop() {
         synchronized (mTaskRunningLock) {
             if (mRunning) {
-                System.out.println("Stopping loops");
+                GreenLogger.log("Stopping loops");
                 mRunning = false;
                 mTimestamp = Timer.getFPGATimestamp();
                 for (Loop loop : mLoops) {

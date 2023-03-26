@@ -7,6 +7,7 @@ import com.team1816.lib.auto.actions.SeriesAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.actions.AlignAction;
 import com.team1816.season.auto.actions.CollectAction;
 import com.team1816.season.auto.actions.ElevatorAction;
@@ -49,7 +50,7 @@ public class DoublePlaceConeFeederMode extends AutoMode {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Double Place Cone Mode");
+        GreenLogger.log("Running Double Place Cone Mode");
         runAction(
             new SeriesAction(
                 // placing first cone

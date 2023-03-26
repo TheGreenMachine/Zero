@@ -3,6 +3,7 @@ package com.team1816.lib.controlboard;
 import com.google.inject.Inject;
 import com.team1816.lib.Injector;
 import com.team1816.lib.hardware.factory.RobotFactory;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.Robot;
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -66,7 +67,7 @@ public class ControlBoardBridge {
                 "Loading \"" + controlBoardConfigName + "\" control board config"
             );
         } catch (Exception e) {
-            System.out.println(e);
+            GreenLogger.log(e);
             DriverStation.reportError(
                 "Control Board Yaml Config error!",
                 e.getStackTrace()

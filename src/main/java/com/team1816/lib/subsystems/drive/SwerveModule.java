@@ -9,6 +9,7 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.util.driveUtil.DriveConversions;
 import com.team1816.lib.util.driveUtil.SwerveKinematics;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.Robot;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -62,7 +63,7 @@ public class SwerveModule implements ISwerveModule {
     ) {
         mModuleConfig = moduleConfig;
 
-        System.out.println(
+        GreenLogger.log(
             "Configuring Swerve Module " +
                 mModuleConfig.moduleName +
                 " on subsystem " +

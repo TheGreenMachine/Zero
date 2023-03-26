@@ -7,6 +7,7 @@ import com.team1816.lib.auto.actions.SeriesAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.actions.AutoBalanceAction;
 import com.team1816.season.auto.actions.ElevatorAction;
 import com.team1816.season.auto.paths.NodeToChargeStationFeederPath;
@@ -28,7 +29,7 @@ public class ExitCommunityBalanceWallMode extends AutoMode {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Exit Community Balance Mode");
+        GreenLogger.log("Running Exit Community Balance Mode");
         runAction(
             new SeriesAction(
                 new WaitAction(.5),

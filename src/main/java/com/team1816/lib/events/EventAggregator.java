@@ -1,5 +1,7 @@
 package com.team1816.lib.events;
 
+import com.team1816.lib.util.logUtil.GreenLogger;
+
 import java.util.HashMap;
 
 /**
@@ -18,7 +20,7 @@ public class EventAggregator implements IEventAggregator {
         try {
             newEvent = type.getDeclaredConstructor().newInstance();
         } catch (Exception exp) {
-            System.out.println(exp.getMessage());
+            GreenLogger.log(exp.getMessage());
             return null;
         }
         _events.put(type, newEvent);

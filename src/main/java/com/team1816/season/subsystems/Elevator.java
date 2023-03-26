@@ -7,6 +7,7 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -41,8 +42,8 @@ public class Elevator extends Subsystem {
     public static final double maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
     public static final double shelfExtension = factory.getConstant(NAME, "shelfExtensionPosition");
 
-    public static final double cubeExtensionMaxOffset = factory.getConstant("cubeExtensionMaxOffset");
-    public static final double cubeExtensionMidOffset = factory.getConstant("cubeExtensionMidOffset");
+    public static final double cubeExtensionMaxOffset = factory.getConstant("cubeExtensionMaxOffset", 10000);
+    public static final double cubeExtensionMidOffset = factory.getConstant("cubeExtensionMidOffset", 5000);
 
     private AsyncTimer colPosTimer;
     private AsyncTimer stowExtensionTimer;
@@ -87,7 +88,10 @@ public class Elevator extends Subsystem {
     /**
      * Logging
      */
+    private DoubleLogEntry desiredExtensionLogger;
+    private DoubleLogEntry actualExtensionLogger;
     private DoubleLogEntry armCurrentDraw;
+    private DoubleLogEntry extensionCurrentDraw;
 
 
     /**
@@ -143,7 +147,7 @@ public class Elevator extends Subsystem {
                 // set it to go down until it hits rubber then just fight against the spring to stay down
                 // that way we don't need to be dead-on for the collect pos
                 angleMotorMain.set(ControlMode.PercentOutput, -0.06);   //(start -.08)i can go up to -0.1 if collecting too high
-                System.out.println("running collector into rubber w/ %out");
+                GreenLogger.log("running collector into rubber w/ %out");
             }
         );
 
@@ -155,9 +159,13 @@ public class Elevator extends Subsystem {
 //        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtensionAcceleration");
 
         if (Constants.kLoggingRobot) {
-            desStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/desiredArmPosition");
-            actStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/actualArmPosition");
-            armCurrentDraw = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/currentDraw");
+            desStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/Angle/desiredPosition");
+            actStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/Angle/actualPosition");
+            armCurrentDraw = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/Angle/currentDraw");
+
+            desiredExtensionLogger = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/Extension/desiredExtensionPosition");
+            actualExtensionLogger = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/Extension/actualExtensionPosition");
+            extensionCurrentDraw = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/Extension/currentDraw");
         }
     }
 
@@ -269,6 +277,10 @@ public class Elevator extends Subsystem {
             ((DoubleLogEntry) desStatesLogger).append(getDesiredAngleState().pos);
             ((DoubleLogEntry) actStatesLogger).append(actualAnglePosition);
             armCurrentDraw.append(angleMotorMain.getOutputCurrent());
+
+            desiredExtensionLogger.append(getDesiredExtensionState().extension);
+            actualExtensionLogger.append(actualExtensionPosition);
+            extensionCurrentDraw.append(extensionMotor.getOutputCurrent());
         }
     }
 

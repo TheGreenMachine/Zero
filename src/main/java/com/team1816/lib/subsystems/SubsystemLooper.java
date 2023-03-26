@@ -3,6 +3,7 @@ package com.team1816.lib.subsystems;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
 import com.team1816.lib.loops.Looper;
+import com.team1816.lib.util.logUtil.GreenLogger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +40,7 @@ public class SubsystemLooper implements ILooper {
         boolean ret_val = true;
 
         for (Subsystem s : mAllSubsystems) {
-            System.out.println("SUBSYSTEM: " + s.getSubsystemName());
+            GreenLogger.log("SUBSYSTEM: " + s.getSubsystemName());
             ret_val &= s.testSubsystem();
         }
 
@@ -88,12 +89,12 @@ public class SubsystemLooper implements ILooper {
         mAllSubsystems = Arrays.asList(allSubsystems);
         for (Subsystem subsystem : mAllSubsystems) {
             if (!subsystem.isImplemented()) {
-                System.out.println(
+                GreenLogger.log(
                     "Warning: " + subsystem.getSubsystemName() + " is not implemented"
                 );
             }
         }
-        System.out.println("********** Subsystems set **********");
+        GreenLogger.log("********** Subsystems set **********");
     }
 
     /**

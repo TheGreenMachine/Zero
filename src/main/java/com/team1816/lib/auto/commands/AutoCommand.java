@@ -6,6 +6,7 @@ import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -79,7 +80,7 @@ public abstract class AutoCommand {
      * Starts the AutoMode and relevant actions
      */
     private void start() {
-        System.out.println("Starting " + this.getClass().getName());
+        GreenLogger.log("Starting " + this.getClass().getName());
         needsStop = false;
     }
 
@@ -94,7 +95,7 @@ public abstract class AutoCommand {
      * Standard cleanup end-procedure
      */
     protected void done() {
-        System.out.println(this.getClass().getName() + " Done");
+        GreenLogger.log(this.getClass().getName() + " Done");
     }
 
     /**

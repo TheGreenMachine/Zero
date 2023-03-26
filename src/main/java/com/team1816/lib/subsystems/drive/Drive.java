@@ -8,6 +8,7 @@ import com.team1816.lib.loops.Loop;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.lib.util.team254.DriveSignal;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
@@ -196,7 +197,7 @@ public abstract class Drive
             SmartDashboard.putData("Demo Mode", demoModeChooser);
             // demo mode functionality configuration
 
-            System.out.println("    Using Demo Control Board");
+            GreenLogger.log("    Using Demo Control Board");
 
             demoModeChooser = new SendableChooser<>();
             SmartDashboard.putData("Demo Mode", demoModeChooser);
@@ -241,7 +242,7 @@ public abstract class Drive
                                 updateTrajectoryPeriodic(timestamp);
                                 break;
                             default:
-                                System.out.println(
+                                GreenLogger.log(
                                     "unexpected drive control state: " + controlState
                                 );
                                 break;
@@ -367,7 +368,7 @@ public abstract class Drive
      * @param midSlowMode - boolean
      */
     public void setMidSlowMode(boolean midSlowMode) {
-        System.out.println("setting slow mode to: " + midSlowMode);
+        GreenLogger.log("setting slow mode to: " + midSlowMode);
         isMidSlowMode = midSlowMode;
     }
 
@@ -627,7 +628,7 @@ public abstract class Drive
 
         // if auto has been changed, update selected auto mode + thread
         if (modeChanged) {
-            System.out.println(
+            GreenLogger.log(
                 "Demo mode changed from: " + desiredMode + ", to: " + selectedMode.name()
             );
 

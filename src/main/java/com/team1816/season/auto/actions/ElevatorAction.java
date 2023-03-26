@@ -3,6 +3,7 @@ package com.team1816.season.auto.actions;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.lib.loops.AsyncTimer;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
@@ -35,7 +36,7 @@ public class ElevatorAction implements AutoAction {
 
     @Override
     public void start() {
-        System.out.println("Setting elevator to angle: " + desiredAngleState.name() + " and extension to: " + desiredExtensionState.name());
+        GreenLogger.log("Setting elevator to angle: " + desiredAngleState.name() + " and extension to: " + desiredExtensionState.name());
         elevator.setDesiredState(desiredAngleState, desiredExtensionState);
 
         if (RobotBase.isSimulation()) {
@@ -62,6 +63,6 @@ public class ElevatorAction implements AutoAction {
 
     @Override
     public void done() {
-        System.out.println("Elevator action completed: elevator angle at " + desiredAngleState.name() + " and extension at " + desiredExtensionState.name());
+        GreenLogger.log("Elevator action completed: elevator angle at " + desiredAngleState.name() + " and extension at " + desiredExtensionState.name());
     }
 }

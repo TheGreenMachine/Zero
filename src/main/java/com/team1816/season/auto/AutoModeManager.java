@@ -3,8 +3,10 @@ package com.team1816.season.auto;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.PathFinder;
 import com.team1816.lib.auto.modes.*;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.modes.*;
 import com.team1816.season.configuration.Constants;
+import edu.wpi.first.util.datalog.DataLogEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -94,12 +96,12 @@ public class AutoModeManager {
         // if auto has been changed, update selected auto mode + thread
         if (autoChanged || colorChanged) {
             if (autoChanged) {
-                System.out.println(
+                GreenLogger.log(
                     "Auto changed from: " + desiredAuto + ", to: " + selectedAuto.name()
                 );
             }
             if (colorChanged) {
-                System.out.println("Robot color changed from: " + desiredColor + ", to: " + selectedColor);
+                GreenLogger.log("Robot color changed from: " + desiredColor + ", to: " + selectedColor);
             }
             autoMode = generateAutoMode(selectedAuto, selectedColor);
             autoModeThread = new Thread(autoMode::run);
@@ -236,7 +238,7 @@ public class AutoModeManager {
             case TRIPLE_CONE_WALL:
                 return (new TriplePlaceConeWallMode(color));
             default:
-                System.out.println("Defaulting to drive straight mode");
+                GreenLogger.log("Defaulting to drive straight mode");
                 return new DriveStraightMode();
         }
     }

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.drive.Drive;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
@@ -102,7 +103,7 @@ public class Orchestrator {
             )
         ); // inverse axis angle
 
-        System.out.println("Updated Pose: " + p);
+        GreenLogger.log("Updated Pose: " + p);
         return p;
     }
 
@@ -165,7 +166,7 @@ public class Orchestrator {
                 )
             ) > minAllowablePoseError
         ) {
-            System.out.println(newRobotPose + " = new robot pose");
+            GreenLogger.log(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);
             robotState.fieldToVehicle = newRobotPose;
             robotState.isPoseUpdated = true;

@@ -2,6 +2,7 @@ package com.team1816.season.auto.commands;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.commands.AutoCommand;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.Robot;
 import com.team1816.season.auto.actions.ScoreAction;
 import com.team1816.season.subsystems.Collector;
@@ -18,13 +19,13 @@ public class AutoScoreCommand extends AutoCommand {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Auto Score Command!");
+        GreenLogger.log("Running Auto Score Command!");
         runAction(new ScoreAction(gameElement, extensionState));
     }
 
     public void done() {
         super.done();
         Robot.runningAutoScore = false;
-        System.out.println("Auto Score Mode Command!");
+        GreenLogger.log("Auto Score Mode Command!");
     }
 }

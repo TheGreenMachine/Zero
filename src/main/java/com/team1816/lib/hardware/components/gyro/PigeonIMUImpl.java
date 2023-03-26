@@ -2,6 +2,7 @@ package com.team1816.lib.hardware.components.gyro;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.team1816.lib.util.logUtil.GreenLogger;
 
 /**
  * A class that interfaces with the PigeonIMU
@@ -21,7 +22,7 @@ public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
     public PigeonIMUImpl(int id) {
         super(id);
         m_handle = super.getHandle();
-        System.out.println("PIGEON HANDLE: " + m_handle);
+        GreenLogger.log("PIGEON HANDLE: " + m_handle);
     }
 
     /**
