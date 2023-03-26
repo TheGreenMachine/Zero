@@ -42,7 +42,7 @@ public class TargetAlignCommand extends AutoCommand {
                     new SeriesAction(
                         new WaitUntilInsideRegion(
                             new Translation2d(0, 0),
-                            new Translation2d(3.0, Constants.fieldCenterY * 2),
+                            new Translation2d(3.20, Constants.fieldCenterY * 2),
                             "Blue Placement Region"
                         ),
                         new AlignAction(extensionState, 0, 0)
@@ -55,7 +55,7 @@ public class TargetAlignCommand extends AutoCommand {
                     trajectoryActions.get(0),
                     new SeriesAction(
                         new WaitUntilInsideRegion(
-                            new Translation2d(13.23, 0),
+                            new Translation2d(13.03, 0),
                             new Translation2d(Constants.fieldCenterX * 2, Constants.fieldCenterY * 2),
                             "Red Placement Region"
                         ),
