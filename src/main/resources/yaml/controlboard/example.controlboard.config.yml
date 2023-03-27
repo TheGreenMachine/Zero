@@ -26,6 +26,7 @@ operator:
     buttons:
         leftBumper: updatePoseWithCamera
         rightBumper: outtake
+        start: collectorPivot
     axes:
         leftTrigger: armStow
         rightTrigger: armCollect

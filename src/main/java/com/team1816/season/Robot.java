@@ -522,6 +522,16 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
+                        () -> controlBoard.getAsBool("collectorPivot"),
+                        () -> {
+                            if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.SCORE) {
+                                collector.setDesiredState(collector.getDesiredRollerState(), Collector.PIVOT_STATE.STOW);
+                            } else if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.STOW){
+                                collector.setDesiredState(collector.getDesiredRollerState(), Collector.PIVOT_STATE.SCORE);
+                            }
+                        }
+                    ),
+                    createAction(
                         () -> controlBoard.getAsBool("grid1"),
                         () -> {
                             grid = 0;
