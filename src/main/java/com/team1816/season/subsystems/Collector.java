@@ -102,6 +102,8 @@ public class Collector extends Subsystem {
             Constants.kCANTimeoutMs
         );
 
+        intakeMotor.configOpenloopRamp(0.5, Constants.kCANTimeoutMs);
+
         allowablePivotError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
 
         if (Constants.kLoggingRobot) {
