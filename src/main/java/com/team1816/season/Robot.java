@@ -464,6 +464,7 @@ public class Robot extends TimedRobot {
                                 alignElevatorThread.start();
                             } else {
                                 alignElevatorThread.stop();
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN);
                                 GreenLogger.log("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
@@ -482,6 +483,7 @@ public class Robot extends TimedRobot {
                                 alignElevatorThread.start();
                             } else {
                                 alignElevatorThread.stop();
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID);
                                 GreenLogger.log("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
@@ -500,6 +502,7 @@ public class Robot extends TimedRobot {
                                 alignElevatorThread.start();
                             } else {
                                 alignElevatorThread.stop();
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
                                 GreenLogger.log("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
