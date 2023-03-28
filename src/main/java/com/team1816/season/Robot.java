@@ -379,6 +379,7 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("toggleArmScoreCollect"),
                         () -> {
+                            orchestrator.updatePoseWithCamera();
                             if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
                             } else {
@@ -389,6 +390,7 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("shelfPos"),
                         (pressed) -> {
+                            orchestrator.updatePoseWithCamera();
                             elevator.setDesiredState(Elevator.ANGLE_STATE.SHELF_COLLECT, Elevator.EXTENSION_STATE.SHELF_COLLECT);
                         }
                     ),
