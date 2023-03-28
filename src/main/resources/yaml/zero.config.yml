@@ -84,7 +84,7 @@ subsystems:
             isDemoMode: 0
             ## Auto Balance ##
             autoBalanceDivider: 75
-            autoBalanceThreshold: 4  #was 2.5, then 3
+            autoBalanceThreshold: 2.5 # degrees
     elevator:
         implemented: true
         falcons:
@@ -189,10 +189,9 @@ constants:
     maxAllowablePoseError: 5
     ## Logging ##
     logRobot: 1 # 0 or 1
-    logDrivetrain: 1
+    logDrivetrain: 1 # 0 or 1
     configStatusFrames: 0 # 0 or 1
     ## General ##
-    EnableBucketTuning: 1
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .025 # seconds
     resetFactoryDefaults: 0 # whether motors get reset to factory default

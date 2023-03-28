@@ -522,12 +522,14 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("collectorPivot"),
+                        () -> controlBoard.getAsBool("toggleCollectorPivot"),
                         () -> {
-                            if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.SCORE) {
-                                collector.setDesiredState(collector.getDesiredRollerState(), Collector.PIVOT_STATE.STOW);
-                            } else if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.STOW){
-                                collector.setDesiredState(collector.getDesiredRollerState(), Collector.PIVOT_STATE.SCORE);
+                            if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.SCORE) {
+                                if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.SCORE) {
+                                    collector.setDesiredState(collector.getDesiredRollerState(), Collector.PIVOT_STATE.STOW);
+                                } else if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.STOW) {
+                                    collector.setDesiredState(collector.getDesiredRollerState(), Collector.PIVOT_STATE.SCORE);
+                                }
                             }
                         }
                     ),
@@ -802,7 +804,6 @@ public class Robot extends TimedRobot {
                     .setTrajectory(
                         autoModeManager.getSelectedAuto().getCurrentTrajectory()
                     );
-
             }
 
             if (drive.isDemoMode()) { // Demo-mode
