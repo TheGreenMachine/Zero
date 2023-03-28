@@ -23,6 +23,7 @@ operator:
     buttons:
         leftBumper: updatePoseWithCamera
         rightBumper: outtake
+        start: toggleCollectorPivot
     buttonpad:
         y: extendMax
         x: extendMid
