@@ -20,15 +20,21 @@ driver:
         start: zeroPose
 operator:
     rumble: false
+    dpad:
+        up: extendStage
+        down: descendStage
     buttons:
         leftBumper: updatePoseWithCamera
         rightBumper: outtake
+        start: collectorPivot
+    axes:
+        leftTrigger: armStow
+        rightTrigger: armCollect
     buttonpad:
-        buttonpad:
-            y: extendMax
-            x: extendMid
-            a: extendMin
-            b: autoScore
+        y: extendMax
+        x: extendMid
+        a: extendMin
+        b: autoScore
 buttonboard:
     upLeft: grid1 # farthest from opposing feeder
     up: grid2 # coopertition

@@ -148,12 +148,12 @@ subsystems:
             ## Demands ##
             cubeIntakePower: 0.70 # percent output voltage
             cubeOuttakePower: -0.45 # percent output voltage
-            coneIntakePower: -1 #was -0.50
+            coneIntakePower: -1 #was -0.50 - 1.375
             coneOuttakePower: 0.65
             stowPosition: 0
-            scorePosition: -28
-            shelfPosition: -22
-            floorPosition: -10 #was -12
+            scorePosition: -47
+            shelfPosition: -40
+            floorPosition: -22 #was -12
             ## Limits ##
             intakeStallAmps: 30
     ledmanager:

@@ -195,6 +195,7 @@ public class PathFinder {
     }
 
     public void setTarget(Pose2d target) {
+        // TODO add offset option here? Up to U @keerthi
         this.target = target;
         this.waypoints = null;
     }
