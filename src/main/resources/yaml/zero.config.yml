@@ -92,13 +92,13 @@ subsystems:
             angleMotorFollower: 7
             extensionMotor: 15
         pidConfig:
-            slot0: # slot for moving arm
+            slot0: # arm motion
                 kP: 0.02
                 kI: 0.00001
                 kD: 1.6
                 kF: 0
                 allowableError: 200
-            slot1: # slot when arm is locked in (reached position)
+            slot1: # arm locked
                 kP: 0.20
                 kI: 0.00002
                 kD: 1.4
@@ -129,7 +129,7 @@ subsystems:
             minExtensionPosition: 20000 # roughly 4800 ticks per inch
             midExtensionPosition: 120000
             maxExtensionPosition: 281000
-            shelfExtensionPosition: 150000 #between mid and max
+            shelfExtensionPosition: 150000 # between mid and max
             ## Offsets ##
             cubeExtensionMaxOffset: 10000
             cubeExtensionMidOffset: 5000
@@ -139,9 +139,9 @@ subsystems:
             pivotMotor: 13
             intakeMotor: 14
         pidConfig:
-            slot0: #intakeMotor - only really works when locking motor max - min input is +/- 0.3 percent
+            slot0: # intakeMotor - only really works when locking motor max - min input is +/- 0.3 percent
                 kP: 0.001
-            slot1: #pivotMotor
+            slot1: # pivotMotor
                 kP: 0.025
                 allowableError: 4
         constants:

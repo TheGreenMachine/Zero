@@ -86,10 +86,10 @@ public class Collector extends Subsystem {
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
         pivotMotor = factory.getMotor(NAME, "pivotMotor");
 
-        cubeIntakePower = factory.getConstant(NAME, "cubeIntakePower", -0.10); // TODO tune these
-        cubeOuttakePower = factory.getConstant(NAME, "cubeOuttakePower", 0.25); // TODO tune these
-        coneIntakePower = factory.getConstant(NAME, "coneIntakePower", -0.25); // TODO tune these
-        coneOuttakePower = factory.getConstant(NAME, "coneOuttakePower", 0.25); // TODO tune these
+        cubeIntakePower = factory.getConstant(NAME, "cubeIntakePower", 0.70);
+        cubeOuttakePower = factory.getConstant(NAME, "cubeOuttakePower", 0.45);
+        coneIntakePower = factory.getConstant(NAME, "coneIntakePower", -1.00);
+        coneOuttakePower = factory.getConstant(NAME, "coneOuttakePower", 0.65);
 
         pivotStowPosition = factory.getConstant(NAME, "stowPosition", 1000);
         pivotScorePosition = factory.getConstant(NAME, "scorePosition", 1000);
