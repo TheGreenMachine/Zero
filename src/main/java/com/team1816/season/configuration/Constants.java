@@ -36,8 +36,8 @@ public class Constants {
     /**
      * CAN Timeouts
      */
-    public static final int kCANTimeoutMs = 10; // use for important on the fly updates
-    public static final int kLongCANTimeoutMs = 100; // use for constructors
+    public static final int kCANTimeoutMs = 10; // utility: on the fly updates
+    public static final int kLongCANTimeoutMs = 100; // utility: constructors
 
     /**
      * Field characterization
@@ -95,21 +95,22 @@ public class Constants {
     /**
      * Camera characterization
      */
-    public static final double kCameraMountingAngleY = 20; // degrees
+    public static final double kCameraMountingAngleY = 0; // degrees
     public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters
 
     public static boolean kLoggingRobot = factory.getConstant("logRobot") > 0;
     public static boolean kLoggingDrivetrain = factory.getConstant("logDrivetrain") > 0 && kLoggingRobot;
 
-    public final boolean kUsePoseTrack =
-        factory.getConstant("shooter", "usingPoseForSpeed", 0) > 0;
     public static final double kBallEjectionDuration = factory.getConstant(
         "shooter",
         "ballEjectionDuration",
         1d
     );
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
-    //AutoBalance
+
+    /**
+     * Auto Balance
+     */
     public static final double autoBalanceThresholdDegrees = factory.getConstant("drivetrain", "autoBalanceThreshold", 2);
     public static final double autoBalanceDivider = factory.getConstant("drivetrain", "autoBalanceDivider", 30);
 
