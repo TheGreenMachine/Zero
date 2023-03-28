@@ -429,6 +429,61 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     /**
+     * Translates tele-op inputs into a SwerveDriveSignal to be used in setOpenLoop() with feedback control for target alignment
+     *
+     * @param forward  forward demand
+     * @param strafe   strafe demand
+     * @param rotation rotation demand
+     * @see this#setOpenLoop(DriveSignal)
+     * @see Drive#setTeleopInputs(double, double, double)
+     * @see SwerveDriveSignal
+     */
+    public void setTeleopInputsWithTarget(double forward, double strafe, double rotation, Pose2d target) {
+        SwerveDriveSignal signal;
+        if (controlState != ControlState.OPEN_LOOP) {
+            controlState = ControlState.OPEN_LOOP;
+        }
+
+        if (forward == 0 && strafe == 0 && rotation == 0 && robotState.fieldToVehicle.getTranslation().getDistance(target.getTranslation()) < Constants.kMinTrajectoryDistance) {
+            Rotation2d[] azimuths = new Rotation2d[4];
+
+            for (int i = 0; i < 4; i++) {
+                azimuths[i] = Rotation2d.fromDegrees(swerveModules[i].azimuthActualDeg);
+            }
+
+            signal = new SwerveDriveSignal(new double[]{0, 0, 0, 0}, azimuths, false);
+        } else {
+            double fM = (target.getX() - robotState.fieldToVehicle.getX());
+            double sM = (target.getY() - robotState.fieldToVehicle.getY());
+            double rM = (target.getRotation().getDegrees() - robotState.fieldToVehicle.getRotation().getDegrees());
+
+            fM *= 1 / (Math.sqrt(Math.pow(fM, 2) + Math.pow(sM, 2)));
+            sM *= 1 / (Math.sqrt(Math.pow(fM, 2) + Math.pow(sM, 2)));
+            rM *= 1 / 180d;
+
+            if ((robotState.fieldToVehicle.getTranslation().getDistance(target.getTranslation()) < Math.pow(kOpenLoopMaxVelMeters, 2) / (2 * kPathFollowingMaxAccelMeters))) {
+                double distance = robotState.fieldToVehicle.getTranslation().getDistance(target.getTranslation());
+                fM *= distance / (Math.pow(kOpenLoopMaxVelMeters, 2) / (2 * kPathFollowingMaxAccelMeters));
+            }
+
+            signal = swerveDriveHelper.calculateDriveSignal(
+                (isDemoMode ? (forward + fM) / 2d * demoModeMultiplier: (forward + fM) / 2d),
+                (isDemoMode ? (strafe + sM) / 2d * demoModeMultiplier + sM : (strafe + sM) / 2d),
+                (isDemoMode ? (rotation + rM) / 2d * demoModeMultiplier + rM : (rotation + rM) / 2d),
+                isSlowMode,
+                isMidSlowMode,
+                true,
+                false
+            );
+        }
+
+        // To avoid overriding brake command
+        if (!isBraking) {
+            setOpenLoop(signal);
+        }
+    }
+
+    /**
      * Sets whether the drivetrain is braking
      *
      * @param braking boolean
