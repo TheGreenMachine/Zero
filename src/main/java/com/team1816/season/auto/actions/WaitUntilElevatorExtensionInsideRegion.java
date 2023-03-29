@@ -7,7 +7,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 
 public class WaitUntilElevatorExtensionInsideRegion implements AutoAction {
     private static Elevator elevator;
-    private double minPos, maxPos;
+    private final double minPos;
+    private final double maxPos;
 
     public WaitUntilElevatorExtensionInsideRegion(double min, double max) {
         elevator = Injector.get(Elevator.class);
