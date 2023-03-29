@@ -6,7 +6,6 @@ import com.team1816.lib.auto.modes.*;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.modes.*;
 import com.team1816.season.configuration.Constants;
-import edu.wpi.first.util.datalog.DataLogEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;

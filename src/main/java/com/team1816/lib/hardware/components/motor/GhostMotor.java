@@ -56,10 +56,10 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public void set(
-            ControlMode Mode,
-            double demand0,
-            DemandType demand1Type,
-            double demand1
+        ControlMode Mode,
+        double demand0,
+        DemandType demand1Type,
+        double demand1
     ) {
         processSet(Mode, demand0);
     }
@@ -111,7 +111,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
             actualOutput[2] = lastPos + (actualOutput[1] / 100 * dtBetweenCallsMS);
         } else if (controlMode == ControlMode.Position) {
             double desaturatedVel = (desiredDemand[2] - lastPos) / dtBetweenCallsMS * 100;
-            if(Math.abs(desaturatedVel) > maxVelTicks100ms){
+            if (Math.abs(desaturatedVel) > maxVelTicks100ms) {
                 desaturatedVel = maxVelTicks100ms * Math.signum(desaturatedVel);
             }
             actualOutput[0] = desaturatedVel / maxVelTicks100ms;
@@ -166,8 +166,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configClosedloopRamp(
-            double secondsFromNeutralToFull,
-            int timeoutMs
+        double secondsFromNeutralToFull,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
@@ -204,8 +204,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configVoltageMeasurementFilter(
-            int filterWindowSamples,
-            int timeoutMs
+        int filterWindowSamples,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
@@ -237,8 +237,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configVelocityMeasurementPeriod(
-            SensorVelocityMeasPeriod period,
-            int timeoutMs
+        SensorVelocityMeasPeriod period,
+        int timeoutMs
     ) {
         return null;
     }
@@ -250,55 +250,55 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configSelectedFeedbackSensor(
-            RemoteFeedbackDevice feedbackDevice,
-            int pidIdx,
-            int timeoutMs
+        RemoteFeedbackDevice feedbackDevice,
+        int pidIdx,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configSelectedFeedbackCoefficient(
-            double coefficient,
-            int pidIdx,
-            int timeoutMs
+        double coefficient,
+        int pidIdx,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configRemoteFeedbackFilter(
-            int deviceID,
-            RemoteSensorSource remoteSensorSource,
-            int remoteOrdinal,
-            int timeoutMs
+        int deviceID,
+        RemoteSensorSource remoteSensorSource,
+        int remoteOrdinal,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configRemoteFeedbackFilter(
-            CANCoder canCoderRef,
-            int remoteOrdinal,
-            int timeoutMs
+        CANCoder canCoderRef,
+        int remoteOrdinal,
+        int timeoutMs
     ) {
         return null;
     }
 
     @Override
     public ErrorCode configRemoteFeedbackFilter(
-            BaseTalon talonRef,
-            int remoteOrdinal,
-            int timeoutMs
+        BaseTalon talonRef,
+        int remoteOrdinal,
+        int timeoutMs
     ) {
         return null;
     }
 
     @Override
     public ErrorCode configSensorTerm(
-            SensorTerm sensorTerm,
-            FeedbackDevice feedbackDevice,
-            int timeoutMs
+        SensorTerm sensorTerm,
+        FeedbackDevice feedbackDevice,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
@@ -317,9 +317,9 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode setSelectedSensorPosition(
-            double sensorPos,
-            int pidIdx,
-            int timeoutMs
+        double sensorPos,
+        int pidIdx,
+        int timeoutMs
     ) {
         processSet(ControlMode.Position, sensorPos);
         return ErrorCode.OK;
@@ -332,9 +332,9 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode setStatusFramePeriod(
-            StatusFrame frame,
-            int periodMs,
-            int timeoutMs
+        StatusFrame frame,
+        int periodMs,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
@@ -346,20 +346,20 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configForwardLimitSwitchSource(
-            RemoteLimitSwitchSource type,
-            LimitSwitchNormal normalOpenOrClose,
-            int deviceID,
-            int timeoutMs
+        RemoteLimitSwitchSource type,
+        LimitSwitchNormal normalOpenOrClose,
+        int deviceID,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configReverseLimitSwitchSource(
-            RemoteLimitSwitchSource type,
-            LimitSwitchNormal normalOpenOrClose,
-            int deviceID,
-            int timeoutMs
+        RemoteLimitSwitchSource type,
+        LimitSwitchNormal normalOpenOrClose,
+        int deviceID,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
@@ -370,8 +370,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configForwardSoftLimitThreshold(
-            double forwardSensorLimit,
-            int timeoutMs
+        double forwardSensorLimit,
+        int timeoutMs
     ) {
         usingLimit = true;
         fwdLimit = (int) forwardSensorLimit;
@@ -381,8 +381,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configReverseSoftLimitThreshold(
-            double reverseSensorLimit,
-            int timeoutMs
+        double reverseSensorLimit,
+        int timeoutMs
     ) {
         usingLimit = true;
         revLimit = (int) reverseSensorLimit;
@@ -430,27 +430,27 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configAllowableClosedloopError(
-            int slotIdx,
-            double allowableCloseLoopError,
-            int timeoutMs
+        int slotIdx,
+        double allowableCloseLoopError,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configMaxIntegralAccumulator(
-            int slotIdx,
-            double iaccum,
-            int timeoutMs
+        int slotIdx,
+        double iaccum,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configClosedLoopPeakOutput(
-            int slotIdx,
-            double percentOut,
-            int timeoutMs
+        int slotIdx,
+        double percentOut,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
@@ -506,16 +506,16 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configMotionCruiseVelocity(
-            double sensorUnitsPer100ms,
-            int timeoutMs
+        double sensorUnitsPer100ms,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configMotionAcceleration(
-            double sensorUnitsPer100msPerSec,
-            int timeoutMs
+        double sensorUnitsPer100msPerSec,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
@@ -527,8 +527,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configMotionProfileTrajectoryPeriod(
-            int baseTrajDurationMs,
-            int timeoutMs
+        int baseTrajDurationMs,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
@@ -614,22 +614,22 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configSetParameter(
-            ParamEnum param,
-            double value,
-            int subValue,
-            int ordinal,
-            int timeoutMs
+        ParamEnum param,
+        double value,
+        int subValue,
+        int ordinal,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configSetParameter(
-            int param,
-            double value,
-            int subValue,
-            int ordinal,
-            int timeoutMs
+        int param,
+        double value,
+        int subValue,
+        int ordinal,
+        int timeoutMs
     ) {
         return null;
     }
@@ -669,26 +669,26 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configSelectedFeedbackSensor(
-            FeedbackDevice feedbackDevice,
-            int pidIdx,
-            int timeoutMs
+        FeedbackDevice feedbackDevice,
+        int pidIdx,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configSupplyCurrentLimit(
-            SupplyCurrentLimitConfiguration currLimitCfg,
-            int timeoutMs
+        SupplyCurrentLimitConfiguration currLimitCfg,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode setStatusFramePeriod(
-            StatusFrameEnhanced frame,
-            int periodMs,
-            int timeoutMs
+        StatusFrameEnhanced frame,
+        int periodMs,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
@@ -700,8 +700,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configVelocityMeasurementPeriod(
-            VelocityMeasPeriod period,
-            int timeoutMs
+        VelocityMeasPeriod period,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
@@ -713,18 +713,18 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configForwardLimitSwitchSource(
-            LimitSwitchSource type,
-            LimitSwitchNormal normalOpenOrClose,
-            int timeoutMs
+        LimitSwitchSource type,
+        LimitSwitchNormal normalOpenOrClose,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configReverseLimitSwitchSource(
-            LimitSwitchSource type,
-            LimitSwitchNormal normalOpenOrClose,
-            int timeoutMs
+        LimitSwitchSource type,
+        LimitSwitchNormal normalOpenOrClose,
+        int timeoutMs
     ) {
         return ErrorCode.OK;
     }

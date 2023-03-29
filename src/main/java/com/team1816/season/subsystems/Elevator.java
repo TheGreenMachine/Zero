@@ -1,7 +1,6 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
@@ -314,14 +313,10 @@ public class Elevator extends Subsystem {
             if (usingMotionMagic && runningMotionMagic) {
                 if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
                     switch (desiredExtensionState) {
-                        case MAX ->
-                            extensionMotor.set(ControlMode.MotionMagic, (maxExtension));
-                        case MID ->
-                            extensionMotor.set(ControlMode.MotionMagic, (midExtension));
-                        case MIN ->
-                            extensionMotor.set(ControlMode.MotionMagic, (minExtension));
-                        case SHELF_COLLECT ->
-                            extensionMotor.set(ControlMode.MotionMagic, (shelfExtension));
+                        case MAX -> extensionMotor.set(ControlMode.MotionMagic, (maxExtension));
+                        case MID -> extensionMotor.set(ControlMode.MotionMagic, (midExtension));
+                        case MIN -> extensionMotor.set(ControlMode.MotionMagic, (minExtension));
+                        case SHELF_COLLECT -> extensionMotor.set(ControlMode.MotionMagic, (shelfExtension));
                     }
                 } else {
                     switch (desiredExtensionState) {
@@ -329,8 +324,7 @@ public class Elevator extends Subsystem {
                             extensionMotor.set(ControlMode.MotionMagic, (maxExtension + cubeExtensionMaxOffset));
                         case MID ->
                             extensionMotor.set(ControlMode.MotionMagic, (midExtension + cubeExtensionMidOffset));
-                        case MIN ->
-                            extensionMotor.set(ControlMode.MotionMagic, (minExtension));
+                        case MIN -> extensionMotor.set(ControlMode.MotionMagic, (minExtension));
                         case SHELF_COLLECT ->
                             extensionMotor.set(ControlMode.MotionMagic, (shelfExtension + cubeExtensionMidOffset));
                     }

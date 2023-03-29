@@ -2,7 +2,6 @@ package com.team1816.season.auto.actions;
 
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.AutoAction;
-import com.team1816.season.Robot;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -29,7 +28,7 @@ public class WaitUntilElevatorExtensionInsideRegion implements AutoAction {
 
     @Override
     public boolean isFinished() {
-        if (RobotBase.isSimulation()){
+        if (RobotBase.isSimulation()) {
             return true;
         }
         return elevator.getActualExtensionPosition() > minPos && elevator.getActualExtensionPosition() < maxPos;
