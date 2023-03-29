@@ -2,12 +2,15 @@ package com.team1816.lib.util.trajectoryUtil;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.team1816.lib.auto.Symmetry;
 import com.team1816.lib.auto.paths.AutoPath;
 import com.team1816.lib.auto.paths.DriveStraightPath;
 import com.team1816.lib.auto.paths.LivingRoomPath;
 import com.team1816.lib.auto.paths.PathUtil;
+import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.season.auto.paths.*;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -93,13 +96,19 @@ public class TrajectoryCalculator {
         String name = formatClassName(path.getClass().getName());
 
         calcTrajectory(robotName, name, path.getWaypoints());
-        calcTrajectory(robotName, name + "_Reflected", path.getReflectedWaypoints());
-        calcTrajectory(robotName, name + "_Rotated", path.getRotatedWaypoints());
+        if (Constants.fieldSymmetry == Symmetry.AXIS) {
+            calcTrajectory(robotName, name + "_Reflected", path.getReflectedWaypoints());
+        } else if (Constants.fieldSymmetry == Symmetry.ORIGIN) {
+            calcTrajectory(robotName, name + "_Rotated", path.getRotatedWaypoints());
+        }
 
         if (path.getWaypointHeadings() != null) {
             calcHeadings(robotName, name + "Headings", path.getWaypoints(), path.getWaypointHeadings());
-            calcHeadings(robotName, name + "Headings_Reflected", path.getReflectedWaypoints(), path.getReflectedWaypointHeadings());
-            calcHeadings(robotName, name + "Headings_Rotated", path.getRotatedWaypoints(), path.getRotatedWaypointHeadings());
+            if (Constants.fieldSymmetry == Symmetry.AXIS) {
+                calcHeadings(robotName, name + "Headings_Reflected", path.getReflectedWaypoints(), path.getReflectedWaypointHeadings());
+            } else if (Constants.fieldSymmetry == Symmetry.ORIGIN) {
+                calcHeadings(robotName, name + "Headings_Rotated", path.getRotatedWaypoints(), path.getRotatedWaypointHeadings());
+            }
         }
     }
 
