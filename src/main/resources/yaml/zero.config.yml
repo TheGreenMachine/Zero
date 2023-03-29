@@ -115,6 +115,9 @@ subsystems:
             usingFeedForward: 0
             extensionPPR: 300000
             angleQuarterPPR: 131072 # 32 x 4096
+            usingMotionMagic: 1
+            motionMagicCruiseVelocity: 30000 # ticks per 100ms
+            motionMagicAcceleration: 10000 # ticks per 100ms per second
             ## Limits ##
             maxVelTicks100ms: 5000
             forwardExtensionLimit: 320000 # Out

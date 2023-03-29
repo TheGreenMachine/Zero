@@ -46,8 +46,6 @@ public class Elevator extends Subsystem {
     public static final double cubeExtensionMidOffset = factory.getConstant("cubeExtensionMidOffset", 5000);
 
     private AsyncTimer colPosTimer;
-    private AsyncTimer stowExtensionTimer;
-
     private static double allowableAngleError;
     private static double allowableExtensionError;
 
@@ -62,8 +60,7 @@ public class Elevator extends Subsystem {
 
     private static double angleQuarterPPR;
     private static double extensionPPR;
-
-    private boolean usingFeedForward = false;
+    private boolean usingMotionMagic = false;
 
 
     /**
@@ -131,7 +128,7 @@ public class Elevator extends Subsystem {
         angleMotorMain.configClosedloopRamp(0.2, Constants.kCANTimeoutMs);
         extensionMotor.configClosedloopRamp(0.05, Constants.kCANTimeoutMs);
 
-        usingFeedForward = factory.getConstant(NAME, "usingFeedForward") > 0;
+        usingMotionMagic = factory.getConstant(NAME, "usingMotionMagic") > 0;
         extensionPPR = factory.getConstant(NAME, "extensionPPR");
         angleQuarterPPR = factory.getConstant(NAME, "angleQuarterPPR");
 
@@ -157,6 +154,13 @@ public class Elevator extends Subsystem {
 //        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtendedAngularAcceleration");
 //        maxExtensionVelocity = factory.getConstant(NAME, "maxExtensionVelocity");
 //        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtensionAcceleration");
+
+        if (usingMotionMagic) {
+            var motionMagicCruiseVelTicksPer100ms = factory.getConstant(NAME, "motionMagicCruiseVelocity");
+            var motionMagicAccelTicksPer100msPerSecond = factory.getConstant(NAME, "motionMagicAcceleration");
+            extensionMotor.configMotionCruiseVelocity(motionMagicCruiseVelTicksPer100ms, Constants.kCANTimeoutMs);
+            extensionMotor.configMotionAcceleration(motionMagicAccelTicksPer100msPerSecond, Constants.kCANTimeoutMs);
+        }
 
         if (Constants.kLoggingRobot) {
             desStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/Angle/desiredPosition");
@@ -251,20 +255,6 @@ public class Elevator extends Subsystem {
         actualExtensionPosition = extensionMotor.getSelectedSensorPosition(0); // not slot id
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
 
-        if (usingFeedForward) {
-            angleFeedForward =
-                Math.cos(actualAnglePosition / angleQuarterPPR) *
-                    (actualExtensionPosition / minExtension) *
-                    Constants.maxArmFeedForward * (12 / infrastructure.getBusVoltage()); // calculates fixed voltage angular feed forward taking both systems into account
-            extensionFeedForward =
-                Math.sin(actualAnglePosition / angleQuarterPPR) *
-                    ((actualExtensionPosition + extensionPPR) / 4 * extensionPPR) *
-                    Constants.maxArmFeedForward * (12 / infrastructure.getBusVoltage()); // calculates fixed voltage extension feed forward taking both systems into account
-            if (robotState.actualElevatorAngleState != desiredAngleState) {
-                angleOutputsChanged = true;
-            }
-        }
-
         if (Math.abs(desiredAngleState.getPos() - actualAnglePosition) < allowableAngleError * 8) {
             angleMotorMain.selectProfileSlot(lockedArmSlot, 0);
             robotState.actualElevatorAngleState = desiredAngleState;
@@ -293,68 +283,50 @@ public class Elevator extends Subsystem {
     public void writeToHardware() {
         if (angleOutputsChanged) {
             angleOutputsChanged = false;
-            if (usingFeedForward) {
-                switch (desiredAngleState) {
-                    case STOW ->
-                        angleMotorMain.set(ControlMode.Position, (stowPos), DemandType.ArbitraryFeedForward, angleFeedForward);
-                    case COLLECT -> {
-                        colPosTimer.update();
-                        if (!colPosTimer.isCompleted()) {
-                            angleOutputsChanged = true;
-                        } else {
-                            colPosTimer.reset();
-                        }
-                    }
-                    case SCORE, SHELF_COLLECT -> {
-                        angleMotorMain.set(ControlMode.Position, (scorePos), DemandType.ArbitraryFeedForward, angleFeedForward);
+            switch (desiredAngleState) {
+                case STOW -> {
+                    angleMotorMain.selectProfileSlot(movingArmSlot, 0);
+                    angleMotorMain.set(ControlMode.Position, (stowPos));
+                }
+                case COLLECT -> {
+                    angleMotorMain.selectProfileSlot(movingArmSlot, 0);
+                    colPosTimer.update();
+                    if (!colPosTimer.isCompleted()) {
+                        angleOutputsChanged = true;
+                    } else {
+                        colPosTimer.reset();
                     }
                 }
-            } else {
-                switch (desiredAngleState) {
-                    case STOW -> {
-                        angleMotorMain.selectProfileSlot(movingArmSlot, 0);
-                        angleMotorMain.set(ControlMode.Position, (stowPos));
-                    }
-                    case COLLECT -> {
-                        angleMotorMain.selectProfileSlot(movingArmSlot, 0);
-                        colPosTimer.update();
-                        if (!colPosTimer.isCompleted()) {
-                            angleOutputsChanged = true;
-                        } else {
-                            colPosTimer.reset();
-                        }
-                    }
-                    case SCORE, SHELF_COLLECT -> {
-                        angleMotorMain.selectProfileSlot(movingArmSlot, 0);
-                        angleMotorMain.set(ControlMode.Position, (scorePos));
-                    }
+                case SCORE, SHELF_COLLECT -> {
+                    angleMotorMain.selectProfileSlot(movingArmSlot, 0);
+                    angleMotorMain.set(ControlMode.Position, (scorePos));
                 }
             }
         }
         if (extensionOutputsChanged) {
             extensionOutputsChanged = false;
-            if (usingFeedForward) {
+            if (usingMotionMagic) {
                 if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
                     switch (desiredExtensionState) {
                         case MAX ->
-                            extensionMotor.set(ControlMode.Position, (maxExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                            extensionMotor.set(ControlMode.MotionMagic, (maxExtension));
                         case MID ->
-                            extensionMotor.set(ControlMode.Position, (midExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                            extensionMotor.set(ControlMode.MotionMagic, (midExtension));
                         case MIN ->
-                            extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                            extensionMotor.set(ControlMode.MotionMagic, (minExtension));
                         case SHELF_COLLECT ->
-                            extensionMotor.set(ControlMode.Position, (shelfExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                            extensionMotor.set(ControlMode.MotionMagic, (shelfExtension));
                     }
                 } else {
                     switch (desiredExtensionState) {
                         case MAX ->
-                            extensionMotor.set(ControlMode.Position, (maxExtension + 10000), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                            extensionMotor.set(ControlMode.MotionMagic, (maxExtension + cubeExtensionMaxOffset));
                         case MID ->
-                            extensionMotor.set(ControlMode.Position, (midExtension + 5000), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                            extensionMotor.set(ControlMode.MotionMagic, (midExtension + cubeExtensionMidOffset));
                         case MIN ->
-                            extensionMotor.set(ControlMode.Position, (minExtension), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                            extensionMotor.set(ControlMode.MotionMagic, (minExtension));
                         case SHELF_COLLECT ->
-                            extensionMotor.set(ControlMode.Position, (shelfExtension + 5000), DemandType.ArbitraryFeedForward, extensionFeedForward);
+                            extensionMotor.set(ControlMode.MotionMagic, (shelfExtension + cubeExtensionMidOffset));
                     }
                 }
             } else {
