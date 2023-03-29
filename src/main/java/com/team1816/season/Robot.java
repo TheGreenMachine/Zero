@@ -295,13 +295,13 @@ public class Robot extends TimedRobot {
                                     TargetAlignCommand command = new TargetAlignCommand(level);
                                     autoTargetAlignThread = new Thread(command::run);
                                 }
-                                ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS, LedManager.ControlState.FAST_BLINK);
+                                ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS, LedManager.ControlState.SOLID);
                                 autoTargetAlignThread.start();
                             } else {
                                 autoTargetAlignThread.stop();
                                 GreenLogger.log("Stopped! driving to trajectory canceled!");
                                 elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
-                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.SOLID);
+                                ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
                                 runningAutoTargetAlign = !runningAutoTargetAlign;
                             }
                         }

@@ -78,7 +78,7 @@ subsystems:
             trackWidth: 19.75 # inches
             wheelbaseLength: 19.75 # inches
             maxVelOpenLoop: 3 # meters/s (3.6)
-            maxVelPathFollowing: 3.5 # meters/s (3.6)
+            maxVelPathFollowing: 3.6 # meters/s (3.6)
             maxAccel: 2.54 # meters/s^2 (2.54)
             dPadMoveSpeed: 0.5
             isDemoMode: 0
@@ -116,11 +116,11 @@ subsystems:
             extensionPPR: 300000
             angleQuarterPPR: 131072 # 32 x 4096
             usingMotionMagic: 1
-            motionMagicCruiseVelocity: 30000 # ticks per 100ms
-            motionMagicAcceleration: 10000 # ticks per 100ms per second
+            motionMagicCruiseVelocity: 50000 # ticks per 100ms
+            motionMagicAcceleration: 25000 # ticks per 100ms per second
             ## Limits ##
             maxVelTicks100ms: 5000
-            forwardExtensionLimit: 320000 # Out
+            forwardExtensionLimit: 330000 # Out
             reverseExtensionLimit: 0 # In
             forwardAngleLimit: 100000 # Elevator horizontal orientation
             reverseAngleLimit: -10000 # Elevator vertical orientation
@@ -130,8 +130,8 @@ subsystems:
             scoreAnglePosition: 66000
             scoreDipAnglePosition: 55000
             minExtensionPosition: 20000 # roughly 4800 ticks per inch
-            midExtensionPosition: 120000
-            maxExtensionPosition: 281000
+            midExtensionPosition: 130000
+            maxExtensionPosition: 320000
             shelfExtensionPosition: 150000 # between mid and max
             ## Offsets ##
             cubeExtensionMaxOffset: 10000
@@ -153,6 +153,7 @@ subsystems:
             cubeOuttakePower: -0.45 # percent output voltage
             coneIntakePower: -1 #was -0.50 - 1.375
             coneOuttakePower: 0.65
+            ## Positions ##
             stowPosition: 0
             scorePosition: -47
             shelfPosition: -40
@@ -166,7 +167,7 @@ subsystems:
             raveEnabled: 0
             raveSpeed: 0.05
             cameraLed: 1
-            maxLevel: 150
+            maxLevel: 180
             ledStripCount: 30
     camera:
         implemented: true

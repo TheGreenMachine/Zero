@@ -61,6 +61,7 @@ public class Elevator extends Subsystem {
     private static double angleQuarterPPR;
     private static double extensionPPR;
     private boolean usingMotionMagic = false;
+    private boolean runningMotionMagic = false;
 
 
     /**
@@ -259,8 +260,13 @@ public class Elevator extends Subsystem {
             angleMotorMain.selectProfileSlot(lockedArmSlot, 0);
             robotState.actualElevatorAngleState = desiredAngleState;
         }
-        if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError * 16) {
-            robotState.actualElevatorExtensionState = desiredExtensionState;
+
+        if (usingMotionMagic && Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError * 32) {
+            runningMotionMagic = false;
+            if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError * 16) {
+                runningMotionMagic = true;
+                robotState.actualElevatorExtensionState = desiredExtensionState;
+            }
         }
 
         if (Constants.kLoggingRobot) {
@@ -305,7 +311,7 @@ public class Elevator extends Subsystem {
         }
         if (extensionOutputsChanged) {
             extensionOutputsChanged = false;
-            if (usingMotionMagic) {
+            if (usingMotionMagic && runningMotionMagic) {
                 if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
                     switch (desiredExtensionState) {
                         case MAX ->
