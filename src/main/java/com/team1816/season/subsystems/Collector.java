@@ -307,11 +307,6 @@ public class Collector extends Subsystem {
 
     }
 
-    public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("Collector/Collector Pivot Position", actualPivotPosition);
-        SmartDashboard.putNumber("Collector/Collector Roller Velocity", rollerVelocity);
-    }
-
     /**
      * Tests the collector subsystem, returns true if tests passed
      *

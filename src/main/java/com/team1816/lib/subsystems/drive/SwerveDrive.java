@@ -19,10 +19,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import javax.xml.crypto.Data;
 import java.util.List;
 import java.util.Objects;
 
@@ -104,6 +106,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     SwerveModulePosition[] actualModulePositions = new SwerveModulePosition[4];
     public double[] motorTemperatures = new double[4];
 
+    /**
+     * Logging
+     */
+    private DoubleLogEntry temperatureLogger;
 
     /**
      * Instantiates a swerve drivetrain from base subsystem parameters
@@ -141,6 +147,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (Constants.kLoggingDrivetrain) {
             desStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Drivetrain/Swerve/DesStates");
             actStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Drivetrain/Swerve/ActStates");
+            temperatureLogger = new DoubleLogEntry(DataLogManager.getLog(), "Drivetrain/Swerve/Temperature");
         }
     }
 
@@ -347,7 +354,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             );
         robotState.deltaVehicle = cs;
 
-        SmartDashboard.putNumber("Drive/Temperature", motorTemperatures[0]);
+        temperatureLogger.append(motorTemperatures[0]);
         robotState.drivetrainTemp = motorTemperatures[0];
 
         robotState.vehicleToFloorProximityCentimeters = infrastructure.getMaximumProximity();
