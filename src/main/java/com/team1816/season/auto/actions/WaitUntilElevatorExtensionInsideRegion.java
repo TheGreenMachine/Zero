@@ -13,8 +13,8 @@ public class WaitUntilElevatorExtensionInsideRegion implements AutoAction {
     public WaitUntilElevatorExtensionInsideRegion(double min, double max) {
         elevator = Injector.get(Elevator.class);
 
-        minPos = Math.min(min, max);
-        maxPos = Math.max(min, max);
+        minPos = Math.min(min, max) - elevator.getAllowableExtensionError();
+        maxPos = Math.max(min, max) + elevator.getAllowableExtensionError();
     }
 
     @Override
