@@ -20,8 +20,8 @@ public class ConeToNodeFeederPath extends AutoPath {
     protected List<Pose2d> getWaypoints() {
         return List.of(
             new Pose2d(6.2, 4.64, Rotation2d.fromDegrees(180)),
-            new Pose2d(3.5, 5.00, Rotation2d.fromDegrees(180)),
-            new Pose2d(1.75, 3.61, Rotation2d.fromDegrees(180))
+            new Pose2d(3, 4.62, Rotation2d.fromDegrees(180)),
+            new Pose2d(1.75, 3.865, Rotation2d.fromDegrees(180))
         );
     }
 

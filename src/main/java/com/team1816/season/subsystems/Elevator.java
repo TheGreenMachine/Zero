@@ -269,7 +269,7 @@ public class Elevator extends Subsystem {
             angleMotorMain.selectProfileSlot(lockedArmSlot, 0);
             robotState.actualElevatorAngleState = desiredAngleState;
         }
-        if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError * 8) {
+        if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError * 16) {
             robotState.actualElevatorExtensionState = desiredExtensionState;
         }
 

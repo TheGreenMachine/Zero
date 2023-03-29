@@ -8,10 +8,7 @@ import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.util.logUtil.GreenLogger;
-import com.team1816.season.auto.actions.AlignAction;
-import com.team1816.season.auto.actions.CollectAction;
-import com.team1816.season.auto.actions.ElevatorAction;
-import com.team1816.season.auto.actions.ScoreAction;
+import com.team1816.season.auto.actions.*;
 import com.team1816.season.auto.paths.ConeToNodeFeederPath;
 import com.team1816.season.auto.paths.NodeToConeFeederPath;
 import com.team1816.season.subsystems.Collector;
@@ -59,13 +56,14 @@ public class DoublePlaceConeFeederMode extends AutoMode {
                     new ParallelAction(
                         new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
                         new SeriesAction(
-                            new WaitAction(3),
+                            new WaitAction(2.5),
+                            new WaitUntilElevatorExtensionInsideRegion(Elevator.minExtension, Elevator.midExtension - ((Elevator.midExtension - Elevator.minExtension) * .5)), // half between
                             new ParallelAction(
                                 trajectoryActions.get(0),
                                 new SeriesAction(
-                                    new WaitAction(1),
+                                    new WaitAction(0.8),
                                     new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
-                                    new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.STOW)
+                                    new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR)
                                 )
                             )
                         )
@@ -79,11 +77,12 @@ public class DoublePlaceConeFeederMode extends AutoMode {
                 ),
                 // aligning
                 new ParallelAction(
-                    new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.STOW),
+                    new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW),
+                    new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
                     trajectoryActions.get(1),
                     new SeriesAction(
                         new WaitAction(1),
-                        new AlignAction(Elevator.EXTENSION_STATE.MAX, Elevator.EXTENSION_STATE.MIN.getExtension(), Elevator.EXTENSION_STATE.MID.getExtension())
+                        new AlignAction(Elevator.EXTENSION_STATE.MAX, Elevator.minExtension, Elevator.maxExtension)
                     )
                 ),
                 // scoring second cone

@@ -38,7 +38,7 @@ DrivetrainTargets {
             put(5, new Pose2d(new Translation2d(14.688, 3.306), Rotation2d.fromDegrees(0)));
             put(6, new Pose2d(new Translation2d(14.688, 3.865), Rotation2d.fromDegrees(0)));
             put(7, new Pose2d(new Translation2d(14.688, 4.424), Rotation2d.fromDegrees(0)));
-            put(8, new Pose2d(new Translation2d(14.688, 4.982), Rotation2d.fromDegrees(0))); // closest to blue feeder station
+            put(8, new Pose2d(new Translation2d(14.688, 5.111), Rotation2d.fromDegrees(0))); // closest to blue feeder station
         }
     };
 }

@@ -18,6 +18,8 @@ driver:
         leftBumper: intakeCube
         rightBumper: intakeCone
         start: zeroPose
+    dpad:
+        down: midSlowMode
 operator:
     rumble: false
     dpad:
