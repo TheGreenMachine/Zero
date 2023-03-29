@@ -115,7 +115,7 @@ subsystems:
             usingFeedForward: 0
             extensionPPR: 300000
             angleQuarterPPR: 131072 # 32 x 4096
-            usingMotionMagic: 1
+            usingMotionMagic: 1 # 0 or 1, disable to utilize standard pid control
             motionMagicCruiseVelocity: 50000 # ticks per 100ms
             motionMagicAcceleration: 25000 # ticks per 100ms per second
             ## Limits ##
