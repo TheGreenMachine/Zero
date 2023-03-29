@@ -243,6 +243,38 @@ public class Elevator extends Subsystem {
     }
 
     /**
+     * Returns the error of the angular position of the arm
+     */
+    public double getAngleError() {
+        return getActualAnglePosition() - getDesiredAngleState().getPos();
+    }
+
+    /**
+     * Returns the error of the extension position of the arm
+     */
+    public double getExtensionError() {
+        return getActualExtensionPosition() - getDesiredExtensionState().getExtension();
+    }
+
+    /**
+     * Returns the allowable angle error of the arm
+     *
+     * @return allowable angle error
+     */
+    public double getAllowableAngleError() {
+        return allowableAngleError * 8;
+    }
+
+    /**
+     * Returns the allowable extension error of the arm
+     *
+     * @return allowable extension error
+     */
+    public double getAllowableExtensionError() {
+        return allowableExtensionError * 16;
+    }
+
+    /**
      * Reads extension and angle motor positions and their corresponding velocities
      *
      * @see Subsystem#readFromHardware()
@@ -255,15 +287,15 @@ public class Elevator extends Subsystem {
         actualExtensionPosition = extensionMotor.getSelectedSensorPosition(0); // not slot id
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
 
-        if (Math.abs(desiredAngleState.getPos() - actualAnglePosition) < allowableAngleError * 8) {
+        if (Math.abs(desiredAngleState.getPos() - actualAnglePosition) < getAllowableAngleError()) {
             angleMotorMain.selectProfileSlot(lockedArmSlot, 0);
             robotState.actualElevatorAngleState = desiredAngleState;
         }
 
-        if (usingMotionMagic && Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError * 32) {
-            runningMotionMagic = false;
-            if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < allowableExtensionError * 16) {
-                runningMotionMagic = true;
+        if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < getAllowableExtensionError() * 2) {
+            if (usingMotionMagic) runningMotionMagic = false;
+            if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < getAllowableExtensionError()) {
+                if (usingMotionMagic) runningMotionMagic = true;
                 robotState.actualElevatorExtensionState = desiredExtensionState;
             }
         }
