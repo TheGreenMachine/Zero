@@ -18,7 +18,6 @@ import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.commands.AlignElevatorCommand;
 import com.team1816.season.auto.commands.AutoScoreCommand;
 import com.team1816.season.auto.commands.TargetAlignCommand;
-import com.team1816.season.auto.commands.TargetTrajectoryCommand;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.DrivetrainTargets;
 import com.team1816.season.states.Orchestrator;
@@ -240,7 +239,7 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("zeroPose"),
                         () -> {
-                            drive.zeroSensors(Constants.kDefaultZeroingPose);
+                            drive.zeroSensors(robotState.allianceColor == Color.BLUE ? Constants.kDefaultZeroingPose : Constants.kFlippedZeroingPose);
                         }
                     ),
 //                    createAction(
@@ -865,7 +864,7 @@ public class Robot extends TimedRobot {
                 strafe = dPadMoveSpeed;
             } else if (dPadPOVToAngle == 0) {
                 double rotVal = MathUtil.inputModulus(
-                    robotState.fieldToVehicle.getRotation().getDegrees(), -180, 180
+                    robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
                 );
                 if ((rotVal < 45 && rotVal > -45) || (rotVal < -178 || rotVal > 178)) {
                     rotation = 0;
@@ -874,11 +873,11 @@ public class Robot extends TimedRobot {
                 }
             }
             SwerveModuleState[] dPadDrivingStates = SwerveDrive.swerveKinematics.toSwerveModuleStates(
-                ChassisSpeeds.fromFieldRelativeSpeeds(0.0, strafe, rotation, robotState.fieldToVehicle.getRotation())
+                ChassisSpeeds.fromFieldRelativeSpeeds(0.0, strafe, rotation, robotState.driverRelativeFieldToVehicle.getRotation())
             );
 
             if(strafe == 0 && rotation == 0){
-                Rotation2d heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
+                Rotation2d heading = Rotation2d.fromDegrees(90).minus(robotState.driverRelativeFieldToVehicle.getRotation());
                 SwerveModuleState templateState = new SwerveModuleState(0, heading);
                 SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
                 ((SwerveDrive) drive).setModuleStates(statePassIn);

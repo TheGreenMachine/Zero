@@ -29,6 +29,7 @@ public class RobotState {
     public final Field2d field = new Field2d();
     public Color allianceColor = Color.BLUE;
     public Pose2d fieldToVehicle = Constants.EmptyPose2d;
+    public Pose2d driverRelativeFieldToVehicle = Constants.EmptyPose2d; // Because Forward on the field isnt forward to the driver when driver is on red team
     public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose2d;
     public Pose2d target = Constants.fieldCenterPose;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation2d;
