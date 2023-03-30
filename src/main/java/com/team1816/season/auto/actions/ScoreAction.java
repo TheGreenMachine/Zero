@@ -16,9 +16,9 @@ public class ScoreAction extends SeriesAction {
                 new CollectAction(Collector.PIVOT_STATE.SCORE),
                 new WaitAction(.35),
                 new CollectAction(gameElement == Collector.GAME_ELEMENT.CUBE ? Collector.ROLLER_STATE.OUTTAKE_CUBE : Collector.ROLLER_STATE.OUTTAKE_CONE),
-                new WaitAction(.15),
+                new WaitAction(.35),
                 // resetting elevator / collector to starting states
-                new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW),
+                new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW, false),
                 new ElevatorAction(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN)
             )
         );
