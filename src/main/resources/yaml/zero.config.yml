@@ -132,7 +132,7 @@ subsystems:
             scoreDipAnglePosition: 55000
             minExtensionPosition: 20000 # roughly 4800 ticks per inch
             midExtensionPosition: 130000
-            maxExtensionPosition: 320000
+            maxExtensionPosition: 310000
             shelfExtensionPosition: 150000 # between mid and max
             ## Offsets ##
             cubeExtensionMaxOffset: 10000
