@@ -329,7 +329,7 @@ public class Robot extends TimedRobot {
                         (pressed) -> {
                             if (pressed) {
                                 drive.setAutoBalance(true);
-                                ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.FAST_BLINK);
+                                ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.BLINK);
                             } else {
                                 drive.setAutoBalance(false);
                                 ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.SOLID);
