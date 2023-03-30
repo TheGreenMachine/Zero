@@ -128,6 +128,7 @@ subsystems:
             stowAnglePosition: 90000
             collectAnglePosition: -2500
             scoreAnglePosition: 66000
+            shelfAnglePosition: 70000
             scoreDipAnglePosition: 55000
             minExtensionPosition: 20000 # roughly 4800 ticks per inch
             midExtensionPosition: 130000
@@ -156,7 +157,7 @@ subsystems:
             ## Positions ##
             stowPosition: 0
             scorePosition: -47
-            shelfPosition: -40
+            shelfPosition: -37
             floorPosition: -22 #was -12
             ## Limits ##
             intakeStallAmps: 30

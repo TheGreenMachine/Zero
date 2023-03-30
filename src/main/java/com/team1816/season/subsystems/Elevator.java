@@ -35,6 +35,8 @@ public class Elevator extends Subsystem {
     public static final double stowPos = factory.getConstant(NAME, "stowAnglePosition");
     public static final double collectPos = factory.getConstant(NAME, "collectAnglePosition");
     public static final double scorePos = factory.getConstant(NAME, "scoreAnglePosition");
+
+    public static final double shelfPos = factory.getConstant(NAME, "shelfAnglePosition");
     public static final double scoreDipPos = factory.getConstant(NAME, "scoreDipAnglePosition");
     public static final double minExtension = factory.getConstant(NAME, "minExtensionPosition");
     public static final double midExtension = factory.getConstant(NAME, "midExtensionPosition");
@@ -334,9 +336,13 @@ public class Elevator extends Subsystem {
                         colPosTimer.reset();
                     }
                 }
-                case SCORE, SHELF_COLLECT -> {
+                case SCORE -> {
                     angleMotorMain.selectProfileSlot(movingArmSlot, 0);
                     angleMotorMain.set(ControlMode.Position, (scorePos));
+                }
+                case SHELF_COLLECT -> {
+                    angleMotorMain.selectProfileSlot(movingArmSlot, 0);
+                    angleMotorMain.set(ControlMode.Position, (shelfPos));
                 }
             }
         }
@@ -416,7 +422,7 @@ public class Elevator extends Subsystem {
         STOW(stowPos),
         COLLECT(collectPos),
         SCORE(scorePos),
-        SHELF_COLLECT(scorePos);
+        SHELF_COLLECT(shelfPos);
 
         private final double pos;
 

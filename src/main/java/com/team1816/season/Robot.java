@@ -878,7 +878,10 @@ public class Robot extends TimedRobot {
             );
 
             if(strafe == 0 && rotation == 0){
-                drive.setTeleopInputs(0,0,0);
+                Rotation2d heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
+                SwerveModuleState templateState = new SwerveModuleState(0, heading);
+                SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
+                ((SwerveDrive) drive).setModuleStates(statePassIn);
             } else {
                 ((SwerveDrive) drive).setModuleStates(dPadDrivingStates);
             }
