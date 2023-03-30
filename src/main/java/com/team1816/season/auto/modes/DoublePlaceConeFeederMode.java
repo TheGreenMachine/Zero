@@ -2,10 +2,7 @@ package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.Color;
-import com.team1816.lib.auto.actions.ParallelAction;
-import com.team1816.lib.auto.actions.SeriesAction;
-import com.team1816.lib.auto.actions.TrajectoryAction;
-import com.team1816.lib.auto.actions.WaitAction;
+import com.team1816.lib.auto.actions.*;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.actions.*;
@@ -13,6 +10,7 @@ import com.team1816.season.auto.paths.ConeToNodeFeederPath;
 import com.team1816.season.auto.paths.NodeToConeFeederPath;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
+import edu.wpi.first.math.geometry.Translation2d;
 
 import java.util.List;
 
@@ -73,7 +71,7 @@ public class DoublePlaceConeFeederMode extends AutoMode {
                 new SeriesAction(
                     new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
                     new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR),
-                    new WaitAction(1)
+                    new WaitAction(.5)
                 ),
                 // aligning
                 new ParallelAction(
@@ -81,7 +79,8 @@ public class DoublePlaceConeFeederMode extends AutoMode {
                     new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
                     trajectoryActions.get(1),
                     new SeriesAction(
-                        new WaitAction(1),
+//                        new WaitUntilInsideRegion(new Translation2d(0, 0), new Translation2d(2.5, 15), "clyde."),
+                        new WaitAction( 2),
                         new AlignAction(Elevator.EXTENSION_STATE.MAX, Elevator.minExtension, Elevator.maxExtension)
                     )
                 ),
