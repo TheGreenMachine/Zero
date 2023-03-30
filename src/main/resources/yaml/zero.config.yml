@@ -67,7 +67,7 @@ subsystems:
         constants:
             ## Positional Configurations ##
             maxVelTicks100ms: 12275.7 # ticks per 100ms
-            openLoopRampRate: 0.8
+            openLoopRampRate: 0.1
             isSwerve: 1
             encPPR: 14641
             azimuthEncPPR: 4096
