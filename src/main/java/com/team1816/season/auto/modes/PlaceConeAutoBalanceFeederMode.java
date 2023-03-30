@@ -35,6 +35,8 @@ public class PlaceConeAutoBalanceFeederMode extends AutoMode {
             new SeriesAction(
                 new WaitAction(.05),
                 new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
+                new WaitAction(.5),
+                new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
                 trajectoryActions.get(0),
                 new WaitAction(0.25),
                 new AutoBalanceAction()

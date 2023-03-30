@@ -46,8 +46,8 @@ public class PlaceConeAutoBalanceMiddleMode extends AutoMode {
             new SeriesAction(
                 new WaitAction(0.25),
                 new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
-                new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
                 new WaitAction(0.25),
+                new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
                 trajectoryActions.get(0),
                 new WaitAction(0.5),
                 new AutoBalanceAction()

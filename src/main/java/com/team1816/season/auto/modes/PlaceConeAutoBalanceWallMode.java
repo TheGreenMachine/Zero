@@ -34,16 +34,10 @@ public class PlaceConeAutoBalanceWallMode extends AutoMode {
         runAction(
             new SeriesAction(
                 new WaitAction(0.05),
-                new ParallelAction(
-                    new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
-                    new ParallelAction(
-                        new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
-                        new SeriesAction(
-                            new WaitAction(4),
-                            trajectoryActions.get(0)
-                        )
-                    )
-                ),
+                new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
+                new WaitAction(.5),
+                new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
+                trajectoryActions.get(0),
                 new WaitAction(0.25),
                 new AutoBalanceAction()
             )
