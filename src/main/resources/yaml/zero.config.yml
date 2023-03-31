@@ -116,7 +116,7 @@ subsystems:
             extensionPPR: 300000
             angleQuarterPPR: 131072 # 32 x 4096
             usingMotionMagic: 1 # 0 or 1, disable to utilize standard pid control
-            motionMagicCruiseVelocity: 75000 # ticks per 100ms
+            motionMagicCruiseVelocity: 100000 # ticks per 100ms
             motionMagicAcceleration: 50000 # ticks per 100ms per second
             ## Limits ##
             maxVelTicks100ms: 5000
