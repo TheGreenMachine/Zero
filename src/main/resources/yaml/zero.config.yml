@@ -172,6 +172,8 @@ subsystems:
             ledStripCount: 30
     camera:
         implemented: true
+        constants:
+            dummy: 0
 infrastructure:
     canivoreBusName: highSpeed
     ## Power Distribution ##

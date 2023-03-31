@@ -14,7 +14,7 @@ public class ScoreAction extends SeriesAction {
                 new ElevatorAction(Elevator.ANGLE_STATE.SCORE, extensionState, gameElement),
                 // outtaking the game piece
                 new CollectAction(Collector.PIVOT_STATE.SCORE),
-                new WaitAction(.15),
+                new WaitAction(.35),
                 new CollectAction(gameElement == Collector.GAME_ELEMENT.CUBE ? Collector.ROLLER_STATE.OUTTAKE_CUBE : Collector.ROLLER_STATE.OUTTAKE_CONE),
                 new WaitAction(.35),
                 // resetting elevator / collector to starting states
