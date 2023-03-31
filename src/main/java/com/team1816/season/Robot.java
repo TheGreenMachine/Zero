@@ -768,7 +768,7 @@ public class Robot extends TimedRobot {
                         zeroing = true;
                         elevator.zeroSensors();
                         collector.zeroSensors();
-                        ledManager.indicateStatus(LedManager.RobotStatus.ZEROING_ELEVATOR, LedManager.ControlState.BLINK);
+                        ledManager.indicateStatus(LedManager.RobotStatus.ZEROING, LedManager.ControlState.BLINK);
                         ledManager.writeToHardware();
                         infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
                     } else if (zeroing) { // ready
@@ -789,7 +789,7 @@ public class Robot extends TimedRobot {
                 }
                 lastButton = zeroingButton.get();
 
-                if (ledManager.getCurrentControlStatus() == LedManager.RobotStatus.ZEROING_ELEVATOR) {
+                if (ledManager.getCurrentControlStatus() == LedManager.RobotStatus.ZEROING) {
                     // only keep looping through write if zeroing elevator cus we need to update its blinking
                     ledManager.writeToHardware();
                 }

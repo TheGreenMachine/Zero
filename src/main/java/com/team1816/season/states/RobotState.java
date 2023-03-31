@@ -57,7 +57,7 @@ public class RobotState {
     public Collector.ROLLER_STATE actualCollectorRollerState = Collector.ROLLER_STATE.STOP;
     public Collector.PIVOT_STATE actualCollectorPivotState = Collector.PIVOT_STATE.STOW;
     public Collector.GAME_ELEMENT actualGameElement = Collector.GAME_ELEMENT.CUBE;
-    public List<VisionPoint> visibleTargets = new ArrayList<>();
+    public VisionPoint visibleTarget = new VisionPoint();
 
     /**
      * Functional pathing states
@@ -117,7 +117,7 @@ public class RobotState {
         actualCollectorRollerState = Collector.ROLLER_STATE.STOP;
         actualCollectorPivotState = Collector.PIVOT_STATE.STOW;
         isPoseUpdated = true;
-        visibleTargets.clear();
+        visibleTarget = new VisionPoint();
         drivetrainTemp = 0;
         vehicleToFloorProximityCentimeters = 0;
     }
