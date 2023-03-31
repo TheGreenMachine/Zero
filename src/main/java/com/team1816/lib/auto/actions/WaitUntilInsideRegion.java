@@ -2,6 +2,7 @@ package com.team1816.lib.auto.actions;
 
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.Symmetry;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
@@ -69,9 +70,9 @@ public class WaitUntilInsideRegion implements AutoAction {
         mTopRight = topRight;
         mRobotState = Injector.get(RobotState.class);
         allianceColor = color;
-        if (color == Color.RED) {
-            mBottomLeft = new Translation2d(Constants.fieldCenterX * 2 - mTopRight.getX(), mBottomLeft.getY());
-            mTopRight = new Translation2d(Constants.fieldCenterX * 2 - mBottomLeft.getX(), mTopRight.getY());
+        if (Constants.fieldSymmetry == Symmetry.AXIS && color == Color.RED) {
+            mBottomLeft = new Translation2d(Constants.fieldCenterX * 2 - mTopRight.getX() - Math.abs(topRight.getX() - bottomLeft.getX()), mBottomLeft.getY());
+            mTopRight = new Translation2d(Constants.fieldCenterX * 2 - mBottomLeft.getX() + Math.abs(topRight.getX() - bottomLeft.getX()), mTopRight.getY());
         }
     }
 
