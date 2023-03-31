@@ -299,7 +299,6 @@ public class Robot extends TimedRobot {
                             } else {
                                 autoTargetAlignThread.stop();
                                 GreenLogger.log("Stopped! driving to trajectory canceled!");
-                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
                                 runningAutoTargetAlign = !runningAutoTargetAlign;
                             }
@@ -374,7 +373,6 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("toggleArmScoreCollect"),
                         () -> {
-                            orchestrator.updatePoseWithCamera();
                             if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
                             } else {
@@ -385,7 +383,6 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("shelfPos"),
                         (pressed) -> {
-                            orchestrator.updatePoseWithCamera();
                             elevator.setDesiredState(Elevator.ANGLE_STATE.SHELF_COLLECT, Elevator.EXTENSION_STATE.SHELF_COLLECT);
                         }
                     ),
@@ -850,7 +847,7 @@ public class Robot extends TimedRobot {
                 0,
                 -controlBoard.getAsDouble("strafe"),
                 0,
-                robotState.fieldToVehicle.getRotation());
+                robotState.driverRelativeFieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
 
         } else if (((ControlBoard) controlBoard).driverController.getDPad() != -1 && ((ControlBoard) controlBoard).driverController.getDPad() != 180) { // dpad bang-bang controller for fine alignment
