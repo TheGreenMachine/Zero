@@ -150,11 +150,14 @@ public class Camera extends Subsystem {
         robotState.visibleTarget = getSingularPoint(); // we're only using one point rn anyway
 
         if(Constants.kLoggingRobot){
-            Pose3d tarPos = FieldConfig.fieldTargets2023.get(robotState.visibleTarget.id);
-            if(tarPos != null){
-                var targetPose = tarPos.toPose2d();
-                visionTargetLogger.append(new double[]{targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees()});
+            var targetPose = robotState.fieldToVehicle;
+
+            Pose3d aprilTagPose = FieldConfig.fieldTargets2023.get(robotState.visibleTarget.id);
+            if(aprilTagPose != null){
+                targetPose = aprilTagPose.toPose2d();
             }
+
+            visionTargetLogger.append(new double[]{targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees()});
         }
     }
 

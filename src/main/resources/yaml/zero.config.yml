@@ -157,7 +157,7 @@ subsystems:
             ## Positions ##
             stowPosition: 0
             scorePosition: -47
-            shelfPosition: -37
+            shelfPosition: -32 #MAYBE -37 optimal for cube, -36 optimal for cone
             floorPosition: -22 #was -12
             ## Limits ##
             intakeStallAmps: 30

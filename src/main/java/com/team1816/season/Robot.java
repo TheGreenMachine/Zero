@@ -337,6 +337,7 @@ public class Robot extends TimedRobot {
                                 if (
                                     elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
                                 ) { // collects from shelf
+                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SHELF_COLLECT);
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.SHELF);
                                 } else { // collects from floor
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR);
@@ -357,6 +358,7 @@ public class Robot extends TimedRobot {
                                 if (
                                     elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
                                 ) { // collects from shelf
+                                    elevator.setDesiredAngleState(Elevator.ANGLE_STATE.SHELF_COLLECT);
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.SHELF);
                                 } else { // collects from floor
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.FLOOR);
