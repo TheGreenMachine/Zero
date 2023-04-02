@@ -251,11 +251,11 @@ public class Collector extends Subsystem {
                     pivotMotor.set(ControlMode.Position, pivotScorePosition);
                 }
                 case SHELF -> {
-                    if (desiredRollerState == ROLLER_STATE.INTAKE_CONE) {
-                        pivotMotor.set(ControlMode.Position, (pivotShelfPosition+6));
-                    } else {
+//                    if (desiredRollerState == ROLLER_STATE.INTAKE_CONE) {
+//                        pivotMotor.set(ControlMode.Position, (pivotShelfPosition+6));
+//                    } else {
                         pivotMotor.set(ControlMode.Position, pivotShelfPosition);
-                    }
+//                    }
                 }
             }
         }

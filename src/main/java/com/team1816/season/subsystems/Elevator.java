@@ -342,11 +342,11 @@ public class Elevator extends Subsystem {
                 }
                 case SHELF_COLLECT -> {
                     angleMotorMain.selectProfileSlot(movingArmSlot, 0);
-                    if(robotState.actualGameElement == Collector.GAME_ELEMENT.CUBE){
-                        angleMotorMain.set(ControlMode.Position, shelfPos - 5000); // TODO WATCH ME
-                    } else {
+//                    if(robotState.actualGameElement == Collector.GAME_ELEMENT.CUBE){
+//                        angleMotorMain.set(ControlMode.Position, shelfPos - 5000); // TODO WATCH ME
+//                    } else {
                         angleMotorMain.set(ControlMode.Position, (shelfPos));
-                    }
+//                    }
                 }
             }
         }
