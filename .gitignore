@@ -10,4 +10,5 @@ simgui-ds.json
 simgui-window.json
 bin/
 *.bag
+*.wpilog
 Compiler
