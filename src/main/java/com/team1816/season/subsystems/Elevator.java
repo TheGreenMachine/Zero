@@ -106,7 +106,7 @@ public class Elevator extends Subsystem {
         this.extensionMotor = factory.getMotor(NAME, "extensionMotor");
 
 
-        double extensionPeakOutput = 0.8;
+        double extensionPeakOutput = 1;
         extensionMotor.configPeakOutputForward(extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.configPeakOutputReverse(-extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.configForwardSoftLimitEnable(true, Constants.kCANTimeoutMs);
@@ -135,28 +135,22 @@ public class Elevator extends Subsystem {
         allowableExtensionError = factory.getPidSlotConfig(NAME, "slot2").allowableError;
 
         colPosTimer = new AsyncTimer(
-            1,
-            () -> {
-                angleMotorMain.set(ControlMode.Position, collectPos);
-            },
-            () -> {
-                // set it to go down until it hits rubber then just fight against the spring to stay down
-                // that way we don't need to be dead-on for the collect pos
-                angleMotorMain.set(ControlMode.PercentOutput, -0.06);   //(start -.08)i can go up to -0.1 if collecting too high
-                GreenLogger.log("running collector into rubber w/ %out");
-            }
+                1,
+                () -> {
+                    angleMotorMain.set(ControlMode.Position, collectPos);
+                },
+                () -> {
+                    // set it to go down until it hits rubber then just fight against the spring to stay down
+                    // that way we don't need to be dead-on for the collect pos
+                    angleMotorMain.set(ControlMode.PercentOutput, -0.06);   //(start -.08)i can go up to -0.1 if collecting too high
+                    GreenLogger.log("running collector into rubber w/ %out");
+                }
         );
-
-
-//        maxAngularVelocity = factory.getConstant(NAME, "maxAngularVelocity");
-//        maxAngularAcceleration = factory.getConstant(NAME, "maxAngularAcceleration");
-//        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtendedAngularAcceleration");
-//        maxExtensionVelocity = factory.getConstant(NAME, "maxExtensionVelocity");
-//        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtensionAcceleration");
 
         if (motionMagicEnabled) {
             var motionMagicCruiseVelTicksPer100ms = factory.getConstant(NAME, "motionMagicCruiseVelocity");
             var motionMagicAccelTicksPer100msPerSecond = factory.getConstant(NAME, "motionMagicAcceleration");
+            extensionMotor.configMotionSCurveStrength(2, Constants.kCANTimeoutMs);
             extensionMotor.configMotionCruiseVelocity(motionMagicCruiseVelTicksPer100ms, Constants.kCANTimeoutMs);
             extensionMotor.configMotionAcceleration(motionMagicAccelTicksPer100msPerSecond, Constants.kCANTimeoutMs);
         }
@@ -229,7 +223,7 @@ public class Elevator extends Subsystem {
      * @return actual angle position
      */
     public double getActualAnglePosition() {
-        return actualExtensionPosition;
+        return actualAnglePosition;
     }
 
     /**
@@ -340,7 +334,7 @@ public class Elevator extends Subsystem {
 //                    if(robotState.actualGameElement == Collector.GAME_ELEMENT.CUBE){
 //                        angleMotorMain.set(ControlMode.Position, shelfPos - 5000); // TODO WATCH ME
 //                    } else {
-                        angleMotorMain.set(ControlMode.Position, (shelfPos));
+                    angleMotorMain.set(ControlMode.Position, (shelfPos));
 //                    }
                 }
             }
@@ -359,23 +353,20 @@ public class Elevator extends Subsystem {
                 }
             } else {
                 switch (desiredExtensionState) {
-                    case MAX ->
-                        extensionMotor.set(controlMode, (maxExtension + cubeExtensionMaxOffset));
-                    case MID ->
-                        extensionMotor.set(controlMode, (midExtension + cubeExtensionMidOffset));
+                    case MAX -> extensionMotor.set(controlMode, (maxExtension + cubeExtensionMaxOffset));
+                    case MID -> extensionMotor.set(controlMode, (midExtension + cubeExtensionMidOffset));
                     case MIN -> extensionMotor.set(controlMode, (minExtension));
-                    case SHELF_COLLECT ->
-                        extensionMotor.set(controlMode, (shelfExtension + cubeExtensionMidOffset));
+                    case SHELF_COLLECT -> extensionMotor.set(controlMode, (shelfExtension + cubeExtensionMidOffset));
                 }
             }
         }
     }
 
-    public boolean armAtTarget(){
+    public boolean armAtTarget() {
         return Math.abs(desiredAngleState.getPos() - actualAnglePosition) < getAllowableAngleError();
     }
 
-    public boolean elevatorAtTarget(){
+    public boolean elevatorAtTarget() {
         return Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < getAllowableExtensionError();
     }
 
@@ -441,183 +432,6 @@ public class Elevator extends Subsystem {
 
         public double getExtension() {
             return extension;
-        }
-    }
-
-    /**
-     * Creates a positional set point feeder for more continuous motion
-     */
-    public static class SetPointFeeder {
-        /**
-         * Feeder properties
-         */
-        double startTimestamp = 0;
-        public FeederConstraints feederConstraints;
-        public double rInitial; // m
-        public double thetaInitial; // rad where zero is the collect position
-        public double rFinal; // m
-        public double thetaFinal; // m
-
-        /**
-         * Profile properties
-         */
-        private double endRotationAccelerationPhase;
-        private double endRotationVelocityPhase;
-        private double endRotationDecelerationPhase;
-
-        private double endTranslationAccelerationPhase;
-        private double endTranslationVelocityPhase;
-        private double endTranslationDecelerationPhase;
-
-        /**
-         * Polar properties
-         */
-        private double a; // polar coefficient
-        private double b; // polar coefficient
-        private double c; // polar coefficient
-
-        /**
-         * Initializes a setpoint feeder
-         *
-         * @param f profile constraints
-         */
-        public SetPointFeeder(FeederConstraints f) {
-            feederConstraints = f; // initializes constraints
-            // calculates relative timestamps to 0
-            // rotation
-            double rotationDistance = (thetaFinal - thetaInitial);
-            double rotationAccelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxAngularAcceleration;
-            double rotationDecelerationTime = feederConstraints.maxAngularVelocity / feederConstraints.maxExtendedAngularAcceleration;
-            double maxRotationDist = rotationDistance - rotationAccelerationTime * rotationAccelerationTime * feederConstraints.maxAngularAcceleration / 2 - rotationDecelerationTime * rotationDecelerationTime * feederConstraints.maxExtendedAngularAcceleration / 2;
-
-            if (maxRotationDist < 0) {
-                rotationAccelerationTime = Math.sqrt(rotationDistance / feederConstraints.maxAngularAcceleration);
-                rotationDecelerationTime = Math.sqrt(rotationDistance / feederConstraints.maxExtendedAngularAcceleration);
-                maxRotationDist = 0;
-            }
-
-            endRotationAccelerationPhase = rotationAccelerationTime;
-            endRotationVelocityPhase = endRotationAccelerationPhase + maxRotationDist / feederConstraints.maxAngularVelocity;
-            endRotationDecelerationPhase = endRotationVelocityPhase + rotationDecelerationTime;
-
-            // translation
-            double translationDistance = rFinal - rInitial;
-            double translationAccelTime = feederConstraints.maxExtensionVelocity / feederConstraints.maxExtensionAcceleration;
-            double maxTranslationDist = translationDistance - translationAccelTime * translationAccelTime * feederConstraints.maxExtensionAcceleration;
-
-            if (maxTranslationDist < 0) {
-                translationAccelTime = Math.sqrt(translationDistance / feederConstraints.maxExtensionAcceleration);
-                maxTranslationDist = 0;
-            }
-
-            endTranslationAccelerationPhase = translationAccelTime;
-            endTranslationVelocityPhase = endTranslationAccelerationPhase + maxTranslationDist / feederConstraints.maxExtensionVelocity;
-            endTranslationDecelerationPhase = endTranslationVelocityPhase + translationAccelTime;
-
-            a = rFinal * Math.sin(thetaFinal) - rInitial * Math.sin(thetaInitial);
-            b = -1 * (rFinal * Math.cos(thetaFinal) - rInitial * Math.cos(thetaInitial));
-            c = -1 * rInitial * Math.sin(thetaInitial) * (rFinal * Math.cos(thetaFinal) - rInitial * Math.cos(thetaInitial));
-        }
-
-        /**
-         * Initializes a full setpoint feeder with initial and final constraints
-         *
-         * @param f            profile constraints
-         * @param rInitial     initial extension
-         * @param thetaInitial initial angle
-         * @param rFinal       final extension
-         * @param thetaFinal   final angle
-         */
-        public SetPointFeeder(FeederConstraints f, double rInitial, double thetaInitial, double rFinal, double thetaFinal) {
-            this.rInitial = rInitial;
-            this.thetaInitial = thetaInitial;
-            this.rFinal = rFinal;
-            this.thetaFinal = thetaFinal;
-
-            new SetPointFeeder(f);
-        }
-
-        /**
-         * Sets the starting timestamp of the set point feeder
-         *
-         * @param timestamp
-         */
-        public void start(double timestamp) {
-            startTimestamp = timestamp;
-        }
-
-        /**
-         * Returns the profiled angular polar component based on constraints
-         *
-         * @param timestamp current timestamp
-         * @return angle
-         */
-        public double getAngle(double timestamp) {
-            double t = timestamp - startTimestamp;
-            if (t <= endRotationAccelerationPhase) {
-                return t * t * feederConstraints.maxAngularAcceleration / 2;
-            } else if (t <= endRotationVelocityPhase) {
-                return endRotationAccelerationPhase * endRotationAccelerationPhase * feederConstraints.maxAngularAcceleration / 2 +
-                    feederConstraints.maxAngularVelocity * (t - endRotationAccelerationPhase);
-            } else if (t <= endRotationDecelerationPhase) {
-                double timeRemaining = endRotationDecelerationPhase - t;
-                return thetaFinal - (timeRemaining * timeRemaining * feederConstraints.maxExtendedAngularAcceleration / 2);
-            } else {
-                return thetaFinal;
-            }
-        }
-
-        /**
-         * Returns the profiled translational polar component based on constraints
-         *
-         * @param timestamp current timestamp
-         * @return angle
-         */
-        public double getExtension(double timestamp) {
-            double t = timestamp - startTimestamp;
-            if (t <= endTranslationAccelerationPhase) {
-                return t * t * feederConstraints.maxExtensionAcceleration / 2;
-            } else if (t <= endTranslationVelocityPhase) {
-                return endTranslationAccelerationPhase * endTranslationAccelerationPhase * feederConstraints.maxExtensionAcceleration / 2 +
-                    feederConstraints.maxExtensionVelocity * (t - endTranslationAccelerationPhase);
-            } else if (t <= endTranslationDecelerationPhase) {
-                double timeRemaining = endTranslationDecelerationPhase - t;
-                return rFinal - (timeRemaining * timeRemaining * feederConstraints.maxExtensionAcceleration);
-            } else {
-                return rFinal;
-            }
-        }
-
-        /**
-         * Feeds profiled positional setpoints based on the current timestamp
-         *
-         * @param timestamp current timestamp
-         * @return setpoints {rotation, translation}
-         */
-        public double[] get(double timestamp) {
-            double angle = getAngle(timestamp);
-            double extension = getExtension(timestamp);
-            // double extension = c / (a * Math.cos(angle) + b * Math.sin(angle));
-            return new double[]{angle, extension};
-        }
-    }
-
-    /**
-     * Class for SetPointFeeder constraints
-     */
-    public static class FeederConstraints {
-        public double maxAngularVelocity; // rad/s
-        public double maxExtendedAngularAcceleration; // rad/s^2
-        public double maxAngularAcceleration; // rad/s^2
-        public double maxExtensionVelocity; // m/s
-        public double maxExtensionAcceleration; // m/s^2
-
-        public FeederConstraints(double maxAngularVelocity, double maxExtendedAngularAcceleration, double maxAngularAcceleration, double maxExtensionVelocity, double maxExtensionAcceleration) {
-            this.maxAngularVelocity = maxAngularVelocity;
-            this.maxExtendedAngularAcceleration = maxExtendedAngularAcceleration;
-            this.maxAngularAcceleration = maxAngularAcceleration;
-            this.maxExtensionVelocity = maxExtensionVelocity;
-            this.maxExtensionAcceleration = maxExtensionAcceleration;
         }
     }
 }
