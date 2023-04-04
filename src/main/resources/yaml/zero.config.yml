@@ -119,7 +119,7 @@ subsystems:
             motionMagicCruiseVelocity: 100000 # ticks per 100ms
             motionMagicAcceleration: 50000 # ticks per 100ms per second
             ## Limits ##
-            maxVelTicks100ms: 5000
+            maxVelTicks100ms: 5000 # not being used for anything rn
             forwardExtensionLimit: 330000 # Out
             reverseExtensionLimit: 0 # In
             forwardAngleLimit: 100000 # Elevator horizontal orientation
@@ -129,7 +129,6 @@ subsystems:
             collectAnglePosition: -2500
             scoreAnglePosition: 60000
             shelfAnglePosition: 70000
-            scoreDipAnglePosition: 55000
             minExtensionPosition: 20000 # roughly 4800 ticks per inch
             midExtensionPosition: 130000
             maxExtensionPosition: 320000

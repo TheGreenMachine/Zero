@@ -37,7 +37,6 @@ public class Elevator extends Subsystem {
     public static final double scorePos = factory.getConstant(NAME, "scoreAnglePosition");
 
     public static final double shelfPos = factory.getConstant(NAME, "shelfAnglePosition");
-    public static final double scoreDipPos = factory.getConstant(NAME, "scoreDipAnglePosition");
     public static final double minExtension = factory.getConstant(NAME, "minExtensionPosition");
     public static final double midExtension = factory.getConstant(NAME, "midExtensionPosition");
     public static final double maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
