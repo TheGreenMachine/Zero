@@ -67,42 +67,6 @@ public class SwerveDriveHelper implements DriveHelper {
             translationalInput.getY()
         );
 
-        if (field_relative) {
-            if (
-                Math.abs(
-                    translationalInputDirection
-                        .unaryMinus()
-                        .rotateBy(nearestPole(translationalInputDirection))
-                        .getRadians()
-                ) <
-                    kPoleThreshold
-            ) {
-                translationalInput =
-                    new Translation2d(
-                        nearestPole(translationalInputDirection).getCos(),
-                        nearestPole(translationalInputDirection).getSin()
-                    )
-                        .times(inputMagnitude);
-            }
-        } else {
-            if (
-                Math.abs(
-                    translationalInputDirection
-                        .unaryMinus()
-                        .rotateBy(nearestPole(translationalInputDirection))
-                        .getRadians()
-                ) <
-                    kRobotRelativePoleThreshold
-            ) {
-                translationalInput =
-                    new Translation2d(
-                        nearestPole(translationalInputDirection).getCos(),
-                        nearestPole(translationalInputDirection).getSin()
-                    )
-                        .times(inputMagnitude);
-            }
-        }
-
         if (inputMagnitude < kDeadband) {
             translationalInput = new Translation2d();
             inputMagnitude = 0;

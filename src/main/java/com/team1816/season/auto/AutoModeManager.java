@@ -28,7 +28,7 @@ public class AutoModeManager {
     private final SendableChooser<DesiredAuto> autoModeChooser;
     private final SendableChooser<Color> sideChooser;
     private DesiredAuto desiredAuto;
-    private Color desiredColor;
+    public Color teamColor;
 
     /**
      * Properties: Execution
@@ -72,8 +72,8 @@ public class AutoModeManager {
         autoMode = new DriveStraightMode();
         autoModeThread = new Thread(autoMode::run);
         desiredAuto = DesiredAuto.DRIVE_STRAIGHT;
-        desiredColor = Color.RED;
-        robotState.allianceColor = desiredColor;
+        teamColor = Color.RED;
+        robotState.allianceColor = teamColor;
     }
 
     /**
@@ -91,7 +91,7 @@ public class AutoModeManager {
             selectedColor = (dsAlliance == DriverStation.Alliance.Red) ? Color.RED : Color.BLUE;
         }
         boolean autoChanged = desiredAuto != selectedAuto;
-        boolean colorChanged = desiredColor != selectedColor;
+        boolean colorChanged = teamColor != selectedColor;
         // if auto has been changed, update selected auto mode + thread
         if (autoChanged || colorChanged) {
             if (autoChanged) {
@@ -100,14 +100,14 @@ public class AutoModeManager {
                 );
             }
             if (colorChanged) {
-                GreenLogger.log("Robot color changed from: " + desiredColor + ", to: " + selectedColor);
+                GreenLogger.log("Robot color changed from: " + teamColor + ", to: " + selectedColor);
             }
             autoMode = generateAutoMode(selectedAuto, selectedColor);
             autoModeThread = new Thread(autoMode::run);
         }
         desiredAuto = selectedAuto;
-        desiredColor = selectedColor;
-        robotState.allianceColor = desiredColor;
+        teamColor = selectedColor;
+        robotState.allianceColor = teamColor;
 
         if (robotState.allianceColor == Color.BLUE) {
             robotState.pathFinder = new PathFinder(List.of(Constants.blueChargeStation));
@@ -125,8 +125,8 @@ public class AutoModeManager {
         if (desiredAuto != null) {
             SmartDashboard.putString("AutoModeSelected", desiredAuto.name());
         }
-        if (desiredColor != null) {
-            SmartDashboard.putString("RobotColorSelected", desiredColor.name());
+        if (teamColor != null) {
+            SmartDashboard.putString("RobotColorSelected", teamColor.name());
         }
     }
 
@@ -188,6 +188,8 @@ public class AutoModeManager {
         PLACE_CONE_AUTO_BALANCE_MIDDLE,
         PLACE_CONE_AUTO_BALANCE_WALL,
 
+        OLD_PLACE_CONE_AUTO_BALANCE_MIDDLE,
+
         DOUBLE_CONE_FEEDER,
         DOUBLE_CONE_WALL,
 
@@ -228,6 +230,8 @@ public class AutoModeManager {
                 return (new PlaceConeAutoBalanceMiddleMode(color));
             case PLACE_CONE_AUTO_BALANCE_WALL:
                 return (new PlaceConeAutoBalanceWallMode(color));
+            case OLD_PLACE_CONE_AUTO_BALANCE_MIDDLE:
+                return (new OldPlaceConeAutoBalanceMiddleMode(color));
             case DOUBLE_CONE_FEEDER:
                 return (new DoublePlaceConeFeederMode(color));
             case DOUBLE_CONE_WALL:

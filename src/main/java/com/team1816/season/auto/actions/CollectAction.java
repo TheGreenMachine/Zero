@@ -13,6 +13,8 @@ public class CollectAction implements AutoAction {
     private LedManager ledManager;
     private Collector collector;
 
+    private boolean waitForPivot;
+
     private Collector.ROLLER_STATE desiredRollerState;
 
     private Collector.PIVOT_STATE desiredPivotState;
@@ -22,6 +24,7 @@ public class CollectAction implements AutoAction {
         ledManager = Injector.get(LedManager.class);
         collector = Injector.get(Collector.class);
         this.desiredRollerState = rollerState;
+        waitForPivot = true;
     }
 
     public CollectAction(Collector.PIVOT_STATE pivotState) {
@@ -29,6 +32,7 @@ public class CollectAction implements AutoAction {
         ledManager = Injector.get(LedManager.class);
         collector = Injector.get(Collector.class);
         this.desiredPivotState = pivotState;
+        waitForPivot = true;
     }
 
     public CollectAction(Collector.ROLLER_STATE rollerState, Collector.PIVOT_STATE pivotState) {
@@ -37,6 +41,16 @@ public class CollectAction implements AutoAction {
         collector = Injector.get(Collector.class);
         this.desiredRollerState = rollerState;
         this.desiredPivotState = pivotState;
+        waitForPivot = true;
+    }
+
+    public CollectAction(Collector.ROLLER_STATE rollerState, Collector.PIVOT_STATE pivotState, boolean waitForPivot) {
+        robotState = Injector.get(RobotState.class);
+        ledManager = Injector.get(LedManager.class);
+        collector = Injector.get(Collector.class);
+        this.desiredRollerState = rollerState;
+        this.desiredPivotState = pivotState;
+        this.waitForPivot = waitForPivot;
     }
 
     @Override
@@ -68,7 +82,11 @@ public class CollectAction implements AutoAction {
 
     @Override
     public boolean isFinished() {
-        return robotState.actualCollectorPivotState.equals(collector.getDesiredPivotState());
+        if (!waitForPivot) {
+            return true;
+        } else {
+            return robotState.actualCollectorPivotState.equals(collector.getDesiredPivotState());
+        }
     }
 
     @Override

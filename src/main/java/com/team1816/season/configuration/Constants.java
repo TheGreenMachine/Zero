@@ -61,6 +61,12 @@ public class Constants {
         EmptyRotation2d
     );
 
+    public static final Pose2d kFlippedZeroingPose = new Pose2d(
+            fieldCenterX * 2 - .5,
+            fieldCenterY,
+            Rotation2d.fromDegrees(180)
+    );
+
     public static final Pose2d kCameraMountingOffset = new Pose2d(
         0.20,
         0.19,

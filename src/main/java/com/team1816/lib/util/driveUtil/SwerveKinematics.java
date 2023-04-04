@@ -168,7 +168,7 @@ public class SwerveKinematics implements DriveKinematics {
         Drive mDrive = Injector.get(Drive.Factory.class).getInstance();
 
         if (field_relative) {
-            Rotation2d gyroHeading = mDrive.getPose().getRotation();
+            Rotation2d gyroHeading = robotState.driverRelativeFieldToVehicle.getRotation();
             double temp = forward * gyroHeading.getCos() + strafe * gyroHeading.getSin();
             strafe = -forward * gyroHeading.getSin() + strafe * gyroHeading.getCos();
             forward = temp;

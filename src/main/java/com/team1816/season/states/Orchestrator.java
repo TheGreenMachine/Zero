@@ -17,8 +17,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 import static com.team1816.lib.subsystems.Subsystem.factory;
 import static com.team1816.lib.subsystems.Subsystem.robotState;
@@ -132,24 +131,36 @@ public class Orchestrator {
      * @return Pose2d
      */
     public Pose2d calculatePoseFromCamera() {
-        var cameraPoints = robotState.visibleTargets;
-        List<Pose2d> poses = new ArrayList<>();
-        double sX = 0, sY = 0;
-        for (VisionPoint point : cameraPoints) {
-            var p = calculateSingleTargetTranslation(point);
-            sX += p.getX();
-            sY += p.getY();
-            poses.add(p);
-        }
-        if (cameraPoints.size() > 0) {
+        var cameraPoint = robotState.visibleTarget;
+        if(!Objects.equals(cameraPoint, new VisionPoint()) && cameraPoint.id > 0){
+            var p = calculateSingleTargetTranslation(cameraPoint);
             Pose2d pose = new Pose2d(
-                sX / cameraPoints.size(),
-                sY / cameraPoints.size(),
+                p.getX(),
+                p.getY(),
                 robotState.fieldToVehicle.getRotation()
             );
+            ledManager.indicateStatus(LedManager.RobotStatus.ZEROING, LedManager.ControlState.BLINK);
             robotState.isPoseUpdated = true;
             return pose;
         }
+//        List<Pose2d> poses = new ArrayList<>();
+//        double sX = 0, sY = 0;
+//        for (VisionPoint point : cameraPoint) {
+//            var p = calculateSingleTargetTranslation(point);
+//            sX += p.getX();
+//            sY += p.getY();
+//            poses.add(p);
+//        }
+//        if (cameraPoint.size() > 0) {
+//            Pose2d pose = new Pose2d(
+//                sX / cameraPoint.size(),
+//                sY / cameraPoint.size(),
+//                robotState.fieldToVehicle.getRotation()
+//            );
+//            robotState.isPoseUpdated = true;
+//            return pose;
+//        }
+        GreenLogger.log("vision point bad - returning fieldToVehicle");
         return robotState.fieldToVehicle;
     }
 

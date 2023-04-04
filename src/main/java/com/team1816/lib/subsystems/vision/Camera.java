@@ -13,7 +13,11 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -44,6 +48,7 @@ public class Camera extends Subsystem {
      */
     public boolean cameraEnabled;
     private PhotonTrackedTarget bestTrackedTarget;
+    private DoubleArrayLogEntry visionTargetLogger;
 
 
     /**
@@ -98,6 +103,9 @@ public class Camera extends Subsystem {
         PhotonCamera.setVersionCheckEnabled(false);
         if (cameraEnabled) {
             cam = new PhotonCamera("snakeyes");
+            if(Constants.kLoggingRobot){
+                visionTargetLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Camera/SeenPoints");
+            }
         }
     }
 
@@ -139,7 +147,18 @@ public class Camera extends Subsystem {
                     )
                 );
         }
-        robotState.visibleTargets = getPoints();
+        robotState.visibleTarget = getSingularPoint(); // we're only using one point rn anyway
+
+        if(Constants.kLoggingRobot){
+            var targetPose = robotState.fieldToVehicle;
+
+            Pose3d aprilTagPose = FieldConfig.fieldTargets2023.get(robotState.visibleTarget.id);
+            if(aprilTagPose != null){
+                targetPose = aprilTagPose.toPose2d();
+            }
+
+            visionTargetLogger.append(new double[]{targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees()});
+        }
     }
 
 
@@ -161,6 +180,24 @@ public class Camera extends Subsystem {
             p.id = bestTarget.getFiducialId();
             p.cameraToTarget = bestTarget.getBestCameraToTarget(); // missing method in PhotonTrackedTarget
             targets.add(p);
+        } else {
+            //GreenLogger.log("camera not returning points b/c camera not implemented");
+        }
+        return targets;
+    }
+
+    public VisionPoint getSingularPoint() {
+        VisionPoint targets = new VisionPoint();
+        if (isImplemented()) {
+            VisionPoint p = new VisionPoint();
+            var result = cam.getLatestResult();
+            if (!result.hasTargets()) {
+                return targets;
+            }
+            var bestTarget = result.getBestTarget();
+            p.id = bestTarget.getFiducialId();
+            p.cameraToTarget = bestTarget.getBestCameraToTarget(); // missing method in PhotonTrackedTarget
+            return p;
         } else {
             //GreenLogger.log("camera not returning points b/c camera not implemented");
         }

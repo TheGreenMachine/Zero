@@ -1,7 +1,10 @@
 package com.team1816.lib.auto.actions;
 
 import com.team1816.lib.Injector;
+import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.Symmetry;
 import com.team1816.lib.util.logUtil.GreenLogger;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -25,15 +28,17 @@ public class WaitUntilInsideRegion implements AutoAction {
     /**
      * State: Bottom left of rectangular region to wait inside
      */
-    private final Translation2d mBottomLeft;
+    private Translation2d mBottomLeft;
     /**
      * State: Top right of rectangular region to wait inside
      */
-    private final Translation2d mTopRight;
+    private Translation2d mTopRight;
     /**
      * State: Name of region
      */
     private String name = "";
+
+    private Color allianceColor;
 
     /**
      * Instantiates a WaitUntilInsideRegion action based on state parameters
@@ -51,6 +56,24 @@ public class WaitUntilInsideRegion implements AutoAction {
         mBottomLeft = bottomLeft;
         mTopRight = topRight;
         mRobotState = Injector.get(RobotState.class);
+        allianceColor = Color.BLUE;
+    }
+
+    public WaitUntilInsideRegion(
+            Translation2d bottomLeft,
+            Translation2d topRight,
+            String name,
+            Color color
+    ) {
+        this.name = name;
+        mBottomLeft = bottomLeft;
+        mTopRight = topRight;
+        mRobotState = Injector.get(RobotState.class);
+        allianceColor = color;
+        if (Constants.fieldSymmetry == Symmetry.AXIS && color == Color.RED) {
+            mBottomLeft = new Translation2d(Constants.fieldCenterX * 2 - mTopRight.getX() - Math.abs(topRight.getX() - bottomLeft.getX()), mBottomLeft.getY());
+            mTopRight = new Translation2d(Constants.fieldCenterX * 2 - mBottomLeft.getX() + Math.abs(topRight.getX() - bottomLeft.getX()), mTopRight.getY());
+        }
     }
 
     /**

@@ -55,9 +55,7 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public boolean isFinished() {
-        return (
-            Timer.getFPGATimestamp() - Robot.autoStart) > 14.8 ||
-            (Math.abs(infrastructure.getPitch()) < Constants.autoBalanceThresholdDegrees && Math.abs(infrastructure.getRoll()) < Constants.autoBalanceThresholdDegrees);
+        return (Timer.getFPGATimestamp() - Robot.autoStart) > 14.5;
     }
 
     @Override

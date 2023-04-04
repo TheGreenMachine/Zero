@@ -18,7 +18,6 @@ import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.commands.AlignElevatorCommand;
 import com.team1816.season.auto.commands.AutoScoreCommand;
 import com.team1816.season.auto.commands.TargetAlignCommand;
-import com.team1816.season.auto.commands.TargetTrajectoryCommand;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.DrivetrainTargets;
 import com.team1816.season.states.Orchestrator;
@@ -240,39 +239,39 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("zeroPose"),
                         () -> {
-                            drive.zeroSensors(Constants.kDefaultZeroingPose);
+                            drive.zeroSensors(robotState.allianceColor == Color.BLUE ? Constants.kDefaultZeroingPose : Constants.kFlippedZeroingPose);
                         }
                     ),
-                    createAction(
-                        () -> controlBoard.getAsBool("autoTarget"),
-                        () -> {
-                            if (robotState.allianceColor == Color.BLUE) {
-                                robotState.target = DrivetrainTargets.blueTargets.get((2 - grid) * 3 + (2 - node));
-                            } else {
-                                robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
-                            }
-                            if (!runningAutoTarget) {
-                                runningAutoTarget = true;
-                                orchestrator.updatePoseWithCamera();
-                                double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
-                                if (distance < Constants.kMinTrajectoryDistance) {
-                                    GreenLogger.log("Distance to target is " + distance + " m");
-                                    GreenLogger.log("Too close to target! can not start trajectory!");
-                                } else {
-                                    GreenLogger.log("Drive trajectory action started!");
-                                    TargetTrajectoryCommand command = new TargetTrajectoryCommand();
-                                    autoTargetThread = new Thread(command::run);
-                                    ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS, LedManager.ControlState.FAST_BLINK);
-                                    autoTargetThread.start();
-                                }
-                            } else {
-                                autoTargetThread.stop();
-                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.SOLID);
-                                GreenLogger.log("Stopped! driving to trajectory canceled!");
-                                runningAutoTarget = !runningAutoTarget;
-                            }
-                        }
-                    ),
+//                    createAction(
+//                        () -> controlBoard.getAsBool("autoTarget"),
+//                        () -> {
+//                            if (robotState.allianceColor == Color.BLUE) {
+//                                robotState.target = DrivetrainTargets.blueTargets.get((2 - grid) * 3 + (2 - node));
+//                            } else {
+//                                robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
+//                            }
+//                            if (!runningAutoTarget) {
+//                                runningAutoTarget = true;
+//                                orchestrator.updatePoseWithCamera();
+//                                double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
+//                                if (distance < Constants.kMinTrajectoryDistance) {
+//                                    GreenLogger.log("Distance to target is " + distance + " m");
+//                                    GreenLogger.log("Too close to target! can not start trajectory!");
+//                                } else {
+//                                    GreenLogger.log("Drive trajectory action started!");
+//                                    TargetTrajectoryCommand command = new TargetTrajectoryCommand();
+//                                    autoTargetThread = new Thread(command::run);
+//                                    ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS, LedManager.ControlState.FAST_BLINK);
+//                                    autoTargetThread.start();
+//                                }
+//                            } else {
+//                                autoTargetThread.stop();
+//                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.SOLID);
+//                                GreenLogger.log("Stopped! driving to trajectory canceled!");
+//                                runningAutoTarget = !runningAutoTarget;
+//                            }
+//                        }
+//                    ),
                     createAction(
                         () -> controlBoard.getAsBool("autoTargetAlign"),
                         () -> {
@@ -300,7 +299,6 @@ public class Robot extends TimedRobot {
                             } else {
                                 autoTargetAlignThread.stop();
                                 GreenLogger.log("Stopped! driving to trajectory canceled!");
-                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
                                 runningAutoTargetAlign = !runningAutoTargetAlign;
                             }
@@ -314,10 +312,6 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
                     ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("midSlowMode"),
-                        drive::setMidSlowMode
-                    ),
                     createAction(
                         () -> controlBoard.getAsBool("midSlowMode"),
                         () -> {
@@ -329,7 +323,7 @@ public class Robot extends TimedRobot {
                         (pressed) -> {
                             if (pressed) {
                                 drive.setAutoBalance(true);
-                                ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.FAST_BLINK);
+                                ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.BLINK);
                             } else {
                                 drive.setAutoBalance(false);
                                 ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.SOLID);
@@ -379,7 +373,6 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("toggleArmScoreCollect"),
                         () -> {
-                            orchestrator.updatePoseWithCamera();
                             if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
                             } else {
@@ -390,7 +383,6 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("shelfPos"),
                         (pressed) -> {
-                            orchestrator.updatePoseWithCamera();
                             elevator.setDesiredState(Elevator.ANGLE_STATE.SHELF_COLLECT, Elevator.EXTENSION_STATE.SHELF_COLLECT);
                         }
                     ),
@@ -773,7 +765,7 @@ public class Robot extends TimedRobot {
                         zeroing = true;
                         elevator.zeroSensors();
                         collector.zeroSensors();
-                        ledManager.indicateStatus(LedManager.RobotStatus.ZEROING_ELEVATOR, LedManager.ControlState.BLINK);
+                        ledManager.indicateStatus(LedManager.RobotStatus.ZEROING, LedManager.ControlState.BLINK);
                         ledManager.writeToHardware();
                         infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
                     } else if (zeroing) { // ready
@@ -794,7 +786,7 @@ public class Robot extends TimedRobot {
                 }
                 lastButton = zeroingButton.get();
 
-                if (ledManager.getCurrentControlStatus() == LedManager.RobotStatus.ZEROING_ELEVATOR) {
+                if (ledManager.getCurrentControlStatus() == LedManager.RobotStatus.ZEROING) {
                     // only keep looping through write if zeroing elevator cus we need to update its blinking
                     ledManager.writeToHardware();
                 }
@@ -855,9 +847,11 @@ public class Robot extends TimedRobot {
                 0,
                 -controlBoard.getAsDouble("strafe"),
                 0,
-                robotState.fieldToVehicle.getRotation());
+                robotState.driverRelativeFieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
-        } else if (((ControlBoard) controlBoard).driverController.getDPad() != -1) { // dpad bang-bang controller for fine alignment
+
+        } else if (((ControlBoard) controlBoard).driverController.getDPad() != -1 && ((ControlBoard) controlBoard).driverController.getDPad() != 180) { // dpad bang-bang controller for fine alignment
+
             int dPadPOVToAngle = ((ControlBoard) controlBoard).driverController.getDPad();
             double strafe = 0;
             double rotation = 0;
@@ -867,7 +861,7 @@ public class Robot extends TimedRobot {
                 strafe = dPadMoveSpeed;
             } else if (dPadPOVToAngle == 0) {
                 double rotVal = MathUtil.inputModulus(
-                    robotState.fieldToVehicle.getRotation().getDegrees(), -180, 180
+                    robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
                 );
                 if ((rotVal < 45 && rotVal > -45) || (rotVal < -178 || rotVal > 178)) {
                     rotation = 0;
@@ -876,10 +870,18 @@ public class Robot extends TimedRobot {
                 }
             }
             SwerveModuleState[] dPadDrivingStates = SwerveDrive.swerveKinematics.toSwerveModuleStates(
-                ChassisSpeeds.fromFieldRelativeSpeeds(0.0, strafe, rotation, robotState.fieldToVehicle.getRotation())
+                ChassisSpeeds.fromFieldRelativeSpeeds(0.0, strafe, rotation, robotState.driverRelativeFieldToVehicle.getRotation())
             );
 
-            ((SwerveDrive) drive).setModuleStates(dPadDrivingStates);
+            if(strafe == 0 && rotation == 0){
+                Rotation2d heading = Rotation2d.fromDegrees(90).minus(robotState.driverRelativeFieldToVehicle.getRotation());
+                SwerveModuleState templateState = new SwerveModuleState(0, heading);
+                SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
+                ((SwerveDrive) drive).setModuleStates(statePassIn);
+            } else {
+                ((SwerveDrive) drive).setModuleStates(dPadDrivingStates);
+            }
+
         } else {
             drive.setTeleopInputs(
                 -controlBoard.getAsDouble("throttle"),

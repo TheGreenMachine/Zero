@@ -278,7 +278,7 @@ public class LedManager extends Subsystem {
         CONE(MAX, 50, 0), // yellow,
         ON_TARGET(MAX, MAX, MAX), // white
         BALANCE(50, 50, MAX), // light blue
-        ZEROING_ELEVATOR(MAX, 0, 20), // deep magenta,
+        ZEROING(MAX, 0, 20), // deep magenta, - elevator or robot during vision update
         OFF(0, 0, 0); // off
 
         final int red;

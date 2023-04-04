@@ -67,7 +67,7 @@ subsystems:
         constants:
             ## Positional Configurations ##
             maxVelTicks100ms: 12275.7 # ticks per 100ms
-            openLoopRampRate: 0.8
+            openLoopRampRate: 0.1
             isSwerve: 1
             encPPR: 14641
             azimuthEncPPR: 4096
@@ -83,7 +83,7 @@ subsystems:
             dPadMoveSpeed: 0.5
             isDemoMode: 0
             ## Auto Balance ##
-            autoBalanceDivider: 75
+            autoBalanceDivider: 50
             autoBalanceThreshold: 2.5 # degrees
     elevator:
         implemented: true
@@ -115,9 +115,9 @@ subsystems:
             usingFeedForward: 0
             extensionPPR: 300000
             angleQuarterPPR: 131072 # 32 x 4096
-            usingMotionMagic: 1
-            motionMagicCruiseVelocity: 50000 # ticks per 100ms
-            motionMagicAcceleration: 25000 # ticks per 100ms per second
+            usingMotionMagic: 1 # 0 or 1, disable to utilize standard pid control
+            motionMagicCruiseVelocity: 100000 # ticks per 100ms
+            motionMagicAcceleration: 50000 # ticks per 100ms per second
             ## Limits ##
             maxVelTicks100ms: 5000
             forwardExtensionLimit: 330000 # Out
@@ -127,7 +127,8 @@ subsystems:
             ## Positions ##
             stowAnglePosition: 90000
             collectAnglePosition: -2500
-            scoreAnglePosition: 66000
+            scoreAnglePosition: 60000
+            shelfAnglePosition: 70000
             scoreDipAnglePosition: 55000
             minExtensionPosition: 20000 # roughly 4800 ticks per inch
             midExtensionPosition: 130000
@@ -155,8 +156,8 @@ subsystems:
             coneOuttakePower: 0.65
             ## Positions ##
             stowPosition: 0
-            scorePosition: -47
-            shelfPosition: -40
+            scorePosition: -46
+            shelfPosition: -37 #MAYBE -37 optimal for cube, -36 optimal for cone
             floorPosition: -22 #was -12
             ## Limits ##
             intakeStallAmps: 30
@@ -172,7 +173,7 @@ subsystems:
     camera:
         implemented: true
         constants:
-            usingCamToUpdatePose: 0
+            dummy: 0
 infrastructure:
     canivoreBusName: highSpeed
     ## Power Distribution ##
