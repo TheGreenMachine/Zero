@@ -61,9 +61,7 @@ public class Elevator extends Subsystem {
 
     private static double angleQuarterPPR;
     private static double extensionPPR;
-    private boolean usingMotionMagic = false;
-    private boolean runningMotionMagic = false;
-
+    private boolean motionMagicEnabled = false;
 
     /**
      * States
@@ -130,7 +128,7 @@ public class Elevator extends Subsystem {
         angleMotorMain.configClosedloopRamp(0.2, Constants.kCANTimeoutMs);
         extensionMotor.configClosedloopRamp(0.05, Constants.kCANTimeoutMs);
 
-        usingMotionMagic = factory.getConstant(NAME, "usingMotionMagic") > 0;
+        motionMagicEnabled = factory.getConstant(NAME, "motionMagicEnabled") > 0;
         extensionPPR = factory.getConstant(NAME, "extensionPPR");
         angleQuarterPPR = factory.getConstant(NAME, "angleQuarterPPR");
 
@@ -157,7 +155,7 @@ public class Elevator extends Subsystem {
 //        maxExtensionVelocity = factory.getConstant(NAME, "maxExtensionVelocity");
 //        maxExtensionAcceleration = factory.getConstant(NAME, "maxExtensionAcceleration");
 
-        if (usingMotionMagic) {
+        if (motionMagicEnabled) {
             var motionMagicCruiseVelTicksPer100ms = factory.getConstant(NAME, "motionMagicCruiseVelocity");
             var motionMagicAccelTicksPer100msPerSecond = factory.getConstant(NAME, "motionMagicAcceleration");
             extensionMotor.configMotionCruiseVelocity(motionMagicCruiseVelTicksPer100ms, Constants.kCANTimeoutMs);
@@ -288,18 +286,14 @@ public class Elevator extends Subsystem {
 
         actualExtensionPosition = extensionMotor.getSelectedSensorPosition(0); // not slot id
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
-
-        if (Math.abs(desiredAngleState.getPos() - actualAnglePosition) < getAllowableAngleError()) {
-            angleMotorMain.selectProfileSlot(lockedArmSlot, 0);
+        if (robotState.actualElevatorAngleState != desiredAngleState && armAtTarget()) {
+            angleOutputsChanged = true;
             robotState.actualElevatorAngleState = desiredAngleState;
         }
 
-        if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < getAllowableExtensionError() * 2) {
-            if (usingMotionMagic) runningMotionMagic = false;
-            if (Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < getAllowableExtensionError()) {
-                if (usingMotionMagic) runningMotionMagic = true;
-                robotState.actualElevatorExtensionState = desiredExtensionState;
-            }
+        if (robotState.actualElevatorExtensionState != desiredExtensionState && elevatorAtTarget()) {
+            extensionOutputsChanged = true;
+            robotState.actualElevatorExtensionState = desiredExtensionState;
         }
 
         if (Constants.kLoggingRobot) {
@@ -322,13 +316,15 @@ public class Elevator extends Subsystem {
     public void writeToHardware() {
         if (angleOutputsChanged) {
             angleOutputsChanged = false;
+            int slot = robotState.actualElevatorAngleState == desiredAngleState ? lockedArmSlot : movingArmSlot;
+
             switch (desiredAngleState) {
                 case STOW -> {
-                    angleMotorMain.selectProfileSlot(movingArmSlot, 0);
+                    angleMotorMain.selectProfileSlot(slot, 0);
                     angleMotorMain.set(ControlMode.Position, (stowPos));
                 }
                 case COLLECT -> {
-                    angleMotorMain.selectProfileSlot(movingArmSlot, 0);
+                    angleMotorMain.selectProfileSlot(slot, 0);
                     colPosTimer.update();
                     if (!colPosTimer.isCompleted()) {
                         angleOutputsChanged = true;
@@ -337,11 +333,11 @@ public class Elevator extends Subsystem {
                     }
                 }
                 case SCORE -> {
-                    angleMotorMain.selectProfileSlot(movingArmSlot, 0);
+                    angleMotorMain.selectProfileSlot(slot, 0);
                     angleMotorMain.set(ControlMode.Position, (scorePos));
                 }
                 case SHELF_COLLECT -> {
-                    angleMotorMain.selectProfileSlot(movingArmSlot, 0);
+                    angleMotorMain.selectProfileSlot(slot, 0);
 //                    if(robotState.actualGameElement == Collector.GAME_ELEMENT.CUBE){
 //                        angleMotorMain.set(ControlMode.Position, shelfPos - 5000); // TODO WATCH ME
 //                    } else {
@@ -352,44 +348,36 @@ public class Elevator extends Subsystem {
         }
         if (extensionOutputsChanged) {
             extensionOutputsChanged = false;
-            if (usingMotionMagic && runningMotionMagic) {
-                if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
-                    switch (desiredExtensionState) {
-                        case MAX -> extensionMotor.set(ControlMode.MotionMagic, (maxExtension));
-                        case MID -> extensionMotor.set(ControlMode.MotionMagic, (midExtension));
-                        case MIN -> extensionMotor.set(ControlMode.MotionMagic, (minExtension));
-                        case SHELF_COLLECT -> extensionMotor.set(ControlMode.MotionMagic, (shelfExtension));
-                    }
-                } else {
-                    switch (desiredExtensionState) {
-                        case MAX ->
-                            extensionMotor.set(ControlMode.MotionMagic, (maxExtension + cubeExtensionMaxOffset));
-                        case MID ->
-                            extensionMotor.set(ControlMode.MotionMagic, (midExtension + cubeExtensionMidOffset));
-                        case MIN -> extensionMotor.set(ControlMode.MotionMagic, (minExtension));
-                        case SHELF_COLLECT ->
-                            extensionMotor.set(ControlMode.MotionMagic, (shelfExtension + cubeExtensionMidOffset));
-                    }
+            ControlMode controlMode = motionMagicEnabled && robotState.actualElevatorExtensionState != desiredExtensionState
+                    ? ControlMode.MotionMagic : ControlMode.Position;
+
+            if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
+                switch (desiredExtensionState) {
+                    case MAX -> extensionMotor.set(controlMode, (maxExtension));
+                    case MID -> extensionMotor.set(controlMode, (midExtension));
+                    case MIN -> extensionMotor.set(controlMode, (minExtension));
+                    case SHELF_COLLECT -> extensionMotor.set(controlMode, (shelfExtension));
                 }
             } else {
-                if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
-                    switch (desiredExtensionState) {
-                        case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension));
-                        case MID -> extensionMotor.set(ControlMode.Position, (midExtension));
-                        case MIN -> extensionMotor.set(ControlMode.Position, (minExtension));
-                        case SHELF_COLLECT -> extensionMotor.set(ControlMode.Position, (shelfExtension));
-                    }
-                } else {
-                    switch (desiredExtensionState) {
-                        case MAX -> extensionMotor.set(ControlMode.Position, (maxExtension + cubeExtensionMaxOffset));
-                        case MID -> extensionMotor.set(ControlMode.Position, (midExtension + cubeExtensionMidOffset));
-                        case MIN -> extensionMotor.set(ControlMode.Position, (minExtension));
-                        case SHELF_COLLECT ->
-                            extensionMotor.set(ControlMode.Position, (shelfExtension + cubeExtensionMidOffset));
-                    }
+                switch (desiredExtensionState) {
+                    case MAX ->
+                        extensionMotor.set(controlMode, (maxExtension + cubeExtensionMaxOffset));
+                    case MID ->
+                        extensionMotor.set(controlMode, (midExtension + cubeExtensionMidOffset));
+                    case MIN -> extensionMotor.set(controlMode, (minExtension));
+                    case SHELF_COLLECT ->
+                        extensionMotor.set(controlMode, (shelfExtension + cubeExtensionMidOffset));
                 }
             }
         }
+    }
+
+    public boolean armAtTarget(){
+        return Math.abs(desiredAngleState.getPos() - actualAnglePosition) < getAllowableAngleError();
+    }
+
+    public boolean elevatorAtTarget(){
+        return Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < getAllowableExtensionError();
     }
 
     @Override
