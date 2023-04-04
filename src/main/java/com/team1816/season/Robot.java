@@ -308,9 +308,11 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("brakeMode"),
                         drive::setBraking
                     ),
-                    createHoldAction(
+                    createAction(
                         () -> controlBoard.getAsBool("slowMode"),
-                        drive::setSlowMode
+                        () -> {
+                            drive.setSlowMode(!drive.getSlowMode());
+                        }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("midSlowMode"),
@@ -318,7 +320,13 @@ public class Robot extends TimedRobot {
                             drive.setMidSlowMode(!drive.getMidSlowMode());
                         }
                     ),
-                    createHoldAction(
+                    createAction(
+                        () -> controlBoard.getAsBool("autoBalance"),
+                        () -> {
+                            drive.setAutoBalance(!drive.isAutoBalancing());
+                        }
+                    ),
+                    /*createHoldAction(
                         () -> controlBoard.getAsBool("autoBalance"),
                         (pressed) -> {
                             if (pressed) {
@@ -329,7 +337,7 @@ public class Robot extends TimedRobot {
                                 ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.SOLID);
                             }
                         }
-                    ),
+                    ),*/
                     createHoldAction(
                         () -> controlBoard.getAsBool("intakeCone"),
                         (pressed) -> {
@@ -850,16 +858,21 @@ public class Robot extends TimedRobot {
                 robotState.driverRelativeFieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
 
-        } else if (((ControlBoard) controlBoard).driverController.getDPad() != -1 && ((ControlBoard) controlBoard).driverController.getDPad() != 180) { // dpad bang-bang controller for fine alignment
+        } else if (((ControlBoard) controlBoard).driverController.getDPad() != -1 && ((ControlBoard) controlBoard).driverController.getDPad() != 270) { // dpad bang-bang controller for fine alignment
 
             int dPadPOVToAngle = ((ControlBoard) controlBoard).driverController.getDPad();
             double strafe = 0;
             double rotation = 0;
-            if (dPadPOVToAngle == 90) {
-                strafe = -dPadMoveSpeed;
-            } else if (dPadPOVToAngle == 270) {
-                strafe = dPadMoveSpeed;
-            } else if (dPadPOVToAngle == 0) {
+            if (dPadPOVToAngle == 180) { //down on the d pad, snap to driver
+                double rotVal = MathUtil.inputModulus(
+                    robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
+                );
+                if ((rotVal < 2 && rotVal > -2) || (rotVal < -135 || rotVal > 135)) {
+                    rotation = 0;
+                } else {
+                    rotation = 90 / rotVal;
+                }
+            } else if (dPadPOVToAngle == 0) { //up on the d pad, snap to human player
                 double rotVal = MathUtil.inputModulus(
                     robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
                 );

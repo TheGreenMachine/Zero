@@ -363,6 +363,12 @@ public abstract class Drive
     }
 
     /**
+     *
+     * @return whether drivetrain is in slowMode
+     */
+    public boolean getSlowMode() { return isSlowMode; }
+
+    /**
      * Sets the drivetrain to attain a slightly faster slow mode
      *
      * @param midSlowMode - boolean

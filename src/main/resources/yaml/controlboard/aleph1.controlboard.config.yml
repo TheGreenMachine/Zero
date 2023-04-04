@@ -9,7 +9,7 @@ driver:
     buttonpad:
         x: toggleArmScoreCollect # remapped to back left button
         y: shelfPos # remapped to back right button
-        a: autoTargetAlign # autoTarget
+        a: midSlowMode # used to be autoTargetAlign
         b: autoBalance
     axes:
         leftTrigger: brakeMode
@@ -19,7 +19,9 @@ driver:
         rightBumper: intakeCone
         start: zeroPose
     dpad:
-        down: midSlowMode
+        up: snapToHumanPlayer
+        down: snapToDriver
+        left: autoTargetAlign
 operator:
     rumble: false
     dpad:
