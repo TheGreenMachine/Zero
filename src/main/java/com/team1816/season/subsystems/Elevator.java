@@ -297,7 +297,7 @@ public class Elevator extends Subsystem {
         }
 
         if (Constants.kLoggingRobot) {
-            ((DoubleLogEntry) desStatesLogger).append(getDesiredAngleState().pos);
+            ((DoubleLogEntry) desStatesLogger).append(desiredAngleTicks);
             ((DoubleLogEntry) actStatesLogger).append(actualAngleTicks);
             armCurrentDraw.append(angleMotorMain.getOutputCurrent());
 
