@@ -118,7 +118,7 @@ subsystems:
             allowableAngleError: 2 # degree (+ || -)
             allowableExtensionError: 1 # in (+ || -)
             ## Motion Magic ##
-            motionMagicEnabled: 1 # 0 or 1, disable to utilize standard pid control
+            motionMagicEnabled: 0 # 0 or 1, disable to utilize standard pid control
             motionMagicCruiseVelocity: 200000 # ticks per 100ms
             motionMagicAcceleration: 150000 # ticks per 100ms per second
             ## Limits ##

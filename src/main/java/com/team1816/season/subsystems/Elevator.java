@@ -124,8 +124,8 @@ public class Elevator extends Subsystem {
         extensionMotor.configPeakOutputReverse(-extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.configForwardSoftLimitEnable(true, Constants.kCANTimeoutMs);
         extensionMotor.configReverseSoftLimitEnable(true, Constants.kCANTimeoutMs);
-        extensionMotor.configForwardSoftLimitThreshold(factory.getConstant(NAME, "forwardExtensionLimit"), Constants.kCANTimeoutMs);
-        extensionMotor.configReverseSoftLimitThreshold(factory.getConstant(NAME, "reverseExtensionLimit"), Constants.kCANTimeoutMs);
+        extensionMotor.configForwardSoftLimitThreshold(factory.getConstant(NAME, "forwardExtensionLimit") * extensionTicksPerInch, Constants.kCANTimeoutMs);
+        extensionMotor.configReverseSoftLimitThreshold(factory.getConstant(NAME, "reverseExtensionLimit") * extensionTicksPerInch, Constants.kCANTimeoutMs);
         extensionMotor.configClosedLoopPeakOutput(2, extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.selectProfileSlot(extensionPIDSlot, 0); // uses the system slot2 configuration for extension control
 
@@ -289,10 +289,10 @@ public class Elevator extends Subsystem {
 
         if(RobotBase.isSimulation()){
             double elevatorLength = kElevatorMinLength +
-                    (extensionMotor.getSelectedSensorPosition(0) / maxExtension * (kElevatorMaxLength - kElevatorMinLength));
+                    (actualExtensionTicks / maxExtension * (kElevatorMaxLength - kElevatorMinLength));
 
             simArm.setLength(elevatorLength);
-            simArm.setAngle(angleMotorMain.getSelectedSensorPosition(0) / angleTicksPerDegree);
+            simArm.setAngle(actualAngleTicks / angleTicksPerDegree);
             SmartDashboard.putData("Elevator Mech 2D", mechCanvas);
         }
 
@@ -301,7 +301,7 @@ public class Elevator extends Subsystem {
             ((DoubleLogEntry) actStatesLogger).append(actualAngleTicks);
             armCurrentDraw.append(angleMotorMain.getOutputCurrent());
 
-            desiredExtensionLogger.append(getDesiredExtensionState().extension);
+            desiredExtensionLogger.append(desiredExtensionTicks);
             actualExtensionLogger.append(actualExtensionTicks);
             extensionCurrentDraw.append(extensionMotor.getOutputCurrent());
         }
@@ -363,6 +363,7 @@ public class Elevator extends Subsystem {
             }
             desiredExtensionTicks = extension;
 
+            System.out.println("extension set val = " + extension);
             extensionMotor.set(controlMode, extension);
         }
     }
