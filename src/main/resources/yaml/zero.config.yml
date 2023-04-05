@@ -146,16 +146,17 @@ subsystems:
                 kP: 0.001
             slot1: # pivotMotor
                 kP: 0.025
-                allowableError: 4
+                allowableError: 2 # this is only being used to compare states
         constants:
             ## Demands ##
             cubeIntakePower: 0.70 # percent output voltage
-            cubeOuttakePower: -0.45 # percent output voltage TODO test if can speed up
+            cubeOuttakePower: -0.45 # percent output voltage TODO test if can speed up - if we can make the elevator not have to extend and we just shoot it
             coneIntakePower: -1 #was -0.50 - 1.375
             coneOuttakePower: 0.65
             ## Positions ##
             stowPosition: 0
-            scorePosition: -46
+            scoreConePosition: -46
+            scoreCubePosition: -37
             shelfPosition: -37 #MAYBE -37 optimal for cube, -36 optimal for cone
             floorPosition: -22 #was -12
             ## Limits ##
@@ -198,4 +199,4 @@ constants:
     ## General ##
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .025 # seconds
-    resetFactoryDefaults: 1 # whether motors get reset to factory default
+    resetFactoryDefaults: 0 # whether motors get reset to factory default
