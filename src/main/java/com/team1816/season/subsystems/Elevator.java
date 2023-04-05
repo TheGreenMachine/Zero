@@ -7,10 +7,18 @@ import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.logUtil.GreenLogger;
+import com.team1816.lib.util.simUtil.SingleJointedElevatorArmSim;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -32,6 +40,15 @@ public class Elevator extends Subsystem {
     /**
      * Properties
      */
+
+    // where ur drawing stuff
+    private final Mechanism2d mechCanvas = new Mechanism2d(3, 3);
+    private final MechanismRoot2d root = mechCanvas.getRoot("ElevatorArm", 1.25, 0.5);
+    private final MechanismLigament2d simArm = root.append(new MechanismLigament2d("elevator", kElevatorMinLength, 90));
+    private static final double kElevatorMinLength = 0.70; // meters
+    private static final double kElevatorMaxLength = 1.25; // meters
+    private static final double kArmGearing = 250; // meters
+    public static final double kArmMass = 13.60; // kg
 
     public static final double angleTicksPerDegree = factory.getConstant(NAME, "angleTicksPerDegree", 0);
     public static final double stowPos = factory.getConstant(NAME, "stowAngle") * angleTicksPerDegree;
@@ -268,6 +285,15 @@ public class Elevator extends Subsystem {
         if (robotState.actualElevatorExtensionState != desiredExtensionState && elevatorAtTarget()) {
             extensionOutputsChanged = true;
             robotState.actualElevatorExtensionState = desiredExtensionState;
+        }
+
+        if(RobotBase.isSimulation()){
+            double elevatorLength = kElevatorMinLength +
+                    (extensionMotor.getSelectedSensorPosition(0) / maxExtension * (kElevatorMaxLength - kElevatorMinLength));
+
+            simArm.setLength(elevatorLength);
+            simArm.setAngle(angleMotorMain.getSelectedSensorPosition(0) / angleTicksPerDegree);
+            SmartDashboard.putData("Elevator Mech 2D", mechCanvas);
         }
 
         if (Constants.kLoggingRobot) {
