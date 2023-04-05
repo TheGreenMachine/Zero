@@ -32,22 +32,22 @@ public class Elevator extends Subsystem {
     /**
      * Properties
      */
-    public static final double stowPos = factory.getConstant(NAME, "stowAnglePosition");
-    public static final double collectPos = factory.getConstant(NAME, "collectAnglePosition");
-    public static final double scorePos = factory.getConstant(NAME, "scoreAnglePosition");
 
-    public static final double shelfPos = factory.getConstant(NAME, "shelfAnglePosition");
-    public static final double minExtension = factory.getConstant(NAME, "minExtensionPosition");
-    public static final double midExtension = factory.getConstant(NAME, "midExtensionPosition");
-    public static final double maxExtension = factory.getConstant(NAME, "maxExtensionPosition");
-    public static final double shelfExtension = factory.getConstant(NAME, "shelfExtensionPosition");
+    public static final double angleTicksPerDegree = factory.getConstant(NAME, "angleTicksPerDegree", 0);
+    public static final double stowPos = factory.getConstant(NAME, "stowAngle") * angleTicksPerDegree;
+    public static final double collectPos = factory.getConstant(NAME, "collectAngle") * angleTicksPerDegree;
+    public static final double scorePos = factory.getConstant(NAME, "scoreAngle") * angleTicksPerDegree;
 
-    public static final double cubeExtensionMaxOffset = factory.getConstant("cubeExtensionMaxOffset", 10000);
-    public static final double cubeExtensionMidOffset = factory.getConstant("cubeExtensionMidOffset", 5000);
+    public static final double shelfPos = factory.getConstant(NAME, "shelfAngle") * angleTicksPerDegree;
 
-    private AsyncTimer colPosTimer;
-    private static double allowableAngleError;
-    private static double allowableExtensionError;
+    public static final double extensionTicksPerInch = factory.getConstant(NAME, "extensionTicksPerInch", 0);
+    public static final double minExtension = factory.getConstant(NAME, "minExtension") * extensionTicksPerInch;
+    public static final double midExtension = factory.getConstant(NAME, "midExtension") * extensionTicksPerInch;
+    public static final double maxExtension = factory.getConstant(NAME, "maxExtension") * extensionTicksPerInch;
+    public static final double shelfExtension = factory.getConstant(NAME, "shelfExtension") * extensionTicksPerInch;
+
+    private final double allowableAngleError;
+    private final double allowableExtensionError;
 
     private static double maxAngularVelocity; // rad/s
     private static double maxAngularAcceleration; // rad/s^2
@@ -57,29 +57,25 @@ public class Elevator extends Subsystem {
     private final int movingArmSlot = 0;
     private final int lockedArmSlot = 1;
     private final int extensionPIDSlot = 2;
-
-    private static double angleQuarterPPR;
-    private static double extensionPPR;
-    private boolean motionMagicEnabled = false;
+    private final boolean motionMagicEnabled;
 
     /**
      * States
      */
-    private double actualExtensionPosition = 0;
-    private double actualAnglePosition = 0;
+
+    private double desiredExtensionTicks = 0;
+    private double desiredAngleTicks = 0;
+    private double actualExtensionTicks = 0;
+    private double actualAngleTicks = 0;
     private double actualAngleThetaDegrees;
-    private double actualExtensionMeters;
+    private double actualExtensionInches;
     private double actualAngleVel;
     private double actualExtensionVel;
     private ANGLE_STATE desiredAngleState = ANGLE_STATE.STOW;
     private EXTENSION_STATE desiredExtensionState = EXTENSION_STATE.MIN;
-    private double angleFeedForward;
-    private double extensionFeedForward;
 
     private boolean angleOutputsChanged;
     private boolean extensionOutputsChanged;
-    private boolean hallEffectTriggered; // not using this rn - turn on robot with arm all the way down for ~20 secs
-    private double zeroingHallEffectTriggerValue;
 
     /**
      * Logging
@@ -113,8 +109,8 @@ public class Elevator extends Subsystem {
         extensionMotor.configReverseSoftLimitEnable(true, Constants.kCANTimeoutMs);
         extensionMotor.configForwardSoftLimitThreshold(factory.getConstant(NAME, "forwardExtensionLimit"), Constants.kCANTimeoutMs);
         extensionMotor.configReverseSoftLimitThreshold(factory.getConstant(NAME, "reverseExtensionLimit"), Constants.kCANTimeoutMs);
-        extensionMotor.configClosedLoopPeakOutput(1, extensionPeakOutput, Constants.kCANTimeoutMs);
-        extensionMotor.selectProfileSlot(extensionPIDSlot, 0); // uses the system slot1 configuration for extension control
+        extensionMotor.configClosedLoopPeakOutput(2, extensionPeakOutput, Constants.kCANTimeoutMs);
+        extensionMotor.selectProfileSlot(extensionPIDSlot, 0); // uses the system slot2 configuration for extension control
 
         double angularPeakOutput = 1;
         angleMotorMain.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
@@ -128,29 +124,13 @@ public class Elevator extends Subsystem {
         extensionMotor.configClosedloopRamp(0.05, Constants.kCANTimeoutMs);
 
         motionMagicEnabled = factory.getConstant(NAME, "motionMagicEnabled") > 0;
-        extensionPPR = factory.getConstant(NAME, "extensionPPR");
-        angleQuarterPPR = factory.getConstant(NAME, "angleQuarterPPR");
 
-        allowableAngleError = factory.getPidSlotConfig(NAME, "slot0").allowableError;
-        allowableExtensionError = factory.getPidSlotConfig(NAME, "slot2").allowableError;
-
-        colPosTimer = new AsyncTimer(
-                1,
-                () -> {
-                    angleMotorMain.set(ControlMode.Position, collectPos);
-                },
-                () -> {
-                    // set it to go down until it hits rubber then just fight against the spring to stay down
-                    // that way we don't need to be dead-on for the collect pos
-                    angleMotorMain.set(ControlMode.PercentOutput, -0.06);   //(start -.08)i can go up to -0.1 if collecting too high
-                    GreenLogger.log("running collector into rubber w/ %out");
-                }
-        );
+        allowableAngleError = factory.getConstant(NAME, "allowableAngleError") * angleTicksPerDegree;
+        allowableExtensionError = factory.getConstant(NAME, "allowableExtensionError") * extensionTicksPerInch;
 
         if (motionMagicEnabled) {
             var motionMagicCruiseVelTicksPer100ms = factory.getConstant(NAME, "motionMagicCruiseVelocity");
             var motionMagicAccelTicksPer100msPerSecond = factory.getConstant(NAME, "motionMagicAcceleration");
-            extensionMotor.configMotionSCurveStrength(2, Constants.kCANTimeoutMs);
             extensionMotor.configMotionCruiseVelocity(motionMagicCruiseVelTicksPer100ms, Constants.kCANTimeoutMs);
             extensionMotor.configMotionAcceleration(motionMagicAccelTicksPer100msPerSecond, Constants.kCANTimeoutMs);
         }
@@ -222,8 +202,8 @@ public class Elevator extends Subsystem {
      *
      * @return actual angle position
      */
-    public double getActualAnglePosition() {
-        return actualAnglePosition;
+    public double getActualAngleTicks() {
+        return actualAngleTicks;
     }
 
     /**
@@ -231,22 +211,22 @@ public class Elevator extends Subsystem {
      *
      * @return actual extension position
      */
-    public double getActualExtensionPosition() {
-        return actualExtensionPosition;
+    public double getActualExtensionTicks() {
+        return actualExtensionTicks;
     }
 
     /**
      * Returns the error of the angular position of the arm
      */
     public double getAngleError() {
-        return getActualAnglePosition() - getDesiredAngleState().getPos();
+        return getActualAngleTicks() - desiredAngleTicks;
     }
 
     /**
      * Returns the error of the extension position of the arm
      */
     public double getExtensionError() {
-        return getActualExtensionPosition() - getDesiredExtensionState().getExtension();
+        return getActualExtensionTicks() - desiredExtensionTicks;
     }
 
     /**
@@ -255,7 +235,7 @@ public class Elevator extends Subsystem {
      * @return allowable angle error
      */
     public double getAllowableAngleError() {
-        return allowableAngleError * 8;
+        return allowableAngleError;
     }
 
     /**
@@ -264,7 +244,7 @@ public class Elevator extends Subsystem {
      * @return allowable extension error
      */
     public double getAllowableExtensionError() {
-        return allowableExtensionError * 16;
+        return allowableExtensionError;
     }
 
     /**
@@ -274,11 +254,12 @@ public class Elevator extends Subsystem {
      */
     @Override
     public void readFromHardware() {
-        actualAnglePosition = angleMotorMain.getSelectedSensorPosition(0);
+        actualAngleTicks = angleMotorMain.getSelectedSensorPosition(0);
         actualAngleVel = angleMotorMain.getSelectedSensorVelocity(0);
 
-        actualExtensionPosition = extensionMotor.getSelectedSensorPosition(0); // not slot id
+        actualExtensionTicks = extensionMotor.getSelectedSensorPosition(0); // not slot id
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
+
         if (robotState.actualElevatorAngleState != desiredAngleState && armAtTarget()) {
             angleOutputsChanged = true;
             robotState.actualElevatorAngleState = desiredAngleState;
@@ -291,11 +272,11 @@ public class Elevator extends Subsystem {
 
         if (Constants.kLoggingRobot) {
             ((DoubleLogEntry) desStatesLogger).append(getDesiredAngleState().pos);
-            ((DoubleLogEntry) actStatesLogger).append(actualAnglePosition);
+            ((DoubleLogEntry) actStatesLogger).append(actualAngleTicks);
             armCurrentDraw.append(angleMotorMain.getOutputCurrent());
 
             desiredExtensionLogger.append(getDesiredExtensionState().extension);
-            actualExtensionLogger.append(actualExtensionPosition);
+            actualExtensionLogger.append(actualExtensionTicks);
             extensionCurrentDraw.append(extensionMotor.getOutputCurrent());
         }
     }
@@ -309,70 +290,69 @@ public class Elevator extends Subsystem {
     public void writeToHardware() {
         if (angleOutputsChanged) {
             angleOutputsChanged = false;
-            int slot = robotState.actualElevatorAngleState == desiredAngleState ? lockedArmSlot : movingArmSlot;
 
+            int slot = robotState.actualElevatorAngleState == desiredAngleState && armAtTarget() ? lockedArmSlot : movingArmSlot;
+
+            double anglePos = 0;
             switch (desiredAngleState) {
                 case STOW -> {
-                    angleMotorMain.selectProfileSlot(slot, 0);
-                    angleMotorMain.set(ControlMode.Position, (stowPos));
+                    anglePos = (stowPos);
                 }
                 case COLLECT -> {
-                    angleMotorMain.selectProfileSlot(slot, 0);
-                    colPosTimer.update();
-                    if (!colPosTimer.isCompleted()) {
-                        angleOutputsChanged = true;
-                    } else {
-                        colPosTimer.reset();
-                    }
+                    anglePos = collectPos;
                 }
                 case SCORE -> {
-                    angleMotorMain.selectProfileSlot(slot, 0);
-                    angleMotorMain.set(ControlMode.Position, (scorePos));
+                    anglePos = (scorePos);
                 }
                 case SHELF_COLLECT -> {
-                    angleMotorMain.selectProfileSlot(slot, 0);
-//                    if(robotState.actualGameElement == Collector.GAME_ELEMENT.CUBE){
-//                        angleMotorMain.set(ControlMode.Position, shelfPos - 5000); // TODO WATCH ME
-//                    } else {
-                    angleMotorMain.set(ControlMode.Position, (shelfPos));
-//                    }
+                    anglePos = (shelfPos);
                 }
             }
+            desiredAngleTicks = anglePos;
+
+            angleMotorMain.selectProfileSlot(slot, 0);
+            angleMotorMain.set(ControlMode.Position, anglePos);
         }
         if (extensionOutputsChanged) {
             extensionOutputsChanged = false;
-            ControlMode controlMode = motionMagicEnabled && robotState.actualElevatorExtensionState != desiredExtensionState
+
+            ControlMode controlMode = motionMagicEnabled // && robotState.actualElevatorExtensionState != desiredExtensionState
                     ? ControlMode.MotionMagic : ControlMode.Position;
 
+            double extension = 0;
             if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
                 switch (desiredExtensionState) {
-                    case MAX -> extensionMotor.set(controlMode, (maxExtension));
-                    case MID -> extensionMotor.set(controlMode, (midExtension));
-                    case MIN -> extensionMotor.set(controlMode, (minExtension));
-                    case SHELF_COLLECT -> extensionMotor.set(controlMode, (shelfExtension));
+                    case MAX -> extension = maxExtension;
+                    case MID -> extension = midExtension;
+                    case MIN -> extension = minExtension;
+                    case SHELF_COLLECT -> extension = shelfExtension;
                 }
             } else {
                 switch (desiredExtensionState) {
-                    case MAX -> extensionMotor.set(controlMode, (maxExtension + cubeExtensionMaxOffset));
-                    case MID -> extensionMotor.set(controlMode, (midExtension + cubeExtensionMidOffset));
-                    case MIN -> extensionMotor.set(controlMode, (minExtension));
-                    case SHELF_COLLECT -> extensionMotor.set(controlMode, (shelfExtension + cubeExtensionMidOffset));
+                    case MAX -> extension = maxExtension;
+                    case MID -> extension = midExtension;
+                    case MIN -> extension = minExtension;
+                    case SHELF_COLLECT -> extension = shelfExtension;
                 }
             }
+            desiredExtensionTicks = extension;
+
+            extensionMotor.set(controlMode, extension);
         }
     }
 
     public boolean armAtTarget() {
-        return Math.abs(desiredAngleState.getPos() - actualAnglePosition) < getAllowableAngleError();
+        return Math.abs(desiredAngleTicks - actualAngleTicks) < getAllowableAngleError();
     }
 
     public boolean elevatorAtTarget() {
-        return Math.abs(desiredExtensionState.getExtension() - actualExtensionPosition) < getAllowableExtensionError();
+        return Math.abs(desiredExtensionTicks - actualExtensionTicks) < getAllowableExtensionError();
     }
 
     @Override
     public void zeroSensors() {
         angleMotorMain.setSelectedSensorPosition(0, 0, Constants.kCANTimeoutMs);
+        angleMotorMain.selectProfileSlot(movingArmSlot, 0);
         setBraking(false);
     }
 

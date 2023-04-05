@@ -109,33 +109,33 @@ subsystems:
                 kI: 0.001
                 kD: 3.2
                 kF: 0
-                allowableError: 200
+                allowableError: 200 # for PID control NOT checking if reached desired position
         constants:
             ## Config ##
-            usingFeedForward: 0
-            extensionPPR: 300000
-            angleQuarterPPR: 131072 # 32 x 4096
-            motionMagicEnabled: 1 # 0 or 1, disable to utilize standard pid control
-            motionMagicCruiseVelocity: 100000 # ticks per 100ms
-            motionMagicAcceleration: 50000 # ticks per 100ms per second
-            ## Limits ##
+            extensionTicksPerInch: 4800
+            angleTicksPerDegree: 1456.35 # ~524288ticks == full ppr
             maxVelTicks100ms: 5000 # not being used for anything rn
-            forwardExtensionLimit: 330000 # Out
-            reverseExtensionLimit: 0 # In
-            forwardAngleLimit: 100000 # Elevator horizontal orientation
-            reverseAngleLimit: -10000 # Elevator vertical orientation
-            ## Positions ##
-            stowAnglePosition: 90000
-            collectAnglePosition: -2500
-            scoreAnglePosition: 60000
-            shelfAnglePosition: 70000
-            minExtensionPosition: 20000 # roughly 4800 ticks per inch
-            midExtensionPosition: 130000
-            maxExtensionPosition: 320000
-            shelfExtensionPosition: 150000 # between mid and max
-            ## Offsets ##
-            cubeExtensionMaxOffset: 10000
-            cubeExtensionMidOffset: 5000
+            allowableAngleError: 2 # degree (+ || -)
+            allowableExtensionError: 1 # in (+ || -)
+            ## Motion Magic ##
+            motionMagicEnabled: 1 # 0 or 1, disable to utilize standard pid control
+            motionMagicCruiseVelocity: 200000 # ticks per 100ms
+            motionMagicAcceleration: 150000 # ticks per 100ms per second
+            ## Limits ##
+            forwardExtensionLimit: 68.75 # in - 330000ticks
+            reverseExtensionLimit: 0 # in
+            forwardAngleLimit: 68.66  # degs - 100000ticks - Elevator horizontal orientation
+            reverseAngleLimit: -6.86 # degs - -10000ticks - Elevator vertical orientation
+            ## Angles ##
+            stowAngle: 61.8 # degrees - 90000ticks
+            collectAngle: 0 # degs - -2500ticks (was using timer)
+            scoreAngle: 41.2 # degs - 60000ticks
+            shelfAngle: 48.06 # degs - 70000ticks TODO tune
+            ## Extensions ##
+            minExtension: 4.16 # in - 20000ticks
+            midExtension: 27.08 # in - 130000ticks
+            maxExtension: 66.66 # in - 320000ticks
+            shelfExtension: 31.25 # in - 150000ticks TODO tune
     collector:
         implemented: true
         sparkmaxes:
@@ -150,7 +150,7 @@ subsystems:
         constants:
             ## Demands ##
             cubeIntakePower: 0.70 # percent output voltage
-            cubeOuttakePower: -0.45 # percent output voltage
+            cubeOuttakePower: -0.45 # percent output voltage TODO test if can speed up
             coneIntakePower: -1 #was -0.50 - 1.375
             coneOuttakePower: 0.65
             ## Positions ##
@@ -168,7 +168,7 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 180
-            ledStripCount: 30
+            ledStripCount: 35
     camera:
         implemented: true
         constants:
@@ -198,4 +198,4 @@ constants:
     ## General ##
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .025 # seconds
-    resetFactoryDefaults: 0 # whether motors get reset to factory default
+    resetFactoryDefaults: 1 # whether motors get reset to factory default
