@@ -44,7 +44,6 @@ public class AutoBalanceAction implements AutoAction {
         isSwerve = drive instanceof SwerveDrive;
 
         GreenLogger.log("Initiating auto balance!");
-        ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.BLINK);
         drive.autoBalance(new ChassisSpeeds());
     }
 
