@@ -24,7 +24,7 @@ public class TargetAlignCommand extends AutoCommand {
 
     private static RobotState robotState;
     private static LedManager ledManager;
-    private Elevator.EXTENSION_STATE extensionState;
+    private final Elevator.EXTENSION_STATE extensionState;
 
     public TargetAlignCommand(Elevator.EXTENSION_STATE extension) {
         super(List.of(new TrajectoryAction(new TargetTrajectoryPath())));

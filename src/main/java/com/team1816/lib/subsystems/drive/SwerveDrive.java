@@ -23,9 +23,7 @@ import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import javax.xml.crypto.Data;
 import java.util.List;
 import java.util.Objects;
 
@@ -340,9 +338,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public void updateRobotState() {
         robotState.fieldToVehicle = swerveOdometry.getPoseMeters();
         robotState.driverRelativeFieldToVehicle = new Pose2d( // for inputs ONLY
-                robotState.fieldToVehicle.getTranslation(),
-                robotState.allianceColor == Color.BLUE ? robotState.fieldToVehicle.getRotation() : robotState.fieldToVehicle.getRotation().rotateBy(Rotation2d.fromDegrees(180))
-                );
+            robotState.fieldToVehicle.getTranslation(),
+            robotState.allianceColor == Color.BLUE ? robotState.fieldToVehicle.getRotation() : robotState.fieldToVehicle.getRotation().rotateBy(Rotation2d.fromDegrees(180))
+        );
 
         var cs = new ChassisSpeeds(
             chassisSpeed.vxMetersPerSecond,

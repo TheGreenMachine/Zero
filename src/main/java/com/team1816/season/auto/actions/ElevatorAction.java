@@ -11,16 +11,24 @@ import edu.wpi.first.wpilibj.RobotBase;
 
 public class ElevatorAction implements AutoAction {
 
-    private RobotState robotState;
-    private Elevator elevator;
-    private Elevator.ANGLE_STATE desiredAngleState;
-    private Elevator.EXTENSION_STATE desiredExtensionState;
+    private final RobotState robotState;
+    private final Elevator elevator;
 
-    private AsyncTimer simWaitTimer = new AsyncTimer(0.5, null); // just waits .5 secs b4 completing action
+    private final Elevator.ANGLE_STATE initialAngleState;
+    private final Elevator.EXTENSION_STATE initialExtensionState;
+    private final Elevator.ANGLE_STATE desiredAngleState;
+    private final Elevator.EXTENSION_STATE desiredExtensionState;
+
+    private final AsyncTimer simWaitTimer = new AsyncTimer(0.5, null); // just waits .5 secs b4 completing action
+    private boolean minMaxTransitionTriggered = false;
 
     public ElevatorAction(Elevator.ANGLE_STATE angle, Elevator.EXTENSION_STATE extension) {
         robotState = Injector.get(RobotState.class);
         elevator = Injector.get(Elevator.class);
+
+        initialAngleState = robotState.actualElevatorAngleState;
+        initialExtensionState = robotState.actualElevatorExtensionState;
+
         desiredAngleState = angle;
         desiredExtensionState = extension;
     }
@@ -28,6 +36,10 @@ public class ElevatorAction implements AutoAction {
     public ElevatorAction(Elevator.ANGLE_STATE angle, Elevator.EXTENSION_STATE extension, Collector.GAME_ELEMENT game_element) {
         robotState = Injector.get(RobotState.class);
         elevator = Injector.get(Elevator.class);
+
+        initialAngleState = robotState.actualElevatorAngleState;
+        initialExtensionState = robotState.actualElevatorExtensionState;
+
         desiredAngleState = angle;
         desiredExtensionState = extension;
 
@@ -37,7 +49,18 @@ public class ElevatorAction implements AutoAction {
     @Override
     public void start() {
         GreenLogger.log("Setting elevator to angle: " + desiredAngleState.name() + " and extension to: " + desiredExtensionState.name());
-        elevator.setDesiredState(desiredAngleState, desiredExtensionState);
+        if (initialExtensionState != desiredExtensionState) {
+            if (initialExtensionState == Elevator.EXTENSION_STATE.MAX) { // transition at mid extension
+                elevator.setDesiredState(initialAngleState, Elevator.EXTENSION_STATE.MID);
+                minMaxTransitionTriggered = false;
+            } else if (desiredExtensionState == Elevator.EXTENSION_STATE.MAX) { // transition at mid extension
+                elevator.setDesiredState(desiredAngleState, Elevator.EXTENSION_STATE.MID);
+                minMaxTransitionTriggered = false;
+            }
+        } else {
+            elevator.setDesiredState(desiredAngleState, desiredExtensionState);
+            minMaxTransitionTriggered = true;
+        }
 
         if (RobotBase.isSimulation()) {
             simWaitTimer.update();
@@ -48,6 +71,12 @@ public class ElevatorAction implements AutoAction {
     public void update() {
         if (RobotBase.isSimulation()) {
             simWaitTimer.update();
+        }
+        if (!minMaxTransitionTriggered) {
+            if (elevator.elevatorWithinRangeOfTarget()) {
+                elevator.setDesiredState(desiredAngleState, desiredExtensionState);
+                minMaxTransitionTriggered = true;
+            }
         }
     }
 

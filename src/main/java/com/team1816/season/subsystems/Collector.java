@@ -10,7 +10,6 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -254,7 +253,7 @@ public class Collector extends Subsystem {
 //                    if (desiredRollerState == ROLLER_STATE.INTAKE_CONE) {
 //                        pivotMotor.set(ControlMode.Position, (pivotShelfPosition+6));
 //                    } else {
-                        pivotMotor.set(ControlMode.Position, pivotShelfPosition);
+                    pivotMotor.set(ControlMode.Position, pivotShelfPosition);
 //                    }
                 }
             }

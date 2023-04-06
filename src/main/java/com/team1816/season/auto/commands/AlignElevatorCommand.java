@@ -18,7 +18,7 @@ public class AlignElevatorCommand extends AutoCommand {
     protected void routine() throws AutoModeEndedException {
         GreenLogger.log("Running Auto Score Command!");
         if (extensionState == Elevator.EXTENSION_STATE.MAX) {
-            runAction(new AlignAction(extensionState, (Elevator.EXTENSION_STATE.MID.getExtension() + Elevator.EXTENSION_STATE.MAX.getExtension()) / 2d, Elevator.EXTENSION_STATE.MAX.getExtension()));
+            runAction(new AlignAction(extensionState, Elevator.EXTENSION_STATE.MID.getExtension(), Elevator.EXTENSION_STATE.MAX.getExtension()));
         } else if (extensionState == Elevator.EXTENSION_STATE.MID) {
             runAction(new AlignAction(extensionState, (Elevator.EXTENSION_STATE.MIN.getExtension() + Elevator.EXTENSION_STATE.MID.getExtension()) / 2d, Elevator.EXTENSION_STATE.MID.getExtension()));
         } else {

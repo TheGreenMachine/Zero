@@ -873,7 +873,7 @@ public class Robot extends TimedRobot {
                 ChassisSpeeds.fromFieldRelativeSpeeds(0.0, strafe, rotation, robotState.driverRelativeFieldToVehicle.getRotation())
             );
 
-            if(strafe == 0 && rotation == 0){
+            if (strafe == 0 && rotation == 0) {
                 Rotation2d heading = Rotation2d.fromDegrees(90).minus(robotState.driverRelativeFieldToVehicle.getRotation());
                 SwerveModuleState templateState = new SwerveModuleState(0, heading);
                 SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
