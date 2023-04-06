@@ -875,12 +875,10 @@ public class Robot extends TimedRobot {
                 robotState.driverRelativeFieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
 
-        } else if (((ControlBoard) controlBoard).driverController.getDPad() != -1 && ((ControlBoard) controlBoard).driverController.getDPad() != 270) { // dpad bang-bang controller for fine alignment
-
-            int dPadPOVToAngle = ((ControlBoard) controlBoard).driverController.getDPad();
-            double strafe = 0;
+        } else if (snappingToDriver || snappingToHumanPlayer) { // dpad bang-bang controller for fine alignment
+            GreenLogger.log(snappingToDriver ? snappingToDriver : snappingToHumanPlayer);
             double rotation = 0;
-            if (dPadPOVToAngle == 180) { //down on the d pad, snap to driver
+            if (snappingToDriver) { //down on the d pad, snap to driver
                 double rotVal = MathUtil.inputModulus(
                     robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
                 );
@@ -889,7 +887,7 @@ public class Robot extends TimedRobot {
                 } else {
                     rotation = 90 / rotVal;
                 }
-            } else if (dPadPOVToAngle == 0) { //up on the d pad, snap to human player
+            } else if (snappingToHumanPlayer) { //up on the d pad, snap to human player
                 double rotVal = MathUtil.inputModulus(
                     robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
                 );
@@ -900,10 +898,10 @@ public class Robot extends TimedRobot {
                 }
             }
             SwerveModuleState[] dPadDrivingStates = SwerveDrive.swerveKinematics.toSwerveModuleStates(
-                ChassisSpeeds.fromFieldRelativeSpeeds(0.0, strafe, rotation, robotState.driverRelativeFieldToVehicle.getRotation())
+                ChassisSpeeds.fromFieldRelativeSpeeds(0.0, 0.0, rotation, robotState.driverRelativeFieldToVehicle.getRotation())
             );
 
-            if(strafe == 0 && rotation == 0){
+            if(rotation == 0){
                 Rotation2d heading = Rotation2d.fromDegrees(90).minus(robotState.driverRelativeFieldToVehicle.getRotation());
                 SwerveModuleState templateState = new SwerveModuleState(0, heading);
                 SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
