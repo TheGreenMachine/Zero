@@ -4,14 +4,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
-import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.Subsystem;
-import com.team1816.lib.util.logUtil.GreenLogger;
-import com.team1816.lib.util.simUtil.SingleJointedElevatorArmSim;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -291,9 +286,9 @@ public class Elevator extends Subsystem {
             robotState.actualElevatorExtensionState = desiredExtensionState;
         }
 
-        if(RobotBase.isSimulation()){
+        if (RobotBase.isSimulation()) {
             double elevatorLength = kElevatorMinLength +
-                    (actualExtensionTicks / maxExtension * (kElevatorMaxLength - kElevatorMinLength));
+                (actualExtensionTicks / maxExtension * (kElevatorMaxLength - kElevatorMinLength));
 
             simArm.setLength(elevatorLength);
             simArm.setAngle(actualAngleTicks / angleTicksPerDegree);
@@ -343,11 +338,12 @@ public class Elevator extends Subsystem {
             angleMotorMain.selectProfileSlot(slot, 0);
             angleMotorMain.set(ControlMode.Position, anglePos);
         }
+
         if (extensionOutputsChanged) {
             extensionOutputsChanged = false;
 
             ControlMode controlMode = motionMagicEnabled // && robotState.actualElevatorExtensionState != desiredExtensionState
-                    ? ControlMode.MotionMagic : ControlMode.Position;
+                ? ControlMode.MotionMagic : ControlMode.Position;
 
             double extension = 0;
             if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
@@ -378,6 +374,10 @@ public class Elevator extends Subsystem {
 
     public boolean elevatorAtTarget() {
         return Math.abs(desiredExtensionTicks - actualExtensionTicks) < getAllowableExtensionError();
+    }
+
+    public boolean elevatorWithinRangeOfTarget() {
+        return Math.abs(desiredExtensionTicks - actualExtensionTicks) < getAllowableExtensionError() * 8;
     }
 
     @Override

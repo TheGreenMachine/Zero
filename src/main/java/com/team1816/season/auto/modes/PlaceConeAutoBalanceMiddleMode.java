@@ -11,7 +11,6 @@ import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.actions.AutoBalanceAction;
 import com.team1816.season.auto.actions.ElevatorAction;
 import com.team1816.season.auto.actions.ScoreAction;
-import com.team1816.season.auto.paths.NodeToChargeStationMiddlePath;
 import com.team1816.season.auto.paths.OldNodeToChargeStationMiddlePath;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;

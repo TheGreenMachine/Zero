@@ -16,7 +16,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
 import org.photonvision.PhotonCamera;
@@ -103,7 +102,7 @@ public class Camera extends Subsystem {
         PhotonCamera.setVersionCheckEnabled(false);
         if (cameraEnabled) {
             cam = new PhotonCamera("snakeyes");
-            if(Constants.kLoggingRobot){
+            if (Constants.kLoggingRobot) {
                 visionTargetLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Camera/SeenPoints");
             }
         }
@@ -149,11 +148,11 @@ public class Camera extends Subsystem {
         }
         robotState.visibleTarget = getSingularPoint(); // we're only using one point rn anyway
 
-        if(Constants.kLoggingRobot){
+        if (Constants.kLoggingRobot) {
             var targetPose = robotState.fieldToVehicle;
 
             Pose3d aprilTagPose = FieldConfig.fieldTargets2023.get(robotState.visibleTarget.id);
-            if(aprilTagPose != null){
+            if (aprilTagPose != null) {
                 targetPose = aprilTagPose.toPose2d();
             }
 

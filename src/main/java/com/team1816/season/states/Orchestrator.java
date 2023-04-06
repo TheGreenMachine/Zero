@@ -132,7 +132,7 @@ public class Orchestrator {
      */
     public Pose2d calculatePoseFromCamera() {
         var cameraPoint = robotState.visibleTarget;
-        if(!Objects.equals(cameraPoint, new VisionPoint()) && cameraPoint.id > 0){
+        if (!Objects.equals(cameraPoint, new VisionPoint()) && cameraPoint.id > 0) {
             var p = calculateSingleTargetTranslation(cameraPoint);
             Pose2d pose = new Pose2d(
                 p.getX(),

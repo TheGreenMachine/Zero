@@ -60,10 +60,10 @@ public class WaitUntilInsideRegion implements AutoAction {
     }
 
     public WaitUntilInsideRegion(
-            Translation2d bottomLeft,
-            Translation2d topRight,
-            String name,
-            Color color
+        Translation2d bottomLeft,
+        Translation2d topRight,
+        String name,
+        Color color
     ) {
         this.name = name;
         mBottomLeft = bottomLeft;

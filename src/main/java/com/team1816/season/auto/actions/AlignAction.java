@@ -10,8 +10,8 @@ public class AlignAction extends SeriesAction {
     public AlignAction(Elevator.EXTENSION_STATE extensionState, double minCollectTriggerThreshold, double maxCollectTriggerThreshold) {
         super(
             // extension to desired scoring level
-            new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW),
             new ParallelAction(
+                new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW),
                 new ElevatorAction(Elevator.ANGLE_STATE.SCORE, extensionState),
                 // outtaking the game piece
                 new SeriesAction(

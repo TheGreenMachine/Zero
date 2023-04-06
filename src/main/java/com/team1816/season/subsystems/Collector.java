@@ -259,7 +259,7 @@ public class Collector extends Subsystem {
 //                    if (desiredRollerState == ROLLER_STATE.INTAKE_CONE) {
 //                        pivotMotor.set(ControlMode.Position, (pivotShelfPosition+6));
 //                    } else {
-                        pivotMotor.set(ControlMode.Position, pivotShelfPosition);
+                    pivotMotor.set(ControlMode.Position, pivotShelfPosition);
 //                    }
                 }
             }
