@@ -123,6 +123,9 @@ public class Robot extends TimedRobot {
     public Elevator.ANGLE_STATE prevAngleState;
     private double dPadMoveSpeed;
 
+    private boolean snappingToHumanPlayer;
+    private boolean snappingToDriver;
+
     /**
      * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
      */
@@ -386,6 +389,20 @@ public class Robot extends TimedRobot {
                             } else {
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
                             }
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("snapToHumanPlayer"),
+                        () -> {
+                            snappingToHumanPlayer = !snappingToHumanPlayer;
+                            snappingToDriver = false;
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("snapToDriver"),
+                        () -> {
+                            snappingToDriver = !snappingToDriver;
+                            snappingToHumanPlayer = false;
                         }
                     ),
                     createHoldAction(
@@ -891,6 +908,8 @@ public class Robot extends TimedRobot {
                 SwerveModuleState templateState = new SwerveModuleState(0, heading);
                 SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
                 ((SwerveDrive) drive).setModuleStates(statePassIn);
+                snappingToDriver = false;
+                snappingToHumanPlayer = false;
             } else {
                 ((SwerveDrive) drive).setModuleStates(dPadDrivingStates);
             }
