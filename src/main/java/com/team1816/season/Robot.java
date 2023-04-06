@@ -875,48 +875,49 @@ public class Robot extends TimedRobot {
                 robotState.driverRelativeFieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
 
-        } else if (snappingToDriver || snappingToHumanPlayer) { // dpad bang-bang controller for fine alignment
-            GreenLogger.log(snappingToDriver ? snappingToDriver : snappingToHumanPlayer);
-            double rotation = 0;
-            if (snappingToDriver) { //down on the d pad, snap to driver
+        } else { // I wonder if this is how Dr. Frankenstein felt after creating his monster
+            double rotation;
+            if (snappingToDriver) { //down on the d pad
+                GreenLogger.log("snappingToDriver"); //TODO for testing
                 double rotVal = MathUtil.inputModulus(
                     robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
                 );
-                if ((rotVal < 2 && rotVal > -2) || (rotVal < -135 || rotVal > 135)) {
-                    rotation = 0;
+                double absRotVal = Math.abs(rotVal);
+
+                if ((Math.abs(rotVal) < 178)) {
+                    rotation = absRotVal < 1 ? Math.pow(absRotVal+1, -.1) : Math.pow(absRotVal, -.1);
+                    if (rotVal < 0){
+                        rotation *= -1;
+                    }
                 } else {
-                    rotation = 90 / rotVal;
+                    rotation = controlBoard.getAsDouble("rotation");
+                    snappingToDriver = false;
                 }
-            } else if (snappingToHumanPlayer) { //up on the d pad, snap to human player
+
+            } else if (snappingToHumanPlayer) { //up on the d pad
+                GreenLogger.log("snappingToHumanPlayer"); //TODO for testing
                 double rotVal = MathUtil.inputModulus(
                     robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
                 );
-                if ((rotVal < 45 && rotVal > -45) || (rotVal < -178 || rotVal > 178)) {
-                    rotation = 0;
+                double absRotVal = Math.abs(rotVal);
+
+                if (absRotVal > 2){
+                    rotation = 180 - absRotVal < 1 ? Math.pow(181-absRotVal, -.1) : Math.pow(180-absRotVal, -.1);
+                    if (rotVal < 0){
+                        rotation *= -1;
+                    }
                 } else {
-                    rotation = 90 / rotVal;
+                    rotation = controlBoard.getAsDouble("rotation");
+                    snappingToHumanPlayer = false;
                 }
-            }
-            SwerveModuleState[] dPadDrivingStates = SwerveDrive.swerveKinematics.toSwerveModuleStates(
-                ChassisSpeeds.fromFieldRelativeSpeeds(0.0, 0.0, rotation, robotState.driverRelativeFieldToVehicle.getRotation())
-            );
-
-            if(rotation == 0){
-                Rotation2d heading = Rotation2d.fromDegrees(90).minus(robotState.driverRelativeFieldToVehicle.getRotation());
-                SwerveModuleState templateState = new SwerveModuleState(0, heading);
-                SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
-                ((SwerveDrive) drive).setModuleStates(statePassIn);
-                snappingToDriver = false;
-                snappingToHumanPlayer = false;
-            } else {
-                ((SwerveDrive) drive).setModuleStates(dPadDrivingStates);
+            }  else {
+                rotation = controlBoard.getAsDouble("rotation");
             }
 
-        } else {
             drive.setTeleopInputs(
                 -controlBoard.getAsDouble("throttle"),
                 -controlBoard.getAsDouble("strafe"),
-                controlBoard.getAsDouble("rotation")
+                rotation
             );
         }
     }
