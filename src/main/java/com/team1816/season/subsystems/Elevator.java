@@ -58,10 +58,11 @@ public class Elevator extends Subsystem {
     public static final double shelfPos = factory.getConstant(NAME, "shelfAngle") * angleTicksPerDegree;
 
     public static final double extensionTicksPerInch = factory.getConstant(NAME, "extensionTicksPerInch", 0);
-    public static final double minExtension = factory.getConstant(NAME, "minExtension") * extensionTicksPerInch;
-    public static final double midExtension = factory.getConstant(NAME, "midExtension") * extensionTicksPerInch;
-    public static final double maxExtension = factory.getConstant(NAME, "maxExtension") * extensionTicksPerInch;
-    public static final double shelfExtension = factory.getConstant(NAME, "shelfExtension") * extensionTicksPerInch;
+    public static final double extensionZeroOffset = factory.getConstant(NAME, "extensionZeroOffset", 0);
+    public static final double minExtension = (factory.getConstant(NAME, "minExtension") + extensionZeroOffset) * extensionTicksPerInch;
+    public static final double midExtension = (factory.getConstant(NAME, "midExtension") + extensionZeroOffset) * extensionTicksPerInch;
+    public static final double maxExtension = (factory.getConstant(NAME, "maxExtension") + extensionZeroOffset) * extensionTicksPerInch;
+    public static final double shelfExtension = (factory.getConstant(NAME, "shelfExtension") + extensionZeroOffset) * extensionTicksPerInch;
 
     private final double allowableAngleError;
     private final double allowableExtensionError;
@@ -138,7 +139,7 @@ public class Elevator extends Subsystem {
         angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
 
         angleMotorMain.configClosedloopRamp(0.2, Constants.kCANTimeoutMs);
-        extensionMotor.configClosedloopRamp(0.05, Constants.kCANTimeoutMs);
+//        extensionMotor.configClosedloopRamp(0.25, Constants.kCANTimeoutMs);
 
         motionMagicEnabled = factory.getConstant(NAME, "motionMagicEnabled") > 0;
 
@@ -277,6 +278,9 @@ public class Elevator extends Subsystem {
         actualExtensionTicks = extensionMotor.getSelectedSensorPosition(0); // not slot id
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
 
+        if(!armAtTarget()){
+            angleMotorMain.selectProfileSlot(movingArmSlot, 0);
+        }
         if (robotState.actualElevatorAngleState != desiredAngleState && armAtTarget()) {
             angleOutputsChanged = true;
             robotState.actualElevatorAngleState = desiredAngleState;

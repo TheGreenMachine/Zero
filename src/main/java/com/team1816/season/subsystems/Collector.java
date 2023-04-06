@@ -10,7 +10,6 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -36,6 +35,9 @@ public class Collector extends Subsystem {
     /**
      * Properties
      */
+
+    private final double collectorRevolutionsPerDegree;
+    private final double zeroOffset;
     public final double cubeIntakePower;
     public final double cubeOuttakePower;
 
@@ -91,10 +93,13 @@ public class Collector extends Subsystem {
         coneIntakePower = factory.getConstant(NAME, "coneIntakePower", -1.00);
         coneOuttakePower = factory.getConstant(NAME, "coneOuttakePower", 0.65);
 
-        pivotStowPosition = factory.getConstant(NAME, "stowPosition", 1000);
-        pivotScorePosition = factory.getConstant(NAME, "scorePosition", 1000);
-        pivotShelfPosition = factory.getConstant(NAME, "shelfPosition", 1000);
-        pivotFloorPosition = factory.getConstant(NAME, "floorPosition", 1000);
+        collectorRevolutionsPerDegree = factory.getConstant(NAME, "collectorRevolutionsPerDegree", 0);
+        zeroOffset = factory.getConstant(NAME, "zeroOffset", 0);
+
+        pivotStowPosition = (factory.getConstant(NAME, "stowAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
+        pivotScorePosition = (factory.getConstant(NAME, "scoreConeAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
+        pivotShelfPosition = (factory.getConstant(NAME, "shelfAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
+        pivotFloorPosition = (factory.getConstant(NAME, "floorAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
 
         intakeMotor.configSupplyCurrentLimit(
             new SupplyCurrentLimitConfiguration(
@@ -215,7 +220,7 @@ public class Collector extends Subsystem {
                     if (currentGameElement == GAME_ELEMENT.CUBE) {
                         intakeMotor.set(ControlMode.PercentOutput, 0.05);
                     } else if (currentGameElement == GAME_ELEMENT.CONE) {
-                        intakeMotor.set(ControlMode.PercentOutput, -0.05);
+                        intakeMotor.set(ControlMode.PercentOutput, -0.1);
                     } else {
                         intakeMotor.set(ControlMode.PercentOutput, 0);
                     }
