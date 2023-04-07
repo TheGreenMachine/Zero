@@ -2,6 +2,7 @@ package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.actions.DriveOpenLoopAction;
 import com.team1816.lib.auto.actions.SeriesAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
@@ -17,10 +18,9 @@ import com.team1816.season.subsystems.Elevator;
 
 import java.util.List;
 
-public class PlaceConeAutoBalanceMiddleMode extends AutoMode {
-    //Does NOT exit community
+public class PlaceConeExitCommunityAutoBalanceMiddleMode extends AutoMode {
 
-    public PlaceConeAutoBalanceMiddleMode() {
+    public PlaceConeExitCommunityAutoBalanceMiddleMode() {
         super(
             List.of(
                 new TrajectoryAction(
@@ -30,7 +30,7 @@ public class PlaceConeAutoBalanceMiddleMode extends AutoMode {
         );
     }
 
-    public PlaceConeAutoBalanceMiddleMode(Color color) {
+    public PlaceConeExitCommunityAutoBalanceMiddleMode(Color color) {
         super(
             List.of(
                 new TrajectoryAction(
@@ -51,8 +51,8 @@ public class PlaceConeAutoBalanceMiddleMode extends AutoMode {
                 new WaitAction(0.25),
                 new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
                 trajectoryActions.get(0),
-                new DriveOpenLoopAction(2, .2),
-                new DriveOpenLoopAction(1.5, -.2),
+                new DriveOpenLoopAction(1.4, .35),
+                new DriveOpenLoopAction(1.4, -.35),
                 new WaitAction(0.5),
                 new AutoBalanceAction()
             )

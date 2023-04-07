@@ -8,10 +8,7 @@ import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.util.logUtil.GreenLogger;
-import com.team1816.season.auto.actions.AlignAction;
-import com.team1816.season.auto.actions.CollectAction;
-import com.team1816.season.auto.actions.ElevatorAction;
-import com.team1816.season.auto.actions.ScoreAction;
+import com.team1816.season.auto.actions.*;
 import com.team1816.season.auto.paths.ConeToNodeWallPath;
 import com.team1816.season.auto.paths.NodeToConeWallPath;
 import com.team1816.season.subsystems.Collector;
@@ -56,6 +53,7 @@ public class DoublePlaceConeWallMode extends AutoMode {
                 // placing first cone
                 new SeriesAction(
                     new WaitAction(.05),
+                    new AlignActionMax(),
                     new ParallelAction(
                         new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
                         new SeriesAction(

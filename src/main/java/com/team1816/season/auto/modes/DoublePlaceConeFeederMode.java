@@ -53,6 +53,7 @@ public class DoublePlaceConeFeederMode extends AutoMode {
                 // placing first cone
                 new SeriesAction(
                     new WaitAction(.05),
+                    new AlignActionMax(),
                     new ParallelAction(
                         new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
                         new SeriesAction(

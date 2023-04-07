@@ -81,6 +81,7 @@
       "/SmartDashboard/Auto mode": "String Chooser",
       "/SmartDashboard/Demo Mode": "String Chooser",
       "/SmartDashboard/Elevator Mech 2D": "Mechanism2d",
+      "/SmartDashboard/Elevator Mechanism 2D": "Mechanism2d",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Mech 2D": "Mechanism2d",
       "/SmartDashboard/Robot color": "String Chooser",
