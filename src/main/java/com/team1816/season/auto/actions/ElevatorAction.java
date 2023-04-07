@@ -82,7 +82,7 @@ public class ElevatorAction implements AutoAction {
 
     @Override
     public boolean isFinished() {
-        if (RobotBase.isSimulation()) {
+        if (RobotBase.isSimulation() || !elevator.isImplemented()) {
             return simWaitTimer.isCompleted();
         }
 

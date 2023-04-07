@@ -8,10 +8,7 @@ import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.util.logUtil.GreenLogger;
-import com.team1816.season.auto.actions.AlignAction;
-import com.team1816.season.auto.actions.CollectAction;
-import com.team1816.season.auto.actions.ElevatorAction;
-import com.team1816.season.auto.actions.ScoreAction;
+import com.team1816.season.auto.actions.*;
 import com.team1816.season.auto.paths.ConeToNodeFeederPath;
 import com.team1816.season.auto.paths.NodeToConeFeederPath;
 import com.team1816.season.auto.paths.NodeToSecondConeFeederPath;
@@ -69,6 +66,7 @@ public class TriplePlaceConeFeederMode extends AutoMode {
                 // scoring first cone
                 new SeriesAction(
                     new WaitAction(.05),
+                    new AlignActionMin(),
                     new ParallelAction(
                         new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MIN),
                         new SeriesAction(
