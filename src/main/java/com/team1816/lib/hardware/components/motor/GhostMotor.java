@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 
 import static java.lang.Double.NaN;
+import static java.lang.Double.max;
 
 /**
  * This class emulates the behaviour of a Motor that is not physically implemented on a robot
@@ -37,9 +38,12 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
      * State
      */
     private ControlMode controlMode;
-    private final double[] desiredDemand = new double[]{0, 0, 0}; // 0: %out, 1: vel, 2: pos
-    private final double[] actualOutput = new double[]{0, 0, 0}; // 0: %out, 1: vel, 2: pos
+    private final double[] desiredDemand = new double[]{0, 0, 0}; // 0: %out, 1: vel, 2: pos, 3: Motion magic
+    private final double[] actualOutput = new double[]{0, 0, 0}; // 0: %out, 1: vel, 2: pos, 3: Motion Magic
     protected double lastPos = 0;
+
+    private double motionMagicCruiseVel;
+    private double motionMagicAccel;
 
     protected double lastUpdate = 0;
 
@@ -74,16 +78,16 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
             this.desiredDemand[0] = NaN;
             this.desiredDemand[1] = demand;
             this.desiredDemand[2] = NaN;
-        } else if (Mode == ControlMode.Position) {
+        } else if (Mode == ControlMode.Position || Mode == ControlMode.MotionMagic) {
             this.desiredDemand[0] = NaN;
             this.desiredDemand[1] = NaN;
             this.desiredDemand[2] = demand;
         } else {
-            GreenLogger.log("no support for this Mode in GhostMotor!");
-            return;
+                GreenLogger.log("no support for this Mode in GhostMotor!");
+                return;
+            }
+            controlMode = Mode;
         }
-        controlMode = Mode;
-    }
 
     private void updateActValues() {
         // don't make unnecessary calculations if robot not in sim
@@ -110,13 +114,19 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
             actualOutput[1] = desiredDemand[1];
             actualOutput[2] = lastPos + (actualOutput[1] / 100 * dtBetweenCallsMS);
         } else if (controlMode == ControlMode.Position) {
-            double desaturatedVel = (desiredDemand[2] - lastPos) / dtBetweenCallsMS * 100;
-            if (Math.abs(desaturatedVel) > maxVelTicks100ms) {
-                desaturatedVel = maxVelTicks100ms * Math.signum(desaturatedVel);
-            }
+            double desaturatedVel = Math.signum(desiredDemand[2] - lastPos) * Math.min(maxVelTicks100ms, Math.abs(desiredDemand[2] - lastPos) / dtBetweenCallsMS * 100);
+
             actualOutput[0] = desaturatedVel / maxVelTicks100ms;
             actualOutput[1] = desaturatedVel;
             actualOutput[2] = desiredDemand[2];
+        } else if (controlMode == ControlMode.MotionMagic) {
+            // not accounting for accel rn - just using motionMagicCruiseVel
+            double accelAccountedVel = Math.min(motionMagicCruiseVel, Math.abs(actualOutput[1]) + (motionMagicAccel / 100 * dtBetweenCallsMS));
+            double desaturatedVel = Math.signum(desiredDemand[2] - lastPos) * Math.min(accelAccountedVel, Math.abs(desiredDemand[2] - lastPos) / dtBetweenCallsMS * 100);
+
+            actualOutput[0] = desaturatedVel / maxVelTicks100ms;
+            actualOutput[1] = desaturatedVel;
+            actualOutput[2] = lastPos + (actualOutput[1] / 100 * dtBetweenCallsMS);
         }
 
         if (usingLimit) {
@@ -509,6 +519,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
         double sensorUnitsPer100ms,
         int timeoutMs
     ) {
+        motionMagicCruiseVel = sensorUnitsPer100ms;
         return ErrorCode.OK;
     }
 
@@ -517,6 +528,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
         double sensorUnitsPer100msPerSec,
         int timeoutMs
     ) {
+        motionMagicAccel = sensorUnitsPer100msPerSec;
         return ErrorCode.OK;
     }
 

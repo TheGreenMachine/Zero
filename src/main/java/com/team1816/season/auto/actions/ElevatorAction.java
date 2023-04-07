@@ -18,8 +18,6 @@ public class ElevatorAction implements AutoAction {
     private final Elevator.EXTENSION_STATE initialExtensionState;
     private final Elevator.ANGLE_STATE desiredAngleState;
     private final Elevator.EXTENSION_STATE desiredExtensionState;
-
-    private final AsyncTimer simWaitTimer = new AsyncTimer(0.5, null); // just waits .5 secs b4 completing action
     private boolean minMaxTransitionTriggered = false;
 
     public ElevatorAction(Elevator.ANGLE_STATE angle, Elevator.EXTENSION_STATE extension) {
@@ -61,17 +59,10 @@ public class ElevatorAction implements AutoAction {
             elevator.setDesiredState(desiredAngleState, desiredExtensionState);
             minMaxTransitionTriggered = true;
         }
-
-        if (RobotBase.isSimulation()) {
-            simWaitTimer.update();
-        }
     }
 
     @Override
     public void update() {
-        if (RobotBase.isSimulation()) {
-            simWaitTimer.update();
-        }
         if (!minMaxTransitionTriggered) {
             if (elevator.elevatorWithinRangeOfTarget()) {
                 elevator.setDesiredState(desiredAngleState, desiredExtensionState);
@@ -82,10 +73,6 @@ public class ElevatorAction implements AutoAction {
 
     @Override
     public boolean isFinished() {
-        if (RobotBase.isSimulation()) {
-            return simWaitTimer.isCompleted();
-        }
-
         return robotState.actualElevatorAngleState.equals(desiredAngleState)
             && robotState.actualElevatorExtensionState.equals(desiredExtensionState);
     }

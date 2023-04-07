@@ -115,12 +115,12 @@ subsystems:
             extensionZeroOffset: 0 # in
             extensionTicksPerInch: 5982.6
             angleTicksPerDegree: 1456.35 # ~524288ticks == full ppr
-            maxVelTicks100ms: 5000 # not being used for anything rn
+            maxVelTicks100ms: 210000 # not being used for anything rn
             allowableAngleError: 2 # degree (+ || -)
             allowableExtensionError: 1 # in (+ || -)
             ## Motion Magic ##
             motionMagicEnabled: 1 # 0 or 1, disable to utilize standard pid control
-            motionMagicCruiseVelocity: 100000 # ticks per 100ms
+            motionMagicCruiseVelocity: 200000 # ticks per 100ms
             motionMagicAcceleration: 64000 # ticks per 100ms per second
             ## Limits ##
             forwardExtensionLimit: 45.125 # in - 330000ticks

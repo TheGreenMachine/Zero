@@ -71,7 +71,7 @@ public class CollectAction implements AutoAction {
             collector.setDesiredRollerState(desiredRollerState);
         }
         if (desiredPivotState != null) {
-            GreenLogger.log("Setting collector to state: " + desiredPivotState.name());
+            GreenLogger.log("Setting collector to state: " + desiredPivotState.name() + ", Game element =  " + collector.getCurrentGameElement());
             collector.setDesiredPivotState(desiredPivotState);
         }
     }
