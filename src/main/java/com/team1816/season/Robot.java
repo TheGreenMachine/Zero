@@ -558,43 +558,43 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("grid1"),
                         () -> {
-                            grid = 0;
-                            GreenLogger.log("Grid changed to 0");
+                            grid = autoModeManager.teamColor == Color.BLUE ? 0 : 2;
+                            GreenLogger.log("Grid changed to FEEDER");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("grid2"),
                         () -> {
                             grid = 1;
-                            GreenLogger.log("Grid changed to 1");
+                            GreenLogger.log("Grid changed to BALANCE");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("grid3"),
                         () -> {
-                            grid = 2;
-                            GreenLogger.log("Grid changed to 2");
+                            grid = autoModeManager.teamColor == Color.BLUE ? 2 : 0;
+                            GreenLogger.log("Grid changed to WALL");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("node1"),
                         () -> {
-                            node = 0;
-                            GreenLogger.log("Node changed to 0");
+                            node = autoModeManager.teamColor == Color.BLUE ? 0 : 2;
+                            GreenLogger.log("Node changed to LEFT");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("node2"),
                         () -> {
                             node = 1;
-                            GreenLogger.log("Node changed to 1");
+                            GreenLogger.log("Node changed to CENTER");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("node3"),
                         () -> {
-                            node = 2;
-                            GreenLogger.log("Node changed to 2");
+                            node = autoModeManager.teamColor == Color.BLUE ? 2 : 0;
+                            GreenLogger.log("Node changed to RIGHT");
                         }
                     ),
                     createAction(
