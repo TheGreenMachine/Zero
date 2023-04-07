@@ -20,7 +20,7 @@ public class SwerveDriveHelper implements DriveHelper {
     private static final double kLowPowerScalar = 0.075; //yml time
 
     private static final double kMidLowPowerRotationScalar = 0.025;
-    private static final double kMidLowPowerScalar = 0.15;
+    private static final double kMidLowPowerScalar = 0.25;
 
     private static final double kRotationExponent = 2.0;
     private static final double kPoleThreshold = 0.0;

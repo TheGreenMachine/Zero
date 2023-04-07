@@ -288,7 +288,7 @@ public class Elevator extends Subsystem {
 
             simArm.setLength(elevatorLength);
             simArm.setAngle(actualAngleTicks / angleTicksPerDegree);
-            SmartDashboard.putData("Elevator Mech 2D", mechCanvas);
+            SmartDashboard.putData("Elevator Mechanism 2D", mechCanvas);
         }
 
         if (Constants.kLoggingRobot) {
