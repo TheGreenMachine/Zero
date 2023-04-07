@@ -2,6 +2,7 @@ package com.team1816.season.auto.actions;
 
 import com.team1816.lib.auto.actions.ParallelAction;
 import com.team1816.lib.auto.actions.SeriesAction;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 
@@ -20,5 +21,17 @@ public class AlignAction extends SeriesAction {
                 )
             )
         );
+    }
+
+    @Override
+    public void start() {
+        GreenLogger.log("Started Elevator Align Action");
+        super.start();
+    }
+
+    @Override
+    public void done() {
+        GreenLogger.log("Elevator Align Action Completed");
+        super.done();
     }
 }

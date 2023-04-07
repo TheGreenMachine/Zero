@@ -273,7 +273,7 @@ public class Elevator extends Subsystem {
         actualExtensionTicks = extensionMotor.getSelectedSensorPosition(0); // not slot id
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
 
-        if(!armAtTarget()){
+        if (!armAtTarget()) {
             angleMotorMain.selectProfileSlot(movingArmSlot, 0);
         }
         if (robotState.actualElevatorAngleState != desiredAngleState && armAtTarget()) {
@@ -346,24 +346,13 @@ public class Elevator extends Subsystem {
                 ? ControlMode.MotionMagic : ControlMode.Position;
 
             double extension = 0;
-            if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
-                switch (desiredExtensionState) {
-                    case MAX -> extension = maxExtension;
-                    case MID -> extension = midExtension;
-                    case MIN -> extension = minExtension;
-                    case SHELF_COLLECT -> extension = shelfExtension;
-                }
-            } else {
-                switch (desiredExtensionState) {
-                    case MAX -> extension = maxExtension;
-                    case MID -> extension = midExtension;
-                    case MIN -> extension = minExtension;
-                    case SHELF_COLLECT -> extension = shelfExtension;
-                }
+            switch (desiredExtensionState) {
+                case MAX -> extension = maxExtension;
+                case MID -> extension = midExtension;
+                case MIN -> extension = minExtension;
+                case SHELF_COLLECT -> extension = shelfExtension;
             }
             desiredExtensionTicks = extension;
-
-            System.out.println("extension set val = " + extension);
             extensionMotor.set(controlMode, extension);
         }
     }
