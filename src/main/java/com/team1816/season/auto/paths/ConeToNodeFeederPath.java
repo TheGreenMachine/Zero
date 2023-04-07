@@ -29,8 +29,8 @@ public class ConeToNodeFeederPath extends AutoPath {
     protected List<Rotation2d> getWaypointHeadings() {
         return List.of(
             Rotation2d.fromDegrees(0),
-            Rotation2d.fromDegrees(-170),
-            Rotation2d.fromDegrees(-178)
+            Rotation2d.fromDegrees(-180),
+            Rotation2d.fromDegrees(-180)
         );
     }
 

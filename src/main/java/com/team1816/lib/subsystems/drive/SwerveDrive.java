@@ -229,8 +229,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (headingsList == null) {
             return Constants.EmptyRotation2d;
         } else if (trajectoryIndex > headingsList.size() - 1) {
-            //GreenLogger.log("heck the headings aren't long enough");
-            return Constants.EmptyRotation2d;
+            return headingsList.get(headingsList.size() - 1);
         }
         if (
             getTrajectoryTimestamp() >
