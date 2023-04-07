@@ -112,17 +112,18 @@ subsystems:
                 allowableError: 200 # for PID control NOT checking if reached desired position
         constants:
             ## Config ##
-            extensionTicksPerInch: 4800
+            extensionZeroOffset: 0 # in
+            extensionTicksPerInch: 5982.6
             angleTicksPerDegree: 1456.35 # ~524288ticks == full ppr
             maxVelTicks100ms: 5000 # not being used for anything rn
             allowableAngleError: 2 # degree (+ || -)
             allowableExtensionError: 1 # in (+ || -)
             ## Motion Magic ##
-            motionMagicEnabled: 0 # 0 or 1, disable to utilize standard pid control
-            motionMagicCruiseVelocity: 200000 # ticks per 100ms
-            motionMagicAcceleration: 150000 # ticks per 100ms per second
+            motionMagicEnabled: 1 # 0 or 1, disable to utilize standard pid control
+            motionMagicCruiseVelocity: 100000 # ticks per 100ms
+            motionMagicAcceleration: 64000 # ticks per 100ms per second
             ## Limits ##
-            forwardExtensionLimit: 68.75 # in - 330000ticks
+            forwardExtensionLimit: 45.125 # in - 330000ticks
             reverseExtensionLimit: 0 # in
             forwardAngleLimit: 68.66  # degs - 100000ticks - Elevator horizontal orientation
             reverseAngleLimit: -6.86 # degs - -10000ticks - Elevator vertical orientation
@@ -130,12 +131,12 @@ subsystems:
             stowAngle: 61.8 # degrees - 90000ticks
             collectAngle: 0 # degs - -2500ticks (was using timer)
             scoreAngle: 41.2 # degs - 60000ticks
-            shelfAngle: 48.06 # degs - 70000ticks TODO tune
+            shelfAngle: 59.46 # degs - 70000ticks TODO tune - for cone rn
             ## Extensions ##
-            minExtension: 4.16 # in - 20000ticks
-            midExtension: 27.08 # in - 130000ticks
-            maxExtension: 66.66 # in - 320000ticks
-            shelfExtension: 31.25 # in - 150000ticks TODO tune
+            minExtension: 3.785 # in - 20000ticks
+            midExtension: 23.205 # in - 130000ticks
+            maxExtension: 40.125 # in - 320000ticks
+            shelfExtension: 10.27 # in - 150000ticks TODO tune - for cone rn
     collector:
         implemented: true
         sparkmaxes:
@@ -153,12 +154,14 @@ subsystems:
             cubeOuttakePower: -0.45 # percent output voltage TODO test if can speed up - if we can make the elevator not have to extend and we just shoot it
             coneIntakePower: -1 #was -0.50 - 1.375
             coneOuttakePower: 0.65
-            ## Positions ##
-            stowPosition: 0
-            scoreConePosition: -40
-            scoreCubePosition: -37
-            shelfPosition: -37 #MAYBE -37 optimal for cube, -36 optimal for cone
-            floorPosition: -22 #was -12
+            ## Positions - 1/4 collector rotation = 29 ##
+            collectorRevolutionsPerDegree: .3305
+            zeroOffset: -90 # degrees
+            stowAngle: 90 # degrees
+            scoreConeAngle: -50 # degs
+            scoreCubeAngle: -22 # degs
+            shelfAngle: -22 #MAYBE -37 optimal for cube, -36 optimal for cone
+            floorAngle: 23.4 # degs
             ## Limits ##
             intakeStallAmps: 30
     ledmanager:
