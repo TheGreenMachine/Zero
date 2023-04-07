@@ -81,9 +81,8 @@ public class DoublePlaceConeFeederMode extends AutoMode {
                     new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
                     trajectoryActions.get(1),
                     new SeriesAction(
-//                        new WaitUntilInsideRegion(new Translation2d(0, 0), new Translation2d(2.5, 15), "clyde."),
                         new WaitAction(2),
-                        new AlignAction(Elevator.EXTENSION_STATE.MAX, Elevator.minExtension, Elevator.maxExtension)
+                        new AlignAction(Elevator.EXTENSION_STATE.MAX, (Elevator.midExtension + Elevator.maxExtension) / 2, Elevator.maxExtension)
                     )
                 ),
                 // scoring second cone

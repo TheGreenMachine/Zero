@@ -91,5 +91,6 @@ public class CollectAction implements AutoAction {
 
     @Override
     public void done() {
+        GreenLogger.log("Collect action completed");
     }
 }

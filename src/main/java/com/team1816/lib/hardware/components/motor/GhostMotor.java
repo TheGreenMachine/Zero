@@ -98,7 +98,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
         // whether motor needs to calculate new numbers - this
         double timeNow = Timer.getFPGATimestamp();
         double dtBetweenCallsMS = (timeNow - lastUpdate) * 1000;
-        if (dtBetweenCallsMS < Robot.looperDt) {
+        if (dtBetweenCallsMS < Robot.looperDt / 2) {
             lastUpdate = timeNow;
             return;
         }
@@ -123,7 +123,6 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
             // not accounting for accel rn - just using motionMagicCruiseVel
             double accelAccountedVel = Math.min(motionMagicCruiseVel, Math.abs(actualOutput[1]) + (motionMagicAccel / 100 * dtBetweenCallsMS));
             double desaturatedVel = Math.signum(desiredDemand[2] - lastPos) * Math.min(accelAccountedVel, Math.abs(desiredDemand[2] - lastPos) / dtBetweenCallsMS * 100);
-
             actualOutput[0] = desaturatedVel / maxVelTicks100ms;
             actualOutput[1] = desaturatedVel;
             actualOutput[2] = lastPos + (actualOutput[1] / 100 * dtBetweenCallsMS);

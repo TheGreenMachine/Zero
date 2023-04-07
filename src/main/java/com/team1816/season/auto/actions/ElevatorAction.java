@@ -2,20 +2,18 @@ package com.team1816.season.auto.actions;
 
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.AutoAction;
-import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
-import edu.wpi.first.wpilibj.RobotBase;
 
 public class ElevatorAction implements AutoAction {
 
     private final RobotState robotState;
     private final Elevator elevator;
 
-    private final Elevator.ANGLE_STATE initialAngleState;
-    private final Elevator.EXTENSION_STATE initialExtensionState;
+    private Elevator.ANGLE_STATE initialAngleState;
+    private Elevator.EXTENSION_STATE initialExtensionState;
     private final Elevator.ANGLE_STATE desiredAngleState;
     private final Elevator.EXTENSION_STATE desiredExtensionState;
     private boolean minMaxTransitionTriggered = false;
@@ -24,9 +22,6 @@ public class ElevatorAction implements AutoAction {
         robotState = Injector.get(RobotState.class);
         elevator = Injector.get(Elevator.class);
 
-        initialAngleState = robotState.actualElevatorAngleState;
-        initialExtensionState = robotState.actualElevatorExtensionState;
-
         desiredAngleState = angle;
         desiredExtensionState = extension;
     }
@@ -34,9 +29,6 @@ public class ElevatorAction implements AutoAction {
     public ElevatorAction(Elevator.ANGLE_STATE angle, Elevator.EXTENSION_STATE extension, Collector.GAME_ELEMENT game_element) {
         robotState = Injector.get(RobotState.class);
         elevator = Injector.get(Elevator.class);
-
-        initialAngleState = robotState.actualElevatorAngleState;
-        initialExtensionState = robotState.actualElevatorExtensionState;
 
         desiredAngleState = angle;
         desiredExtensionState = extension;
@@ -47,6 +39,9 @@ public class ElevatorAction implements AutoAction {
     @Override
     public void start() {
         GreenLogger.log("Setting elevator to angle: " + desiredAngleState.name() + " and extension to: " + desiredExtensionState.name());
+        initialAngleState = robotState.actualElevatorAngleState;
+        initialExtensionState = robotState.actualElevatorExtensionState;
+
         if (initialExtensionState != desiredExtensionState) {
             if (initialExtensionState == Elevator.EXTENSION_STATE.MAX) { // transition at mid extension
                 elevator.setDesiredState(initialAngleState, Elevator.EXTENSION_STATE.MID);
@@ -64,7 +59,7 @@ public class ElevatorAction implements AutoAction {
     @Override
     public void update() {
         if (!minMaxTransitionTriggered) {
-            if (elevator.elevatorWithinRangeOfTarget()) {
+            if (elevator.extensionAtTarget()) {
                 elevator.setDesiredState(desiredAngleState, desiredExtensionState);
                 minMaxTransitionTriggered = true;
             }

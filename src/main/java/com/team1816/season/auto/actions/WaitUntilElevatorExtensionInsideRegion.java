@@ -29,9 +29,6 @@ public class WaitUntilElevatorExtensionInsideRegion implements AutoAction {
 
     @Override
     public boolean isFinished() {
-        if (RobotBase.isSimulation()) {
-            return true;
-        }
         return elevator.getActualExtensionTicks() > minPos && elevator.getActualExtensionTicks() < maxPos;
     }
 

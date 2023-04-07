@@ -661,6 +661,9 @@ public class Robot extends TimedRobot {
 
         collector.currentGameElement = Collector.GAME_ELEMENT.CONE;
         robotState.actualGameElement = Collector.GAME_ELEMENT.CONE;
+        elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
+        collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
+
         drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
         autoModeManager.startAuto();
 

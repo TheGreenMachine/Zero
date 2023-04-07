@@ -181,9 +181,6 @@ public class AutoModeManager {
         PLACE_CONE,
         PLACE_CUBE,
         PLACE_CONE_EXIT_COMMUNITY,
-        EXIT_BALANCE_FEEDER,
-        EXIT_BALANCE_MIDDLE,
-        EXIT_BALANCE_WALL,
         PLACE_CONE_AUTO_BALANCE_FEEDER,
         PLACE_CONE_AUTO_BALANCE_MIDDLE,
         PLACE_CONE_AUTO_BALANCE_WALL,
@@ -208,7 +205,7 @@ public class AutoModeManager {
         switch (mode) {
             case DO_NOTHING:
                 return new DoNothingMode();
-            case TUNE_DRIVETRAIN: // comented for competition purposes
+            case TUNE_DRIVETRAIN: // commented for competition purposes
                 return new TuneDrivetrainMode();
             case LIVING_ROOM:
                 return (new LivingRoomMode(color));
@@ -218,12 +215,6 @@ public class AutoModeManager {
                 return (new PlaceConeMode());
             case PLACE_CUBE:
                 return (new PlaceCubeMode());
-            case EXIT_BALANCE_FEEDER:
-                return (new ExitCommunityBalanceFeederMode(color));
-            case EXIT_BALANCE_MIDDLE:
-                return (new ExitCommunityBalanceMiddleMode(color));
-            case EXIT_BALANCE_WALL:
-                return (new ExitCommunityBalanceWallMode(color));
             case PLACE_CONE_AUTO_BALANCE_FEEDER:
                 return (new PlaceConeAutoBalanceFeederMode(color));
             case PLACE_CONE_AUTO_BALANCE_MIDDLE:

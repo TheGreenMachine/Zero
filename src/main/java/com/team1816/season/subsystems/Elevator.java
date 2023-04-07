@@ -9,11 +9,6 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -37,13 +32,8 @@ public class Elevator extends Subsystem {
      */
 
     // where ur drawing stuff
-    private final Mechanism2d mechCanvas = new Mechanism2d(3, 3);
-    private final MechanismRoot2d root = mechCanvas.getRoot("ElevatorArm", 1.25, 0.5);
-    private final MechanismLigament2d simArm = root.append(new MechanismLigament2d("elevator", kElevatorMinLength, 90));
-    private static final double kElevatorMinLength = 0.70; // meters
-    private static final double kElevatorMaxLength = 1.25; // meters
-    private static final double kArmGearing = 250; // meters
-    public static final double kArmMass = 13.60; // kg
+    public static final double kElevatorMinLength = 0.70; // meters
+    public static final double kElevatorMaxLength = 1.25; // meters
 
     public static final double angleTicksPerDegree = factory.getConstant(NAME, "angleTicksPerDegree", 0);
     public static final double stowPos = factory.getConstant(NAME, "stowAngle") * angleTicksPerDegree;
@@ -79,8 +69,6 @@ public class Elevator extends Subsystem {
     private double desiredAngleTicks = 0;
     private double actualExtensionTicks = 0;
     private double actualAngleTicks = 0;
-    private double actualAngleThetaDegrees;
-    private double actualExtensionInches;
     private double actualAngleVel;
     private double actualExtensionVel;
     private ANGLE_STATE desiredAngleState = ANGLE_STATE.STOW;
@@ -94,6 +82,7 @@ public class Elevator extends Subsystem {
      */
     private DoubleLogEntry desiredExtensionLogger;
     private DoubleLogEntry actualExtensionLogger;
+    private DoubleLogEntry actualExtensionVelLogger;
     private DoubleLogEntry armCurrentDraw;
     private DoubleLogEntry extensionCurrentDraw;
 
@@ -112,7 +101,6 @@ public class Elevator extends Subsystem {
         this.angleMotorMain = factory.getMotor(NAME, "angleMotorMain");
         this.angleMotorFollower = factory.getFollowerMotor(NAME, "angleMotorFollower", angleMotorMain);
         this.extensionMotor = factory.getMotor(NAME, "extensionMotor");
-
 
         double extensionPeakOutput = 1;
         extensionMotor.configPeakOutputForward(extensionPeakOutput, Constants.kCANTimeoutMs);
@@ -154,6 +142,7 @@ public class Elevator extends Subsystem {
 
             desiredExtensionLogger = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/Extension/desiredExtensionPosition");
             actualExtensionLogger = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/Extension/actualExtensionPosition");
+            actualExtensionVelLogger = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/Extension/actualExtensionVelocity");
             extensionCurrentDraw = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/Extension/currentDraw");
         }
     }
@@ -280,7 +269,7 @@ public class Elevator extends Subsystem {
             robotState.actualElevatorAngleState = desiredAngleState;
         }
 
-        if (robotState.actualElevatorExtensionState != desiredExtensionState && elevatorAtTarget()) {
+        if (robotState.actualElevatorExtensionState != desiredExtensionState && extensionAtTarget()) {
             extensionOutputsChanged = true;
             robotState.actualElevatorExtensionState = desiredExtensionState;
         }
@@ -289,14 +278,8 @@ public class Elevator extends Subsystem {
             extensionOutputsChanged = true;
         }
 
-        if (RobotBase.isSimulation()) {
-            double elevatorLength = kElevatorMinLength +
-                (actualExtensionTicks / maxExtension * (kElevatorMaxLength - kElevatorMinLength));
-
-            simArm.setLength(elevatorLength);
-            simArm.setAngle(actualAngleTicks / angleTicksPerDegree);
-            SmartDashboard.putData("Elevator Mech 2D", mechCanvas);
-        }
+        robotState.actualElevatorAngle = actualAngleTicks / angleTicksPerDegree;
+        robotState.actualElevatorExtensionInches = actualExtensionTicks / extensionTicksPerInch;
 
         if (Constants.kLoggingRobot) {
             ((DoubleLogEntry) desStatesLogger).append(desiredAngleTicks);
@@ -305,6 +288,7 @@ public class Elevator extends Subsystem {
 
             desiredExtensionLogger.append(desiredExtensionTicks);
             actualExtensionLogger.append(actualExtensionTicks);
+            actualExtensionVelLogger.append(actualExtensionVel);
             extensionCurrentDraw.append(extensionMotor.getOutputCurrent());
         }
     }
@@ -372,15 +356,11 @@ public class Elevator extends Subsystem {
     }
 
     public boolean armAtTarget() {
-        return Math.abs(desiredAngleTicks - actualAngleTicks) < getAllowableAngleError();
+        return Math.abs(desiredAngleTicks - actualAngleTicks) < getAllowableAngleError() && !angleOutputsChanged;
     }
 
-    public boolean elevatorAtTarget() {
-        return Math.abs(desiredExtensionTicks - actualExtensionTicks) < getAllowableExtensionError();
-    }
-
-    public boolean elevatorWithinRangeOfTarget() {
-        return Math.abs(desiredExtensionTicks - actualExtensionTicks) < getAllowableExtensionError() * 8;
+    public boolean extensionAtTarget() {
+        return Math.abs(desiredExtensionTicks - actualExtensionTicks) < getAllowableExtensionError() && !extensionOutputsChanged;
     }
 
     @Override

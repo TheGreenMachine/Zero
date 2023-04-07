@@ -56,6 +56,7 @@ public class Collector extends Subsystem {
     private static double pivotCubeScorePosition;
     private static double allowablePivotError;
 
+    public static final double kCollectorLength = 0.35; // meters
 
     /**
      * States
@@ -180,6 +181,10 @@ public class Collector extends Subsystem {
         return rollerVelocity;
     }
 
+    public double getDesiredPivotPosition() {
+        return desiredPivotPosition;
+    }
+
     public double getActualPivotPosition() {
         return actualPivotPosition;
     }
@@ -196,12 +201,13 @@ public class Collector extends Subsystem {
 
         robotState.gameElementChanged = robotState.actualGameElement != currentGameElement;
         robotState.actualGameElement = currentGameElement;
+        robotState.actualCollectorAngle = actualPivotPosition / collectorRevolutionsPerDegree - zeroOffset;
 
 
         if (robotState.actualCollectorRollerState != desiredRollerState) {
             robotState.actualCollectorRollerState = desiredRollerState;
         }
-        if (Math.abs(desiredPivotPosition - actualPivotPosition) < allowablePivotError) {
+        if (Math.abs(desiredPivotPosition - actualPivotPosition) < allowablePivotError && !pivotOutputsChanged) {
             robotState.actualCollectorPivotState = desiredPivotState;
         }
 

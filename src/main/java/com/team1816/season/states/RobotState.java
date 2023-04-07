@@ -10,7 +10,9 @@ import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.*;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 
 /**
  * This class is responsible for logging the robot's actual states and estimated states.
@@ -54,9 +56,18 @@ public class RobotState {
     public Collector.ROLLER_STATE actualCollectorRollerState = Collector.ROLLER_STATE.STOP;
     public Collector.PIVOT_STATE actualCollectorPivotState = Collector.PIVOT_STATE.STOW;
     public Collector.GAME_ELEMENT actualGameElement = Collector.GAME_ELEMENT.CONE;
+
+    public double actualElevatorAngle = 0;
+    public double actualElevatorExtensionInches = 0; // INCHES
+    public double actualCollectorAngle = 0;
     public VisionPoint visibleTarget = new VisionPoint();
 
     public boolean gameElementChanged = false;
+
+    public final Mechanism2d mechCanvas = new Mechanism2d(3, 3);
+    public final MechanismRoot2d root = mechCanvas.getRoot("ElevatorArm", 1.25, 0.5);
+    public final MechanismLigament2d simArm = root.append(new MechanismLigament2d("elevator", Elevator.kElevatorMinLength, 90));
+    public final MechanismLigament2d simCollector = simArm.append(new MechanismLigament2d("collector", Collector.kCollectorLength, 90));
 
     /**
      * Functional pathing states
@@ -70,6 +81,9 @@ public class RobotState {
     public RobotState() {
         resetPosition();
         FieldConfig.setupField(field);
+
+        simArm.setColor(new Color8Bit(125,125,125));
+        simCollector.setLineWeight(4);
     }
 
     /**
@@ -120,6 +134,9 @@ public class RobotState {
         drivetrainTemp = 0;
         vehicleToFloorProximityCentimeters = 0;
         gameElementChanged = false;
+        actualElevatorAngle = 0;
+        actualElevatorExtensionInches = 0;
+        actualCollectorAngle = 0;
     }
 
     /**
@@ -195,5 +212,26 @@ public class RobotState {
      */
     public synchronized void outputToSmartDashboard() {
         field.setRobotPose(fieldToVehicle);
+        if (RobotBase.isSimulation()) {
+            // elevator
+            double elevatorLength = Elevator.kElevatorMinLength +
+                    (actualElevatorExtensionInches * 0.0254);
+
+            simArm.setLength(elevatorLength);
+            simArm.setAngle(actualElevatorAngle);
+
+            // collector
+            simCollector.setAngle(actualCollectorAngle);
+            Color8Bit color;
+            if(actualGameElement == Collector.GAME_ELEMENT.CONE){
+                color = new Color8Bit(255, 255, 0);
+            } else if(actualGameElement == Collector.GAME_ELEMENT.CUBE){
+                color = new Color8Bit(0, 0, 255);
+            } else {
+                color = new Color8Bit(125, 125, 125);
+            }
+            simCollector.setColor(color);
+            SmartDashboard.putData("Mech 2D", mechCanvas);
+        }
     }
 }
