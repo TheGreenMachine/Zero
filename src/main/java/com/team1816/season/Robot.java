@@ -885,7 +885,7 @@ public class Robot extends TimedRobot {
                 double absRotVal = Math.abs(rotVal);
 
                 if ((Math.abs(rotVal) < 178)) {
-                    rotation = absRotVal < 1 ? Math.pow(absRotVal+1, -.1) : Math.pow(absRotVal, -.1);
+                    rotation = absRotVal <= 1 ? Math.pow(absRotVal+1, -.3) : Math.pow(absRotVal, -.3);
                     if (rotVal < 0){
                         rotation *= -1;
                     }
@@ -902,7 +902,7 @@ public class Robot extends TimedRobot {
                 double absRotVal = Math.abs(rotVal);
 
                 if (absRotVal > 2){
-                    rotation = 180 - absRotVal < 1 ? Math.pow(181-absRotVal, -.1) : Math.pow(180-absRotVal, -.1);
+                    rotation = 180 - absRotVal <= 1 ? Math.pow(181-absRotVal, -.3) : Math.pow(180-absRotVal, -.3);
                     if (rotVal < 0){
                         rotation *= -1;
                     }
