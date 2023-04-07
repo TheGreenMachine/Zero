@@ -49,22 +49,24 @@ public class Collector extends Subsystem {
 
     private static double pivotFloorPosition;
 
-    private static double pivotShelfPosition;
+    private static double pivotConeShelfPosition;
+    private static double pivotCubeShelfPosition;
 
-    private static double pivotScorePosition;
-
+    private static double pivotConeScorePosition;
+    private static double pivotCubeScorePosition;
     private static double allowablePivotError;
 
 
     /**
      * States
      */
-    private GAME_ELEMENT currentGameElement = GAME_ELEMENT.NOTHING;
+    public GAME_ELEMENT currentGameElement = GAME_ELEMENT.CONE;
 
     private ROLLER_STATE desiredRollerState = ROLLER_STATE.STOP;
     private PIVOT_STATE desiredPivotState = PIVOT_STATE.STOW;
     private double rollerVelocity = 0;
 
+    private double desiredPivotPosition = 0;
     private double actualPivotPosition = 0;
     private boolean rollerOutputsChanged = false;
     private boolean pivotOutputsChanged = false;
@@ -97,14 +99,16 @@ public class Collector extends Subsystem {
         zeroOffset = factory.getConstant(NAME, "zeroOffset", 0);
 
         pivotStowPosition = (factory.getConstant(NAME, "stowAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
-        pivotScorePosition = (factory.getConstant(NAME, "scoreConeAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
-        pivotShelfPosition = (factory.getConstant(NAME, "shelfAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
+        pivotConeScorePosition = (factory.getConstant(NAME, "scoreConeAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
+        pivotCubeScorePosition = (factory.getConstant(NAME, "scoreCubeAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
+        pivotConeShelfPosition = (factory.getConstant(NAME, "shelfConeAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
+        pivotCubeShelfPosition = (factory.getConstant(NAME, "shelfCubeAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
         pivotFloorPosition = (factory.getConstant(NAME, "floorAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
 
         intakeMotor.configSupplyCurrentLimit(
-            new SupplyCurrentLimitConfiguration(
-                true, factory.getConstant(NAME, "intakeStallAmps", 5), 0, 0),
-            Constants.kCANTimeoutMs
+                new SupplyCurrentLimitConfiguration(
+                        true, factory.getConstant(NAME, "intakeStallAmps", 5), 0, 0),
+                Constants.kCANTimeoutMs
         );
 
         intakeMotor.configOpenloopRamp(0.25, Constants.kCANTimeoutMs);
@@ -130,6 +134,10 @@ public class Collector extends Subsystem {
         this.desiredPivotState = desiredPivotState;
         rollerOutputsChanged = true;
         pivotOutputsChanged = true;
+    }
+
+    public void setCurrentGameElement(GAME_ELEMENT currentGameElement) {
+        this.currentGameElement = currentGameElement;
     }
 
     /**
@@ -186,19 +194,21 @@ public class Collector extends Subsystem {
         rollerVelocity = intakeMotor.getSelectedSensorVelocity(0);
         actualPivotPosition = pivotMotor.getSelectedSensorPosition(0);
 
+        robotState.gameElementChanged = robotState.actualGameElement != currentGameElement;
         robotState.actualGameElement = currentGameElement;
+
 
         if (robotState.actualCollectorRollerState != desiredRollerState) {
             robotState.actualCollectorRollerState = desiredRollerState;
         }
-        if (Math.abs(desiredPivotState.getPivotPosition() - actualPivotPosition) < allowablePivotError) {
+        if (Math.abs(desiredPivotPosition - actualPivotPosition) < allowablePivotError) {
             robotState.actualCollectorPivotState = desiredPivotState;
         }
 
         if (Constants.kLoggingRobot) {
             rollerVelocityLogger.append(rollerVelocity);
 
-            ((DoubleLogEntry) desStatesLogger).append(desiredPivotState.getPivotPosition());
+            ((DoubleLogEntry) desStatesLogger).append(desiredPivotPosition);
             ((DoubleLogEntry) actStatesLogger).append(actualPivotPosition);
 
             rollerCurrentDraw.append(intakeMotor.getOutputCurrent());
@@ -245,24 +255,34 @@ public class Collector extends Subsystem {
         }
         if (pivotOutputsChanged) {
             pivotOutputsChanged = false;
+            double pos = 0;
             switch (desiredPivotState) {
                 case STOW -> {
-                    pivotMotor.set(ControlMode.Position, pivotStowPosition);
+                    pos = pivotStowPosition;
                 }
                 case FLOOR -> {
-                    pivotMotor.set(ControlMode.Position, pivotFloorPosition);
+                    pos = pivotFloorPosition;
                 }
                 case SCORE -> {
-                    pivotMotor.set(ControlMode.Position, pivotScorePosition);
+                    if (currentGameElement == GAME_ELEMENT.CONE) {
+                        pos = pivotConeScorePosition;
+                    } else if (currentGameElement == GAME_ELEMENT.CUBE) {
+                        pos = pivotCubeScorePosition;
+                    } else {
+                        pos = pivotStowPosition;
+                    }
                 }
                 case SHELF -> {
-//                    if (desiredRollerState == ROLLER_STATE.INTAKE_CONE) {
-//                        pivotMotor.set(ControlMode.Position, (pivotShelfPosition+6));
-//                    } else {
-                    pivotMotor.set(ControlMode.Position, pivotShelfPosition);
-//                    }
+                    if (currentGameElement == GAME_ELEMENT.CONE) {
+                        pos = pivotConeShelfPosition;
+                    } else {
+                        pos = pivotCubeShelfPosition;
+                    }
                 }
             }
+            desiredPivotPosition = pos;
+
+            pivotMotor.set(ControlMode.Position, pos);
         }
     }
 
@@ -346,19 +366,9 @@ public class Collector extends Subsystem {
     }
 
     public enum PIVOT_STATE {
-        STOW(pivotStowPosition),
-        FLOOR(pivotFloorPosition),
-        SHELF(pivotShelfPosition),
-        SCORE(pivotScorePosition);
-
-        private final double pivot;
-
-        PIVOT_STATE(double pivot) {
-            this.pivot = pivot;
-        }
-
-        public double getPivotPosition() {
-            return pivot;
-        }
+        STOW,
+        FLOOR,
+        SHELF,
+        SCORE;
     }
 }

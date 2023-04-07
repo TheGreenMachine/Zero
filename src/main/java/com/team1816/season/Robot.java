@@ -373,10 +373,13 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("toggleArmScoreCollect"),
                         () -> {
-                            if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
+                            if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT){
+                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
+                            } else if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
                             } else {
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
+                                collector.setDesiredPivotState(Collector.PIVOT_STATE.STOW);
                             }
                         }
                     ),
@@ -457,6 +460,7 @@ public class Robot extends TimedRobot {
                             } else {
                                 alignElevatorThread.stop();
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN);
+                                collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
                                 GreenLogger.log("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
@@ -476,6 +480,7 @@ public class Robot extends TimedRobot {
                             } else {
                                 alignElevatorThread.stop();
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID);
+                                collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
                                 GreenLogger.log("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
@@ -495,6 +500,7 @@ public class Robot extends TimedRobot {
                             } else {
                                 alignElevatorThread.stop();
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
+                                collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
                                 GreenLogger.log("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
@@ -525,6 +531,7 @@ public class Robot extends TimedRobot {
                                 if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.SCORE) {
                                     collector.setDesiredState(collector.getDesiredRollerState(), Collector.PIVOT_STATE.STOW);
                                 } else if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.STOW) {
+                                    collector.setCurrentGameElement(Collector.GAME_ELEMENT.CONE);
                                     collector.setDesiredState(collector.getDesiredRollerState(), Collector.PIVOT_STATE.SCORE);
                                 }
                             }
@@ -652,6 +659,8 @@ public class Robot extends TimedRobot {
 
         drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
 
+        collector.currentGameElement = Collector.GAME_ELEMENT.CONE;
+        robotState.actualGameElement = Collector.GAME_ELEMENT.CONE;
         drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
         autoModeManager.startAuto();
 

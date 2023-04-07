@@ -1,9 +1,11 @@
 package com.team1816.season.auto.commands;
 
 import com.team1816.lib.auto.AutoModeEndedException;
+import com.team1816.lib.auto.actions.SeriesAction;
 import com.team1816.lib.auto.commands.AutoCommand;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.Robot;
+import com.team1816.season.auto.actions.AlignAction;
 import com.team1816.season.auto.actions.ScoreAction;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;

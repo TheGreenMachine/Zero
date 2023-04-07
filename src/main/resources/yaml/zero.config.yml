@@ -128,15 +128,16 @@ subsystems:
             forwardAngleLimit: 68.66  # degs - 100000ticks - Elevator horizontal orientation
             reverseAngleLimit: -6.86 # degs - -10000ticks - Elevator vertical orientation
             ## Angles ##
-            stowAngle: 61.8 # degrees - 90000ticks
+            stowAngle: 40 # degrees - 90000ticks
             collectAngle: 0 # degs - -2500ticks (was using timer)
-            scoreAngle: 41.2 # degs - 60000ticks
+            scoreAngle: 38 # degs - 60000ticks
             shelfAngle: 59.46 # degs - 70000ticks TODO tune - for cone rn
             ## Extensions ##
-            minExtension: 3.785 # in - 20000ticks
-            midExtension: 23.205 # in - 130000ticks
-            maxExtension: 40.125 # in - 320000ticks
-            shelfExtension: 10.27 # in - 150000ticks TODO tune - for cone rn
+            minExtension: 3.8 # in - 20000ticks
+            midExtension: 13 # in - 130000ticks
+            maxExtension: 33.5 # in - 320000ticks
+            shelfConeExtension: 13 # in - 150000ticks TODO tune - for cone rn
+            shelfCubeExtension: 10 # in - 150000ticks TODO tune - for cube rn
     collector:
         implemented: true
         sparkmaxes:
@@ -147,7 +148,7 @@ subsystems:
                 kP: 0.001
             slot1: # pivotMotor
                 kP: 0.025
-                allowableError: 2 # this is only being used to compare states
+                allowableError: .66 # this is only being used to compare states
         constants:
             ## Demands ##
             cubeIntakePower: 0.70 # percent output voltage
@@ -158,9 +159,10 @@ subsystems:
             collectorRevolutionsPerDegree: .3305
             zeroOffset: -90 # degrees
             stowAngle: 90 # degrees
-            scoreConeAngle: -50 # degs
-            scoreCubeAngle: -22 # degs
-            shelfAngle: -22 #MAYBE -37 optimal for cube, -36 optimal for cone
+            scoreConeAngle: -38 # degs
+            scoreCubeAngle: 10 # degs
+            shelfConeAngle: -38 # Cone
+            shelfCubeAngle: -48 # Cone
             floorAngle: 23.4 # degs
             ## Limits ##
             intakeStallAmps: 30

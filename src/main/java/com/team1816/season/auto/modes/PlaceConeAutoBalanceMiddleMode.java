@@ -50,8 +50,8 @@ public class PlaceConeAutoBalanceMiddleMode extends AutoMode {
                 new WaitAction(0.25),
                 new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
                 trajectoryActions.get(0),
-                new DriveOpenLoopAction(1.4, .35),
-                new DriveOpenLoopAction(1.4, -.35),
+                new DriveOpenLoopAction(2, .2),
+                new DriveOpenLoopAction(1.5, -.2),
                 new WaitAction(0.5),
                 new AutoBalanceAction()
             )

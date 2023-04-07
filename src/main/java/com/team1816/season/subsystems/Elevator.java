@@ -51,14 +51,13 @@ public class Elevator extends Subsystem {
     public static final double scorePos = factory.getConstant(NAME, "scoreAngle") * angleTicksPerDegree;
 
     public static final double shelfPos = factory.getConstant(NAME, "shelfAngle") * angleTicksPerDegree;
-
     public static final double extensionTicksPerInch = factory.getConstant(NAME, "extensionTicksPerInch", 0);
     public static final double extensionZeroOffset = factory.getConstant(NAME, "extensionZeroOffset", 0);
     public static final double minExtension = (factory.getConstant(NAME, "minExtension") + extensionZeroOffset) * extensionTicksPerInch;
     public static final double midExtension = (factory.getConstant(NAME, "midExtension") + extensionZeroOffset) * extensionTicksPerInch;
     public static final double maxExtension = (factory.getConstant(NAME, "maxExtension") + extensionZeroOffset) * extensionTicksPerInch;
-    public static final double shelfExtension = (factory.getConstant(NAME, "shelfExtension") + extensionZeroOffset) * extensionTicksPerInch;
-
+    public static final double shelfConeExtension = (factory.getConstant(NAME, "shelfConeExtension") + extensionZeroOffset) * extensionTicksPerInch;
+    public static final double shelfCubeExtension = (factory.getConstant(NAME, "shelfCubeExtension") + extensionZeroOffset) * extensionTicksPerInch;
     private final double allowableAngleError;
     private final double allowableExtensionError;
 
@@ -286,6 +285,10 @@ public class Elevator extends Subsystem {
             robotState.actualElevatorExtensionState = desiredExtensionState;
         }
 
+        if(robotState.gameElementChanged){
+            extensionOutputsChanged = true;
+        }
+
         if (RobotBase.isSimulation()) {
             double elevatorLength = kElevatorMinLength +
                 (actualExtensionTicks / maxExtension * (kElevatorMaxLength - kElevatorMinLength));
@@ -351,14 +354,14 @@ public class Elevator extends Subsystem {
                     case MAX -> extension = maxExtension;
                     case MID -> extension = midExtension;
                     case MIN -> extension = minExtension;
-                    case SHELF_COLLECT -> extension = shelfExtension;
+                    case SHELF_COLLECT -> extension = shelfConeExtension;
                 }
             } else {
                 switch (desiredExtensionState) {
                     case MAX -> extension = maxExtension;
                     case MID -> extension = midExtension;
                     case MIN -> extension = minExtension;
-                    case SHELF_COLLECT -> extension = shelfExtension;
+                    case SHELF_COLLECT -> extension = shelfCubeExtension;
                 }
             }
             desiredExtensionTicks = extension;
@@ -412,28 +415,17 @@ public class Elevator extends Subsystem {
      * Base enums
      **/
     public enum ANGLE_STATE {
-        STOW(stowPos),
-        COLLECT(collectPos),
-        SCORE(scorePos),
-        SHELF_COLLECT(shelfPos);
-
-        private final double pos;
-
-        ANGLE_STATE(double pos) {
-            this.pos = pos;
-        }
-
-        public double getPos() {
-            return pos;
-        }
-
+        STOW,
+        COLLECT,
+        SCORE,
+        SHELF_COLLECT
     }
 
     public enum EXTENSION_STATE {
         MIN(minExtension),
         MID(midExtension),
         MAX(maxExtension),
-        SHELF_COLLECT(shelfExtension);
+        SHELF_COLLECT(shelfConeExtension);
 
         private final double extension;
 

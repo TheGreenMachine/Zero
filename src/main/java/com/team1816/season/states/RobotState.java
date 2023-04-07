@@ -53,8 +53,10 @@ public class RobotState {
 
     public Collector.ROLLER_STATE actualCollectorRollerState = Collector.ROLLER_STATE.STOP;
     public Collector.PIVOT_STATE actualCollectorPivotState = Collector.PIVOT_STATE.STOW;
-    public Collector.GAME_ELEMENT actualGameElement = Collector.GAME_ELEMENT.CUBE;
+    public Collector.GAME_ELEMENT actualGameElement = Collector.GAME_ELEMENT.CONE;
     public VisionPoint visibleTarget = new VisionPoint();
+
+    public boolean gameElementChanged = false;
 
     /**
      * Functional pathing states
@@ -117,6 +119,7 @@ public class RobotState {
         visibleTarget = new VisionPoint();
         drivetrainTemp = 0;
         vehicleToFloorProximityCentimeters = 0;
+        gameElementChanged = false;
     }
 
     /**
