@@ -306,7 +306,7 @@ public class Robot extends TimedRobot {
                                     () -> controlBoard.getAsBool("brakeMode"),
                                     drive::setBraking
                             ),
-                            createHoldAction(
+                            createAction(
                                     () -> controlBoard.getAsBool("slowMode"),
                                     () -> {
                                         drive.setSlowMode(!drive.getSlowMode());
@@ -391,17 +391,17 @@ public class Robot extends TimedRobot {
                                         elevator.setDesiredState(Elevator.ANGLE_STATE.SHELF_COLLECT, Elevator.EXTENSION_STATE.SHELF_COLLECT);
                                     }
                             ),
-                            createAction(
+                            createHoldAction(
                                     () -> controlBoard.getAsBool("snapToHumanPlayer"),
-                                    () -> {
-                                        snappingToHumanPlayer = !snappingToHumanPlayer;
+                                    (pressed) -> {
+                                        snappingToHumanPlayer = pressed;
                                         snappingToDriver = false;
                                     }
                             ),
-                            createAction(
+                            createHoldAction(
                                     () -> controlBoard.getAsBool("snapToDriver"),
-                                    () -> {
-                                        snappingToDriver = !snappingToDriver;
+                                    (pressed) -> {
+                                        snappingToDriver = pressed;
                                         snappingToHumanPlayer = false;
                                     }
                             ),
@@ -880,40 +880,18 @@ public class Robot extends TimedRobot {
 
         } else { // I wonder if this is how Dr. Frankenstein felt after creating his monster
             double rotation;
-            if (snappingToDriver) { //down on the d pad
-                GreenLogger.log("snappingToDriver"); //TODO for testing
+            if (snappingToDriver || snappingToHumanPlayer) { //down / up on the d pad
                 double rotVal = MathUtil.inputModulus(
                     robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
                 );
-                double absRotVal = Math.abs(rotVal);
 
-                if ((Math.abs(rotVal) < 178)) {
-                    rotation = absRotVal <= 1 ? Math.pow(absRotVal+1, -.3) : Math.pow(absRotVal, -.3);
-                    if (rotVal < 0){
-                        rotation *= -1;
-                    }
+                if(snappingToDriver){
+                    if(rotVal == 0) rotVal += 0.01;
+                    rotation = Math.min(0.75, (180 - Math.abs(rotVal)) / 45) * -Math.signum(rotVal); // TODO tune cutoff % divider
                 } else {
-                    rotation = controlBoard.getAsDouble("rotation");
-                    snappingToDriver = false;
+                    rotation = Math.min(0.75, Math.abs(rotVal) / 45) * Math.signum(rotVal);
                 }
-
-            } else if (snappingToHumanPlayer) { //up on the d pad
-                GreenLogger.log("snappingToHumanPlayer"); //TODO for testing
-                double rotVal = MathUtil.inputModulus(
-                    robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
-                );
-                double absRotVal = Math.abs(rotVal);
-
-                if (absRotVal > 2){
-                    rotation = 180 - absRotVal <= 1 ? Math.pow(181-absRotVal, -.3) : Math.pow(180-absRotVal, -.3);
-                    if (rotVal < 0){
-                        rotation *= -1;
-                    }
-                } else {
-                    rotation = controlBoard.getAsDouble("rotation");
-                    snappingToHumanPlayer = false;
-                }
-            }  else {
+            } else {
                 rotation = controlBoard.getAsDouble("rotation");
             }
 
