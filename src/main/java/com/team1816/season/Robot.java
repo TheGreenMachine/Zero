@@ -25,6 +25,7 @@ import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -342,7 +343,7 @@ public class Robot extends TimedRobot {
                         () -> {
                             if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
                                     && robotState.actualElevatorExtensionState != Elevator.EXTENSION_STATE.MIN) {
-                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
+                                elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
                             } else if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
                             } else {

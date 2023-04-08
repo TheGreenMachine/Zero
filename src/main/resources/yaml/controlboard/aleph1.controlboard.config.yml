@@ -12,8 +12,8 @@ driver:
         b: autoBalance
         a: autoTargetAlign
     axes:
-        leftTrigger: midSlowMode # Previously brakemode
-        rightTrigger: slowMode
+        leftTrigger: slowMode # Previously brakemode
+        rightTrigger: midSlowMode
     buttons:
         leftBumper: intakeCube
         rightBumper: intakeCone
