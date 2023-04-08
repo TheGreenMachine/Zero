@@ -319,14 +319,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             SwerveModuleState templateState = new SwerveModuleState(0, heading);
             SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
             setModuleStates(statePassIn);
-            ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.SOLID);
         } else {
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
                 throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond,
                 strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond,
                 fieldRelativeChassisSpeeds.omegaRadiansPerSecond);
             setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
-            ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.BLINK);
         }
     }
 
