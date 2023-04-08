@@ -24,6 +24,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -124,6 +125,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         if (Constants.kLoggingDrivetrain) {
             desStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Drivetrain/Tank/DesStates");
             actStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Drivetrain/Tank/ActStates");
+            gyroPitchLogger = new DoubleLogEntry(DataLogManager.getLog(), "Drivetrain/Tank/Pitch");
+            gyroRollLogger = new DoubleLogEntry(DataLogManager.getLog(), "Drivetrain/Tank/Roll");
         }
     }
 
@@ -302,6 +305,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         if (Constants.kLoggingDrivetrain) {
             drivetrainPoseLogger.append(new double[]{robotState.fieldToVehicle.getX(), robotState.fieldToVehicle.getY(), robotState.fieldToVehicle.getRotation().getRadians()});
             drivetrainChassisSpeedsLogger.append(new double[]{robotState.deltaVehicle.vxMetersPerSecond, robotState.deltaVehicle.vyMetersPerSecond, robotState.deltaVehicle.omegaRadiansPerSecond});
+            gyroPitchLogger.append(infrastructure.getPitch());
+            gyroRollLogger.append(infrastructure.getRoll());
         }
     }
 
