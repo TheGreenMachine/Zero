@@ -363,7 +363,6 @@ public class Elevator extends Subsystem {
             }
             desiredExtensionTicks = extension;
 
-            System.out.println("extension set val = " + extension);
             extensionMotor.set(controlMode, extension);
         }
     }

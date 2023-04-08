@@ -222,7 +222,7 @@ public class Robot extends TimedRobot {
                 }
                 var filePath = logFileDir + robotName + "_" + logFile + ".bag";
                 DataLogManager.start();
-                DriverStation.startDataLog(DataLogManager.getLog(), false);
+                DriverStation.startDataLog(DataLogManager.getLog(), true);
             }
 
             subsystemManager.registerEnabledLoops(enabledLoop);
@@ -306,16 +306,13 @@ public class Robot extends TimedRobot {
                                     () -> controlBoard.getAsBool("brakeMode"),
                                     drive::setBraking
                             ),
-                            createAction(
+                            createHoldAction(
                                     () -> controlBoard.getAsBool("slowMode"),
-                                    () -> {
-                                        drive.setSlowMode(!drive.getSlowMode());
-                                    }                            ),
-                            createAction(
+                                    drive::setSlowMode
+                            ),
+                            createHoldAction(
                                     () -> controlBoard.getAsBool("midSlowMode"),
-                                    () -> {
-                                        drive.setMidSlowMode(!drive.getMidSlowMode());
-                                    }
+                                    drive::setMidSlowMode
                             ),
                             createAction(
                                     () -> controlBoard.getAsBool("autoBalance"),
@@ -887,9 +884,9 @@ public class Robot extends TimedRobot {
 
                 if(snappingToDriver){
                     if(rotVal == 0) rotVal += 0.01;
-                    rotation = Math.min(0.75, (180 - Math.abs(rotVal)) / 45) * -Math.signum(rotVal); // TODO tune cutoff % divider
+                    rotation = Math.min(0.5, (180 - Math.abs(rotVal)) / 30) * -Math.signum(rotVal); // TODO tune cutoff % divider
                 } else {
-                    rotation = Math.min(0.75, Math.abs(rotVal) / 45) * Math.signum(rotVal);
+                    rotation = Math.min(0.5, Math.abs(rotVal) / 30) * Math.signum(rotVal);
                 }
             } else {
                 rotation = controlBoard.getAsDouble("rotation");
