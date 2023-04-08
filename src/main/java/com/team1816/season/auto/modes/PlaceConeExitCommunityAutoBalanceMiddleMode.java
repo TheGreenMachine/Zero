@@ -12,9 +12,12 @@ import com.team1816.season.auto.actions.AlignActionMax;
 import com.team1816.season.auto.actions.AutoBalanceAction;
 import com.team1816.season.auto.actions.ElevatorAction;
 import com.team1816.season.auto.actions.ScoreAction;
+import com.team1816.season.auto.paths.ChargeStationToField;
+import com.team1816.season.auto.paths.FieldToChargeStation;
 import com.team1816.season.auto.paths.NodeToChargeStationMiddlePath;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
+import edu.wpi.first.math.trajectory.Trajectory;
 
 import java.util.List;
 
@@ -22,21 +25,31 @@ public class PlaceConeExitCommunityAutoBalanceMiddleMode extends AutoMode {
 
     public PlaceConeExitCommunityAutoBalanceMiddleMode() {
         super(
-            List.of(
-                new TrajectoryAction(
-                    new NodeToChargeStationMiddlePath()
+                List.of(
+                        new TrajectoryAction(
+                                new NodeToChargeStationMiddlePath()
+                        ),
+                        new TrajectoryAction(
+                                new ChargeStationToField()
+                        ), new TrajectoryAction(
+                                new FieldToChargeStation()
+                        )
                 )
-            )
         );
     }
 
     public PlaceConeExitCommunityAutoBalanceMiddleMode(Color color) {
         super(
-            List.of(
-                new TrajectoryAction(
-                    new NodeToChargeStationMiddlePath(color)
+                List.of(
+                        new TrajectoryAction(
+                                new NodeToChargeStationMiddlePath(color)
+                        ),
+                        new TrajectoryAction(
+                                new ChargeStationToField(color)
+                        ), new TrajectoryAction(
+                                new FieldToChargeStation(color)
+                        )
                 )
-            )
         );
     }
 
@@ -44,18 +57,20 @@ public class PlaceConeExitCommunityAutoBalanceMiddleMode extends AutoMode {
     protected void routine() throws AutoModeEndedException {
         GreenLogger.log("Running Place Cone Balance Mode");
         runAction(
-            new SeriesAction(
-                new WaitAction(0.25),
-                new AlignActionMax(),
-                new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
-                new WaitAction(0.25),
-                new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
-                trajectoryActions.get(0),
-                new DriveOpenLoopAction(1.4, .35),
-                new DriveOpenLoopAction(1.4, -.35),
-                new WaitAction(0.5),
-                new AutoBalanceAction()
-            )
+                new SeriesAction(
+                        new WaitAction(0.25),
+                        new AlignActionMax(),
+                        new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
+                        new WaitAction(0.25),
+                        new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
+                        trajectoryActions.get(0),
+                        new WaitAction(0.25),
+                        trajectoryActions.get(1),
+                        new WaitAction(0.25),
+                        trajectoryActions.get(2),
+                        new WaitAction(0.25),
+                        new AutoBalanceAction()
+                )
         );
     }
 }

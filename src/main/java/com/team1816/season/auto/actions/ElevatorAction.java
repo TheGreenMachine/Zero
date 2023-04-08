@@ -59,7 +59,7 @@ public class ElevatorAction implements AutoAction {
     @Override
     public void update() {
         if (!minMaxTransitionTriggered) {
-            if (elevator.extensionAtTarget()) {
+            if (elevator.extensionAtTarget(8)) {
                 elevator.setDesiredState(desiredAngleState, desiredExtensionState);
                 minMaxTransitionTriggered = true;
             }

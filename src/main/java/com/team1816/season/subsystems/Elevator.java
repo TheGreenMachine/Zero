@@ -43,6 +43,7 @@ public class Elevator extends Subsystem {
     public static final double shelfPos = factory.getConstant(NAME, "shelfAngle") * angleTicksPerDegree;
     public static final double extensionTicksPerInch = factory.getConstant(NAME, "extensionTicksPerInch", 0);
     public static final double extensionZeroOffset = factory.getConstant(NAME, "extensionZeroOffset", 0);
+    public static final double stowExtension = (factory.getConstant(NAME, "stowExtension") + extensionZeroOffset) * extensionTicksPerInch;
     public static final double minExtension = (factory.getConstant(NAME, "minExtension") + extensionZeroOffset) * extensionTicksPerInch;
     public static final double midExtension = (factory.getConstant(NAME, "midExtension") + extensionZeroOffset) * extensionTicksPerInch;
     public static final double maxExtension = (factory.getConstant(NAME, "maxExtension") + extensionZeroOffset) * extensionTicksPerInch;
@@ -337,14 +338,26 @@ public class Elevator extends Subsystem {
                 switch (desiredExtensionState) {
                     case MAX -> extension = maxExtension;
                     case MID -> extension = midExtension;
-                    case MIN -> extension = minExtension;
+                    case MIN -> {
+                        if(desiredAngleState == ANGLE_STATE.STOW){
+                            extension = stowExtension;
+                        } else {
+                            extension = minExtension;
+                        }
+                    }
                     case SHELF_COLLECT -> extension = shelfConeExtension;
                 }
             } else {
                 switch (desiredExtensionState) {
                     case MAX -> extension = maxExtension;
                     case MID -> extension = midExtension;
-                    case MIN -> extension = minExtension;
+                    case MIN -> {
+                        if(desiredAngleState == ANGLE_STATE.STOW){
+                            extension = stowExtension;
+                        } else {
+                            extension = minExtension;
+                        }
+                    }
                     case SHELF_COLLECT -> extension = shelfCubeExtension;
                 }
             }
@@ -361,6 +374,10 @@ public class Elevator extends Subsystem {
 
     public boolean extensionAtTarget() {
         return Math.abs(desiredExtensionTicks - actualExtensionTicks) < getAllowableExtensionError() && !extensionOutputsChanged;
+    }
+
+    public boolean extensionAtTarget(int inchesRange) {
+        return Math.abs(desiredExtensionTicks - actualExtensionTicks) < (inchesRange * extensionTicksPerInch) && !extensionOutputsChanged;
     }
 
     @Override

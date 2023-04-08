@@ -23,7 +23,7 @@ import java.util.List;
  */
 public abstract class AutoMode {
 
-    private static RobotState robotState;
+    public static RobotState robotState;
 
     private static final long looperDtInMS = (long) (Constants.kLooperDt * 1000);
 

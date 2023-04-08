@@ -245,11 +245,6 @@ public class Robot extends TimedRobot {
 //                    createAction(
 //                        () -> controlBoard.getAsBool("autoTarget"),
 //                        () -> {
-//                            if (robotState.allianceColor == Color.BLUE) {
-//                                robotState.target = DrivetrainTargets.blueTargets.get((2 - grid) * 3 + (2 - node));
-//                            } else {
-//                                robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
-//                            }
 //                            if (!runningAutoTarget) {
 //                                runningAutoTarget = true;
 //                                orchestrator.updatePoseWithCamera();
@@ -276,7 +271,7 @@ public class Robot extends TimedRobot {
                                     () -> controlBoard.getAsBool("autoTargetAlign"),
                                     () -> {
                                         if (robotState.allianceColor == Color.BLUE) {
-                                            robotState.target = DrivetrainTargets.blueTargets.get((2 - grid) * 3 + (2 - node));
+                                            robotState.target = DrivetrainTargets.blueTargets.get(grid * 3 + node);
                                         } else {
                                             robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
                                         }
@@ -335,17 +330,15 @@ public class Robot extends TimedRobot {
                                     (pressed) -> {
                                         if (pressed) {
                                             if (
-                                                    elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
+                                                elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
                                             ) { // collects from shelf
                                                 collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.SHELF);
                                             } else { // collects from floor
                                                 collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR);
                                             }
-                                            drive.setMidSlowMode(true);
                                             ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK); // indicates on LEDs
                                         } else {
                                             collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
-                                            drive.setMidSlowMode(false);
                                             ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                                         }
                                     }
@@ -361,11 +354,9 @@ public class Robot extends TimedRobot {
                                             } else { // collects from floor
                                                 collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.FLOOR);
                                             }
-                                            drive.setMidSlowMode(true);
                                             ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK); // indicates on LEDs
                                         } else {
                                             collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
-                                            drive.setMidSlowMode(false);
                                             ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
                                         }
                                     }
@@ -373,7 +364,8 @@ public class Robot extends TimedRobot {
                             createAction(
                                     () -> controlBoard.getAsBool("toggleArmScoreCollect"),
                                     () -> {
-                                        if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT) {
+                                        if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
+                                                && robotState.actualElevatorExtensionState != Elevator.EXTENSION_STATE.MIN) {
                                             elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
                                         } else if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
                                             elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
@@ -540,7 +532,7 @@ public class Robot extends TimedRobot {
                             createAction(
                                     () -> controlBoard.getAsBool("grid1"),
                                     () -> {
-                                        grid = autoModeManager.teamColor == Color.BLUE ? 0 : 2;
+                                        grid = autoModeManager.teamColor == Color.RED ? 0 : 2;
                                         GreenLogger.log("Grid changed to FEEDER");
                                     }
                             ),
@@ -554,14 +546,14 @@ public class Robot extends TimedRobot {
                             createAction(
                                     () -> controlBoard.getAsBool("grid3"),
                                     () -> {
-                                        grid = autoModeManager.teamColor == Color.BLUE ? 2 : 0;
+                                        grid = autoModeManager.teamColor == Color.RED ? 2 : 0;
                                         GreenLogger.log("Grid changed to WALL");
                                     }
                             ),
                             createAction(
                                     () -> controlBoard.getAsBool("node1"),
                                     () -> {
-                                        node = autoModeManager.teamColor == Color.BLUE ? 0 : 2;
+                                        node = autoModeManager.teamColor == Color.RED ? 0 : 2;
                                         GreenLogger.log("Node changed to LEFT");
                                     }
                             ),
@@ -575,7 +567,7 @@ public class Robot extends TimedRobot {
                             createAction(
                                     () -> controlBoard.getAsBool("node3"),
                                     () -> {
-                                        node = autoModeManager.teamColor == Color.BLUE ? 2 : 0;
+                                        node = autoModeManager.teamColor == Color.RED ? 2 : 0;
                                         GreenLogger.log("Node changed to RIGHT");
                                     }
                             ),
@@ -661,7 +653,7 @@ public class Robot extends TimedRobot {
 
         collector.currentGameElement = Collector.GAME_ELEMENT.CONE;
         robotState.actualGameElement = Collector.GAME_ELEMENT.CONE;
-        elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
+        elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN);
         collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
 
         drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);

@@ -78,8 +78,8 @@ subsystems:
             trackWidth: 19.75 # inches
             wheelbaseLength: 19.75 # inches
             maxVelOpenLoop: 3.5 # meters/s (3.6)
-            maxVelPathFollowing: 3.6 # meters/s (3.6)
-            maxAccel: 2.54 # meters/s^2 (2.54)
+            maxVelPathFollowing: 3.1 # meters/s (3.6)
+            maxAccel: 2.17 # meters/s^2 (2.54)
             dPadMoveSpeed: 0.5
             isDemoMode: 0
             ## Auto Balance ##
@@ -130,9 +130,10 @@ subsystems:
             ## Angles ##
             stowAngle: 40 # degrees - 90000ticks
             collectAngle: 0 # degs - -2500ticks (was using timer)
-            scoreAngle: 38 # degs - 60000ticks
+            scoreAngle: 40 # degs - 60000ticks
             shelfAngle: 59.46 # degs - 70000ticks TODO tune - for cone rn
             ## Extensions ##
+            stowExtension: 1 # in
             minExtension: 3.8 # in - 20000ticks
             midExtension: 13 # in - 130000ticks
             maxExtension: 33.5 # in - 320000ticks
@@ -163,7 +164,7 @@ subsystems:
             scoreCubeAngle: 10 # degs
             shelfConeAngle: -38 # Cone
             shelfCubeAngle: -48 # Cone
-            floorAngle: 23.4 # degs
+            floorAngle: 26 # degs
             ## Limits ##
             intakeStallAmps: 30
     ledmanager:
