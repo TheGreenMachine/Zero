@@ -123,6 +123,9 @@ public class Robot extends TimedRobot {
     public Elevator.ANGLE_STATE prevAngleState;
     private double dPadMoveSpeed;
 
+    private boolean snappingToHumanPlayer;
+    private boolean snappingToDriver;
+
     /**
      * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
      */
@@ -305,26 +308,33 @@ public class Robot extends TimedRobot {
                             ),
                             createHoldAction(
                                     () -> controlBoard.getAsBool("slowMode"),
-                                    drive::setSlowMode
-                            ),
+                                    () -> {
+                                        drive.setSlowMode(!drive.getSlowMode());
+                                    }                            ),
                             createAction(
                                     () -> controlBoard.getAsBool("midSlowMode"),
                                     () -> {
                                         drive.setMidSlowMode(!drive.getMidSlowMode());
                                     }
                             ),
-                            createHoldAction(
+                            createAction(
                                     () -> controlBoard.getAsBool("autoBalance"),
-                                    (pressed) -> {
-                                        if (pressed) {
-                                            drive.setAutoBalance(true);
-                                            ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.BLINK);
-                                        } else {
-                                            drive.setAutoBalance(false);
-                                            ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.SOLID);
-                                        }
+                                    () -> {
+                                        drive.setAutoBalance(!drive.isAutoBalancing());
                                     }
                             ),
+                            /*createHoldAction(
+                        () -> controlBoard.getAsBool("autoBalance"),
+                        (pressed) -> {
+                            if (pressed) {
+                                drive.setAutoBalance(true);
+                                ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.BLINK);
+                            } else {
+                                drive.setAutoBalance(false);
+                                ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.SOLID);
+                            }
+                        }
+                    ),*/
                             createHoldAction(
                                     () -> controlBoard.getAsBool("intakeCone"),
                                     (pressed) -> {
@@ -379,6 +389,20 @@ public class Robot extends TimedRobot {
                                     () -> controlBoard.getAsBool("shelfPos"),
                                     (pressed) -> {
                                         elevator.setDesiredState(Elevator.ANGLE_STATE.SHELF_COLLECT, Elevator.EXTENSION_STATE.SHELF_COLLECT);
+                                    }
+                            ),
+                            createAction(
+                                    () -> controlBoard.getAsBool("snapToHumanPlayer"),
+                                    () -> {
+                                        snappingToHumanPlayer = !snappingToHumanPlayer;
+                                        snappingToDriver = false;
+                                    }
+                            ),
+                            createAction(
+                                    () -> controlBoard.getAsBool("snapToDriver"),
+                                    () -> {
+                                        snappingToDriver = !snappingToDriver;
+                                        snappingToHumanPlayer = false;
                                     }
                             ),
                             // Operator Gamepad
@@ -854,43 +878,49 @@ public class Robot extends TimedRobot {
                     robotState.driverRelativeFieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
 
-        } else if (((ControlBoard) controlBoard).driverController.getDPad() != -1 && ((ControlBoard) controlBoard).driverController.getDPad() != 180) { // dpad bang-bang controller for fine alignment
-
-            int dPadPOVToAngle = ((ControlBoard) controlBoard).driverController.getDPad();
-            double strafe = 0;
-            double rotation = 0;
-            if (dPadPOVToAngle == 90) {
-                strafe = -dPadMoveSpeed;
-            } else if (dPadPOVToAngle == 270) {
-                strafe = dPadMoveSpeed;
-            } else if (dPadPOVToAngle == 0) {
+        } else { // I wonder if this is how Dr. Frankenstein felt after creating his monster
+            double rotation;
+            if (snappingToDriver) { //down on the d pad
+                GreenLogger.log("snappingToDriver"); //TODO for testing
                 double rotVal = MathUtil.inputModulus(
-                        robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
+                    robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
                 );
-                if ((rotVal < 45 && rotVal > -45) || (rotVal < -178 || rotVal > 178)) {
-                    rotation = 0;
+                double absRotVal = Math.abs(rotVal);
+
+                if ((Math.abs(rotVal) < 178)) {
+                    rotation = absRotVal <= 1 ? Math.pow(absRotVal+1, -.3) : Math.pow(absRotVal, -.3);
+                    if (rotVal < 0){
+                        rotation *= -1;
+                    }
                 } else {
-                    rotation = 90 / rotVal;
+                    rotation = controlBoard.getAsDouble("rotation");
+                    snappingToDriver = false;
                 }
-            }
-            SwerveModuleState[] dPadDrivingStates = SwerveDrive.swerveKinematics.toSwerveModuleStates(
-                    ChassisSpeeds.fromFieldRelativeSpeeds(0.0, strafe, rotation, robotState.driverRelativeFieldToVehicle.getRotation())
-            );
 
-            if (strafe == 0 && rotation == 0) {
-                Rotation2d heading = Rotation2d.fromDegrees(90).minus(robotState.driverRelativeFieldToVehicle.getRotation());
-                SwerveModuleState templateState = new SwerveModuleState(0, heading);
-                SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
-                ((SwerveDrive) drive).setModuleStates(statePassIn);
-            } else {
-                ((SwerveDrive) drive).setModuleStates(dPadDrivingStates);
+            } else if (snappingToHumanPlayer) { //up on the d pad
+                GreenLogger.log("snappingToHumanPlayer"); //TODO for testing
+                double rotVal = MathUtil.inputModulus(
+                    robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
+                );
+                double absRotVal = Math.abs(rotVal);
+
+                if (absRotVal > 2){
+                    rotation = 180 - absRotVal <= 1 ? Math.pow(181-absRotVal, -.3) : Math.pow(180-absRotVal, -.3);
+                    if (rotVal < 0){
+                        rotation *= -1;
+                    }
+                } else {
+                    rotation = controlBoard.getAsDouble("rotation");
+                    snappingToHumanPlayer = false;
+                }
+            }  else {
+                rotation = controlBoard.getAsDouble("rotation");
             }
 
-        } else {
             drive.setTeleopInputs(
-                    -controlBoard.getAsDouble("throttle"),
-                    -controlBoard.getAsDouble("strafe"),
-                    controlBoard.getAsDouble("rotation")
+                -controlBoard.getAsDouble("throttle"),
+                -controlBoard.getAsDouble("strafe"),
+                rotation
             );
         }
     }
