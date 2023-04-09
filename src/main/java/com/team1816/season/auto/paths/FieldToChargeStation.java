@@ -1,9 +1,7 @@
 package com.team1816.season.auto.paths;
 
-import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.paths.AutoPath;
-import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
@@ -21,16 +19,16 @@ public class FieldToChargeStation extends AutoPath {
     @Override
     protected List<Pose2d> getWaypoints() {
         return List.of(
-                new Pose2d(6.5, 3.00, Rotation2d.fromDegrees(180)),
-                new Pose2d(4, 3.00, Rotation2d.fromDegrees(180))
+            new Pose2d(6.5, 3.00, Rotation2d.fromDegrees(180)),
+            new Pose2d(4, 3.00, Rotation2d.fromDegrees(180))
         );
     }
 
     @Override
     protected List<Rotation2d> getWaypointHeadings() {
         return List.of(
-                Rotation2d.fromDegrees(180),
-                Rotation2d.fromDegrees(180)
+            Rotation2d.fromDegrees(180),
+            Rotation2d.fromDegrees(180)
         );
     }
 

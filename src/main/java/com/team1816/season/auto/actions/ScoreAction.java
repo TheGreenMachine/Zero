@@ -1,6 +1,5 @@
 package com.team1816.season.auto.actions;
 
-import com.team1816.lib.auto.actions.ParallelAction;
 import com.team1816.lib.auto.actions.SeriesAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.util.logUtil.GreenLogger;

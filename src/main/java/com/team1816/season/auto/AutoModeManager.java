@@ -28,7 +28,7 @@ public class AutoModeManager {
     private final SendableChooser<DesiredAuto> autoModeChooser;
     private final SendableChooser<Color> sideChooser;
     private DesiredAuto desiredAuto;
-    public Color teamColor;
+    private Color teamColor;
 
     /**
      * Properties: Execution
@@ -191,8 +191,8 @@ public class AutoModeManager {
         DOUBLE_CONE_FEEDER,
         DOUBLE_CONE_WALL,
 
-        TRIPLE_CONE_FEEDER_heheNOT_WorkInG,
-        TRIPLE_CONE_WALL_heheNOT_WorkInG
+//        TRIPLE_CONE_FEEDER,
+//        TRIPLE_CONE_WALL
     }
 
     /**
@@ -230,10 +230,10 @@ public class AutoModeManager {
                 return (new DoublePlaceConeFeederMode(color));
             case DOUBLE_CONE_WALL:
                 return (new DoublePlaceConeWallMode(color));
-            case TRIPLE_CONE_FEEDER_heheNOT_WorkInG:
-                return (new TriplePlaceConeFeederMode(color));
-            case TRIPLE_CONE_WALL_heheNOT_WorkInG:
-                return (new TriplePlaceConeWallMode(color));
+//            case TRIPLE_CONE_FEEDER:
+//                return (new TriplePlaceConeFeederMode(color));
+//            case TRIPLE_CONE_WALL:
+//                return (new TriplePlaceConeWallMode(color));
             default:
                 GreenLogger.log("Defaulting to drive straight mode");
                 return new DriveStraightMode();

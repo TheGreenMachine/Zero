@@ -12,7 +12,7 @@ driver:
         b: autoBalance
         a: autoTargetAlign
     axes:
-        leftTrigger: midSlowMode # Previously brake mode
+        leftTrigger: midSlowMode
         rightTrigger: slowMode
     buttons:
         leftBumper: intakeCube
@@ -21,20 +21,13 @@ driver:
     dpad:
         up: snapToHumanPlayer
         down: snapToDriver
-        left: brakeMode # Previously autoTargetAlign
-        right: snapToHumanPlayer
+        left: brakeMode
 operator:
     rumble: false
-    dpad:
-        up: extendStage
-        down: descendStage
     buttons:
         leftBumper: updatePoseWithCamera
         rightBumper: outtake
         start: toggleCollectorPivot
-    axes:
-        leftTrigger: armStow
-        rightTrigger: armCollect
     buttonpad:
         y: extendMax
         x: extendMid

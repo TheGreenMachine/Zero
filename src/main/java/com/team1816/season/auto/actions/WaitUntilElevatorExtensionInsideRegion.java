@@ -3,7 +3,6 @@ package com.team1816.season.auto.actions;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.AutoAction;
 import com.team1816.season.subsystems.Elevator;
-import edu.wpi.first.wpilibj.RobotBase;
 
 public class WaitUntilElevatorExtensionInsideRegion implements AutoAction {
     private static Elevator elevator;

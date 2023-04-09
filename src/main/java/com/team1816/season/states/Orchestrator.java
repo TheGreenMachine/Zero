@@ -139,7 +139,6 @@ public class Orchestrator {
                 p.getY(),
                 robotState.fieldToVehicle.getRotation()
             );
-            ledManager.indicateStatus(LedManager.RobotStatus.ZEROING, LedManager.ControlState.BLINK);
             robotState.isPoseUpdated = true;
             return pose;
         }

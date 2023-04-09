@@ -28,13 +28,13 @@ public class RobotState {
     public final Field2d field = new Field2d();
     public Color allianceColor = Color.BLUE;
     public Pose2d fieldToVehicle = Constants.EmptyPose2d;
-    public Pose2d driverRelativeFieldToVehicle = Constants.EmptyPose2d; // Because Forward on the field isnt forward to the driver when driver is on red team
+    public Pose2d driverRelativeFieldToVehicle = Constants.EmptyPose2d;
     public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose2d;
     public Pose2d target = Constants.fieldCenterPose;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation2d;
     public Pose2d fieldToTurret = Constants.EmptyPose2d;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds(); // velocities of vehicle
-    public ChassisSpeeds calculatedVehicleAccel = new ChassisSpeeds(); // accel values calculated by watching drivetrain encoders
+    public ChassisSpeeds calculatedVehicleAccel = new ChassisSpeeds(); // calculated acceleration of vehicle
     public Double[] triAxialAcceleration = new Double[]{0d, 0d, 0d};
     public boolean isPoseUpdated = true;
     public double vehicleToFloorProximityCentimeters = 0;
@@ -82,7 +82,7 @@ public class RobotState {
         resetPosition();
         FieldConfig.setupField(field);
 
-        simArm.setColor(new Color8Bit(125,125,125));
+        simArm.setColor(new Color8Bit(125, 125, 125));
         simCollector.setLineWeight(4);
     }
 
@@ -215,7 +215,7 @@ public class RobotState {
         if (RobotBase.isSimulation()) {
             // elevator
             double elevatorLength = Elevator.kElevatorMinLength +
-                    (actualElevatorExtensionInches * 0.0254);
+                (actualElevatorExtensionInches * 0.0254);
 
             simArm.setLength(elevatorLength);
             simArm.setAngle(actualElevatorAngle);
@@ -223,9 +223,9 @@ public class RobotState {
             // collector
             simCollector.setAngle(actualCollectorAngle);
             Color8Bit color;
-            if(actualGameElement == Collector.GAME_ELEMENT.CONE){
+            if (actualGameElement == Collector.GAME_ELEMENT.CONE) {
                 color = new Color8Bit(255, 255, 0);
-            } else if(actualGameElement == Collector.GAME_ELEMENT.CUBE){
+            } else if (actualGameElement == Collector.GAME_ELEMENT.CUBE) {
                 color = new Color8Bit(0, 0, 255);
             } else {
                 color = new Color8Bit(125, 125, 125);

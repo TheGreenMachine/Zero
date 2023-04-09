@@ -4,14 +4,12 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.controlboard.ActionManager;
-import com.team1816.lib.controlboard.ControlBoard;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
-import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.AutoModeManager;
@@ -25,10 +23,8 @@ import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.*;
 
@@ -325,7 +321,7 @@ public class Robot extends TimedRobot {
                         (pressed) -> {
                             if (pressed) {
                                 if (
-                                        elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
+                                    elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
                                 ) { // collects from shelf
                                     collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.SHELF);
                                 } else { // collects from floor
@@ -342,7 +338,7 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("toggleArmScoreCollect"),
                         () -> {
                             if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
-                                    && robotState.actualElevatorExtensionState != Elevator.EXTENSION_STATE.MIN) {
+                                && robotState.actualElevatorExtensionState != Elevator.EXTENSION_STATE.MIN) {
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
                             } else if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
@@ -389,30 +385,6 @@ public class Robot extends TimedRobot {
                                 }
                             } else {
                                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
-                            }
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("extendStage"),
-                        () -> {
-                            Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
-
-                            if (extensionState == Elevator.EXTENSION_STATE.MIN) {
-                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
-                            } else if (extensionState == Elevator.EXTENSION_STATE.MID) {
-                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MAX);
-                            }
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("descendStage"),
-                        () -> {
-                            Elevator.EXTENSION_STATE extensionState = elevator.getDesiredExtensionState();
-
-                            if (extensionState == Elevator.EXTENSION_STATE.MID) {
-                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MIN);
-                            } else if (extensionState == Elevator.EXTENSION_STATE.MAX) {
-                                elevator.setDesiredExtensionState(Elevator.EXTENSION_STATE.MID);
                             }
                         }
                     ),
@@ -523,7 +495,7 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("grid1"),
                         () -> {
-                            grid = autoModeManager.teamColor == Color.RED ? 0 : 2;
+                            grid = robotState.allianceColor == Color.RED ? 0 : 2;
                             GreenLogger.log("Grid changed to FEEDER");
                         }
                     ),
@@ -537,14 +509,14 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("grid3"),
                         () -> {
-                            grid = autoModeManager.teamColor == Color.RED ? 2 : 0;
+                            grid = robotState.allianceColor == Color.RED ? 2 : 0;
                             GreenLogger.log("Grid changed to WALL");
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("node1"),
                         () -> {
-                            node = autoModeManager.teamColor == Color.RED ? 0 : 2;
+                            node = robotState.allianceColor == Color.RED ? 0 : 2;
                             GreenLogger.log("Node changed to LEFT");
                         }
                     ),
@@ -558,7 +530,7 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("node3"),
                         () -> {
-                            node = autoModeManager.teamColor == Color.RED ? 2 : 0;
+                            node = robotState.allianceColor == Color.RED ? 2 : 0;
                             GreenLogger.log("Node changed to RIGHT");
                         }
                     ),
@@ -791,10 +763,10 @@ public class Robot extends TimedRobot {
             if (autoModeManager.update()) {
                 drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
                 robotState.field
-                        .getObject("Trajectory")
-                        .setTrajectory(
-                                autoModeManager.getSelectedAuto().getCurrentTrajectory()
-                        );
+                    .getObject("Trajectory")
+                    .setTrajectory(
+                        autoModeManager.getSelectedAuto().getCurrentTrajectory()
+                    );
             }
 
             if (drive.isDemoMode()) { // Demo-mode
@@ -813,8 +785,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         robotState.field
-                .getObject("Trajectory")
-                .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
+            .getObject("Trajectory")
+            .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
     }
 
     /**
@@ -839,23 +811,23 @@ public class Robot extends TimedRobot {
 
         if (drive.isAutoBalancing()) {
             ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
-                    0,
-                    -controlBoard.getAsDouble("strafe"),
-                    0,
-                    robotState.driverRelativeFieldToVehicle.getRotation());
+                0,
+                -controlBoard.getAsDouble("strafe"),
+                0,
+                robotState.driverRelativeFieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
         } else {
             double rotation;
-            if (snappingToDriver || snappingToHumanPlayer) { //down / up on the d pad
+            if (snappingToDriver || snappingToHumanPlayer) {
                 double rotVal = MathUtil.inputModulus(
                     robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
                 );
-
-                if(snappingToDriver){
-                    if(rotVal == 0) rotVal += 0.01;
-                    rotation = Math.min(0.5, (180 - Math.abs(rotVal)) / 30) * -Math.signum(rotVal); // TODO tune cutoff % divider
+                if (snappingToDriver) {
+                    if (rotVal == 0)
+                        rotVal += 0.01d;
+                    rotation = Math.min(0.5, (180 - Math.abs(rotVal)) / 40) * -Math.signum(rotVal);
                 } else {
-                    rotation = Math.min(0.5, Math.abs(rotVal) / 30) * Math.signum(rotVal);
+                    rotation = Math.min(0.5, Math.abs(rotVal) / 40) * Math.signum(rotVal);
                 }
             } else {
                 rotation = controlBoard.getAsDouble("rotation");

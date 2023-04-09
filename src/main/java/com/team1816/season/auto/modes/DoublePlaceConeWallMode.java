@@ -77,9 +77,9 @@ public class DoublePlaceConeWallMode extends AutoMode {
                 ),
                 // aligning
                 new ParallelAction(
-                        new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW),
-                        new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
-                        trajectoryActions.get(1)
+                    new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW),
+                    new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
+                    trajectoryActions.get(1)
                 ),
                 new AlignAction(Elevator.EXTENSION_STATE.MAX, (Elevator.midExtension + Elevator.maxExtension) * .75, Elevator.maxExtension),
                 // scoring second cone

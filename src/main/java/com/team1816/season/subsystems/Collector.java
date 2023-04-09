@@ -107,9 +107,9 @@ public class Collector extends Subsystem {
         pivotFloorPosition = (factory.getConstant(NAME, "floorAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
 
         intakeMotor.configSupplyCurrentLimit(
-                new SupplyCurrentLimitConfiguration(
-                        true, factory.getConstant(NAME, "intakeStallAmps", 5), 0, 0),
-                Constants.kCANTimeoutMs
+            new SupplyCurrentLimitConfiguration(
+                true, factory.getConstant(NAME, "intakeStallAmps", 5), 0, 0),
+            Constants.kCANTimeoutMs
         );
 
         intakeMotor.configOpenloopRamp(0.25, Constants.kCANTimeoutMs);
