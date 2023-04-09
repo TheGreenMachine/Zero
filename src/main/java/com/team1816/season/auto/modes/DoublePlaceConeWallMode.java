@@ -54,18 +54,14 @@ public class DoublePlaceConeWallMode extends AutoMode {
                 new SeriesAction(
                     new WaitAction(.05),
                     new AlignActionMax(),
+                    new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
+                    new WaitUntilElevatorExtensionInsideRegion(Elevator.minExtension, Elevator.midExtension - ((Elevator.midExtension - Elevator.minExtension) * .5)), // half between
                     new ParallelAction(
-                        new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
+                        trajectoryActions.get(0),
                         new SeriesAction(
-                            new WaitAction(3),
-                            new ParallelAction(
-                                trajectoryActions.get(0),
-                                new SeriesAction(
-                                    new WaitAction(1),
-                                    new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
-                                    new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.STOW)
-                                )
-                            )
+                            new WaitAction(0.8),
+                            new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
+                            new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR)
                         )
                     )
                 ),
@@ -73,7 +69,7 @@ public class DoublePlaceConeWallMode extends AutoMode {
                 new SeriesAction(
                     new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
                     new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR),
-                    new WaitAction(1)
+                    new WaitAction(.5)
                 ),
                 // aligning
                 new ParallelAction(

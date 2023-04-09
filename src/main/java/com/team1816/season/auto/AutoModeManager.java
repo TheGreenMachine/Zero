@@ -206,10 +206,10 @@ public class AutoModeManager {
         switch (mode) {
             case DO_NOTHING:
                 return new DoNothingMode();
-            case TUNE_DRIVETRAIN: // commented for competition purposes
-                return new TuneDrivetrainMode();
-            case LIVING_ROOM:
-                return (new LivingRoomMode(color));
+//            case TUNE_DRIVETRAIN: // commented for competition purposes
+//                return new TuneDrivetrainMode();
+//            case LIVING_ROOM:
+//                return (new LivingRoomMode(color));
             case PLACE_CONE_EXIT_COMMUNITY:
                 return (new PlaceConeExitCommunityMode(color));
             case PLACE_CONE:
