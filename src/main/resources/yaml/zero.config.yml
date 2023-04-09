@@ -77,7 +77,7 @@ subsystems:
             maxRotVel: 18
             trackWidth: 19.75 # inches
             wheelbaseLength: 19.75 # inches
-            maxVelOpenLoop: 3.675 # meters/s (3.6)
+            maxVelOpenLoop: 3.75 # meters/s (3.6)
             maxVelPathFollowing: 3.2 # meters/s (3.6)
             maxAccel: 2.17 # meters/s^2 (2.54)
             dPadMoveSpeed: 0.5
