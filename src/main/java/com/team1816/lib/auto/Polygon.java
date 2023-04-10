@@ -64,27 +64,18 @@ public class Polygon {
      * Determines if a line between two points is contained by the polygon to any degree
      */
     public boolean intersects(Translation2d p1, Translation2d p2) {
+        if (contains(p1) || contains(p2)) {
+            return false;
+        }
+
         for (int i = 0; i < vertices.size(); i++) {
             if (((p1 == vertices.get(i) && p2 == vertices.get((i + 1) % vertices.size())) || (p2 == vertices.get(i) && p1 == vertices.get((i + 1) % vertices.size())))) {
                 return false;
             }
         }
 
-        double xIncrement, yIncrement;
-
-        if (Math.abs(p2.getX() - p1.getX()) < Math.abs(p2.getY() - p1.getY())) {
-            xIncrement = 0.01 * Math.signum(p2.getX() - p1.getX()); // approximate resolution to check slopes NOTE: might need to reduce resolution for finer calculations
-            yIncrement = (p2.getY() - p1.getY()) / (p2.getX() - p1.getX()) * Math.abs(xIncrement) * Math.signum(p2.getY() - p1.getY());
-        } else {
-            yIncrement = 0.01 * Math.signum(p2.getY() - p1.getY()); // approximate resolution to check slopes NOTE: might need to reduce resolution for finer calculations
-            xIncrement = (p2.getX() - p1.getX()) / (p2.getY() - p1.getY()) * Math.abs(yIncrement) * Math.signum(p2.getX() - p1.getX());
-        }
-
-        for (int i = 0; i < Math.max(Math.abs((p2.getX() - p1.getX()) / (2 * xIncrement)), Math.abs((p2.getY() - p1.getY()) / (2 * yIncrement))); i++) {
-            if (
-                this.contains(new Translation2d(p1.getX() + xIncrement * i, p1.getY() + yIncrement * i)) ||
-                    this.contains(new Translation2d(p2.getX() - xIncrement * i, p2.getY() - yIncrement * i))
-            ) {
+        for (int i = 0; i < vertices.size(); i++) {
+            if (intersects(vertices.get(i), vertices.get((i + 1) % vertices.size()), p1, p2)) {
                 return true;
             }
         }
@@ -92,9 +83,14 @@ public class Polygon {
     }
 
     /**
-     * Utilizes ray-casting to determine if a line intersects the polygon
+     * Utilizes angular geometric approach to determine if two lines defined by (p1, p2), and (p3, p4) intersect
      */
-    public boolean intersects(Line2D line) {
-        return intersects(new Translation2d(line.getX1(), line.getY1()), new Translation2d(line.getX2(), line.getY2()));
+    public boolean intersects(Translation2d p1, Translation2d p2, Translation2d p3, Translation2d p4) {
+        return Line2D.linesIntersect(
+            p1.getX(), p1.getY(),
+            p2.getX(), p2.getY(),
+            p3.getX(), p3.getY(),
+            p4.getX(), p4.getY()
+        );
     }
 }

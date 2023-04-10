@@ -44,8 +44,7 @@ public class PathFinder {
         // static visibility graph
         for (Translation2d i : points) { // initial
             for (Translation2d f : points) { // final
-                a:
-                if (!i.equals(f)) {
+                a: if (!i.equals(f)) {
                     // checks if line segment intersects the polygons
                     for (Polygon o : obstacles) {  // n^2log(n)
                         if (o.intersects(i, f)) {
