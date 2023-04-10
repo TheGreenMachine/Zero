@@ -79,7 +79,6 @@ public abstract class Drive
     protected boolean isBraking;
     protected boolean isSlowMode;
 
-    protected boolean isMidSlowMode;
     protected boolean isAutoBalancing = false;
 
     /**
@@ -370,23 +369,6 @@ public abstract class Drive
      * @return whether drivetrain is in slowMode
      */
     public boolean getSlowMode() { return isSlowMode; }
-
-    /**
-     * Sets the drivetrain to attain a slightly faster slow mode
-     *
-     * @param midSlowMode - boolean
-     */
-    public void setMidSlowMode(boolean midSlowMode) {
-        GreenLogger.log("setting slow mode to: " + midSlowMode);
-        isMidSlowMode = midSlowMode;
-    }
-
-    /**
-     * Returns whether the drivetrain is in midSlowMode
-     */
-    public boolean getMidSlowMode() {
-        return isMidSlowMode;
-    }
 
     /**
      * Sets the drivetrain to normalize gyroscopic pitch and yaw with gradient of maximal descent

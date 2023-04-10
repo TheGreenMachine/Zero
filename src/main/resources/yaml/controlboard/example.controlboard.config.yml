@@ -9,7 +9,6 @@
 #    buttonpad:
 #        x: toggleArmScoreCollect # remapped to back left button
 #        y: shelfPos # remapped to back right button
-#        a: midSlowMode # autoTarget
 #        b: autoBalance
 #    axes:
 #        leftTrigger: brakeMode

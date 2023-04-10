@@ -11,7 +11,6 @@ driver:
         y: shelfPos # remapped to back right button
         b: autoBalance
     axes:
-        leftTrigger: midSlowMode
         rightTrigger: slowMode
     buttons:
         leftBumper: intakeCube
