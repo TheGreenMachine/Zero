@@ -17,8 +17,8 @@ public class SwerveDriveHelper implements DriveHelper {
     private static final double kMaxRotation = kMaxAngularSpeed;
     private static final double kHighPowerRotationScalar = 0.05;
 
-    private static final double kLowPowerRotationScalar = 0.00625; //yml time
-    private static final double kLowPowerScalar = 0.075; //yml time
+    private static final double kLowPowerRotationScalar = 0.006875; //yml time
+    private static final double kLowPowerScalar = 0.0825; //yml time
 
     private static final double kMidLowPowerRotationScalar = 0.00625;
     private static final double kMidLowPowerScalar = 0.25;
@@ -105,10 +105,7 @@ public class SwerveDriveHelper implements DriveHelper {
         translationalInput = translationalInput.times(kOpenLoopMaxVelMeters);
         rotationInput *= kMaxRotation;
 
-        if (extreme_low_power) {
-            translationalInput = translationalInput.times(kMidLowPowerScalar);
-            rotationInput *= kMidLowPowerRotationScalar;
-        } else if (low_power) {
+         if (low_power) {
             translationalInput = translationalInput.times(kLowPowerScalar);
             rotationInput *= kLowPowerRotationScalar;
         } else {
