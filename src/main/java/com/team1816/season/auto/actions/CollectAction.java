@@ -83,7 +83,7 @@ public class CollectAction implements AutoAction {
 
     @Override
     public boolean isFinished() {
-        if (!waitForPivot || RobotBase.isSimulation() || collector.isImplemented()) {
+        if (!waitForPivot || RobotBase.isSimulation() || !collector.isImplemented()) {
             return true;
         } else {
             return robotState.actualCollectorPivotState.equals(collector.getDesiredPivotState());

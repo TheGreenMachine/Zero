@@ -143,16 +143,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public synchronized void writeToHardware() {// sets the demands for hardware from the inputs provided
         if (controlState == ControlState.OPEN_LOOP) {
-            if (isMidSlowMode) {
-                leftMain.set(
-                    ControlMode.PercentOutput,
-                    0.25 * leftPowerDemand
-                );
-                rightMain.set(
-                    ControlMode.PercentOutput,
-                    0.25 * rightPowerDemand
-                );
-            } else {
                 leftMain.set(
                     ControlMode.PercentOutput,
                     isSlowMode ? (leftPowerDemand * 0.5) : leftPowerDemand
@@ -161,7 +151,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                     ControlMode.PercentOutput,
                     isSlowMode ? (rightPowerDemand * 0.5) : rightPowerDemand
                 );
-            }
         } else {
             leftMain.set(ControlMode.Velocity, leftVelDemand);
             rightMain.set(ControlMode.Velocity, rightVelDemand);
@@ -402,12 +391,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
             DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters);
             setVelocity(driveSignal);
-        } else {
-
-            heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
-            //TODO tankdrive jolt align
         }
-
     }
 
     /**
