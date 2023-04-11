@@ -391,12 +391,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             DifferentialDriveWheelSpeeds wheelSpeeds = tankKinematics.toWheelSpeeds(chassisSpeeds);
             DriveSignal driveSignal = new DriveSignal(wheelSpeeds.leftMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters, wheelSpeeds.rightMetersPerSecond / TankDrive.kPathFollowingMaxVelMeters);
             setVelocity(driveSignal);
-        } else {
-
-            heading = Rotation2d.fromDegrees(90).minus(robotState.fieldToVehicle.getRotation());
-            //TODO tankdrive jolt align
         }
-
     }
 
     /**

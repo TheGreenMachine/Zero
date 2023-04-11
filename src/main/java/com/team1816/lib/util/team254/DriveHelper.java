@@ -9,7 +9,6 @@ public interface DriveHelper {
         double strafeInput,
         double rotationInput,
         boolean low_power,
-        boolean extreme_low_power,
         boolean field_relative,
         boolean use_heading_controller
     );
