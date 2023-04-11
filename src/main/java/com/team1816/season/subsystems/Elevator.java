@@ -27,11 +27,10 @@ public class Elevator extends Subsystem {
     private final IGreenMotor angleMotorMain;
     private final IGreenMotor angleMotorFollower;
     private final IGreenMotor extensionMotor;
+
     /**
      * Properties
      */
-
-    // where ur drawing stuff
     public static final double kElevatorMinLength = 0.70; // meters
     public static final double kElevatorMaxLength = 1.25; // meters
 
@@ -120,9 +119,7 @@ public class Elevator extends Subsystem {
         angleMotorFollower.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
         angleMotorFollower.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
         angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
-
         angleMotorMain.configClosedloopRamp(0.2, Constants.kCANTimeoutMs);
-//        extensionMotor.configClosedloopRamp(0.25, Constants.kCANTimeoutMs);
 
         motionMagicEnabled = factory.getConstant(NAME, "motionMagicEnabled") > 0;
 
@@ -262,7 +259,7 @@ public class Elevator extends Subsystem {
         actualExtensionTicks = extensionMotor.getSelectedSensorPosition(0); // not slot id
         actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
 
-        if(!armAtTarget()){
+        if (!armAtTarget()) {
             angleMotorMain.selectProfileSlot(movingArmSlot, 0);
         }
         if (robotState.actualElevatorAngleState != desiredAngleState && armAtTarget()) {
@@ -275,7 +272,7 @@ public class Elevator extends Subsystem {
             robotState.actualElevatorExtensionState = desiredExtensionState;
         }
 
-        if(robotState.gameElementChanged){
+        if (robotState.gameElementChanged) {
             extensionOutputsChanged = true;
         }
 
@@ -334,36 +331,28 @@ public class Elevator extends Subsystem {
                 ? ControlMode.MotionMagic : ControlMode.Position;
 
             double extension = 0;
-            if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
-                switch (desiredExtensionState) {
-                    case MAX -> extension = maxExtension;
-                    case MID -> extension = midExtension;
-                    case MIN -> {
-                        if(desiredAngleState == ANGLE_STATE.STOW){
-                            extension = stowExtension;
-                        } else {
-                            extension = minExtension;
-                        }
+
+            switch (desiredExtensionState) {
+                case MAX -> extension = maxExtension;
+                case MID -> extension = midExtension;
+                case MIN -> {
+                    if (desiredAngleState == ANGLE_STATE.STOW) {
+                        extension = stowExtension;
+                    } else {
+                        extension = minExtension;
                     }
-                    case SHELF_COLLECT -> extension = shelfConeExtension;
                 }
-            } else {
-                switch (desiredExtensionState) {
-                    case MAX -> extension = maxExtension;
-                    case MID -> extension = midExtension;
-                    case MIN -> {
-                        if(desiredAngleState == ANGLE_STATE.STOW){
-                            extension = stowExtension;
-                        } else {
-                            extension = minExtension;
-                        }
+                case SHELF_COLLECT -> {
+                    if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
+                        extension = shelfConeExtension;
+                    } else {
+                        extension = shelfCubeExtension;
                     }
-                    case SHELF_COLLECT -> extension = shelfCubeExtension;
                 }
             }
             desiredExtensionTicks = extension;
 
-            extensionMotor.set(controlMode, extension);
+            extensionMotor.set(controlMode, desiredExtensionTicks);
         }
     }
 

@@ -10,8 +10,9 @@ driver:
         x: toggleArmScoreCollect # remapped to back left button
         y: shelfPos # remapped to back right button
         b: autoBalance
+        a: autoTargetAlign
     axes:
-        leftTrigger: midSlowMode # Previously brakemode
+        leftTrigger: midSlowMode
         rightTrigger: slowMode
     buttons:
         leftBumper: intakeCube
@@ -20,20 +21,13 @@ driver:
     dpad:
         up: snapToHumanPlayer
         down: snapToDriver
-        left: brakeMode # Previously autoTargetAlign
-        right: autoTargetAlign
+        left: brakeMode
 operator:
     rumble: false
-    dpad:
-        up: extendStage
-        down: descendStage
     buttons:
         leftBumper: updatePoseWithCamera
         rightBumper: outtake
         start: toggleCollectorPivot
-    axes:
-        leftTrigger: armStow
-        rightTrigger: armCollect
     buttonpad:
         y: extendMax
         x: extendMid

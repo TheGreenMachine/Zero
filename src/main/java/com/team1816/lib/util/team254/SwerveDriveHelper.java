@@ -1,6 +1,7 @@
 package com.team1816.lib.util.team254;
 
 import com.team1816.lib.util.driveUtil.SwerveKinematics;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
@@ -19,7 +20,7 @@ public class SwerveDriveHelper implements DriveHelper {
     private static final double kLowPowerRotationScalar = 0.00625; //yml time
     private static final double kLowPowerScalar = 0.075; //yml time
 
-    private static final double kMidLowPowerRotationScalar = 0.025;
+    private static final double kMidLowPowerRotationScalar = 0.00625;
     private static final double kMidLowPowerScalar = 0.25;
 
     private static final double kRotationExponent = 2.0;
@@ -27,6 +28,14 @@ public class SwerveDriveHelper implements DriveHelper {
     private static final double kRobotRelativePoleThreshold = Math.toRadians(5);
     private static final double kDeadband = 0.15;
     private static final double kRotationDeadband = 0.05;
+
+    private final double translationSlewRate = 12.5;
+    private final SlewRateLimiter throttleFilter = new SlewRateLimiter(translationSlewRate);
+    private final SlewRateLimiter strafeFilter = new SlewRateLimiter(translationSlewRate);
+
+    private final double rotationSlewRate = 12.5;
+    private final SlewRateLimiter rotationFilter = new SlewRateLimiter(rotationSlewRate);
+
 
     /**
      * Instantiates a SwerveDriveHelper
@@ -107,9 +116,9 @@ public class SwerveDriveHelper implements DriveHelper {
         }
 
         return SwerveKinematics.inverseKinematics(
-            translationalInput.getX(),
-            translationalInput.getY(),
-            rotationInput,
+            throttleFilter.calculate(translationalInput.getX()),
+            strafeFilter.calculate(translationalInput.getY()),
+            rotationFilter.calculate(rotationInput),
             field_relative
         );
     }

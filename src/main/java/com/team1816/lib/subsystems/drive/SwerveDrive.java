@@ -147,6 +147,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             desStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Drivetrain/Swerve/DesStates");
             actStatesLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Drivetrain/Swerve/ActStates");
             temperatureLogger = new DoubleLogEntry(DataLogManager.getLog(), "Drivetrain/Swerve/Temperature");
+            gyroPitchLogger = new DoubleLogEntry(DataLogManager.getLog(), "Drivetrain/Swerve/Pitch");
+            gyroRollLogger = new DoubleLogEntry(DataLogManager.getLog(), "Drivetrain/Swerve/Roll");
         }
     }
 
@@ -319,14 +321,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             SwerveModuleState templateState = new SwerveModuleState(0, heading);
             SwerveModuleState[] statePassIn = new SwerveModuleState[]{templateState, templateState, templateState, templateState};
             setModuleStates(statePassIn);
-            ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.SOLID);
         } else {
             ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
                 throttle + fieldRelativeChassisSpeeds.vxMetersPerSecond,
                 strafe + fieldRelativeChassisSpeeds.vyMetersPerSecond,
                 fieldRelativeChassisSpeeds.omegaRadiansPerSecond);
             setModuleStates(swerveKinematics.toSwerveModuleStates(chassisSpeeds));
-            ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.BLINK);
         }
     }
 
@@ -366,6 +366,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (Constants.kLoggingDrivetrain) {
             drivetrainPoseLogger.append(new double[]{robotState.fieldToVehicle.getX(), robotState.fieldToVehicle.getY(), robotState.fieldToVehicle.getRotation().getDegrees()});
             drivetrainChassisSpeedsLogger.append(new double[]{robotState.deltaVehicle.vxMetersPerSecond, robotState.deltaVehicle.vyMetersPerSecond, robotState.deltaVehicle.omegaRadiansPerSecond});
+            gyroPitchLogger.append(infrastructure.getPitch());
+            gyroRollLogger.append(infrastructure.getRoll());
         }
     }
 

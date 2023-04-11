@@ -19,6 +19,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -179,6 +180,8 @@ public abstract class Drive
      */
     protected DoubleArrayLogEntry drivetrainPoseLogger;
     protected DoubleArrayLogEntry drivetrainChassisSpeedsLogger;
+    protected DoubleLogEntry gyroPitchLogger;
+    protected DoubleLogEntry gyroRollLogger;
 
     /**
      * Instantiates the Drive with base subsystem parameters and accounts for DemoMode
