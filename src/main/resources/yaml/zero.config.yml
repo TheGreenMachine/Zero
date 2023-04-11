@@ -115,7 +115,7 @@ subsystems:
             extensionZeroOffset: 0 # in
             extensionTicksPerInch: 5982.6
             angleTicksPerDegree: 1456.35 # ~524288ticks == full ppr
-            maxVelTicks100ms: 21000 # not being used for anything rn
+            maxVelTicks100ms: 10000 # only being used to simulate angle motors
             allowableAngleError: 2 # degree (+ || -)
             allowableExtensionError: 1 # in (+ || -)
             ## Motion Magic ##
@@ -151,6 +151,7 @@ subsystems:
                 kP: 0.025
                 allowableError: .66 # this is only being used to compare states
         constants:
+            maxVelTicks100ms: 10.83
             ## Demands ##
             cubeIntakePower: 0.70 # percent output voltage
             cubeOuttakePower: -0.45 # percent output voltage TODO test if can speed up - if we can make the elevator not have to extend and we just shoot it

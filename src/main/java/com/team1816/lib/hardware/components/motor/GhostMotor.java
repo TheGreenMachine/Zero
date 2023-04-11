@@ -118,7 +118,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
             actualOutput[0] = desaturatedVel / maxVelTicks100ms;
             actualOutput[1] = desaturatedVel;
-            actualOutput[2] = desiredDemand[2];
+            actualOutput[2] = lastPos + (actualOutput[1] / 100 * dtBetweenCallsMS);
         } else if (controlMode == ControlMode.MotionMagic) {
             // not accounting for accel rn - just using motionMagicCruiseVel
             double accelAccountedVel = Math.min(motionMagicCruiseVel, Math.abs(actualOutput[1]) + (motionMagicAccel / 100 * dtBetweenCallsMS));
