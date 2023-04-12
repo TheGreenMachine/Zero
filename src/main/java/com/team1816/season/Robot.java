@@ -406,12 +406,9 @@ public class Robot extends TimedRobot {
                                 GreenLogger.log("Auto align action started!");
                                 AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MIN);
                                 alignElevatorThread = new Thread(command::run);
-//                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
                                 alignElevatorThread.start();
                             } else {
                                 alignElevatorThread.stop();
-//                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN);
-//                                collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.SCORE);
                                 GreenLogger.log("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
@@ -426,12 +423,9 @@ public class Robot extends TimedRobot {
                                 GreenLogger.log("Auto align action started!");
                                 AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MID);
                                 alignElevatorThread = new Thread(command::run);
-//                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
                                 alignElevatorThread.start();
                             } else {
                                 alignElevatorThread.stop();
-//                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MID);
-//                                collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
                                 GreenLogger.log("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
@@ -446,12 +440,10 @@ public class Robot extends TimedRobot {
                                 GreenLogger.log("Auto align action started!");
                                 AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MAX);
                                 alignElevatorThread = new Thread(command::run);
-//                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
                                 alignElevatorThread.start();
                             } else {
                                 alignElevatorThread.stop();
                                 elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
-//                                collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
                                 GreenLogger.log("Stopped! Auto align cancelled!");
                                 runningAutoAlign = !runningAutoAlign;
                             }
@@ -709,7 +701,7 @@ public class Robot extends TimedRobot {
         try {
             if (RobotController.getUserButton()) {
                 drive.zeroSensors(Constants.kDefaultZeroingPose);
-                ledManager.indicateStatus(LedManager.RobotStatus.CUBE);
+                ledManager.indicateStatus(LedManager.RobotStatus.ZEROING);
             } else {
                 // non-camera LEDs will flash red if robot periodic updates fail
                 if (faulted) {

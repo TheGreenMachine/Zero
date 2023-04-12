@@ -1,6 +1,7 @@
 package com.team1816.lib.util.team254;
 
 import com.team1816.lib.util.Util;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 
 /**
  * Helper class to implement "Cheesy Drive". "Cheesy Drive" simply means that the "turning" stick controls the curvature
@@ -41,6 +42,12 @@ public class CheesyDriveHelper implements DriveHelper {
     private double leftPrevPwm = 0;
     private double rightPrevPwm = 0;
 
+    private static final double throttleRate = 1.0;
+    private static final double turnRate = 2.5;
+
+    private static final SlewRateLimiter throttleFilter = new SlewRateLimiter(throttleRate);
+    private static final SlewRateLimiter turnFilter = new SlewRateLimiter(turnRate);
+
     /**
      * Returns a modified DriveSignal for an arcade style control path
      *
@@ -69,8 +76,8 @@ public class CheesyDriveHelper implements DriveHelper {
         boolean isQuickTurn,
         boolean isHighGear
     ) {
-        wheel = handleDeadband(wheel, kWheelDeadband);
-        throttle = handleDeadband(throttle, kThrottleDeadband);
+        wheel = throttleFilter.calculate(handleDeadband(wheel, kWheelDeadband));
+        throttle = turnFilter.calculate(handleDeadband(throttle, kThrottleDeadband));
 
         double negInertia = wheel - mOldWheel;
         mOldWheel = wheel;

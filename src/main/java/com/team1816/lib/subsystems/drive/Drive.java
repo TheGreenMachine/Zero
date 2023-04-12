@@ -365,10 +365,11 @@ public abstract class Drive
     }
 
     /**
-     *
      * @return whether drivetrain is in slowMode
      */
-    public boolean getSlowMode() { return isSlowMode; }
+    public boolean getSlowMode() {
+        return isSlowMode;
+    }
 
     /**
      * Sets the drivetrain to normalize gyroscopic pitch and yaw with gradient of maximal descent

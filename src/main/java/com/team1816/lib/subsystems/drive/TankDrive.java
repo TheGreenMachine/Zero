@@ -143,14 +143,14 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public synchronized void writeToHardware() {// sets the demands for hardware from the inputs provided
         if (controlState == ControlState.OPEN_LOOP) {
-                leftMain.set(
-                    ControlMode.PercentOutput,
-                    isSlowMode ? (leftPowerDemand * 0.5) : leftPowerDemand
-                );
-                rightMain.set(
-                    ControlMode.PercentOutput,
-                    isSlowMode ? (rightPowerDemand * 0.5) : rightPowerDemand
-                );
+            leftMain.set(
+                ControlMode.PercentOutput,
+                isSlowMode ? (leftPowerDemand * 0.5) : leftPowerDemand
+            );
+            rightMain.set(
+                ControlMode.PercentOutput,
+                isSlowMode ? (rightPowerDemand * 0.5) : rightPowerDemand
+            );
         } else {
             leftMain.set(ControlMode.Velocity, leftVelDemand);
             rightMain.set(ControlMode.Velocity, rightVelDemand);

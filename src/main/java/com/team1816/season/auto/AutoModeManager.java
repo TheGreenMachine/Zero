@@ -2,7 +2,9 @@ package com.team1816.season.auto;
 
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.PathFinder;
-import com.team1816.lib.auto.modes.*;
+import com.team1816.lib.auto.modes.AutoMode;
+import com.team1816.lib.auto.modes.DoNothingMode;
+import com.team1816.lib.auto.modes.DriveStraightMode;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.modes.*;
 import com.team1816.season.configuration.Constants;

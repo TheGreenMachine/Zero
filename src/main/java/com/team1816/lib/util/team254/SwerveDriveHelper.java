@@ -104,7 +104,7 @@ public class SwerveDriveHelper implements DriveHelper {
         translationalInput = translationalInput.times(kOpenLoopMaxVelMeters);
         rotationInput *= kMaxRotation;
 
-         if (low_power) {
+        if (low_power) {
             translationalInput = translationalInput.times(kLowPowerScalar);
             rotationInput *= kLowPowerRotationScalar;
         } else {

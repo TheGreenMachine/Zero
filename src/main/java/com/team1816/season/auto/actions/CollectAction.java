@@ -6,7 +6,6 @@ import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.Collector;
-import edu.wpi.first.wpilibj.RobotBase;
 
 public class CollectAction implements AutoAction {
 

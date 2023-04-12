@@ -269,13 +269,13 @@ public class LedManager extends Subsystem {
      */
     public enum RobotStatus {
         ENABLED(0, MAX, 0), // green
-        DISABLED(MAX, MAX / 4, 0), // orange
+        DISABLED(MAX, MAX / 6, 0), // orange
         ERROR(MAX, 0, 0), // red
         AUTONOMOUS(0, MAX, MAX), // cyan
         ENDGAME(0, 0, MAX), // blue
         CUBE(MAX, 0, 150), // magenta
         RAGE(MAX, 5, 5), // deep red
-        CONE(MAX, 50, 0), // yellow,
+        CONE(MAX, 70, 0), // yellow,
         ON_TARGET(MAX, MAX, MAX), // white
         BALANCE(50, 50, MAX), // light blue
         ZEROING(MAX, 0, MAX), // deep magenta, - elevator or robot during vision update

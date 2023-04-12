@@ -11,7 +11,7 @@ public class XboxController extends Controller {
 
     public XboxController(int port) {
         super(port);
-        if(RobotBase.isReal()){
+        if (RobotBase.isReal()) {
             mJoystickButtonMap.put(Controller.Button.A, 1);
             mJoystickButtonMap.put(Controller.Button.B, 2);
             mJoystickButtonMap.put(Controller.Button.X, 3);

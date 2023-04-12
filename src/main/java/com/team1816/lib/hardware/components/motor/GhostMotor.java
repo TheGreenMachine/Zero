@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 
 import static java.lang.Double.NaN;
-import static java.lang.Double.max;
 
 /**
  * This class emulates the behaviour of a Motor that is not physically implemented on a robot
@@ -83,11 +82,11 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
             this.desiredDemand[1] = NaN;
             this.desiredDemand[2] = demand;
         } else {
-                GreenLogger.log("no support for this Mode in GhostMotor!");
-                return;
-            }
-            controlMode = Mode;
+            GreenLogger.log("no support for this Mode in GhostMotor!");
+            return;
         }
+        controlMode = Mode;
+    }
 
     private void updateActValues() {
         // don't make unnecessary calculations if robot not in sim
