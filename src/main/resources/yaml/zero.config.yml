@@ -115,31 +115,31 @@ subsystems:
             isDemoMode: 0
             extensionZeroOffset: 0 # in
             extensionTicksPerInch: 5982.6
-            angleTicksPerDegree: 1456.35 # ~524288ticks == full ppr
-            maxVelTicks100ms: 10000 # only being used to simulate angle motors
-            allowableAngleError: 4 # degree (+ || -)
+            angleTicksPerDegree: 1456.35 # PPR: ~524288 ticks
+            maxVelTicks100ms: 10000 # used to simulate angle motors
+            allowableAngleError: 4 # degrees (+ || -)
             allowableExtensionError: 1.5 # in (+ || -)
             ## Motion Magic ##
             motionMagicEnabled: 1 # 0 or 1, disable to utilize standard pid control
-            motionMagicCruiseVelocity: 20000 # ticks per 100ms - was 200,000 (which was ticks/s NOT t/100ms)
+            motionMagicCruiseVelocity: 20000 # ticks per 100ms
             motionMagicAcceleration: 64000 # ticks per 100ms per second
             ## Limits ##
-            forwardExtensionLimit: 45.125 # in - 330000ticks
+            forwardExtensionLimit: 45.125 # in - 330000 ticks
             reverseExtensionLimit: 0 # in
-            forwardAngleLimit: 68.66  # degs - 100000ticks - Elevator horizontal orientation
-            reverseAngleLimit: -6.86 # degs - -10000ticks - Elevator vertical orientation
+            forwardAngleLimit: 68.66  # degrees - 100000 ticks - Elevator horizontal orientation
+            reverseAngleLimit: -6.86 # degrees - (-10000) ticks - Elevator vertical orientation
             ## Angles ##
-            stowAngle: 40 # degrees - 90000ticks
-            collectAngle: 0 # degs - -2500ticks (was using timer)
-            scoreAngle: 40 # degs - 60000ticks
-            shelfAngle: 59.46 # degs - 70000ticks TODO tune - for cone rn
+            stowAngle: 40 # degrees - 90000 ticks
+            collectAngle: 0 # degrees - -2500 ticks
+            scoreAngle: 40 # degrees - 60000 ticks
+            shelfAngle: 59.46 # degrees - 70000 ticks
             ## Extensions ##
             stowExtension: 1 # in
-            minExtension: 3.8 # in - 20000ticks
-            midExtension: 13 # in - 130000ticks
-            maxExtension: 33.5 # in - 320000ticks
-            shelfConeExtension: 13 # in - 150000ticks TODO tune - for cone rn
-            shelfCubeExtension: 10 # in - 150000ticks TODO tune - for cube rn
+            minExtension: 3.8 # in - 20000 ticks
+            midExtension: 13 # in - 130000 ticks
+            maxExtension: 33.5 # in - 320000 ticks
+            shelfConeExtension: 13 # in - 150000 ticks
+            shelfCubeExtension: 10 # in - 150000 ticks
     collector:
         implemented: true
         sparkmaxes:
@@ -155,7 +155,7 @@ subsystems:
             maxVelTicks100ms: 10.83
             ## Demands ##
             cubeIntakePower: 0.70 # percent output voltage
-            cubeOuttakePower: -0.45 # percent output voltage TODO test if can speed up - if we can make the elevator not have to extend and we just shoot it
+            cubeOuttakePower: -0.45 # percent output voltage
             coneIntakePower: -1 #was -0.50 - 1.375
             coneOuttakePower: 0.65
             ## Positions - 1/4 collector rotation = 29 ##
