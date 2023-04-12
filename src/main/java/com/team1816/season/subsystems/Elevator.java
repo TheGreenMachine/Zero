@@ -31,6 +31,8 @@ public class Elevator extends Subsystem {
     /**
      * Properties
      */
+    private static final boolean isDemoMode = factory.getConstant(NAME, "isDemoMode", 0) > 0;
+
     public static final double kElevatorMinLength = 0.70; // meters
     public static final double kElevatorMaxLength = 1.25; // meters
 
@@ -64,7 +66,6 @@ public class Elevator extends Subsystem {
     /**
      * States
      */
-
     private double desiredExtensionTicks = 0;
     private double desiredAngleTicks = 0;
     private double actualExtensionTicks = 0;
@@ -102,7 +103,7 @@ public class Elevator extends Subsystem {
         this.angleMotorFollower = factory.getFollowerMotor(NAME, "angleMotorFollower", angleMotorMain);
         this.extensionMotor = factory.getMotor(NAME, "extensionMotor");
 
-        double extensionPeakOutput = 1;
+        double extensionPeakOutput = (!isDemoMode) ? 1 : 0.5;
         extensionMotor.configPeakOutputForward(extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.configPeakOutputReverse(-extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.configForwardSoftLimitEnable(true, Constants.kCANTimeoutMs);
@@ -112,7 +113,7 @@ public class Elevator extends Subsystem {
         extensionMotor.configClosedLoopPeakOutput(2, extensionPeakOutput, Constants.kCANTimeoutMs);
         extensionMotor.selectProfileSlot(extensionPIDSlot, 0); // uses the system slot2 configuration for extension control
 
-        double angularPeakOutput = 1;
+        double angularPeakOutput = (!isDemoMode) ? 1 : 0.5;
         angleMotorMain.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
         angleMotorMain.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
         angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
@@ -127,8 +128,14 @@ public class Elevator extends Subsystem {
         allowableExtensionError = factory.getConstant(NAME, "allowableExtensionError") * extensionTicksPerInch;
 
         if (motionMagicEnabled) {
-            var motionMagicCruiseVelTicksPer100ms = factory.getConstant(NAME, "motionMagicCruiseVelocity");
-            var motionMagicAccelTicksPer100msPerSecond = factory.getConstant(NAME, "motionMagicAcceleration");
+            double motionMagicCruiseVelTicksPer100ms, motionMagicAccelTicksPer100msPerSecond;
+            if (isDemoMode) {
+                motionMagicCruiseVelTicksPer100ms = factory.getConstant(NAME, "motionMagicCruiseVelocity") * 0.25;
+                motionMagicAccelTicksPer100msPerSecond = factory.getConstant(NAME, "motionMagicAcceleration") * 0.25;
+            } else {
+                motionMagicCruiseVelTicksPer100ms = factory.getConstant(NAME, "motionMagicCruiseVelocity");
+                motionMagicAccelTicksPer100msPerSecond = factory.getConstant(NAME, "motionMagicAcceleration");
+            }
             extensionMotor.configMotionCruiseVelocity(motionMagicCruiseVelTicksPer100ms, Constants.kCANTimeoutMs);
             extensionMotor.configMotionAcceleration(motionMagicAccelTicksPer100msPerSecond, Constants.kCANTimeoutMs);
         }

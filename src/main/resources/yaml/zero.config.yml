@@ -112,6 +112,7 @@ subsystems:
                 allowableError: 200 # for PID control NOT checking if reached desired position
         constants:
             ## Config ##
+            isDemoMode: 0
             extensionZeroOffset: 0 # in
             extensionTicksPerInch: 5982.6
             angleTicksPerDegree: 1456.35 # ~524288ticks == full ppr
