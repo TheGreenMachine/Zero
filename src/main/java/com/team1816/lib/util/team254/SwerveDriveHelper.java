@@ -29,11 +29,11 @@ public class SwerveDriveHelper implements DriveHelper {
     private static final double kDeadband = 0.15;
     private static final double kRotationDeadband = 0.05;
 
-    private final double translationSlewRate = 12.5;
+    private final double translationSlewRate = 11.25;
     private final SlewRateLimiter throttleFilter = new SlewRateLimiter(translationSlewRate);
     private final SlewRateLimiter strafeFilter = new SlewRateLimiter(translationSlewRate);
 
-    private final double rotationSlewRate = 12.5;
+    private final double rotationSlewRate = 11.25;
     private final SlewRateLimiter rotationFilter = new SlewRateLimiter(rotationSlewRate);
 
 
