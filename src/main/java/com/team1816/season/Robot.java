@@ -308,7 +308,7 @@ public class Robot extends TimedRobot {
                                 ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK); // indicates on LEDs
                             } else {
                                 collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
-                                ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
+                                ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.SOLID);
                             }
                         }
                     ),
@@ -326,7 +326,7 @@ public class Robot extends TimedRobot {
                                 ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK); // indicates on LEDs
                             } else {
                                 collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
-                                ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
+                                ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.SOLID);
                             }
                         }
                     ),
