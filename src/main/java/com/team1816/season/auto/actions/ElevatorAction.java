@@ -68,9 +68,6 @@ public class ElevatorAction implements AutoAction {
 
     @Override
     public boolean isFinished() {
-        if (!elevator.isImplemented()) {
-            return true;
-        }
         return robotState.actualElevatorAngleState.equals(desiredAngleState)
             && robotState.actualElevatorExtensionState.equals(desiredExtensionState);
     }

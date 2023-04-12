@@ -270,12 +270,10 @@ public class Collector extends Subsystem {
                     pos = pivotFloorPosition;
                 }
                 case SCORE -> {
-                    if (currentGameElement == GAME_ELEMENT.CONE) {
-                        pos = pivotConeScorePosition;
-                    } else if (currentGameElement == GAME_ELEMENT.CUBE) {
+                    if (currentGameElement == GAME_ELEMENT.CUBE) {
                         pos = pivotCubeScorePosition;
                     } else {
-                        pos = pivotStowPosition;
+                        pos = pivotConeScorePosition;
                     }
                 }
                 case SHELF -> {

@@ -65,7 +65,6 @@ public class CollectAction implements AutoAction {
         } else if (desiredRollerState == Collector.ROLLER_STATE.OUTTAKE_CUBE) {
             ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.SOLID);
         } else if (desiredRollerState == Collector.ROLLER_STATE.STOP) {
-            ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET);
         }
         if (desiredRollerState != null) {
             GreenLogger.log("Setting collector to state: " + desiredRollerState.name());

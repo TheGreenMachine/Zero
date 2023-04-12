@@ -10,7 +10,7 @@ public class ScoreAction extends SeriesAction {
     public ScoreAction(Collector.GAME_ELEMENT gameElement, Elevator.EXTENSION_STATE extensionState) {
         super(
             new SeriesAction(
-                new CollectAction(Collector.ROLLER_STATE.STOP),
+                new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.SCORE),
                 new ElevatorAction(Elevator.ANGLE_STATE.SCORE, extensionState),
                 new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.SCORE),
                 new CollectAction(gameElement == Collector.GAME_ELEMENT.CUBE ? Collector.ROLLER_STATE.OUTTAKE_CUBE : Collector.ROLLER_STATE.OUTTAKE_CONE),
