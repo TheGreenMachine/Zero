@@ -97,7 +97,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
         // whether motor needs to calculate new numbers - this
         double timeNow = Timer.getFPGATimestamp();
         double dtBetweenCallsMS = (timeNow - lastUpdate) * 1000;
-        if (dtBetweenCallsMS < Robot.looperDt * 0.75) {
+        if (dtBetweenCallsMS < Robot.robotDt) {
             lastUpdate = timeNow;
             return;
         }
