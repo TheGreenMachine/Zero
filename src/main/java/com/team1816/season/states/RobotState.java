@@ -271,8 +271,10 @@ public class RobotState {
             y_rot = colRot.getY();
             z_rot = colRot.getZ();
 
-            xExtension = Math.cos(Math.toRadians(actualElevatorAngle)) * actEleExtMeters + Elevator.kElevatorMinLength - 0.2;
-            zExtension = Math.sin(Math.toRadians(actualElevatorAngle)) * actEleExtMeters + Elevator.kElevatorMinLength - 0.2;
+            xExtension = Math.cos(Math.toRadians(actualElevatorAngle)) * (actEleExtMeters + Elevator.kElevatorMinLength)
+                    + Math.cos(Math.toRadians(90 - actualElevatorAngle)) * 0.16;
+            zExtension = Math.sin(Math.toRadians(actualElevatorAngle)) * (actEleExtMeters + Elevator.kElevatorMinLength)
+                    - Math.sin(Math.toRadians(90 - actualElevatorAngle)) * 0.16;;
 
             SmartDashboard.putNumberArray(
                     "Collector/3dPoses/Collector",
