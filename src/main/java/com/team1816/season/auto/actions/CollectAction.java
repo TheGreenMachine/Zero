@@ -63,14 +63,15 @@ public class CollectAction implements AutoAction {
             ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.SOLID);
         } else if (desiredRollerState == Collector.ROLLER_STATE.OUTTAKE_CUBE) {
             ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.SOLID);
-        } else if (desiredRollerState == Collector.ROLLER_STATE.STOP) {
         }
+
+        GreenLogger.log("(Game Element = " + collector.getCurrentGameElement() + ")");
         if (desiredRollerState != null) {
             GreenLogger.log("Setting collector to state: " + desiredRollerState.name());
             collector.setDesiredRollerState(desiredRollerState);
         }
         if (desiredPivotState != null) {
-            GreenLogger.log("Setting collector to state: " + desiredPivotState.name() + ", Game element =  " + collector.getCurrentGameElement());
+            GreenLogger.log("Setting collector to state: " + desiredPivotState.name());
             collector.setDesiredPivotState(desiredPivotState);
         }
     }

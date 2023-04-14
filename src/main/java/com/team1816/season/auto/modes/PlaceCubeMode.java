@@ -5,7 +5,7 @@ import com.team1816.lib.auto.actions.SeriesAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.util.logUtil.GreenLogger;
-import com.team1816.season.auto.actions.AlignActionMax;
+import com.team1816.season.auto.actions.AlignMaxAction;
 import com.team1816.season.auto.actions.ScoreAction;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
@@ -17,11 +17,11 @@ public class PlaceCubeMode extends AutoMode {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        GreenLogger.log("Running Place Cone Mode");
+        GreenLogger.log("Running Place Cube Mode");
         runAction(new WaitAction(.5));
         runAction(
             new SeriesAction(
-                new AlignActionMax(),
+                new AlignMaxAction(),
                 new ScoreAction(Collector.GAME_ELEMENT.CUBE, Elevator.EXTENSION_STATE.MAX)
             )
         );

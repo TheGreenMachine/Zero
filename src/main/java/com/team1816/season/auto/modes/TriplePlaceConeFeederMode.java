@@ -66,7 +66,7 @@ public class TriplePlaceConeFeederMode extends AutoMode {
                 // scoring first cone
                 new SeriesAction(
                     new WaitAction(.05),
-                    new AlignActionMin(),
+                    new AlignMinAction(),
                     new ParallelAction(
                         new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MIN),
                         new SeriesAction(

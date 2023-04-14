@@ -64,8 +64,8 @@ public class RobotState {
 
     public boolean gameElementChanged = false;
 
-    public final Mechanism2d mechCanvas = new Mechanism2d(3, 3);
-    public final MechanismRoot2d root = mechCanvas.getRoot("ElevatorArm", 1.3, 0.38);
+    public final Mechanism2d mechanismCanvas = new Mechanism2d(3, 3);
+    public final MechanismRoot2d root = mechanismCanvas.getRoot("ElevatorArm", 1.3, 0.38);
     public final MechanismLigament2d simArm = root.append(new MechanismLigament2d("elevator", Elevator.kElevatorMinLength, 90));
     public final MechanismLigament2d simCollector = simArm.append(new MechanismLigament2d("collector", Collector.kCollectorLength, 90));
 
@@ -231,7 +231,7 @@ public class RobotState {
                 color = new Color8Bit(125, 125, 125);
             }
             simCollector.setColor(color);
-            SmartDashboard.putData("Mech 2D", mechCanvas);
+            SmartDashboard.putData("Mech 2D", mechanismCanvas);
         }
     }
 }

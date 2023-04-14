@@ -8,6 +8,8 @@ import com.team1816.season.subsystems.Elevator;
 
 public class AlignAction extends SeriesAction {
 
+    private static Elevator.EXTENSION_STATE levelState;
+
     public AlignAction(Elevator.EXTENSION_STATE extensionState, double minCollectTriggerThreshold, double maxCollectTriggerThreshold) {
         super(
             // extension to desired scoring level
@@ -21,17 +23,18 @@ public class AlignAction extends SeriesAction {
                 )
             )
         );
+        levelState = extensionState;
     }
 
     @Override
     public void start() {
-        GreenLogger.log("Started Elevator Align Action");
+        GreenLogger.log("Started Elevator Align Action (Level: " + levelState.name() + ")");
         super.start();
     }
 
     @Override
     public void done() {
-        GreenLogger.log("Elevator Align Action Completed");
+        GreenLogger.log("Elevator Align Action Completed (Level: " + levelState.name() + ")");
         super.done();
     }
 }

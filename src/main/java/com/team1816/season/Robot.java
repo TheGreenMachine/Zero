@@ -458,11 +458,10 @@ public class Robot extends TimedRobot {
                                 GreenLogger.log("Auto Score action started!");
                                 AutoScoreCommand command = new AutoScoreCommand(collector.getCurrentGameElement(), elevator.getDesiredExtensionState());
                                 autoScoreThread = new Thread(command::run);
-                                ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.BLINK);
                                 autoScoreThread.start();
                             } else {
                                 autoScoreThread.stop();
-                                GreenLogger.log("Stopped! Auto scoring cancelled!");
+                                GreenLogger.log("Stopped! Auto Score sequence cancelled!");
                                 runningAutoScore = !runningAutoScore;
                             }
                         }
