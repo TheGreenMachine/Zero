@@ -246,19 +246,19 @@ public class RobotState {
             double zExtension = Math.sin(Math.toRadians(actualElevatorAngle)) * actEleExtMeters;
 
             SmartDashboard.putNumberArray(
-                    "Elevator/3dPoses/FirstExtension",
+                    "Elevator/FirstExtension",
                     new double[]{-0.2, 0, 0.38, w_rot, x_rot, y_rot, z_rot}
             );
             SmartDashboard.putNumberArray(
-                    "Elevator/3dPoses/SecondExtension",
+                    "Elevator/SecondExtension",
                     new double[]{-0.2 + xExtension * 0.333, 0, 0.38 + zExtension * 0.333, w_rot, x_rot, y_rot, z_rot}
             );
             SmartDashboard.putNumberArray(
-                    "Elevator/3dPoses/ThirdExtension",
+                    "Elevator/ThirdExtension",
                     new double[]{-0.2 + xExtension * 0.666, 0, 0.38 + zExtension * 0.666, w_rot, x_rot, y_rot, z_rot}
             );
             SmartDashboard.putNumberArray(
-                    "Elevator/3dPoses/FourthExtension",
+                    "Elevator/FourthExtension",
                     new double[]{-0.2 + xExtension, 0, 0.38 + zExtension, w_rot, x_rot, y_rot, z_rot}
             );
 
@@ -277,7 +277,7 @@ public class RobotState {
                     - Math.sin(Math.toRadians(90 - actualElevatorAngle)) * 0.16;;
 
             SmartDashboard.putNumberArray(
-                    "Collector/3dPoses/Collector",
+                    "Collector/Collector",
                     new double[]{-0.2 + xExtension, 0, 0.38 + zExtension, w_rot, x_rot, y_rot, z_rot}
             );
         }
