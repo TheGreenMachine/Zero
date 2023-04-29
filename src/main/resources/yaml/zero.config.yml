@@ -179,7 +179,7 @@ subsystems:
             maxLevel: 200
             ledStripCount: 35
     camera:
-        implemented: true
+        implemented: false
         constants:
             dummy: 0
 infrastructure:
