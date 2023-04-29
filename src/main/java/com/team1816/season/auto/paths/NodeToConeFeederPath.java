@@ -19,10 +19,11 @@ public class NodeToConeFeederPath extends AutoPath {
     @Override
     protected List<Pose2d> getWaypoints() {
         return List.of(
-            new Pose2d(1.75, 5.05, Rotation2d.fromDegrees(0)),
+            new Pose2d(1.77, 4.95, Rotation2d.fromDegrees(-35)),
+//            new Pose2d(2.285, 4.875, Rotation2d.fromDegrees(-20)),
             new Pose2d(2.8, 4.8, Rotation2d.fromDegrees(0)),
             new Pose2d(4.5, 4.8, Rotation2d.fromDegrees(0)),
-            new Pose2d(6.2, 4.7, Rotation2d.fromDegrees(0))
+            new Pose2d(6.2, 4.6, Rotation2d.fromDegrees(0))
         );
     }
 
@@ -30,7 +31,8 @@ public class NodeToConeFeederPath extends AutoPath {
     protected List<Rotation2d> getWaypointHeadings() {
         return List.of(
             Rotation2d.fromDegrees(180),
-            Rotation2d.fromDegrees(40),
+//            Rotation2d.fromDegrees(180),
+            Rotation2d.fromDegrees(0),
             Rotation2d.fromDegrees(0),
             Rotation2d.fromDegrees(0)
         );
