@@ -42,7 +42,7 @@ public class AutoBalanceAction implements AutoAction {
 
         isSwerve = drive instanceof SwerveDrive;
 
-        GreenLogger.log("Initiating auto balance!");
+        GreenLogger.log("Initiating balance procedure!");
         ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.BLINK);
         drive.autoBalance(new ChassisSpeeds());
     }
@@ -59,7 +59,7 @@ public class AutoBalanceAction implements AutoAction {
 
     @Override
     public void done() {
-        GreenLogger.log("Drivetrain is Balanced!");
+        GreenLogger.log("Drivetrain is balanced!");
         ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.SOLID);
         drive.setBraking(true);
     }

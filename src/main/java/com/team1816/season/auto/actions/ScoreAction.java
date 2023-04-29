@@ -7,6 +7,9 @@ import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
 
 public class ScoreAction extends SeriesAction {
+
+    private static Elevator.EXTENSION_STATE level;
+
     public ScoreAction(Collector.GAME_ELEMENT gameElement, Elevator.EXTENSION_STATE extensionState) {
         super(
             new SeriesAction(
@@ -20,17 +23,19 @@ public class ScoreAction extends SeriesAction {
                 new ElevatorAction(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN)
             )
         );
+
+        level = extensionState;
     }
 
     @Override
     public void start() {
-        GreenLogger.log("Started Score Action Sequence");
+        GreenLogger.log("Started Score Action Sequence (Level: " + level.name() + ")");
         super.start();
     }
 
     @Override
     public void done() {
-        GreenLogger.log("Score Action Sequence Completed");
+        GreenLogger.log("Score Action Sequence Completed (Level: " + level.name() + ")");
         super.done();
     }
 }

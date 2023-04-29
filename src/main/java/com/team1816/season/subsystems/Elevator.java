@@ -115,7 +115,7 @@ public class Elevator extends Subsystem {
         extensionMotor.selectProfileSlot(extensionPIDSlot, 0); // uses the system slot2 configuration for extension control
 
         // for some odd reason if these nums aren't specified as doubles they make the angle motor not work in sim
-        double angularPeakOutput = (!isDemoMode) ? 1d : 0.5d;
+        double angularPeakOutput = (!isDemoMode) ? 1 : 0.5;
         angleMotorMain.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
         angleMotorMain.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
         angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);

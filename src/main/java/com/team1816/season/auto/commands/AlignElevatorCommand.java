@@ -4,7 +4,9 @@ import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.commands.AutoCommand;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.Robot;
-import com.team1816.season.auto.actions.AlignAction;
+import com.team1816.season.auto.actions.AlignMaxAction;
+import com.team1816.season.auto.actions.AlignMidAction;
+import com.team1816.season.auto.actions.AlignMinAction;
 import com.team1816.season.subsystems.Elevator;
 
 public class AlignElevatorCommand extends AutoCommand {
@@ -16,19 +18,19 @@ public class AlignElevatorCommand extends AutoCommand {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        GreenLogger.log("Running Auto Score Command!");
+        GreenLogger.log("Running Align Elevator Command!");
         if (extensionState == Elevator.EXTENSION_STATE.MAX) {
-            runAction(new AlignAction(extensionState, (Elevator.EXTENSION_STATE.MID.getExtension() + Elevator.EXTENSION_STATE.MAX.getExtension()) / 2d, Elevator.EXTENSION_STATE.MAX.getExtension()));
+            runAction(new AlignMaxAction());
         } else if (extensionState == Elevator.EXTENSION_STATE.MID) {
-            runAction(new AlignAction(extensionState, (Elevator.EXTENSION_STATE.MIN.getExtension() + Elevator.EXTENSION_STATE.MID.getExtension()) / 2d, Elevator.EXTENSION_STATE.MID.getExtension()));
+            runAction(new AlignMidAction());
         } else {
-            runAction(new AlignAction(extensionState, 0, (Elevator.EXTENSION_STATE.MIN.getExtension() + Elevator.EXTENSION_STATE.MID.getExtension()) / 2d));
+            runAction(new AlignMinAction());
         }
     }
 
     public void done() {
         super.done();
         Robot.runningAutoAlign = false;
-        GreenLogger.log("Auto Score Command Completed!");
+        GreenLogger.log(" Align Elevator Command Completed!");
     }
 }

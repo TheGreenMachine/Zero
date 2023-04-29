@@ -26,6 +26,6 @@ public class AutoScoreCommand extends AutoCommand {
     public void done() {
         super.done();
         Robot.runningAutoScore = false;
-        GreenLogger.log("Auto Score Mode Command!");
+        GreenLogger.log("Auto Score Command Completed!");
     }
 }

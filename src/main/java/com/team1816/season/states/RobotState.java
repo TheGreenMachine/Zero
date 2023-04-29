@@ -69,7 +69,6 @@ public class RobotState {
     public final MechanismLigament2d simArm = root.append(new MechanismLigament2d("elevator", Elevator.kElevatorMinLength, 90));
     public final MechanismLigament2d simCollector = simArm.append(new MechanismLigament2d("collector", Collector.kCollectorLength, 90));
 
-
     /**
      * Functional pathing states
      */

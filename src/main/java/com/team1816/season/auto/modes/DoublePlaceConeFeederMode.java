@@ -53,23 +53,18 @@ public class DoublePlaceConeFeederMode extends AutoMode {
                 // placing first cone
                 new SeriesAction(
                     new WaitAction(.05),
-                    new AlignActionMax(),
+                    new AlignMaxAction(),
                     new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
-                    new WaitUntilElevatorExtensionInsideRegion(Elevator.minExtension, Elevator.midExtension - ((Elevator.midExtension - Elevator.minExtension) * .5)), // half between
+                    new WaitUntilElevatorExtensionInsideRegion(Elevator.minExtension, (Elevator.midExtension + Elevator.minExtension) * .5), // half between
                     new ParallelAction(
                         trajectoryActions.get(0),
                         new SeriesAction(
-                            new WaitAction(0.8),
+                            // collecting second cone
+                            new WaitAction(1.2),
                             new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
                             new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR)
                         )
                     )
-                ),
-                // collecting second cone
-                new SeriesAction(
-                    new ElevatorAction(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN),
-                    new CollectAction(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR),
-                    new WaitAction(.5)
                 ),
                 // aligning
                 new ParallelAction(
@@ -77,9 +72,8 @@ public class DoublePlaceConeFeederMode extends AutoMode {
                     new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
                     trajectoryActions.get(1)
                 ),
-                new AlignAction(Elevator.EXTENSION_STATE.MAX, (Elevator.midExtension + Elevator.maxExtension) * .75, Elevator.maxExtension),
+                new AlignMaxAction(),
                 // scoring second cone
-                new WaitAction(0.25),
                 new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
                 new WaitAction(0.5)
             )

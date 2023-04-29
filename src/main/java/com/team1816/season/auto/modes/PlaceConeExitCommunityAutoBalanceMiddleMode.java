@@ -7,7 +7,7 @@ import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.util.logUtil.GreenLogger;
-import com.team1816.season.auto.actions.AlignActionMax;
+import com.team1816.season.auto.actions.AlignMaxAction;
 import com.team1816.season.auto.actions.AutoBalanceAction;
 import com.team1816.season.auto.actions.ElevatorAction;
 import com.team1816.season.auto.actions.ScoreAction;
@@ -57,16 +57,13 @@ public class PlaceConeExitCommunityAutoBalanceMiddleMode extends AutoMode {
         runAction(
             new SeriesAction(
                 new WaitAction(0.25),
-                new AlignActionMax(),
+                new AlignMaxAction(),
                 new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
                 new WaitAction(0.25),
                 new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
                 trajectoryActions.get(0),
-                new WaitAction(0.25),
                 trajectoryActions.get(1),
-                new WaitAction(0.25),
                 trajectoryActions.get(2),
-                new WaitAction(0.25),
                 new AutoBalanceAction()
             )
         );

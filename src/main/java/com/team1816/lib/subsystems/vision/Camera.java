@@ -148,7 +148,7 @@ public class Camera extends Subsystem {
         }
         robotState.visibleTarget = getSingularPoint(); // we're only using one point rn anyway
 
-        if (Constants.kLoggingRobot) {
+        if (Constants.kLoggingRobot && cameraEnabled) {
             var targetPose = robotState.fieldToVehicle;
 
             Pose3d aprilTagPose = FieldConfig.fieldTargets2023.get(robotState.visibleTarget.id);

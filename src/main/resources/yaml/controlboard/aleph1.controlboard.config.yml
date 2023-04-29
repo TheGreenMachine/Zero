@@ -7,8 +7,8 @@ driver:
         right:
             horizontal: rotation
     buttonpad:
-        x: toggleArmScoreCollect # remapped to back left button
-        y: shelfPos # remapped to back right button
+        x: toggleArmScoreCollect # remapped to back left button on controller
+        y: shelfPos # remapped to back right button on controller
         b: brakeMode
         a: autoTargetAlign
     axes:

@@ -150,7 +150,7 @@ public class TrajectoryAction implements AutoAction {
     @Override
     public void start() {
         GreenLogger.log(
-            "Starting trajectory! (seconds = " + trajectory.getTotalTimeSeconds() + ")"
+            "Starting trajectory! (Seconds = " + trajectory.getTotalTimeSeconds() + ")"
         );
         drive.startTrajectory(trajectory, headings);
         command.initialize();
