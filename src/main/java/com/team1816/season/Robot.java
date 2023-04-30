@@ -13,9 +13,6 @@ import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.AutoModeManager;
-import com.team1816.season.auto.commands.AlignElevatorCommand;
-import com.team1816.season.auto.commands.AutoScoreCommand;
-import com.team1816.season.auto.commands.TargetAlignCommand;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.DrivetrainTargets;
 import com.team1816.season.states.Orchestrator;
@@ -108,16 +105,7 @@ public class Robot extends TimedRobot {
     private int node = 0;
     private Elevator.EXTENSION_STATE level = Elevator.EXTENSION_STATE.MIN;
 
-    private boolean desireCube = true;
-
-    public static boolean runningAutoTarget = false;
-    public static boolean runningAutoTargetAlign = false;
-
-    public static boolean runningAutoAlign = false;
-    public static boolean runningAutoScore = false;
-    public static boolean runningAutoBalance = false;
     public Elevator.ANGLE_STATE prevAngleState;
-    private double dPadMoveSpeed;
 
     private boolean snappingToHumanPlayer;
     private boolean snappingToDriver;
@@ -150,8 +138,6 @@ public class Robot extends TimedRobot {
             robotLoopLogger = new DoubleLogEntry(DataLogManager.getLog(), "Timings/Robot");
             looperLogger = new DoubleLogEntry(DataLogManager.getLog(), "Timings/RobotState");
         }
-
-        dPadMoveSpeed = factory.getConstant(Drive.NAME, "dPadMoveSpeed", 0);
     }
 
     /**
@@ -249,28 +235,7 @@ public class Robot extends TimedRobot {
                             } else {
                                 robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
                             }
-                            if (!runningAutoTargetAlign) {
-                                runningAutoTargetAlign = true;
-                                orchestrator.updatePoseWithCamera();
-                                double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
-                                if (distance < Constants.kMinTrajectoryDistance) {
-                                    GreenLogger.log("Distance to target is " + distance + " m");
-                                    GreenLogger.log("Too close to target! can not start trajectory! setting elevator extension to: " + level.name());
-                                    AlignElevatorCommand command = new AlignElevatorCommand(level);
-                                    autoTargetAlignThread = new Thread(command::run);
-                                } else {
-                                    GreenLogger.log("Drive trajectory action started!");
-                                    TargetAlignCommand command = new TargetAlignCommand(level);
-                                    autoTargetAlignThread = new Thread(command::run);
-                                }
-                                ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS, LedManager.ControlState.SOLID);
-                                autoTargetAlignThread.start();
-                            } else {
-                                autoTargetAlignThread.stop();
-                                GreenLogger.log("Stopped! driving to trajectory canceled!");
-                                ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
-                                runningAutoTargetAlign = !runningAutoTargetAlign;
-                            }
+                            orchestrator.autoTargetAlign(level);
                         }
                     ),
                     createHoldAction(
@@ -400,69 +365,28 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("extendMin"),
                         () -> {
                             GreenLogger.log("extend min");
-                            if (!runningAutoAlign) {
-                                runningAutoAlign = true;
-                                GreenLogger.log("Auto align action started!");
-                                AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MIN);
-                                alignElevatorThread = new Thread(command::run);
-                                alignElevatorThread.start();
-                            } else {
-                                alignElevatorThread.stop();
-                                GreenLogger.log("Stopped! Auto align cancelled!");
-                                runningAutoAlign = !runningAutoAlign;
-                            }
+                            orchestrator.alignMin();
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("extendMid"),
                         () -> {
                             GreenLogger.log("extend mid");
-                            if (!runningAutoAlign) {
-                                runningAutoAlign = true;
-                                GreenLogger.log("Auto align action started!");
-                                AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MID);
-                                alignElevatorThread = new Thread(command::run);
-                                alignElevatorThread.start();
-                            } else {
-                                alignElevatorThread.stop();
-                                GreenLogger.log("Stopped! Auto align cancelled!");
-                                runningAutoAlign = !runningAutoAlign;
-                            }
+                            orchestrator.alignMid();
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("extendMax"),
                         () -> {
                             GreenLogger.log("extend max");
-                            if (!runningAutoAlign) {
-                                runningAutoAlign = true;
-                                GreenLogger.log("Auto align action started!");
-                                AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MAX);
-                                alignElevatorThread = new Thread(command::run);
-                                alignElevatorThread.start();
-                            } else {
-                                alignElevatorThread.stop();
-                                elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MAX);
-                                GreenLogger.log("Stopped! Auto align cancelled!");
-                                runningAutoAlign = !runningAutoAlign;
-                            }
+                            orchestrator.alignMax();
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("autoScore"),
                         () -> {
                             GreenLogger.log("autoscore");
-                            if (!runningAutoScore) {
-                                runningAutoScore = true;
-                                GreenLogger.log("Auto Score action started!");
-                                AutoScoreCommand command = new AutoScoreCommand(collector.getCurrentGameElement(), elevator.getDesiredExtensionState());
-                                autoScoreThread = new Thread(command::run);
-                                autoScoreThread.start();
-                            } else {
-                                autoScoreThread.stop();
-                                GreenLogger.log("Stopped! Auto Score sequence cancelled!");
-                                runningAutoScore = !runningAutoScore;
-                            }
+                            orchestrator.autoScore();
                         }
                     ),
                     createAction(
@@ -554,15 +478,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         try {
-            if (autoScoreThread != null && autoScoreThread.isAlive()) {
-                autoScoreThread.stop();
-            }
-            if (alignElevatorThread != null && alignElevatorThread.isAlive()) {
-                alignElevatorThread.stop();
-            }
-            if (autoTargetAlignThread != null && autoTargetAlignThread.isAlive()) {
-                autoTargetAlignThread.stop();
-            }
+            orchestrator.clearThreads();
 
             enabledLoop.stop();
             // Stop any running autos

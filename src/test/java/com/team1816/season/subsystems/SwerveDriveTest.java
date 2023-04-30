@@ -77,7 +77,7 @@ public class SwerveDriveTest {
 
     @Test
     public void testFactoryMock() {
-        assertEquals(maxVel, kOpenLoopMaxVelMeters, .01);
+        assertEquals(maxVel, kMaxVelOpenLoopMeters, .01);
         assertEquals(maxRotVel, kMaxAngularSpeed, .01);
         assertEquals(kDriveWheelTrackWidthMeters, kDriveWheelbaseLengthMeters, .01);
     }

@@ -80,7 +80,6 @@ subsystems:
             maxVelOpenLoop: 3.75 # meters/s (3.6)
             maxVelPathFollowing: 3.1 # meters/s (3.6)
             maxAccel: 2.1 # meters/s^2 (2.54)
-            dPadMoveSpeed: 0.5
             isDemoMode: 0
             ## Auto Balance ##
             autoBalanceDivider: 50
@@ -181,7 +180,7 @@ subsystems:
     camera:
         implemented: true
         constants:
-            dummy: 0
+            useMultiTargetOdometry: 1
 infrastructure:
     canivoreBusName: highSpeed
     ## Power Distribution ##

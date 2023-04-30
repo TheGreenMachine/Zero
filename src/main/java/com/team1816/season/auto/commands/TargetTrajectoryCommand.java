@@ -6,8 +6,8 @@ import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.commands.AutoCommand;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.util.logUtil.GreenLogger;
-import com.team1816.season.Robot;
 import com.team1816.season.auto.paths.TargetTrajectoryPath;
+import com.team1816.season.states.Orchestrator;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class TargetTrajectoryCommand extends AutoCommand {
 
     public void done() {
         super.done();
-        Robot.runningAutoTarget = false;
+        Orchestrator.runningAutoTarget = false;
         ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.SOLID);
         GreenLogger.log("Target Trajectory Command Completed!");
     }

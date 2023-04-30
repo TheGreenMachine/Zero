@@ -50,6 +50,7 @@ public class DoublePlaceConeWallMode extends AutoMode {
         GreenLogger.log("Running Double Place Cone Mode");
         runAction(
             new SeriesAction(
+                new GameElementAction(Collector.GAME_ELEMENT.CONE),
                 // placing first cone
                 new SeriesAction(
                     new WaitAction(.05),

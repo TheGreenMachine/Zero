@@ -32,7 +32,6 @@ public class Camera extends Subsystem {
     /**
      * Components
      */
-    static LedManager led;
     private PhotonCamera cam;
     private GreenSimVisionSystem simVisionSystem;
 
@@ -41,6 +40,7 @@ public class Camera extends Subsystem {
      */
     private static final String NAME = "camera";
     private final double CAMERA_HEIGHT_METERS = 0.15;
+    private boolean usingMultiTargetOdometry = true;
 
     /**
      * State
@@ -60,8 +60,9 @@ public class Camera extends Subsystem {
     @Inject
     public Camera(LedManager ledManager, Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
-        led = ledManager;
         cameraEnabled = this.isImplemented();
+
+        usingMultiTargetOdometry = factory.getConstant(NAME, "useMultiTargetOdometry") > 0;
 
         if (RobotBase.isSimulation()) {
             simVisionSystem =
@@ -240,6 +241,13 @@ public class Camera extends Subsystem {
         bestTrackedTarget = principal_RANSAC;
 
         return targets;
+    }
+
+    /**
+     * Returns if multi-target odometry calculation is desired
+     */
+    public boolean isUsingMultiTargetOdometryCalculation() {
+        return usingMultiTargetOdometry;
     }
 
     /**

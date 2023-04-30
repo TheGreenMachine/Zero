@@ -9,10 +9,10 @@ import com.team1816.lib.auto.actions.WaitUntilInsideRegion;
 import com.team1816.lib.auto.commands.AutoCommand;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.util.logUtil.GreenLogger;
-import com.team1816.season.Robot;
 import com.team1816.season.auto.actions.AlignAction;
 import com.team1816.season.auto.paths.TargetTrajectoryPath;
 import com.team1816.season.configuration.Constants;
+import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -64,7 +64,7 @@ public class TargetAlignCommand extends AutoCommand {
 
     public void done() {
         super.done();
-        Robot.runningAutoTargetAlign = false;
+        Orchestrator.runningAutoTargetAlign = false;
         ledManager.indicateStatus(LedManager.RobotStatus.ON_TARGET, LedManager.ControlState.SOLID);
         GreenLogger.log("Target Align Command Completed!");
     }

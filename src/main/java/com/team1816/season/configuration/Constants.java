@@ -115,7 +115,7 @@ public class Constants {
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
 
     /**
-     * Auto Balance
+     * Balancing characterization
      */
     public static final double autoBalanceThresholdDegrees = factory.getConstant("drivetrain", "autoBalanceThreshold", 2);
     public static final double autoBalanceDivider = factory.getConstant("drivetrain", "autoBalanceDivider", 30);

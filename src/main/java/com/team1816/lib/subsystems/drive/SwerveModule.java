@@ -142,7 +142,7 @@ public class SwerveModule implements ISwerveModule {
         if (!isOpenLoop) {
             driveMotor.set(ControlMode.Velocity, driveDemandTP100MS);
         } else {
-            driveDemandMPS *= Drive.kOpenLoopMaxVelMeters;
+            driveDemandMPS *= Drive.kMaxVelOpenLoopMeters;
             driveMotor.set(ControlMode.PercentOutput, desired_state.speedMetersPerSecond); // lying to it - speedMetersPerSecond passed in is actually percent output (1 to -1)
         }
         azimuthMotor.set(ControlMode.Position, azimuthDemandPos);
