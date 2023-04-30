@@ -81,17 +81,17 @@ public class Camera extends Subsystem {
                     0
                 );
             for (int i = 0; i <= 8; i++) {
-                if (FieldConfig.fieldTargets2023.get(i) == null) {
+                if (FieldConfig.fiducialTargets.get(i) == null) {
                     continue;
                 }
                 simVisionSystem.addSimVisionTarget(
                     new GreenSimVisionTarget(
                         new Pose2d(
-                            FieldConfig.fieldTargets2023.get(i).getX(),
-                            FieldConfig.fieldTargets2023.get(i).getY(),
-                            FieldConfig.fieldTargets2023.get(i).getRotation().toRotation2d()
+                            FieldConfig.fiducialTargets.get(i).getX(),
+                            FieldConfig.fiducialTargets.get(i).getY(),
+                            FieldConfig.fiducialTargets.get(i).getRotation().toRotation2d()
                         ),
-                        FieldConfig.fieldTargets2023.get(i).getZ(),
+                        FieldConfig.fiducialTargets.get(i).getZ(),
                         .1651,
                         .1651,
                         i
@@ -146,12 +146,13 @@ public class Camera extends Subsystem {
                     )
                 );
         }
-        robotState.visibleTarget = getSingularPoint(); // we're only using one point rn anyway
+        robotState.superlativeTarget = getPoint();
+        robotState.visibleTargets = getPoints();
 
         if (Constants.kLoggingRobot) {
             var targetPose = robotState.fieldToVehicle;
 
-            Pose3d aprilTagPose = FieldConfig.fieldTargets2023.get(robotState.visibleTarget.id);
+            Pose3d aprilTagPose = FieldConfig.fiducialTargets.get(robotState.superlativeTarget.id);
             if (aprilTagPose != null) {
                 targetPose = aprilTagPose.toPose2d();
             }
@@ -162,30 +163,12 @@ public class Camera extends Subsystem {
 
 
     /**
-     * Polls targets from the camera and returns the best target as a list of VisionPoints (reduces computational overhead)
+     * Polls targets from the camera and returns the best target as a singular VisionPoint
      *
-     * @return List of VisionPoint
+     * @return VisionPoint
      * @see VisionPoint
      */
-    public ArrayList<VisionPoint> getPoints() {
-        ArrayList<VisionPoint> targets = new ArrayList<>();
-        if (isImplemented()) {
-            VisionPoint p = new VisionPoint();
-            var result = cam.getLatestResult();
-            if (!result.hasTargets()) {
-                return targets;
-            }
-            var bestTarget = result.getBestTarget();
-            p.id = bestTarget.getFiducialId();
-            p.cameraToTarget = bestTarget.getBestCameraToTarget(); // missing method in PhotonTrackedTarget
-            targets.add(p);
-        } else {
-            //GreenLogger.log("camera not returning points b/c camera not implemented");
-        }
-        return targets;
-    }
-
-    public VisionPoint getSingularPoint() {
+    public VisionPoint getPoint() {
         VisionPoint targets = new VisionPoint();
         if (isImplemented()) {
             VisionPoint p = new VisionPoint();
@@ -197,8 +180,30 @@ public class Camera extends Subsystem {
             p.id = bestTarget.getFiducialId();
             p.cameraToTarget = bestTarget.getBestCameraToTarget(); // missing method in PhotonTrackedTarget
             return p;
-        } else {
-            //GreenLogger.log("camera not returning points b/c camera not implemented");
+        }
+        return targets;
+    }
+
+    /**
+     * Polls targets from the camera and returns the best target as a list of VisionPoints (reduces computational overhead)
+     *
+     * @return List of VisionPoint
+     * @see VisionPoint
+     */
+    public ArrayList<VisionPoint> getPoints() {
+        ArrayList<VisionPoint> targets = new ArrayList<>();
+        if (isImplemented()) {
+            var result = cam.getLatestResult();
+            if (!result.hasTargets()) {
+                return targets;
+            }
+            var bestTarget = result.getBestTarget();
+            for (PhotonTrackedTarget target: result.getTargets()) {
+                VisionPoint p = new VisionPoint();
+                p.id = target.getFiducialId();
+                p.cameraToTarget = target.getBestCameraToTarget();
+                targets.add(p);
+            }
         }
         return targets;
     }

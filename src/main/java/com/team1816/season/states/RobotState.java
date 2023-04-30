@@ -14,6 +14,9 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class is responsible for logging the robot's actual states and estimated states.
  * Including superstructure and subsystem states.
@@ -60,7 +63,8 @@ public class RobotState {
     public double actualElevatorAngle = 0;
     public double actualElevatorExtensionInches = 0; // INCHES
     public double actualCollectorAngle = 0;
-    public VisionPoint visibleTarget = new VisionPoint();
+    public VisionPoint superlativeTarget = new VisionPoint();
+    public List<VisionPoint> visibleTargets = new ArrayList<>();
 
     public boolean gameElementChanged = false;
 
@@ -130,7 +134,8 @@ public class RobotState {
         actualCollectorRollerState = Collector.ROLLER_STATE.STOP;
         actualCollectorPivotState = Collector.PIVOT_STATE.STOW;
         isPoseUpdated = true;
-        visibleTarget = new VisionPoint();
+        superlativeTarget = new VisionPoint();
+        visibleTargets = new ArrayList<>();
         drivetrainTemp = 0;
         vehicleToFloorProximityCentimeters = 0;
         gameElementChanged = false;
