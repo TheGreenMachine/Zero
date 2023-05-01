@@ -41,7 +41,7 @@ public class Orchestrator {
 
 
     /**
-     * State
+     * Properties
      */
     private final double maxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
@@ -82,7 +82,7 @@ public class Orchestrator {
      * @see VisionPoint
      */
     public Pose2d calculateSingleTargetTranslation(VisionPoint target) {
-        Pose2d targetPos = FieldConfig.fieldTargets2023.get(target.id).toPose2d();
+        Pose2d targetPos = FieldConfig.fiducialTargets.get(target.id).toPose2d();
 
         double X = target.getX(), Y = target.getY();
 
@@ -115,8 +115,8 @@ public class Orchestrator {
      */
     public Pose2d photonCalculateSingleTargetTranslation(PhotonTrackedTarget target) {
         Pose2d targetPos = new Pose2d(
-            FieldConfig.fieldTargets2023.get(target.getFiducialId()).getX(),
-            FieldConfig.fieldTargets2023.get(target.getFiducialId()).getY(),
+            FieldConfig.fiducialTargets.get(target.getFiducialId()).getX(),
+            FieldConfig.fiducialTargets.get(target.getFiducialId()).getY(),
             new Rotation2d()
         );
         Translation2d targetTranslation = target.getBestCameraToTarget().getTranslation().toTranslation2d();
@@ -131,35 +131,42 @@ public class Orchestrator {
      * @return Pose2d
      */
     public Pose2d calculatePoseFromCamera() {
-        var cameraPoint = robotState.visibleTarget;
-        if (!Objects.equals(cameraPoint, new VisionPoint()) && cameraPoint.id > 0) {
-            var p = calculateSingleTargetTranslation(cameraPoint);
-            Pose2d pose = new Pose2d(
-                p.getX(),
-                p.getY(),
-                robotState.fieldToVehicle.getRotation()
-            );
-            robotState.isPoseUpdated = true;
-            return pose;
-        }
-//        List<Pose2d> poses = new ArrayList<>();
-//        double sX = 0, sY = 0;
-//        for (VisionPoint point : cameraPoint) {
-//            var p = calculateSingleTargetTranslation(point);
-//            sX += p.getX();
-//            sY += p.getY();
-//            poses.add(p);
-//        }
-//        if (cameraPoint.size() > 0) {
+//        // Single target pose estimation
+//        var cameraPoint = robotState.superlativeTarget;
+//        if (!Objects.equals(cameraPoint, new VisionPoint()) && cameraPoint.id >= 0) {
+//            var p = calculateSingleTargetTranslation(cameraPoint);
 //            Pose2d pose = new Pose2d(
-//                sX / cameraPoint.size(),
-//                sY / cameraPoint.size(),
+//                p.getX(),
+//                p.getY(),
 //                robotState.fieldToVehicle.getRotation()
 //            );
 //            robotState.isPoseUpdated = true;
 //            return pose;
 //        }
-        GreenLogger.log("vision point bad - returning fieldToVehicle");
+//        GreenLogger.log("Vision Point bad - returning fieldToVehicle");
+
+
+        // Multi-target pose estimation
+        var cameraPoints = robotState.visibleTargets;
+        double sX = 0, sY = 0, count = 0;
+        for (VisionPoint point : cameraPoints) {
+            if (!Objects.equals(point, new VisionPoint()) && point.id >= 0) {
+                var p = calculateSingleTargetTranslation(point);
+                sX += p.getX();
+                sY += p.getY();
+                count++;
+            }
+        }
+        if (count > 0) {
+            Pose2d pose = new Pose2d(
+                sX / count,
+                sY / count,
+                robotState.fieldToVehicle.getRotation()
+            );
+            robotState.isPoseUpdated = true;
+            return pose;
+        }
+        GreenLogger.log("Vision Points bad - returning fieldToVehicle");
         return robotState.fieldToVehicle;
     }
 

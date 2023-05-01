@@ -17,7 +17,7 @@ import java.util.List;
 public class FieldConfig {
 
     public static Field2d field;
-    public static final HashMap<Integer, Pose3d> fieldTargets2023 = new HashMap<>() {
+    public static final HashMap<Integer, Pose3d> fiducialTargets = new HashMap<>() {
         {
             /**
              * April Tag Targets
@@ -34,15 +34,11 @@ public class FieldConfig {
             put(6, new Pose3d(new Translation3d(1.027, 4.424, 0.470), new Rotation3d(0, 0, 0))); // Blue Feeder Edge Grid
             put(7, new Pose3d(new Translation3d(1.027, 2.748, 0.470), new Rotation3d(0, 0, 0))); // Blue Co-Op Grid
             put(8, new Pose3d(new Translation3d(1.027, 1.072, 0.470), new Rotation3d(0, 0, 0))); // Blue Edge Grid
-
-            /* Test */
-            put(51, new Pose3d(new Translation3d(Constants.fieldCenterX, Constants.fieldCenterY, 0.1), new Rotation3d()));
         }
     };
 
     public static void setupField(Field2d field) {
         if (FieldConfig.field != null) {
-            // if field is already set up, do not set up again
             return;
         }
         FieldConfig.field = field;
@@ -50,10 +46,10 @@ public class FieldConfig {
         SmartDashboard.putData("Field", field);
 
         if (RobotBase.isSimulation()) {
-            // set up april tags
+            // Initialize April Tag Poses
             List<Pose2d> aprilTagPoses = new ArrayList<>();
             for (int i = 0; i <= 8; i++) {
-                if (fieldTargets2023.get(i) == null) {
+                if (fiducialTargets.get(i) == null) {
                     aprilTagPoses.add(
                         i,
                         new Pose2d(new Translation2d(-1, -1), new Rotation2d())
@@ -61,11 +57,11 @@ public class FieldConfig {
                     continue;
                 }
                 aprilTagPoses.add(
-                    i, // if we want ids to be marked on each pose, we'll prob need to adjust the Field2DObject class (make our own?)
+                    i,
                     new Pose2d(
-                        fieldTargets2023.get(i).getX(),
-                        fieldTargets2023.get(i).getY(),
-                        fieldTargets2023.get(i).getRotation().toRotation2d()
+                        fiducialTargets.get(i).getX(),
+                        fiducialTargets.get(i).getY(),
+                        fiducialTargets.get(i).getRotation().toRotation2d()
                     )
                 );
             }
