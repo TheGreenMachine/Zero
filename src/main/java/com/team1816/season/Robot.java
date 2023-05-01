@@ -219,19 +219,24 @@ public class Robot extends TimedRobot {
                     }
                 } else { // rio disk space management
                     File root = new File("/");
-                    while (root.getUsableSpace() > Constants.kUsableDiskSpace) {
+                    while (root.getUsableSpace() < (long) (Constants.kLoggingDiskPartitionRatio * root.getTotalSpace())) {
+                        System.out.println("Allotted Disk Space Limit Exceeded");
                         File oldestLog = null, logDir = new File(logFileDir);
                         long ols = Long.MAX_VALUE;
                         for (String f: Objects.requireNonNull(logDir.list())) {
                             File cur = new File(f);
-                            if (ols > cur.lastModified()) { // smaller value indicates older file
+                            // keeps official run logs (practice, qualification, elimination)
+                            if (!(f.contains("Practice") || f.contains("Qualification") || f.contains("Elimination")) && ols > cur.lastModified()) { // smaller value indicates older file
                                 ols = cur.lastModified();
                                 oldestLog = cur;
                             }
                         }
                         if (oldestLog != null && oldestLog.delete()) {
-                            System.out.println("Disk Space Limit Exceeded");
                             System.out.println("Deleting File: " + oldestLog);
+                        } else {
+                            System.out.println("Unable to Delete Log Files - Manual Deletion Required");
+                            DriverStation.reportError("Allotted Disk Space Exceeded - Unable to Delete Log Files", true);
+                            break;
                         }
                     }
                 }
