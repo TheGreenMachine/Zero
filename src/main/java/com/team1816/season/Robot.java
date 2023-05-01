@@ -250,7 +250,7 @@ public class Robot extends TimedRobot {
             // zeroing ypr - (-90) pigeon is mounted with the "y" axis facing forward
             infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
             subsystemManager.zeroSensors();
-            faulted = true; // elevator not zeroed on bootup - letting ppl know
+            faulted = true; // robot faulted: elevator not zeroed on start-up
 
             /** Register ControlBoard */
             controlBoard = Injector.get(IControlBoard.class);
