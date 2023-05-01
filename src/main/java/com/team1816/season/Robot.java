@@ -226,7 +226,7 @@ public class Robot extends TimedRobot {
                         for (String f: Objects.requireNonNull(logDir.list())) {
                             File cur = new File(f);
                             // keeps official run logs (practice, qualification, elimination)
-                            if (!(f.contains("Practice") || f.contains("Qualification") || f.contains("Elimination")) && ols > cur.lastModified()) { // smaller value indicates older file
+                            if (!(f.contains("P") || f.contains("Q") || f.contains("E")) && ols > cur.lastModified()) { // smaller value indicates older file
                                 ols = cur.lastModified();
                                 oldestLog = cur;
                             }
@@ -239,6 +239,7 @@ public class Robot extends TimedRobot {
                             break;
                         }
                     }
+                    System.out.println("Current Disk Usage: " + (100) * ((double) root.getUsableSpace() / root.getTotalSpace()) + "%");
                 }
                 var filePath = logFileDir + robotName + "_" + logFile + ".bag";
                 DataLogManager.start(logFileDir, "", 0.25);
