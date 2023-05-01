@@ -12,6 +12,7 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.lib.util.logUtil.GreenLogger;
+import com.team1816.lib.util.logUtil.RioLogManager;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.commands.AlignElevatorCommand;
 import com.team1816.season.auto.commands.AutoScoreCommand;
@@ -218,22 +219,7 @@ public class Robot extends TimedRobot {
                         logFileDir = System.getProperty("user.dir") + "/";
                     }
                 } else { // rio disk space management
-                    File root = new File("/");
-                    while (root.getUsableSpace() > Constants.kUsableDiskSpace) {
-                        File oldestLog = null, logDir = new File(logFileDir);
-                        long ols = Long.MAX_VALUE;
-                        for (String f: Objects.requireNonNull(logDir.list())) {
-                            File cur = new File(f);
-                            if (ols > cur.lastModified()) { // smaller value indicates older file
-                                ols = cur.lastModified();
-                                oldestLog = cur;
-                            }
-                        }
-                        if (oldestLog != null && oldestLog.delete()) {
-                            System.out.println("Disk Space Limit Exceeded");
-                            System.out.println("Deleting File: " + oldestLog);
-                        }
-                    }
+                    RioLogManager.sweepLogs(logFileDir);
                 }
                 var filePath = logFileDir + robotName + "_" + logFile + ".bag";
                 DataLogManager.start(logFileDir, "", 0.25);
