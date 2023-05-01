@@ -68,8 +68,8 @@ public class RobotState {
 
     public boolean gameElementChanged = false;
 
-    public final Mechanism2d mechanismCanvas = new Mechanism2d(3, 3);
-    public final MechanismRoot2d root = mechanismCanvas.getRoot("ElevatorArm", 1.3, 0.38);
+    public final Mechanism2d mechCanvas = new Mechanism2d(3, 3);
+    public final MechanismRoot2d root = mechCanvas.getRoot("ElevatorArm", 1.3, 0.38);
     public final MechanismLigament2d simArm = root.append(new MechanismLigament2d("elevator", Elevator.kElevatorMinLength, 90));
     public final MechanismLigament2d simCollector = simArm.append(new MechanismLigament2d("collector", Collector.kCollectorLength, 90));
 
@@ -219,8 +219,8 @@ public class RobotState {
         field.setRobotPose(fieldToVehicle);
         if (RobotBase.isSimulation()) {
             // elevator
-            double elevatorLength = Elevator.kElevatorMinLength +
-                (actualElevatorExtensionInches * 0.0254);
+            double actEleExtMeters = (actualElevatorExtensionInches * 0.0254);
+            double elevatorLength = Elevator.kElevatorMinLength + actEleExtMeters;
 
             simArm.setLength(elevatorLength);
             simArm.setAngle(actualElevatorAngle);
@@ -236,7 +236,54 @@ public class RobotState {
                 color = new Color8Bit(125, 125, 125);
             }
             simCollector.setColor(color);
-            SmartDashboard.putData("Mech 2D", mechanismCanvas);
+            SmartDashboard.putData("Mech 2D", mechCanvas);
+
+            // for advantagescope CAD model logging :)
+            // act ele angle negated b/c CAD model flipped arm
+            Quaternion elevatorRot = new Rotation3d(0, Math.toRadians(-actualElevatorAngle), 0).getQuaternion();
+            double w_rot = elevatorRot.getW();
+            double x_rot = elevatorRot.getX();
+            double y_rot = elevatorRot.getY();
+            double z_rot = elevatorRot.getZ();
+
+            double xExtension = Math.cos(Math.toRadians(actualElevatorAngle)) * actEleExtMeters;
+            double zExtension = Math.sin(Math.toRadians(actualElevatorAngle)) * actEleExtMeters;
+
+            SmartDashboard.putNumberArray(
+                    "Elevator/FirstExtension",
+                    new double[]{-0.2, 0, 0.38, w_rot, x_rot, y_rot, z_rot}
+            );
+            SmartDashboard.putNumberArray(
+                    "Elevator/SecondExtension",
+                    new double[]{-0.2 + xExtension * 0.333, 0, 0.38 + zExtension * 0.333, w_rot, x_rot, y_rot, z_rot}
+            );
+            SmartDashboard.putNumberArray(
+                    "Elevator/ThirdExtension",
+                    new double[]{-0.2 + xExtension * 0.666, 0, 0.38 + zExtension * 0.666, w_rot, x_rot, y_rot, z_rot}
+            );
+            SmartDashboard.putNumberArray(
+                    "Elevator/FourthExtension",
+                    new double[]{-0.2 + xExtension, 0, 0.38 + zExtension, w_rot, x_rot, y_rot, z_rot}
+            );
+
+            // collector
+            Quaternion colRot = new Rotation3d(0, Math.toRadians(-actualElevatorAngle), 0)
+                    .plus(new Rotation3d(0, Math.toRadians(-actualCollectorAngle), 0))
+                    .getQuaternion();
+            w_rot = colRot.getW();
+            x_rot = colRot.getX();
+            y_rot = colRot.getY();
+            z_rot = colRot.getZ();
+
+            xExtension = Math.cos(Math.toRadians(actualElevatorAngle)) * (actEleExtMeters + Elevator.kElevatorMinLength)
+                    + Math.cos(Math.toRadians(90 - actualElevatorAngle)) * 0.16;
+            zExtension = Math.sin(Math.toRadians(actualElevatorAngle)) * (actEleExtMeters + Elevator.kElevatorMinLength)
+                    - Math.sin(Math.toRadians(90 - actualElevatorAngle)) * 0.16;;
+
+            SmartDashboard.putNumberArray(
+                    "Collector/Collector",
+                    new double[]{-0.2 + xExtension, 0, 0.38 + zExtension, w_rot, x_rot, y_rot, z_rot}
+            );
         }
     }
 }

@@ -150,7 +150,7 @@ public class Camera extends Subsystem {
         robotState.superlativeTarget = getPoint();
         robotState.visibleTargets = getPoints();
 
-        if (Constants.kLoggingRobot) {
+        if (Constants.kLoggingRobot && cameraEnabled) {
             var targetPose = robotState.fieldToVehicle;
 
             Pose3d aprilTagPose = FieldConfig.fiducialTargets.get(robotState.superlativeTarget.id);

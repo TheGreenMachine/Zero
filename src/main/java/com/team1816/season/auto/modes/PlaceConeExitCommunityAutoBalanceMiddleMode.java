@@ -60,11 +60,8 @@ public class PlaceConeExitCommunityAutoBalanceMiddleMode extends AutoMode {
                 new WaitAction(0.25),
                 new ElevatorAction(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN),
                 trajectoryActions.get(0),
-                new WaitAction(0.25),
                 trajectoryActions.get(1),
-                new WaitAction(0.25),
                 trajectoryActions.get(2),
-                new WaitAction(0.25),
                 new AutoBalanceAction()
             )
         );

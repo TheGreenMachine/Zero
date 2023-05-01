@@ -79,7 +79,7 @@ subsystems:
             wheelbaseLength: 19.75 # inches
             maxVelOpenLoop: 3.75 # meters/s (3.6)
             maxVelPathFollowing: 3.1 # meters/s (3.6)
-            maxAccel: 2.1 # meters/s^2 (2.54)
+            maxAccel: 1.5 # meters/s^2 (2.54)
             isDemoMode: 0
             ## Auto Balance ##
             autoBalanceDivider: 50
@@ -149,7 +149,7 @@ subsystems:
                 kP: 0.001
             slot1: # pivotMotor
                 kP: 0.025
-                allowableError: 1.65 # this is only being used to compare states
+                allowableError: 3 # this is only being used to compare states
         constants:
             maxVelTicks100ms: 10.83
             ## Demands ##
@@ -161,11 +161,11 @@ subsystems:
             collectorRevolutionsPerDegree: .3305
             zeroOffset: -90 # degrees
             stowAngle: 90 # degrees
-            scoreConeAngle: -38 # degs
-            scoreCubeAngle: 10 # degs
-            shelfConeAngle: -38 # Cone
-            shelfCubeAngle: -48 # Cone
-            floorAngle: 26 # degs
+            scoreConeAngle: -35 # degrees
+            scoreCubeAngle: 10 # degrees
+            shelfConeAngle: -38 # degrees
+            shelfCubeAngle: -48 # degrees
+            floorAngle: 26 # degrees
             ## Limits ##
             intakeStallAmps: 30
     ledmanager:
@@ -178,7 +178,7 @@ subsystems:
             maxLevel: 200
             ledStripCount: 35
     camera:
-        implemented: true
+        implemented: false
         constants:
             useMultiTargetOdometry: 1
 infrastructure:
