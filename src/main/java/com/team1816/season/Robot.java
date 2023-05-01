@@ -28,10 +28,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.*;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 import static com.team1816.lib.controlboard.ControlUtils.createAction;
 import static com.team1816.lib.controlboard.ControlUtils.createHoldAction;
@@ -215,10 +217,27 @@ public class Robot extends TimedRobot {
                     } else {
                         logFileDir = System.getProperty("user.dir") + "/";
                     }
+                } else { // rio disk space management
+                    File root = new File("/");
+                    while (root.getUsableSpace() > Constants.kUsableDiskSpace) {
+                        File oldestLog = null, logDir = new File(logFileDir);
+                        long ols = Long.MAX_VALUE;
+                        for (String f: Objects.requireNonNull(logDir.list())) {
+                            File cur = new File(f);
+                            if (ols > cur.lastModified()) { // smaller value indicates older file
+                                ols = cur.lastModified();
+                                oldestLog = cur;
+                            }
+                        }
+                        if (oldestLog != null && oldestLog.delete()) {
+                            System.out.println("Disk Space Limit Exceeded");
+                            System.out.println("Deleting File: " + oldestLog);
+                        }
+                    }
                 }
                 var filePath = logFileDir + robotName + "_" + logFile + ".bag";
-                DataLogManager.start();
-                DriverStation.startDataLog(DataLogManager.getLog(), true);
+                DataLogManager.start(logFileDir, "", 0.25);
+                DriverStation.startDataLog(DataLogManager.getLog(), false);
             }
 
             subsystemManager.registerEnabledLoops(enabledLoop);
