@@ -32,7 +32,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Date;
 import java.util.Objects;
 
@@ -220,33 +219,30 @@ public class Robot extends TimedRobot {
                     }
                 } else { // rio disk space management
                     File root = new File("/");
-                    if (root.getUsableSpace() < (long) (Constants.kLoggingDiskPartitionRatio * root.getTotalSpace())){
-                        GreenLogger.log("Allocated disk space exceeded. Beginning deletion of old logs...");
-                    }
                     while (root.getUsableSpace() < (long) (Constants.kLoggingDiskPartitionRatio * root.getTotalSpace())) {
-                        GreenLogger.log("Disk usage at " + ((double) root.getUsableSpace() / root.getTotalSpace()) * 100 + "%");
+                        System.out.println("Current Disk Usage: " + ((double) root.getUsableSpace() / root.getTotalSpace()) * 100 + "%");
                         File oldestLog = null, logDir = new File(logFileDir);
                         long ols = Long.MAX_VALUE;
-                        for (String f: Objects.requireNonNull(logDir.list())) {
+                        for (String f : Objects.requireNonNull(logDir.list())) {
                             File cur = new File(f);
-                            // Keeps official match logs (practice, qualification, elimination)
+                            // retains official match logs (practice, qualification, elimination)
                             if (!(f.contains("P") || f.contains("Q") || f.contains("E")) && ols > cur.lastModified()) { // smaller value indicates older file
                                 ols = cur.lastModified();
                                 oldestLog = cur;
                             }
                         }
                         if (oldestLog != null && oldestLog.delete()) {
-                            GreenLogger.log("Deleting File: " + oldestLog);
+                            System.out.println("Deleting File: " + oldestLog);
                         } else {
-                            GreenLogger.log("Unable to Delete Log Files - Manual Deletion Required");
+                            System.out.println("Unable to Delete Log Files - Manual Deletion Required");
                             DriverStation.reportError("Allotted Disk Space Exceeded - Unable to Delete Log Files", true);
                             break;
                         }
                     }
                     System.out.println("Current Disk Usage: " + (100) * ((double) root.getUsableSpace() / root.getTotalSpace()) + "%");
                 }
-
-                DataLogManager.start(logFileDir, "", 0.25);
+                // start logging
+                DataLogManager.start(logFileDir, "", Constants.kLooperDt);
                 DriverStation.startDataLog(DataLogManager.getLog(), false);
             }
 

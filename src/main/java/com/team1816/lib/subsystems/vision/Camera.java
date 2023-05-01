@@ -198,7 +198,7 @@ public class Camera extends Subsystem {
                 return targets;
             }
             var bestTarget = result.getBestTarget();
-            for (PhotonTrackedTarget target: result.getTargets()) {
+            for (PhotonTrackedTarget target : result.getTargets()) {
                 VisionPoint p = new VisionPoint();
                 p.id = target.getFiducialId();
                 p.cameraToTarget = target.getBestCameraToTarget();
