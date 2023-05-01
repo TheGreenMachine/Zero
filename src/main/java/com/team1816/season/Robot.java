@@ -220,6 +220,28 @@ public class Robot extends TimedRobot {
                     }
                 } else { // rio disk space management
                     RioLogManager.sweepLogs(logFileDir);
+                    File root = new File("/");
+                    while (root.getUsableSpace() < (long) (Constants.kLoggingDiskPartitionRatio * root.getTotalSpace())) {
+                        System.out.println("Allotted Disk Space Limit Exceeded");
+                        File oldestLog = null, logDir = new File(logFileDir);
+                        long ols = Long.MAX_VALUE;
+                        for (String f: Objects.requireNonNull(logDir.list())) {
+                            File cur = new File(f);
+                            // keeps official run logs (practice, qualification, elimination)
+                            if (!(f.contains("P") || f.contains("Q") || f.contains("E")) && ols > cur.lastModified()) { // smaller value indicates older file
+                                ols = cur.lastModified();
+                                oldestLog = cur;
+                            }
+                        }
+                        if (oldestLog != null && oldestLog.delete()) {
+                            System.out.println("Deleting File: " + oldestLog);
+                        } else {
+                            System.out.println("Unable to Delete Log Files - Manual Deletion Required");
+                            DriverStation.reportError("Allotted Disk Space Exceeded - Unable to Delete Log Files", true);
+                            break;
+                        }
+                    }
+                    System.out.println("Current Disk Usage: " + (100) * ((double) root.getUsableSpace() / root.getTotalSpace()) + "%");
                 }
                 var filePath = logFileDir + robotName + "_" + logFile + ".bag";
                 DataLogManager.start(logFileDir, "", 0.25);
@@ -228,10 +250,10 @@ public class Robot extends TimedRobot {
 
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
-            // zeroing ypr - (-90) b/c our pigeon is mounted with the "y" axis facing forward
+            // zeroing ypr - (-90) pigeon is mounted with the "y" axis facing forward
             infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
             subsystemManager.zeroSensors();
-            faulted = true; // elevator not zeroed on bootup - letting ppl know
+            faulted = true; // robot faulted: elevator not zeroed on start-up
 
             /** Register ControlBoard */
             controlBoard = Injector.get(IControlBoard.class);

@@ -104,7 +104,7 @@ public class Constants {
     public static final double kCameraMountingAngleY = 0; // degrees
     public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters
 
-    public static long kUsableDiskSpace = (long) (0.25 * (2^29)); // free bytes on system to load log files (30% of the rio's storage, ~134 mb)
+    public static final double kLoggingDiskPartitionRatio = 0.25; // percent of storage space allotted for logging
     public static boolean kLoggingRobot = factory.getConstant("logRobot") > 0;
     public static boolean kLoggingDrivetrain = factory.getConstant("logDrivetrain") > 0 && kLoggingRobot;
 
