@@ -21,7 +21,7 @@ public class ConeToNodeFeederPath extends AutoPath {
         return List.of(
             new Pose2d(6.2, 4.6, Rotation2d.fromDegrees(180)),
             new Pose2d(2.58, 4.68, Rotation2d.fromDegrees(180)),
-            new Pose2d(1.75, 3.77, Rotation2d.fromDegrees(180))
+            new Pose2d(1.75, 3.85, Rotation2d.fromDegrees(180))
         );
     }
 

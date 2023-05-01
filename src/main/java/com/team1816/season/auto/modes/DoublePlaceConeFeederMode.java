@@ -66,6 +66,7 @@ public class DoublePlaceConeFeederMode extends AutoMode {
                         )
                     )
                 ),
+                new WaitAction(0.5),
                 // aligning
                 new ParallelAction(
                     new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW),
