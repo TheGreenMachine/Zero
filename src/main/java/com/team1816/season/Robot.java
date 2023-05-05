@@ -83,7 +83,6 @@ public class Robot extends TimedRobot {
      * Autonomous
      */
     private final AutoModeManager autoModeManager;
-    private Thread autoTargetThread;
 
     private Thread alignElevatorThread;
     private Thread autoScoreThread;
@@ -558,9 +557,6 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         try {
-            if (autoTargetThread != null && autoTargetThread.isAlive()) {
-                autoTargetThread.stop();
-            }
             if (autoScoreThread != null && autoScoreThread.isAlive()) {
                 autoScoreThread.stop();
             }
