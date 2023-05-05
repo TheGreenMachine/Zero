@@ -165,7 +165,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (controlState == ControlState.OPEN_LOOP) {
             SwerveDriveKinematics.desaturateWheelSpeeds(
                 desiredModuleStates,
-                kOpenLoopMaxVelMeters
+                    kMaxVelOpenLoopMeters
             );
             for (int i = 0; i < 4; i++) {
                 swerveModules[i].setDesiredState(desiredModuleStates[i], true);

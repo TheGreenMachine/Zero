@@ -99,13 +99,9 @@ public abstract class Drive
     /**
      * Constants
      */
-    public static final double maxVelTicks100ms = factory.getConstant(
-        NAME,
-        "maxVelTicks100ms"
-    );
-    public static final double driveEncPPR = factory.getConstant(NAME, "encPPR");
+    public static final double driveEncPPR = factory.getConstant(NAME, "encPPR"); // Distance calibration
 
-    // Drivetrain characterization
+    // Chassis characterization
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(
         NAME,
         "trackWidth",
@@ -120,30 +116,23 @@ public abstract class Drive
         NAME,
         "wheelDiameter"
     );
-    public static final double kWheelCircumferenceInches =
-        kDriveWheelDiameterInches * Math.PI;
-    public static final double kDriveWheelRadiusInches = kDriveWheelDiameterInches / 2.0;
 
+    // Conversions
     public static final double kDriveWheelTrackWidthMeters = Units.inchesToMeters(
         kDriveWheelTrackWidthInches
     );
     public static final double kDriveWheelbaseLengthMeters = Units.inchesToMeters(
         kDriveWheelbaseLengthInches
     );
-    public static final double kDriveWheelDiameterMeters = Units.inchesToMeters(
-        kDriveWheelDiameterInches
-    );
-    public static final double kWheelCircumferenceMeters = Units.inchesToMeters(
-        kWheelCircumferenceInches
-    );
-    public static final double kDriveWheelRadiusMeters = Units.inchesToMeters(
-        kDriveWheelRadiusInches
-    );
+
+    public static final double kWheelCircumferenceMeters = Units.inchesToMeters(kDriveWheelDiameterInches) * Math.PI;
+
     public static double kTrackScrubFactor = factory.getConstant(
         NAME,
         "kTrackScrubFactor"
     );
-    // Drive speed
+
+    // Constraints
     public static final double kPathFollowingMaxAccelMeters = factory.getConstant(
         NAME,
         "maxAccel",
@@ -153,7 +142,7 @@ public abstract class Drive
         NAME,
         "maxVelPathFollowing"
     );
-    public static final double kOpenLoopMaxVelMeters = factory.getConstant(
+    public static final double kMaxVelOpenLoopMeters = factory.getConstant(
         NAME,
         "maxVelOpenLoop"
     );
@@ -168,10 +157,17 @@ public abstract class Drive
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared =
         2 * Math.PI;
 
-    // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeed,
         kMaxAngularAccelerationRadiansPerSecondSquared
+    );
+    public double maxAllowablePoseError = factory.getConstant(
+        "maxAllowablePoseError",
+        4
+    );
+    public final double minAllowablePoseError = factory.getConstant(
+        "minAllowablePoseError",
+        0.05
     );
 
     /**

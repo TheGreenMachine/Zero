@@ -80,7 +80,6 @@ subsystems:
             maxVelOpenLoop: 3.75 # meters/s (3.6)
             maxVelPathFollowing: 3.1 # meters/s (3.6)
             maxAccel: 1.5 # meters/s^2 (2.54)
-            dPadMoveSpeed: 0.5
             isDemoMode: 0
             ## Auto Balance ##
             autoBalanceDivider: 50
@@ -162,11 +161,11 @@ subsystems:
             collectorRevolutionsPerDegree: .3305
             zeroOffset: -90 # degrees
             stowAngle: 90 # degrees
-            scoreConeAngle: -35 # degs
-            scoreCubeAngle: 10 # degs
-            shelfConeAngle: -38 # Cone
-            shelfCubeAngle: -48 # Cone
-            floorAngle: 26 # degs
+            scoreConeAngle: -35 # degrees
+            scoreCubeAngle: 10 # degrees
+            shelfConeAngle: -38 # degrees
+            shelfCubeAngle: -48 # degrees
+            floorAngle: 26 # degrees
             ## Limits ##
             intakeStallAmps: 30
     ledmanager:
@@ -181,7 +180,7 @@ subsystems:
     camera:
         implemented: false
         constants:
-            dummy: 0
+            useMultiTargetOdometry: 1
 infrastructure:
     canivoreBusName: highSpeed
     ## Power Distribution ##

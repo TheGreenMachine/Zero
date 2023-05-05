@@ -63,6 +63,7 @@ public class TriplePlaceConeWallMode extends AutoMode {
         GreenLogger.log("Running Triple Place Cone Mode");
         runAction(
             new SeriesAction(
+                new GameElementAction(Collector.GAME_ELEMENT.CONE),
                 // scoring first cone
                 new SeriesAction(
                     new WaitAction(.05),

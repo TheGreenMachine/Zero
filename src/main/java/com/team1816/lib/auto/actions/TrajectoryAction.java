@@ -96,7 +96,7 @@ public class TrajectoryAction implements AutoAction {
         } else if (drive instanceof SwerveDrive) {
             var thetaController = new ProfiledPIDController(
                 kPThetaController,
-                0,
+                kDThetaController,
                 0,
                 kThetaControllerConstraints
             );

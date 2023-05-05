@@ -16,7 +16,7 @@ public class AlignAction extends SeriesAction {
             new ParallelAction(
                 new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW),
                 new ElevatorAction(Elevator.ANGLE_STATE.SCORE, extensionState),
-                // outtaking the game piece
+                // collector set to rest scoring state
                 new SeriesAction(
                     new WaitUntilElevatorExtensionInsideRegion(minCollectTriggerThreshold, maxCollectTriggerThreshold),
                     new CollectAction(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.SCORE)

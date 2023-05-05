@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 import static com.team1816.lib.subsystems.drive.Drive.kMaxAngularSpeed;
-import static com.team1816.lib.subsystems.drive.Drive.kOpenLoopMaxVelMeters;
+import static com.team1816.lib.subsystems.drive.Drive.kMaxVelOpenLoopMeters;
 
 /**
  * Class based on Team 1323's sendInput method to make driving feel better
@@ -101,7 +101,7 @@ public class SwerveDriveHelper implements DriveHelper {
                     Math.signum(rotationInput);
         }
 
-        translationalInput = translationalInput.times(kOpenLoopMaxVelMeters);
+        translationalInput = translationalInput.times(kMaxVelOpenLoopMeters);
         rotationInput *= kMaxRotation;
 
         if (low_power) {

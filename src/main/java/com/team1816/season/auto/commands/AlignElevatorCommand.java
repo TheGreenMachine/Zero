@@ -3,10 +3,10 @@ package com.team1816.season.auto.commands;
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.commands.AutoCommand;
 import com.team1816.lib.util.logUtil.GreenLogger;
-import com.team1816.season.Robot;
 import com.team1816.season.auto.actions.AlignMaxAction;
 import com.team1816.season.auto.actions.AlignMidAction;
 import com.team1816.season.auto.actions.AlignMinAction;
+import com.team1816.season.states.Orchestrator;
 import com.team1816.season.subsystems.Elevator;
 
 public class AlignElevatorCommand extends AutoCommand {
@@ -30,7 +30,7 @@ public class AlignElevatorCommand extends AutoCommand {
 
     public void done() {
         super.done();
-        Robot.runningAutoAlign = false;
+        Orchestrator.runningAutoAlign = false;
         GreenLogger.log(" Align Elevator Command Completed!");
     }
 }

@@ -11,6 +11,7 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.util.EnhancedMotorChecker;
+import com.team1816.lib.util.driveUtil.DriveConversions;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.lib.util.team254.CheesyDriveHelper;
 import com.team1816.lib.util.team254.DriveSignal;
@@ -318,8 +319,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         leftPowerDemand = signal.getLeft();
         rightPowerDemand = signal.getRight();
 
-        leftVelDemand = leftPowerDemand * maxVelTicks100ms;
-        rightVelDemand = rightPowerDemand * maxVelTicks100ms;
+        leftVelDemand = leftPowerDemand * DriveConversions.metersPerSecondToTicksPer100ms(kMaxVelOpenLoopMeters);
+        rightVelDemand = rightPowerDemand * DriveConversions.metersPerSecondToTicksPer100ms(kMaxVelOpenLoopMeters);
     }
 
     /**

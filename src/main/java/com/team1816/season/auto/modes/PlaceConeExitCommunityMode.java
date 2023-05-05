@@ -8,6 +8,7 @@ import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.actions.AlignMaxAction;
+import com.team1816.season.auto.actions.GameElementAction;
 import com.team1816.season.auto.actions.ScoreAction;
 import com.team1816.season.auto.paths.NodeToExitCommunityPath;
 import com.team1816.season.subsystems.Collector;
@@ -32,6 +33,7 @@ public class PlaceConeExitCommunityMode extends AutoMode {
         runAction(new WaitAction(.5));
         runAction(
             new SeriesAction(
+                new GameElementAction(Collector.GAME_ELEMENT.CONE),
                 new AlignMaxAction(),
                 new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX)
             )

@@ -7,10 +7,7 @@ import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.util.logUtil.GreenLogger;
-import com.team1816.season.auto.actions.AlignMaxAction;
-import com.team1816.season.auto.actions.AutoBalanceAction;
-import com.team1816.season.auto.actions.ElevatorAction;
-import com.team1816.season.auto.actions.ScoreAction;
+import com.team1816.season.auto.actions.*;
 import com.team1816.season.auto.paths.NodeToChargeStationWallPath;
 import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Elevator;
@@ -33,6 +30,7 @@ public class PlaceConeAutoBalanceWallMode extends AutoMode {
         GreenLogger.log("Running Place Cone Balance Mode");
         runAction(
             new SeriesAction(
+                new GameElementAction(Collector.GAME_ELEMENT.CONE),
                 new WaitAction(0.05),
                 new AlignMaxAction(),
                 new ScoreAction(Collector.GAME_ELEMENT.CONE, Elevator.EXTENSION_STATE.MAX),
