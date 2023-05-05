@@ -1,5 +1,6 @@
 # Zero
-Zero is FRC Team 1816's robot for the 2023 FRC season, *FIRST Charged Up*. This software uses Java 11, the [WPILib](https://github.com/wpilibsuite/allwpilib) library, and the [CTRE Phoenix](https://github.com/CrossTheRoadElec/Phoenix-api) library.
+Zero is FRC Team 1816's robot for the 2023 FRC season, *FIRST Charged Up*. This software uses Java 17, 
+[WPILib](https://github.com/wpilibsuite/allwpilib), the [CTRE Phoenix](https://github.com/CrossTheRoadElec/Phoenix-api) Library, [Guice](https://github.com/google/guice), and [Apache Commons Math](https://github.com/apache/commons-math).
 
 ## Prerequisites
 1. You must have Java 17 installed on your system. You can [download OpenJDK 17 here](https://openjdk.java.net/projects/jdk/17/) or [download Oracle's JDK 17 here](https://www.oracle.com/java/technologies/downloads/#java17). Alternatively, this will be installed through the WPILib One-Click Installer.
