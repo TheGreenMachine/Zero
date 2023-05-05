@@ -71,7 +71,7 @@ public class Util {
         return (a - epsilon <= b) && (a + epsilon >= b);
     }
 
-    public static void cleanLogFiles(){
+    public static void cleanLogFiles() { // needs to be called after log
         var logPath = DataLogManager.getLogDir();
         long day = 1000 * 60 * 60 * 24;
         long now = System.currentTimeMillis();

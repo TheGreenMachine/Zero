@@ -196,13 +196,12 @@ public class Robot extends TimedRobot {
             DriverStation.silenceJoystickConnectionWarning(true);
 
             // Remember to register our elevator and collector subsystems below!! The subsystem manager deals with calling
-            // read/writetohardware on a loop, but it can only call read/write if it recognizes said subsystem. To recognize
+            // read/write to hardware on a loop, but it can only call read/write if it recognizes said subsystem. To recognize
             // your subsystem, just add it alongside the drive, ledManager, and camera parameters :)
             subsystemManager.setSubsystems(drive, ledManager, camera, elevator, collector);
 
             /** Logging */
             if (Constants.kLoggingRobot) {
-                var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
                 var robotName = System.getenv("ROBOT_NAME");
                 if (robotName == null) robotName = "default";
                 var logFileDir = "/home/lvuser/";
@@ -217,9 +216,9 @@ public class Robot extends TimedRobot {
                         logFileDir = System.getProperty("user.dir") + "/";
                     }
                 }
-                var filePath = logFileDir + robotName + "_" + logFile + ".bag";
-                DataLogManager.start();
-                // Note this needs to run after the logging is started otherwise directory is not known
+
+                DataLogManager.start(logFileDir);
+                // Note: this needs to run after the logging is started otherwise directory is not known
                 Util.cleanLogFiles();
                 DriverStation.startDataLog(DataLogManager.getLog(), false);
             }
