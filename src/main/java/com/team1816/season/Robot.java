@@ -11,6 +11,7 @@ import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.vision.Camera;
+import com.team1816.lib.util.Util;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.auto.commands.AlignElevatorCommand;
@@ -219,7 +220,9 @@ public class Robot extends TimedRobot {
                 }
                 var filePath = logFileDir + robotName + "_" + logFile + ".bag";
                 DataLogManager.start();
-                DriverStation.startDataLog(DataLogManager.getLog(), true);
+                // Note this needs to run after the logging is started otherwise directory is not known
+                Util.cleanLogFiles();
+                DriverStation.startDataLog(DataLogManager.getLog(), false);
             }
 
             subsystemManager.registerEnabledLoops(enabledLoop);
