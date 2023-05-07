@@ -42,7 +42,7 @@ public class DirectTargetTrajectoryPath extends AutoPath {
     @Override
     protected List<Rotation2d> getWaypointHeadings() {
         List<Rotation2d> headings = new ArrayList<>();
-        var rD = robotState.fieldToVehicle.getRotation().getDegrees()-target.getRotation().getDegrees();
+        var rD = robotState.fieldToVehicle.getRotation().getDegrees() - target.getRotation().getDegrees();
         if (Math.abs(rD) > rD + 360) {
             headings.add(Rotation2d.fromDegrees(robotState.fieldToVehicle.getRotation().getDegrees() + 360));
             headings.add(target.getRotation());

@@ -7,7 +7,6 @@ import com.team1816.lib.auto.actions.SeriesAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitUntilInsideRegion;
 import com.team1816.lib.auto.commands.AutoCommand;
-import com.team1816.lib.auto.paths.DirectTargetTrajectoryPath;
 import com.team1816.lib.auto.paths.TargetTrajectoryPath;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.util.logUtil.GreenLogger;

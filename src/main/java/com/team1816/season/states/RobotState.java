@@ -250,39 +250,40 @@ public class RobotState {
             double zExtension = Math.sin(Math.toRadians(actualElevatorAngle)) * actEleExtMeters;
 
             SmartDashboard.putNumberArray(
-                    "Elevator/FirstExtension",
-                    new double[]{-0.2, 0, 0.38, w_rot, x_rot, y_rot, z_rot}
+                "Elevator/FirstExtension",
+                new double[]{-0.2, 0, 0.38, w_rot, x_rot, y_rot, z_rot}
             );
             SmartDashboard.putNumberArray(
-                    "Elevator/SecondExtension",
-                    new double[]{-0.2 + xExtension * 0.333, 0, 0.38 + zExtension * 0.333, w_rot, x_rot, y_rot, z_rot}
+                "Elevator/SecondExtension",
+                new double[]{-0.2 + xExtension * 0.333, 0, 0.38 + zExtension * 0.333, w_rot, x_rot, y_rot, z_rot}
             );
             SmartDashboard.putNumberArray(
-                    "Elevator/ThirdExtension",
-                    new double[]{-0.2 + xExtension * 0.666, 0, 0.38 + zExtension * 0.666, w_rot, x_rot, y_rot, z_rot}
+                "Elevator/ThirdExtension",
+                new double[]{-0.2 + xExtension * 0.666, 0, 0.38 + zExtension * 0.666, w_rot, x_rot, y_rot, z_rot}
             );
             SmartDashboard.putNumberArray(
-                    "Elevator/FourthExtension",
-                    new double[]{-0.2 + xExtension, 0, 0.38 + zExtension, w_rot, x_rot, y_rot, z_rot}
+                "Elevator/FourthExtension",
+                new double[]{-0.2 + xExtension, 0, 0.38 + zExtension, w_rot, x_rot, y_rot, z_rot}
             );
 
             // collector
             Quaternion colRot = new Rotation3d(0, Math.toRadians(-actualElevatorAngle), 0)
-                    .plus(new Rotation3d(0, Math.toRadians(-actualCollectorAngle), 0))
-                    .getQuaternion();
+                .plus(new Rotation3d(0, Math.toRadians(-actualCollectorAngle), 0))
+                .getQuaternion();
             w_rot = colRot.getW();
             x_rot = colRot.getX();
             y_rot = colRot.getY();
             z_rot = colRot.getZ();
 
             xExtension = Math.cos(Math.toRadians(actualElevatorAngle)) * (actEleExtMeters + Elevator.kElevatorMinLength)
-                    + Math.cos(Math.toRadians(90 - actualElevatorAngle)) * 0.16;
+                + Math.cos(Math.toRadians(90 - actualElevatorAngle)) * 0.16;
             zExtension = Math.sin(Math.toRadians(actualElevatorAngle)) * (actEleExtMeters + Elevator.kElevatorMinLength)
-                    - Math.sin(Math.toRadians(90 - actualElevatorAngle)) * 0.16;;
+                - Math.sin(Math.toRadians(90 - actualElevatorAngle)) * 0.16;
+            ;
 
             SmartDashboard.putNumberArray(
-                    "Collector/Collector",
-                    new double[]{-0.2 + xExtension, 0, 0.38 + zExtension, w_rot, x_rot, y_rot, z_rot}
+                "Collector/Collector",
+                new double[]{-0.2 + xExtension, 0, 0.38 + zExtension, w_rot, x_rot, y_rot, z_rot}
             );
         }
     }
