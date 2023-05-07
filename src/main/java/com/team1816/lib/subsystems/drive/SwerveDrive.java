@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.auto.Color;
+import com.team1816.lib.auto.Symmetry;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.PidProvider;
@@ -340,7 +341,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         robotState.fieldToVehicle = swerveOdometry.getPoseMeters();
         robotState.driverRelativeFieldToVehicle = new Pose2d( // for inputs ONLY
             robotState.fieldToVehicle.getTranslation(),
-            robotState.allianceColor == Color.BLUE ? robotState.fieldToVehicle.getRotation() : robotState.fieldToVehicle.getRotation().rotateBy(Rotation2d.fromDegrees(180))
+            (robotState.allianceColor == Color.BLUE && Constants.fieldSymmetry == Symmetry.AXIS) ? robotState.fieldToVehicle.getRotation() : robotState.fieldToVehicle.getRotation().rotateBy(Rotation2d.fromDegrees(180))
         );
 
         var cs = new ChassisSpeeds(

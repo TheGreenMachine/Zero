@@ -49,7 +49,7 @@ public class FieldConfig {
             // Initialize April Tag Poses
             List<Pose2d> aprilTagPoses = new ArrayList<>();
             for (int i = 0; i <= 8; i++) {
-                if (fiducialTargets.get(i) == null) {
+                if (!fiducialTargets.containsKey(i)) {
                     aprilTagPoses.add(
                         i,
                         new Pose2d(new Translation2d(-1, -1), new Rotation2d())

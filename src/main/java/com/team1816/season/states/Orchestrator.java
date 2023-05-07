@@ -55,7 +55,6 @@ public class Orchestrator {
     public static boolean runningAutoAlign = false;
     public static boolean runningAutoScore = false;
 
-
     /**
      * Instantiates an Orchestrator with all its subsystems
      *
@@ -215,28 +214,31 @@ public class Orchestrator {
      * @see VisionPoint
      */
     public Pose2d calculateSingleTargetTranslation(VisionPoint target) {
-        Pose2d targetPos = FieldConfig.fiducialTargets.get(target.id).toPose2d();
+        if (FieldConfig.fiducialTargets.containsKey(target.id)) {
+            Pose2d targetPos = FieldConfig.fiducialTargets.get(target.id).toPose2d();
+            double X = target.getX(), Y = target.getY();
 
-        double X = target.getX(), Y = target.getY();
+            Translation2d cameraToTarget = new Translation2d(X, Y).rotateBy(robotState.getLatestFieldToCamera());
+            Translation2d robotToTarget = cameraToTarget.plus(
+                Constants.kCameraMountingOffset.getTranslation().rotateBy(
+                    robotState.fieldToVehicle.getRotation()
+                )
+            );
+            Translation2d targetToRobot = robotToTarget.unaryMinus();
 
-        Translation2d cameraToTarget = new Translation2d(X, Y).rotateBy(robotState.getLatestFieldToCamera());
-        Translation2d robotToTarget = cameraToTarget.plus(
-            Constants.kCameraMountingOffset.getTranslation().rotateBy(
-                robotState.fieldToVehicle.getRotation()
-            )
-        );
-        Translation2d targetToRobot = robotToTarget.unaryMinus();
+            Translation2d targetTranslation = targetToRobot.rotateBy(targetPos.getRotation());
+            Pose2d p = targetPos.plus(
+                new Transform2d(
+                    targetTranslation,
+                    targetPos.getRotation().rotateBy(Rotation2d.fromDegrees(180))
+                )
+            ); // inverse axis angle
 
-        Translation2d targetTranslation = targetToRobot.rotateBy(targetPos.getRotation());
-        Pose2d p = targetPos.plus(
-            new Transform2d(
-                targetTranslation,
-                targetPos.getRotation().rotateBy(Rotation2d.fromDegrees(180))
-            )
-        ); // inverse axis angle
-
-        GreenLogger.log("Updated Pose: " + p);
-        return p;
+            GreenLogger.log("Updated Pose: " + p);
+            return p;
+        } else {
+            return robotState.fieldToVehicle;
+        }
     }
 
     /**

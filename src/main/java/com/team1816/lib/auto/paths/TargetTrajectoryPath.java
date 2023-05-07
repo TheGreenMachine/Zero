@@ -1,10 +1,8 @@
-package com.team1816.season.auto.paths;
+package com.team1816.lib.auto.paths;
 
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.PathFinder;
-import com.team1816.lib.auto.paths.AutoPath;
-import com.team1816.lib.auto.paths.PathUtil;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,6 +14,9 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Path that delivers the robot to a specified target with active obstacle avoidance
+ */
 public class TargetTrajectoryPath extends AutoPath {
 
     public static RobotState robotState;
