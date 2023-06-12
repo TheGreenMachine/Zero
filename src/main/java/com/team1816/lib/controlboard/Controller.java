@@ -42,6 +42,9 @@ public abstract class Controller {
         RIGHT_Y,
         LEFT_TRIGGER,
         RIGHT_TRIGGER,
+
+        // Dance Pad
+        MIDDLE
     }
 
     /**
@@ -49,10 +52,10 @@ public abstract class Controller {
      */
     public enum Button {
         // Standard Controls
-        A,
-        B,
-        X,
-        Y,
+        A, // Triangle on Dance Pad
+        B, // Circle on Dance Pad
+        X, // X on Dance Pad
+        Y, // Square on Dance Pad
         LEFT_BUMPER,
         RIGHT_BUMPER,
         BACK,
@@ -69,8 +72,10 @@ public abstract class Controller {
         UP_LEFT,
         UP_RIGHT,
         DOWN_LEFT,
-        DOWN_RIGHT
+        DOWN_RIGHT,
 
+        // Dance Pad
+        SELECT
     }
 
     /**

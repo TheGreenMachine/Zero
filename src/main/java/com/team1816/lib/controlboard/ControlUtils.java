@@ -26,6 +26,9 @@ public class ControlUtils implements Controller.Factory {
         if (axisCount <= 3 && RobotBase.isSimulation()) {
             GreenLogger.log("    Using Wasd Controller for port: " + port);
             return new WasdController(port);
+        } else if (axisCount == 5) {
+            GreenLogger.log("    Using DancePad Controller for port: " + port);
+            return new DancePadController(port);
         } else if (axisCount == 4) {
             GreenLogger.log("    Using Logitech Controller for port: " + port);
             return new LogitechController(port);

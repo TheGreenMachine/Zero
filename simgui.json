@@ -172,10 +172,50 @@
     }
   },
   "NetworkTables": {
+    "$pub$": {
+      "FMSInfo": {
+        "open": true
+      },
+      "LiveWindow": {
+        ".status": {
+          "[...]##v_$pub$/LiveWindow/.status/LW Enabled": {
+            "open": true,
+            "{...}##v_[0]": {
+              "open": true
+            }
+          },
+          "open": true
+        },
+        "open": true
+      },
+      "Shuffleboard": {
+        ".metadata": {
+          "open": true
+        },
+        ".recording": {
+          "open": true
+        },
+        "Simulation": {
+          "open": true
+        },
+        "open": true
+      },
+      "SmartDashboard": {
+        "open": true
+      },
+      "open": true
+    },
+    "FMSInfo": {
+      "open": true
+    },
     "LiveWindow": {
+      ".status": {
+        "open": true
+      },
       "drivetrain": {
         "open": true
-      }
+      },
+      "open": true
     },
     "Persistent Values": {
       "open": false
@@ -199,6 +239,15 @@
       "Field": {
         "open": true
       },
+      "Mech 2D": {
+        "ElevatorArm": {
+          "open": true
+        },
+        "open": true
+      },
+      "Robot color": {
+        "open": true
+      },
       "Starting Position": {
         "open": true
       },
@@ -209,12 +258,18 @@
     },
     "combined": true,
     "photonvision": {
+      "ZED": {
+        "open": true
+      },
       "open": true,
       "zed": {
         "open": true
       }
     },
     "special": true
+  },
+  "NetworkTables Info": {
+    "visible": true
   },
   "NetworkTables View": {
     "visible": false
