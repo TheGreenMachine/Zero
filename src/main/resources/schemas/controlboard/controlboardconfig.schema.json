@@ -11,6 +11,9 @@
         },
         "buttonboard": {
             "$ref": "string.map.schema.json"
+        },
+        "dancepad": {
+            "$ref": "controllerconfig.schema.json"
         }
     }
 }
