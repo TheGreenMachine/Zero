@@ -110,6 +110,11 @@ public class Robot extends TimedRobot {
     private boolean snappingToHumanPlayer;
     private boolean snappingToDriver;
 
+    private double straightInc = 0.0;
+    private double sideInc = 0.0;
+    private double rotateInc = 0.0;
+
+
     /**
      * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
      */
@@ -464,7 +469,41 @@ public class Robot extends TimedRobot {
                             level = Elevator.EXTENSION_STATE.MAX;
                             GreenLogger.log("Score level changed to High");
                         }
-                    )
+                    ),
+                    //Dance pad
+                    createAction(
+                        () -> controlBoard.getAsBool("incrementForward"),
+                        () -> {
+                            straightInc += .1;
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("incrementBack"),
+                        () -> {
+                            straightInc -= .1;
+                        }
+                    ),
+                    createAction(
+                         () -> controlBoard.getAsBool("incrementRight"),
+                         () -> {
+                            sideInc += .1;
+                         }
+                    ),
+                    createAction(
+                         () -> controlBoard.getAsBool("incrementLeft"),
+                         () -> {
+                            sideInc -= .1;
+                         }
+                    ),
+                    createAction(
+                         () -> controlBoard.getAsBool("incrementTL"),
+                         () -> {
+                             rotateInc -= .05;
+                         }
+                    ),
+                    createAction(),
+                    createAction(),
+                    createAction()
                 );
         } catch (Throwable t) {
             faulted = true;
