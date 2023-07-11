@@ -462,7 +462,6 @@ public class ControlBoardBridge {
     public HashMap<String, Controller.Button> getButtonBoardMap() {
         return buttonBoardMap;
     }
-
     public boolean buttonBoardMapContainsKey(String key) {
         return buttonBoardMap.containsKey(key);
     }
@@ -474,6 +473,9 @@ public class ControlBoardBridge {
         return (
             dancepadAxisMap.containsKey(key) || dancepadButtonMap.containsKey(key)
         );
+    }
+    public HashMap<String, Controller.Axis> getDancepadAxisMap() {
+        return dancepadAxisMap;
     }
 
 

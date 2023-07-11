@@ -16,17 +16,21 @@ public class ControlBoard implements IControlBoard {
     public static final int kDriveGamepadPort = 0;
     public static final int kOperatorGamepadPort = 1;
     public static final int kButtonBoardPort = 2;
+    public static final int kDancepadPort = 3;
 
     public final Controller driverController;
     public final Controller operatorController;
 
     public final Controller buttonBoardController;
 
+    public final Controller dancepadController;
+
     @Inject
     private ControlBoard(ControlBoardBridge bridge, Controller.Factory controller) {
         driverController = controller.getControllerInstance(kDriveGamepadPort);
         operatorController = controller.getControllerInstance(kOperatorGamepadPort);
         buttonBoardController = controller.getControllerInstance(kButtonBoardPort);
+        dancepadController = controller.getControllerInstance(kDancepadPort);
         controlBoardBridge = bridge;
     }
 
@@ -70,6 +74,18 @@ public class ControlBoard implements IControlBoard {
             } else if (controlBoardBridge.getOperatorButtonMap().containsKey(name)) {
                 return operatorController.getButton(
                     controlBoardBridge.getOperatorButtonMap().get(name)
+                )
+                    ? 1
+                    : 0;
+            }
+        } else if (controlBoardBridge.dancepadMapContainsKey(name)) {
+            if (controlBoardBridge.getDancepadAxisMap().containsKey(name)) {
+                return dancepadController.getJoystick(
+                    controlBoardBridge.getDancepadAxisMap().get(name)
+                );
+            } else if (controlBoardBridge.getDancepadButtonMap().containsKey(name)) {
+                return dancepadController.getButton(
+                    controlBoardBridge.getDancepadButtonMap().get(name)
                 )
                     ? 1
                     : 0;
