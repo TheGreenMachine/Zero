@@ -769,8 +769,7 @@ public class Robot extends TimedRobot {
                 0,
                 robotState.driverRelativeFieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
-        }
-        else {
+        } else {
             double rotation;
             if (snappingToDriver || snappingToHumanPlayer) {
                 double rotVal = MathUtil.inputModulus(
@@ -788,9 +787,9 @@ public class Robot extends TimedRobot {
             }
 
             drive.setTeleopInputs(
-                -controlBoard.getAsDouble("throttle"),
-                -controlBoard.getAsDouble("strafe"),
-                rotation
+                -controlBoard.getAsDouble("throttle") - straightInc,
+                -controlBoard.getAsDouble("strafe") - sideInc,
+                rotation + rotateInc
             );
         }
     }
