@@ -130,6 +130,16 @@ public class ControlBoard implements IControlBoard {
                         controlBoardBridge.getOperatorDpadMap().get(name)
                 );
             }
+        } else if (controlBoardBridge.dancepadMapContainsKey(name)) {
+            if (controlBoardBridge.getDancepadAxisMap().containsKey(name)) {
+                return dancepadController.getTrigger(
+                    controlBoardBridge.getDancepadAxisMap().get(name)
+                );
+            } else if (controlBoardBridge.getDancepadButtonMap().containsKey(name)) {
+                return dancepadController.getButton(
+                    controlBoardBridge.getDancepadButtonMap().get(name)
+                );
+            }
         } else if (controlBoardBridge.buttonBoardMapContainsKey(name)) {
             return buttonBoardController.getButton(
                 controlBoardBridge.getButtonBoardMap().get(name)
