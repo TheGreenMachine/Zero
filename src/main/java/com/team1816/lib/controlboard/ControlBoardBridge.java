@@ -38,6 +38,11 @@ public class ControlBoardBridge {
 
     private HashMap<String, Controller.Button> buttonBoardMap = new HashMap<>();
 
+    private HashMap<String, Controller.Button> dancepadButtonMap = new HashMap<>();
+    private HashMap<String, Controller.Axis> dancepadAxisMap = new HashMap<>();
+    private HashMap<String, Integer> dancepadDpadMap = new HashMap<>();
+    private boolean dancepadRumble = false;
+
     /**
      * Instantiates the ControlBoardBridge which maps controllable axes and buttons
      */
@@ -313,6 +318,62 @@ public class ControlBoardBridge {
                     Controller.Button.DOWN_RIGHT
                 );
             }
+            if (config.dancepad != null) {
+                if (config.dancepad.rumble != null) {
+                    dancepadRumble = config.dancepad.rumble;
+                }
+                if (config.dancepad.axes != null) {
+                    dancepadAxisMap.put(
+                        config.dancepad.axes.getOrDefault("middle", "empty"),
+                        Controller.Axis.MIDDLE
+                    );
+                }
+                if (config.dancepad.buttonpad != null) {
+                    if (config.dancepad.buttonpad.x != null) dancepadButtonMap.put(
+                        config.dancepad.buttonpad.x,
+                        Controller.Button.X
+                    );
+                    if (config.dancepad.buttonpad.y != null) dancepadButtonMap.put(
+                        config.dancepad.buttonpad.y,
+                        Controller.Button.Y
+                    );
+                    if (config.dancepad.buttonpad.a != null) dancepadButtonMap.put(
+                        config.dancepad.buttonpad.a,
+                        Controller.Button.A
+                    );
+                    if (config.dancepad.buttonpad.b != null) dancepadButtonMap.put(
+                        config.driver.buttonpad.b,
+                        Controller.Button.B
+                    );
+                }
+                if (config.dancepad.buttons != null) {
+                    dancepadButtonMap.put(
+                        config.dancepad.buttons.getOrDefault("select", "empty"),
+                        Controller.Button.SELECT
+                    );
+                    dancepadButtonMap.put(
+                        config.dancepad.buttons.getOrDefault("start", "empty"),
+                        Controller.Button.START
+                    );
+                    dancepadButtonMap.put(
+                        config.dancepad.buttons.getOrDefault("up", "empty"),
+                        Controller.Button.UP
+                    );
+                    dancepadButtonMap.put(
+                        config.dancepad.buttons.getOrDefault("down", "empty"),
+                        Controller.Button.DOWN
+                    );
+                    dancepadButtonMap.put(
+                        config.dancepad.buttons.getOrDefault("left", "empty"),
+                        Controller.Button.LEFT
+                    );
+                    dancepadButtonMap.put(
+                        config.dancepad.buttons.getOrDefault("right", "empty"),
+                        Controller.Button.RIGHT
+                    );
+                }
+
+            }
         }
     }
 
@@ -405,5 +466,15 @@ public class ControlBoardBridge {
     public boolean buttonBoardMapContainsKey(String key) {
         return buttonBoardMap.containsKey(key);
     }
+
+    public HashMap<String, Controller.Button> getDancepadButtonMap() {
+        return dancepadButtonMap;
+    }
+    public boolean dancepadMapContainsKey(String key) {
+        return (
+            dancepadAxisMap.containsKey(key) || dancepadButtonMap.containsKey(key)
+        );
+    }
+
 
 }

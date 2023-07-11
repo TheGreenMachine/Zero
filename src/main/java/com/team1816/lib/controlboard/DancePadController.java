@@ -1,6 +1,6 @@
 package com.team1816.lib.controlboard;
 
-public class DancePadController extends Controller{
+public class DancePadController extends Controller {
     /**
      * Instantiates a controller based on it's assigned (USB) port seen in the DriverStation utility
      *

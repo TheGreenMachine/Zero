@@ -501,9 +501,24 @@ public class Robot extends TimedRobot {
                              rotateInc -= .05;
                          }
                     ),
-                    createAction(),
-                    createAction(),
-                    createAction()
+                    createAction(
+                        () -> controlBoard.getAsBool("incrementTR"),
+                        () -> {
+                            rotateInc += .05;
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("incrementBL"),
+                        () -> {
+                            rotateInc -= .1;
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("incrementBR"),
+                        () -> {
+                            rotateInc += .1;
+                        }
+                    )
                 );
         } catch (Throwable t) {
             faulted = true;
@@ -754,7 +769,8 @@ public class Robot extends TimedRobot {
                 0,
                 robotState.driverRelativeFieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
-        } else {
+        }
+        else {
             double rotation;
             if (snappingToDriver || snappingToHumanPlayer) {
                 double rotVal = MathUtil.inputModulus(
