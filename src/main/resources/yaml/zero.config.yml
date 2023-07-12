@@ -1,6 +1,13 @@
 subsystems:
     drivetrain:
         implemented: true
+        motors:
+            FLDr:
+                motorType: falcon
+                motorName: FLDr
+                id: 11
+                currentLimit: 40
+                invertMotor: false
         falcons:
             FLDr: 11
             FRDr: 9

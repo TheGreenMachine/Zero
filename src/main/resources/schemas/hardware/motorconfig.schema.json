@@ -1,0 +1,21 @@
+{
+    "type": "object",
+    "title": "Motor Configuration",
+    "properties": {
+        "motorType": {
+            "type" : "string"
+        },
+        "motorName": {
+            "type" : "string"
+        },
+        "id": {
+            "type" : "number"
+        },
+        "currentLimit": {
+            "type": "number"
+        },
+        "invertMotor" : {
+            "type": "boolean"
+        }
+    }
+}

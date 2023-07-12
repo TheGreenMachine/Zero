@@ -7,6 +7,7 @@ import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
+import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.revrobotics.CANSparkMax;
@@ -164,7 +165,7 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public double getTemperature() {
-        return 0;
+        return motor.getMotorTemperature();
     }
 
     @Override
@@ -290,7 +291,8 @@ public class LazySparkMax implements IGreenMotor {
         double forwardSensorLimit,
         int timeoutMs
     ) {
-        return null;
+        motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float)forwardSensorLimit);
+        return ErrorCode.OK;
     }
 
     @Override
@@ -298,7 +300,8 @@ public class LazySparkMax implements IGreenMotor {
         double reverseSensorLimit,
         int timeoutMs
     ) {
-        return null;
+        motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float)reverseSensorLimit); //TODO make sure that reverseSensorLimit doesn't need to be negative or something
+        return ErrorCode.OK;
     }
 
     @Override
@@ -339,9 +342,19 @@ public class LazySparkMax implements IGreenMotor {
         return ErrorCode.OK;
     }
 
+    public ErrorCode config_Pid_Manual(int slotIdx, SlotConfiguration slotConfiguration) {
+        pidController.setP(slotConfiguration.kP, slotIdx);
+        pidController.setI(slotConfiguration.kI, slotIdx);
+        pidController.setD(slotConfiguration.kD, slotIdx);
+        pidController.setFF(slotConfiguration.kF, slotIdx);
+        pidController.setIZone(slotConfiguration.integralZone);
+        pidController.setSmartMotionAllowedClosedLoopError(slotConfiguration.allowableClosedloopError, slotIdx);
+        return ErrorCode.OK;
+    }
     @Override
     public ErrorCode config_IntegralZone(int slotIdx, double izone, int timeoutMs) {
-        return null;
+        pidController.setIZone(izone, slotIdx);
+        return ErrorCode.OK;
     }
 
     @Override
@@ -350,7 +363,8 @@ public class LazySparkMax implements IGreenMotor {
         double allowableCloseLoopError,
         int timeoutMs
     ) {
-        return null;
+        pidController.setSmartMotionAllowedClosedLoopError(allowableCloseLoopError, slotIdx); //TODO make sure this is actually allowable error
+        return ErrorCode.OK;
     }
 
     @Override
@@ -359,7 +373,8 @@ public class LazySparkMax implements IGreenMotor {
         double iaccum,
         int timeoutMs
     ) {
-        return null;
+        pidController.setIMaxAccum(iaccum, slotIdx);
+        return ErrorCode.OK;
     }
 
     @Override
@@ -368,6 +383,7 @@ public class LazySparkMax implements IGreenMotor {
         double percentOut,
         int timeoutMs
     ) {
+        pidController.setOutputRange(0, percentOut, slotIdx); //TODO MAKE SURE THIS WORKS
         return null;
     }
 
@@ -383,7 +399,7 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public ErrorCode setIntegralAccumulator(double iaccum, int pidIdx, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override

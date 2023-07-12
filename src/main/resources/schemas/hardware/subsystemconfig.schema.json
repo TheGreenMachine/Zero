@@ -9,6 +9,10 @@
         "required": [
             "implemented"
         ],
+        "motors": {
+            "type": "object",
+            "existingJavaType": "java.util.Map<String,MotorConfiguration>"
+        },
         "canifier": {
             "type": "integer"
         },
