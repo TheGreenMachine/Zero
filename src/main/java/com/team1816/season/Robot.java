@@ -4,6 +4,7 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.controlboard.ActionManager;
+import com.team1816.lib.controlboard.ControlBoard;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
@@ -113,6 +114,9 @@ public class Robot extends TimedRobot {
     private double straightInc = 0.0;
     private double sideInc = 0.0;
     private double rotateInc = 0.0;
+
+    private double linScale = 1;
+    private double rotScale = 1;
 
 
     /**
@@ -471,10 +475,12 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     //Dance pad
-                    createAction(
+                    createHoldAction(
                         () -> controlBoard.getAsBool("incrementForward"),
-                        () -> {
-                            straightInc += .1;
+                        (held) -> {
+                            if (straightInc < .6) {
+                                straightInc += .1;
+                            }
                         }
                     ),
                     createAction(
@@ -786,10 +792,16 @@ public class Robot extends TimedRobot {
                 rotation = controlBoard.getAsDouble("rotation");
             }
 
+            double linearThrottle = (controlBoard.getAsDouble("linearThrottle") + 1)/2;
+            double rotationalThrottle = (controlBoard.getAsDouble("roationalThrottle") + 1)/2;
+
+            linScale = Math.abs(controlBoard.getAsDouble("linearThrottle")) * 1.5;
+            rotScale = Math.abs(controlBoard.getAsDouble("rotationThrottle")) * 1.5;
+
             drive.setTeleopInputs(
-                -controlBoard.getAsDouble("throttle") - straightInc,
-                -controlBoard.getAsDouble("strafe") - sideInc,
-                rotation + rotateInc
+                -controlBoard.getAsDouble("throttle") + (straightInc * linScale),
+                -controlBoard.getAsDouble("strafe") + (sideInc * linScale),
+                rotation + (rotateInc * rotScale)
             );
         }
     }
