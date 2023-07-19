@@ -23,6 +23,16 @@ public class ControlUtils implements Controller.Factory {
     public Controller getControllerInstance(int port) {
         var hid = new Joystick(port);
         var axisCount = hid.getAxisCount();
+
+        // Controller diagnostics
+        System.out.println(hid.getName());
+        System.out.println(hid.getType());
+        System.out.println("Is connected? " + hid.isConnected());
+        System.out.println(hid.getButtonCount() + " buttons");
+        System.out.println(hid.getPOVCount() + " POVs");
+        System.out.println(axisCount + " axes");
+
+
         if (axisCount <= 3 && RobotBase.isSimulation()) {
             GreenLogger.log("    Using Wasd Controller for port: " + port);
             return new WasdController(port);

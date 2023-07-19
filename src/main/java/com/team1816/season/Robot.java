@@ -478,15 +478,17 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("incrementForward"),
                         (held) -> {
-                            if (straightInc < .6) {
-                                straightInc += .1;
+                            if (held) {
+                                if (straightInc < .6) {
+                                    straightInc += .1;
+                                }
                             }
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("incrementBack"),
                         () -> {
-                            straightInc -= .1;
+                            System.out.println("just work please");
                         }
                     ),
                     createAction(
@@ -799,7 +801,7 @@ public class Robot extends TimedRobot {
             rotScale = rotationalThrottle * 1.5;
 
             drive.setTeleopInputs(
-                -controlBoard.getAsDouble("throttle") + (straightInc * linScale),
+                -controlBoard.getAsDouble("throttle") + (straightInc),
                 -controlBoard.getAsDouble("strafe") + (sideInc * linScale),
                 rotation + (rotateInc * rotScale)
             );
