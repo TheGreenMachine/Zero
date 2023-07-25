@@ -481,6 +481,8 @@ public class Robot extends TimedRobot {
                             if (held) {
                                 if (straightInc < .6) {
                                     straightInc += .1;
+                                } else {
+                                    straightInc = 0;
                                 }
                             }
                         }
@@ -491,16 +493,28 @@ public class Robot extends TimedRobot {
                             System.out.println("just work please");
                         }
                     ),
-                    createAction(
+                    createHoldAction(
                          () -> controlBoard.getAsBool("incrementRight"),
-                         () -> {
-                            sideInc += .1;
+                         (held) -> {
+                            if (held) {
+                                if (sideInc < .6) {
+                                    sideInc += .1;
+                                } else {
+                                    sideInc = 0;
+                                }
+                            }
                          }
                     ),
-                    createAction(
+                    createHoldAction(
                          () -> controlBoard.getAsBool("incrementLeft"),
-                         () -> {
-                            sideInc -= .1;
+                         (held) -> {
+                            if (held) {
+                                if (sideInc > -.6) {
+                                    sideInc -= .1;
+                                } else {
+                                    sideInc = 0;
+                                }
+                            }
                          }
                     ),
                     createAction(
