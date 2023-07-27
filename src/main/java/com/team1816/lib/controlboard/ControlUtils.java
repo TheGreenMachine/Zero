@@ -3,6 +3,7 @@ package com.team1816.lib.controlboard;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.lib.util.team254.LatchedBoolean;
 import com.team1816.season.Robot;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -32,13 +33,12 @@ public class ControlUtils implements Controller.Factory {
         System.out.println(hid.getPOVCount() + " POVs");
         System.out.println(axisCount + " axes");
 
-
-        if (axisCount <= 3 && RobotBase.isSimulation()) {
+        if (axisCount == 5 || hid.getName().equals("USB Gamepad ")) {
+            GreenLogger.log("    Using Dance Pad Controller for port: " + port);
+            return new DancePadController(port);
+        } else if (axisCount <= 3 && RobotBase.isSimulation()) {
             GreenLogger.log("    Using Wasd Controller for port: " + port);
             return new WasdController(port);
-        } else if (axisCount == 5) {
-            GreenLogger.log("    Using DancePad Controller for port: " + port);
-            return new DancePadController(port);
         } else if (axisCount == 4) {
             GreenLogger.log("    Using Logitech Controller for port: " + port);
             return new LogitechController(port);
