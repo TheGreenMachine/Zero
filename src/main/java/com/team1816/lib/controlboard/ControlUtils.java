@@ -25,13 +25,8 @@ public class ControlUtils implements Controller.Factory {
         var hid = new Joystick(port);
         var axisCount = hid.getAxisCount();
 
-        // Controller diagnostics
-        System.out.println(hid.getName());
-        System.out.println(hid.getType());
-        System.out.println("Is connected? " + hid.isConnected());
-        System.out.println(hid.getButtonCount() + " buttons");
-        System.out.println(hid.getPOVCount() + " POVs");
-        System.out.println(axisCount + " axes");
+
+        //controllerDiagnostics(hid);
 
         if (axisCount == 5 || hid.getName().equals("USB Gamepad ")) {
             GreenLogger.log("    Using Dance Pad Controller for port: " + port);
@@ -70,6 +65,15 @@ public class ControlUtils implements Controller.Factory {
 
     public interface ButtonAction {
         void update();
+    }
+
+    private static void controllerDiagnostics(Joystick hid) {
+        GreenLogger.log(hid.getName());
+        GreenLogger.log(String.valueOf(hid.getType()));
+        GreenLogger.log("Is connected? " + hid.isConnected());
+        GreenLogger.log(hid.getButtonCount() + " buttons");
+        GreenLogger.log(hid.getPOVCount() + " POVs");
+        GreenLogger.log(hid.getAxisCount() + " axes");
     }
 
     public static class PressAction implements ButtonAction {
