@@ -5,6 +5,7 @@ import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.controlboard.ActionManager;
 import com.team1816.lib.controlboard.ControlBoard;
+import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
@@ -12,6 +13,7 @@ import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.vision.Camera;
+import com.team1816.lib.util.DancePadUtil;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.configuration.Constants;
@@ -111,12 +113,12 @@ public class Robot extends TimedRobot {
     private boolean snappingToHumanPlayer;
     private boolean snappingToDriver;
 
-    private double straightInc = 0.0;
-    private double sideInc = 0.0;
-    private double rotateInc = 0.0;
+    private double linScale;
+    private double rotScale;
 
-    private double linScale = 1;
-    private double rotScale = 1;
+    private DancePadUtil dancePadUtil;
+
+
 
 
     /**
@@ -138,6 +140,10 @@ public class Robot extends TimedRobot {
         infrastructure = Injector.get(Infrastructure.class);
         subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
+
+        linScale = 1;
+        rotScale = 1;
+        dancePadUtil = new DancePadUtil();
 
         prevAngleState = Elevator.ANGLE_STATE.STOW;
         if (RobotBase.isReal()) {
@@ -479,55 +485,78 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("incrementForward"),
                         (held) -> {
                             if (held) {
-                                if (straightInc < .6) {
-                                    straightInc += .1;
-                                }
+                               dancePadUtil.pressButton(Controller.Button.UP);
+                            }
+                            else {
+                                dancePadUtil.pressButton(Controller.Button.UP);
                             }
                         }
                     ),
-                    createAction(
+                    createHoldAction(
                         () -> controlBoard.getAsBool("incrementBack"),
-                        () -> {
-                            System.out.println("just work please");
+                        (held) -> {
+                            if (held)
+                                dancePadUtil.pressButton(Controller.Button.DOWN);
+                            else
+                                dancePadUtil.pressButton(Controller.Button.DOWN);
                         }
                     ),
-                    createAction(
+                    createHoldAction(
                          () -> controlBoard.getAsBool("incrementRight"),
-                         () -> {
-                            sideInc += .1;
+                         (held) -> {
+                             if (held)
+                                 dancePadUtil.pressButton(Controller.Button.RIGHT);
+                             else
+                                 dancePadUtil.pressButton(Controller.Button.RIGHT);
                          }
                     ),
-                    createAction(
+                    createHoldAction(
                          () -> controlBoard.getAsBool("incrementLeft"),
-                         () -> {
-                            sideInc -= .1;
-                         }
+                         (held) -> {
+                             if (held)
+                                 dancePadUtil.pressButton(Controller.Button.LEFT);
+                             else
+                                 dancePadUtil.pressButton(Controller.Button.LEFT);
+                        }
                     ),
-                    createAction(
+                    createHoldAction(
                          () -> controlBoard.getAsBool("incrementTL"),
-                         () -> {
-                             rotateInc -= .05;
+                         (held) -> {
+                             if (held)
+                                 dancePadUtil.pressButton(Controller.Button.UP_LEFT);
+                             else
+                                 dancePadUtil.pressButton(Controller.Button.UP_LEFT);
                          }
                     ),
-                    createAction(
+                    createHoldAction(
                         () -> controlBoard.getAsBool("incrementTR"),
-                        () -> {
-                            rotateInc += .05;
+                        (held) -> {
+                            if (held) {
+                                dancePadUtil.pressButton(Controller.Button.UP_RIGHT);
+                            } else
+                                dancePadUtil.pressButton(Controller.Button.UP_RIGHT);
                         }
                     ),
-                    createAction(
+                    createHoldAction(
                         () -> controlBoard.getAsBool("incrementBL"),
-                        () -> {
-                            rotateInc -= .1;
+                        (held) -> {
+                            if (held)
+                                dancePadUtil.pressButton(Controller.Button.DOWN_LEFT);
+                            else
+                                dancePadUtil.pressButton(Controller.Button.DOWN_LEFT);
                         }
                     ),
-                    createAction(
+                    createHoldAction(
                         () -> controlBoard.getAsBool("incrementBR"),
-                        () -> {
-                            rotateInc += .1;
+                        (held) -> {
+                            if (held)
+                                dancePadUtil.pressButton(Controller.Button.DOWN_RIGHT);
+                            else
+                                dancePadUtil.pressButton(Controller.Button.DOWN_RIGHT);
                         }
                     )
                 );
+            dancePadUtil.initializeBooleans();
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -794,16 +823,17 @@ public class Robot extends TimedRobot {
                 rotation = controlBoard.getAsDouble("rotation");
             }
 
+            dancePadUtil.update();
+
             double linearThrottle = (controlBoard.getAsDouble("linearThrottle") + 1)/2;
             double rotationalThrottle = (controlBoard.getAsDouble("roationalThrottle") + 1)/2;
 
             linScale = linearThrottle * 1.5;
             rotScale = rotationalThrottle * 1.5;
-
             drive.setTeleopInputs(
-                -controlBoard.getAsDouble("throttle") + (straightInc),
-                -controlBoard.getAsDouble("strafe") + (sideInc * linScale),
-                rotation + (rotateInc * rotScale)
+                -controlBoard.getAsDouble("throttle") + (dancePadUtil.straightInc),
+                -controlBoard.getAsDouble("strafe") + (dancePadUtil.sideInc * linScale),
+                rotation + (dancePadUtil.rotateInc * rotScale)
             );
         }
     }

@@ -342,7 +342,7 @@ public class ControlBoardBridge {
                         Controller.Button.A
                     );
                     if (config.dancepad.buttonpad.b != null) dancepadButtonMap.put(
-                        config.driver.buttonpad.b,
+                        config.dancepad.buttonpad.b,
                         Controller.Button.B
                     );
                 }
