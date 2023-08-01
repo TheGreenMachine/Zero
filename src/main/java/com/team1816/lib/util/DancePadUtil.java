@@ -77,79 +77,96 @@ public class DancePadUtil {
     }
 
     private void updateLinear() {
-        if (straightInc < .6) {
-            if (downPressed) {
-                straightInc -= .1;
-            }
-        }
-        if (straightInc > -.6) {
-            if (upPressed) {
-                straightInc += .1;
-            }
-        }
         if(!downPressed && !upPressed) {
-            if (Math.abs(straightInc) < .2 ) {
+//                if (Math.abs(straightInc) < .5 ) {
+//                    straightInc = 0;
+//                } else if( straightInc > 0) {
+//                    straightInc -= .175;
+//                } else if (straightInc < 0) {
+//                    straightInc += .175;
+//                }
+            straightInc =0;
+        } else {
+
+            if (straightInc > -.6) {
+                if (downPressed) {
+                    straightInc -= .1;
+                }
+            }
+            if (straightInc < .6) {
+                if (upPressed) {
+                    straightInc += .1;
+                }
+            }
+            if (!downPressed && !upPressed) {
+//                if (Math.abs(straightInc) < .5 ) {
+//                    straightInc = 0;
+//                } else if( straightInc > 0) {
+//                    straightInc -= .175;
+//                } else if (straightInc < 0) {
+//                    straightInc += .175;
+//                }
                 straightInc = 0;
-            } else if( straightInc > 0) {
-                straightInc -=.175;
-            } else if (straightInc < 0) {
-                straightInc += .175;
             }
         }
     }
 
     private void updateHorizontal() {
-        if (sideInc < .6) {
-            if (rightPressed) {
-                sideInc += .1;
-            }
-        }
-        if (sideInc > -.6) {
-            if (leftPressed) {
-                sideInc -= .1;
-            }
-        }
         if(!rightPressed && !leftPressed) {
-            if (Math.abs(sideInc) < .2 ) {
-                sideInc = 0;
-            } else if( sideInc > 0) {
-                sideInc -= .175;
-            } else if (sideInc < 0) {
-                sideInc += .175;
+//            if (Math.abs(sideInc) < .2 ) {
+//                sideInc = 0;
+//            } else if( sideInc > 0) {
+//                sideInc -= .175;
+//            } else if (sideInc < 0) {
+//                sideInc += .175;
+//            }
+            sideInc =0;
+        } else {
+
+            if (sideInc > -.6) {
+                if (rightPressed) {
+                    sideInc -= .1;
+                }
+            }
+            if (sideInc < .6) {
+                if (leftPressed) {
+                    sideInc += .1;
+                }
             }
         }
-
     }
 
     private void updateRotational() {
-        if (rotateInc < .6) {
-            if (TRPressed || BRPressed) {
-                if (TRPressed) {
-                    rotateInc += .1;
-                } else {
-                    rotateInc += .05;
-                }
-            }
-        }
-        if (rotateInc > -.6) {
-            if (TLPressed || BLPressed) {
-                if (TLPressed) {
-                    rotateInc -= .1;
-                } else {
-                    rotateInc -= .05;
-                }
-            }
-        }
         if(!TLPressed && !BRPressed && !BLPressed && !TRPressed) {
-            if (Math.abs(rotateInc) < .2 ) {
-                rotateInc = 0;
-            } else if( rotateInc > 0) {
-                rotateInc -=.175;
-            } else if (rotateInc < 0) {
-                rotateInc += .175;
+//            if (Math.abs(rotateInc) < .2 ) {
+//                rotateInc = 0;
+//            } else if( rotateInc > 0) {
+//                rotateInc -=.175;
+//            } else if (rotateInc < 0) {
+//                rotateInc += .175;
+//            }
+            rotateInc = 0;
+        } else {
+
+            if (rotateInc < .6) {
+                if (TRPressed || BRPressed) {
+                    if (TRPressed) {
+                        rotateInc += .1;
+                    } else {
+                        rotateInc += .05;
+                    }
+                }
+            }
+            if (rotateInc > -.6) {
+                if (TLPressed || BLPressed) {
+                    if (TLPressed) {
+                        rotateInc -= .1;
+                    } else {
+                        rotateInc -= .05;
+                    }
+                }
             }
         }
-
     }
 
     public void initializeBooleans() {
@@ -162,6 +179,8 @@ public class DancePadUtil {
         TRPressed = false;
         BLPressed = false;
         BRPressed = false;
+
+
 
     }
 

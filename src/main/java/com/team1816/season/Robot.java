@@ -824,16 +824,21 @@ public class Robot extends TimedRobot {
             }
 
             dancePadUtil.update();
+            double straightInc = dancePadUtil.straightInc;
+            double sideInc = dancePadUtil.sideInc;
+            double rotInc = dancePadUtil.rotateInc;
+
 
             double linearThrottle = (controlBoard.getAsDouble("linearThrottle") + 1)/2;
-            double rotationalThrottle = (controlBoard.getAsDouble("roationalThrottle") + 1)/2;
+            double rotationalThrottle = (controlBoard.getAsDouble("rotationalThrottle") + 1)/2;
 
             linScale = linearThrottle * 1.5;
             rotScale = rotationalThrottle * 1.5;
+
             drive.setTeleopInputs(
-                -controlBoard.getAsDouble("throttle") + (dancePadUtil.straightInc),
-                -controlBoard.getAsDouble("strafe") + (dancePadUtil.sideInc * linScale),
-                rotation + (dancePadUtil.rotateInc * rotScale)
+                -controlBoard.getAsDouble("throttle") + (straightInc * linScale),
+                -controlBoard.getAsDouble("strafe") + (sideInc * linScale),
+                rotation + (rotInc * rotScale)
             );
         }
     }
