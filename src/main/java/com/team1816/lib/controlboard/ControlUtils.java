@@ -26,18 +26,18 @@ public class ControlUtils implements Controller.Factory {
         var axisCount = hid.getAxisCount();
 
 
-        //controllerDiagnostics(hid);
+        controllerDiagnostics(hid);
 
-        if (axisCount == 5 || hid.getName().equals("USB Gamepad ")) {
-            GreenLogger.log("    Using Dance Pad Controller for port: " + port);
-            return new DancePadController(port);
-        } else if (axisCount <= 3 && RobotBase.isSimulation()) {
+         if (axisCount <= 3 && RobotBase.isSimulation()) {
             GreenLogger.log("    Using Wasd Controller for port: " + port);
             return new WasdController(port);
         } else if (axisCount == 4) {
             GreenLogger.log("    Using Logitech Controller for port: " + port);
             return new LogitechController(port);
-        } else {
+        } else if (axisCount == 5) {
+             GreenLogger.log("    Using Dance Pad Controller for port: " + port);
+             return new DancePadController(port);
+         } else {
             if (port == ControlBoard.kButtonBoardPort) { // reserved button board port
                 GreenLogger.log("    Using ButtonBoard Controller for port: " + port);
                 return new ButtonboardController(port);
