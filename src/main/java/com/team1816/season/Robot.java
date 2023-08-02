@@ -829,13 +829,12 @@ public class Robot extends TimedRobot {
             double rotInc = dancePadUtil.rotateInc;
 
 
-            double linearThrottle = (controlBoard.getAsDouble("linearThrottle") + 1)/2;
-            double rotationalThrottle = (controlBoard.getAsDouble("rotationalThrottle") + 1)/2;
+            double linearThrottle = (-controlBoard.getAsDouble("linearThrottle") + 1)/2;
+            double rotationalThrottle = (-controlBoard.getAsDouble("rotationalThrottle") + 1)/2;
 
             linScale = linearThrottle * 1.5;
             rotScale = rotationalThrottle * 1.5;
 
-            System.out.println("Lthrot = " + controlBoard.getAsDouble("linearThrottle"));
             drive.setTeleopInputs(
                 -controlBoard.getAsDouble("throttle") + (straightInc * linScale),
                 -controlBoard.getAsDouble("strafe") + (sideInc * linScale),
