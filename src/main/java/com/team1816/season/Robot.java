@@ -835,6 +835,7 @@ public class Robot extends TimedRobot {
             linScale = linearThrottle * 1.5;
             rotScale = rotationalThrottle * 1.5;
 
+            System.out.println("Lthrot = " + controlBoard.getAsDouble("linearThrottle"));
             drive.setTeleopInputs(
                 -controlBoard.getAsDouble("throttle") + (straightInc * linScale),
                 -controlBoard.getAsDouble("strafe") + (sideInc * linScale),

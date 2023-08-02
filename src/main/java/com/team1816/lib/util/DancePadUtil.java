@@ -85,7 +85,7 @@ public class DancePadUtil {
 //                } else if (straightInc < 0) {
 //                    straightInc += .175;
 //                }
-            straightInc =0;
+            straightInc = 0;
         } else {
 
             if (straightInc > -.6) {
@@ -97,16 +97,6 @@ public class DancePadUtil {
                 if (upPressed) {
                     straightInc += .1;
                 }
-            }
-            if (!downPressed && !upPressed) {
-//                if (Math.abs(straightInc) < .5 ) {
-//                    straightInc = 0;
-//                } else if( straightInc > 0) {
-//                    straightInc -= .175;
-//                } else if (straightInc < 0) {
-//                    straightInc += .175;
-//                }
-                straightInc = 0;
             }
         }
     }
