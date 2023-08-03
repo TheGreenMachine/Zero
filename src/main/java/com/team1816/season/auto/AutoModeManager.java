@@ -193,6 +193,8 @@ public class AutoModeManager {
         DOUBLE_CONE_FEEDER,
         DOUBLE_CONE_WALL,
 
+        MICHAEL,
+
 //        TRIPLE_CONE_FEEDER,
 //        TRIPLE_CONE_WALL
     }
@@ -232,6 +234,8 @@ public class AutoModeManager {
                 return (new DoublePlaceConeFeederMode(color));
             case DOUBLE_CONE_WALL:
                 return (new DoublePlaceConeWallMode(color));
+            case MICHAEL:
+                return new MichaelMode(color);
 //            case TRIPLE_CONE_FEEDER:
 //                return (new TriplePlaceConeFeederMode(color));
 //            case TRIPLE_CONE_WALL:

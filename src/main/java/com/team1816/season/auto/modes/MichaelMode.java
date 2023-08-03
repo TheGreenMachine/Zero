@@ -34,6 +34,8 @@ public class MichaelMode extends AutoMode {
     protected void routine() throws AutoModeEndedException {
         GreenLogger.log("MichaelMode does something");
 
+        runAction(this.trajectoryActions.get(0));
+
         if (robotState.actualCollectorAngle == 60.0) {
             throw new AutoModeEndedException();
         }

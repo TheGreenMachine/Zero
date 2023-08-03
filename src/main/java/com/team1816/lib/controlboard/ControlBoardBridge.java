@@ -37,6 +37,8 @@ public class ControlBoardBridge {
     private boolean operatorRumble = false;
 
     private HashMap<String, Controller.Button> buttonBoardMap = new HashMap<>();
+    private String driverControllerType;
+    private String operatorControllerType;
 
     /**
      * Instantiates the ControlBoardBridge which maps controllable axes and buttons
@@ -74,8 +76,15 @@ public class ControlBoardBridge {
             );
         }
 
+        /*
+        * Note(Michael): How are the values being set up? This just seems like
+        * some kind of dark magic.
+        */
         if (config != null) {
             if (config.driver != null) {
+                if (config.driver.controllerType != null) {
+                    driverControllerType = config.driver.controllerType;
+                }
                 if (config.driver.rumble != null) {
                     driverRumble = config.driver.rumble;
                 }
@@ -176,6 +185,9 @@ public class ControlBoardBridge {
                 }
             }
             if (config.operator != null) {
+                if (config.operator.controllerType != null) {
+                    operatorControllerType = config.operator.controllerType;
+                }
                 if (config.operator.rumble != null) {
                     operatorRumble = config.operator.rumble;
                 }
@@ -406,4 +418,11 @@ public class ControlBoardBridge {
         return buttonBoardMap.containsKey(key);
     }
 
+    public String getDriverControllerType() {
+        return driverControllerType;
+    }
+
+    public String getOperatorControllerType() {
+        return operatorControllerType;
+    }
 }

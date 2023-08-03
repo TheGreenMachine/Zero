@@ -3,6 +3,9 @@
     "title": "ControllerConfig",
     "additionalProperties": false,
     "properties": {
+        "controllerType": {
+            "type": "string"
+        },
         "rumble": {
             "type": "boolean"
         },

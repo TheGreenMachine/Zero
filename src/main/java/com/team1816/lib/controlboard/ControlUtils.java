@@ -20,24 +20,36 @@ import java.util.function.DoubleSupplier;
 public class ControlUtils implements Controller.Factory {
 
     @Override
-    public Controller getControllerInstance(int port) {
-        var hid = new Joystick(port);
-        var axisCount = hid.getAxisCount();
-        if (axisCount <= 3 && RobotBase.isSimulation()) {
-            GreenLogger.log("    Using Wasd Controller for port: " + port);
-            return new WasdController(port);
-        } else if (axisCount == 4) {
-            GreenLogger.log("    Using Logitech Controller for port: " + port);
-            return new LogitechController(port);
-        } else {
-            if (port == ControlBoard.kButtonBoardPort) { // reserved button board port
-                GreenLogger.log("    Using ButtonBoard Controller for port: " + port);
-                return new ButtonboardController(port);
-            } else {
-                GreenLogger.log("    Using XboxController Controller for port: " + port);
-                return new XboxController(port);
-            }
+    public Controller getControllerInstance(int port, String controllerType) {
+        if (port == ControlBoard.kButtonBoardPort) {
+            GreenLogger.log("    Using ButtonBoard Controller for port: " + port);
+            return new ButtonboardController(port);
         }
+
+        System.out.println("Control type is " + controllerType + " for port " + port);
+
+        if (controllerType.equals("Xbox")) {
+            GreenLogger.log("   Using Xbox Controller for port: " + port);
+            return new XboxController(port);
+        }
+
+        if (controllerType.equals("Logitech")) {
+            GreenLogger.log("   Using Logitech Controller for port: " + port);
+            return new LogitechController(port);
+        }
+
+//        switch (controllerType) {
+//            case "Xbox":
+//                GreenLogger.log("   Using Xbox Controller for port: " + port);
+//                return new XboxController(port);
+//
+//            case "Logitech":
+//                GreenLogger.log("   Using Logitech Controller for port: " + port);
+//                return new LogitechController(port);
+//        }
+
+        GreenLogger.log("   Using WASD Controller for port: " + port);
+        return new WasdController(port);
     }
 
     public static PressAction createAction(BooleanSupplier input, Runnable action) {

@@ -18,7 +18,7 @@ public abstract class Controller {
      * Base factory for controllers
      */
     public interface Factory {
-        Controller getControllerInstance(int port);
+        Controller getControllerInstance(int port, String controllerType);
     }
 
     /**

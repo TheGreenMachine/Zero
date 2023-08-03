@@ -1,4 +1,5 @@
 driver:
+    controllerType: Xbox
     rumble: false
     joysticks:
         left:
@@ -21,6 +22,7 @@ driver:
         down: snapToDriver
         left: brakeMode
 operator:
+    controllerType: Xbox
     rumble: false
     buttons:
         leftBumper: updatePoseWithCamera

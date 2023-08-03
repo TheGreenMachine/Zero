@@ -91,6 +91,11 @@
       "/SmartDashboard/Turret Sim": "Mechanism2d"
     },
     "windows": {
+      "/SmartDashboard/Auto mode": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
         "April Tags": {
           "arrows": false,
