@@ -226,7 +226,7 @@ public class Robot extends TimedRobot {
                         () -> {
                             drive.zeroSensors(robotState.allianceColor == Color.BLUE ? Constants.kDefaultZeroingPose : Constants.kFlippedZeroingPose);
                         }
-                    );
+                    ),
                     createAction(
                         () -> controlBoard.getAsBool("autoTargetAlign"),
                         () -> {
