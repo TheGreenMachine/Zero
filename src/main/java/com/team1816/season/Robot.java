@@ -226,14 +226,7 @@ public class Robot extends TimedRobot {
                         () -> {
                             drive.zeroSensors(robotState.allianceColor == Color.BLUE ? Constants.kDefaultZeroingPose : Constants.kFlippedZeroingPose);
                         }
-                    ),
-                    /*
-                    1. Make a joystick event
-                    - Button
-                    -
-                    2. Maybe make 2 joystick classes?
-                    3.
-                     */
+                    );
                     createAction(
                         () -> controlBoard.getAsBool("autoTargetAlign"),
                         () -> {
