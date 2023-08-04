@@ -50,11 +50,6 @@ public class ControlBoard implements IControlBoard {
     }
 
     public double getDoubleFromControllerYaml(String name, double defaultVal) {
-        /*
-            Note(Michael): I do not know if this implementation is any bit cleaner
-            from the previous version, but it surely is something.
-        */
-
         HashMap<String, Controller.Axis>[] axis_maps = new HashMap[]{
                 controlBoardBridge.getDriverAxisMap(),
                 controlBoardBridge.getOperatorAxisMap()
@@ -82,19 +77,6 @@ public class ControlBoard implements IControlBoard {
     }
 
     public boolean getBooleanFromControllerYaml(String name, boolean defaultVal) {
-        /*
-        * Note(Michael): From what I can tell, the first if statement checks if the
-        * key 'name' is found in the three hashmaps that represent the axis mapping,
-        * button mapping, and dpad mapping on the main driver. After it finds what
-        * map te key belongs to, it will try to convert it to the appropriate return
-        * value the procedure it expects.
-        *
-        * The second if is much of the same, just this time with the operator mappings.
-        *
-        * The third if statement contains only the button board mapping, which I assume
-        * is just the 9 buttons that are used for the auto actions?
-        */
-
         HashMap<String, Controller.Axis>[] axis_maps = new HashMap[]{
                 controlBoardBridge.getDriverAxisMap(),
                 controlBoardBridge.getOperatorAxisMap()
@@ -130,44 +112,5 @@ public class ControlBoard implements IControlBoard {
         }
 
         return defaultVal;
-
-        //// Original code below:
-
-//        if (controlBoardBridge.driverMapContainsKey(name)) {
-//            if (controlBoardBridge.getDriverAxisMap().containsKey(name)) {
-//                return driverController.getTrigger(
-//                    controlBoardBridge.getDriverAxisMap().get(name)
-//                );
-//            } else if (controlBoardBridge.getDriverButtonMap().containsKey(name)) {
-//                return driverController.getButton(
-//                    controlBoardBridge.getDriverButtonMap().get(name)
-//                );
-//            } else if (controlBoardBridge.getDriverDpadMap().containsKey(name)) {
-//                return (
-//                    driverController.getDPad() ==
-//                        controlBoardBridge.getDriverDpadMap().get(name)
-//                );
-//            }
-//        } else if (controlBoardBridge.operatorMapContainsKey(name)) {
-//            if (controlBoardBridge.getOperatorAxisMap().containsKey(name)) {
-//                return operatorController.getTrigger(
-//                    controlBoardBridge.getOperatorAxisMap().get(name)
-//                );
-//            } else if (controlBoardBridge.getOperatorButtonMap().containsKey(name)) {
-//                return operatorController.getButton(
-//                    controlBoardBridge.getOperatorButtonMap().get(name)
-//                );
-//            } else if (controlBoardBridge.getOperatorDpadMap().containsKey(name)) {
-//                return (
-//                    operatorController.getDPad() ==
-//                        controlBoardBridge.getOperatorDpadMap().get(name)
-//                );
-//            }
-//        } else if (controlBoardBridge.buttonBoardMapContainsKey(name)) {
-//            return buttonBoardController.getButton(
-//                controlBoardBridge.getButtonBoardMap().get(name)
-//            );
-//        }
-//        return defaultVal;
     }
 }

@@ -76,10 +76,6 @@ public class ControlBoardBridge {
             );
         }
 
-        /*
-        * Note(Michael): How are the values being set up? This just seems like
-        * some kind of dark magic.
-        */
         if (config != null) {
             if (config.driver != null) {
                 if (config.driver.controllerType != null) {
