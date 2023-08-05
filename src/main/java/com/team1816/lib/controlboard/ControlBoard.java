@@ -50,26 +50,38 @@ public class ControlBoard implements IControlBoard {
     }
 
     public double getDoubleFromControllerYaml(String name, double defaultVal) {
-        HashMap<String, Controller.Axis>[] axis_maps = new HashMap[]{
+        HashMap<String, Controller.Axis>[] axisMaps = new HashMap[]{
                 controlBoardBridge.getDriverAxisMap(),
                 controlBoardBridge.getOperatorAxisMap()
         };
 
-        HashMap<String, Controller.Button>[] button_maps = new HashMap[]{
+        HashMap<String, Controller.Button>[] buttonMaps = new HashMap[]{
                 controlBoardBridge.getDriverButtonMap(),
                 controlBoardBridge.getOperatorButtonMap(),
                 controlBoardBridge.getButtonBoardMap()
         };
 
-        for (var axis_map : axis_maps) {
-            if (axis_map.containsKey(name)) {
-                return driverController.getJoystick(axis_map.get(name));
+        Controller[] controllers = new Controller[] {
+                driverController,
+                operatorController,
+                buttonBoardController
+        };
+
+        for (var i = 0; i < axisMaps.length; i++) {
+            var axisMap = axisMaps[i];
+            var controller = controllers[i];
+
+            if (axisMap.containsKey(name)) {
+                return controller.getJoystick(axisMap.get(name));
             }
         }
 
-        for (var button_map : button_maps) {
-            if (button_map.containsKey(name)) {
-                return driverController.getButton(button_map.get(name)) ? 1 : 0;
+        for (var i = 0; i < buttonMaps.length; i++) {
+            var buttonMap = buttonMaps[i];
+            var controller = controllers[i];
+
+            if (buttonMap.containsKey(name)) {
+                return controller.getButton(buttonMap.get(name)) ? 1 : 0;
             }
         }
 
@@ -77,37 +89,52 @@ public class ControlBoard implements IControlBoard {
     }
 
     public boolean getBooleanFromControllerYaml(String name, boolean defaultVal) {
-        HashMap<String, Controller.Axis>[] axis_maps = new HashMap[]{
+        HashMap<String, Controller.Axis>[] axisMaps = new HashMap[]{
                 controlBoardBridge.getDriverAxisMap(),
                 controlBoardBridge.getOperatorAxisMap()
         };
 
-        HashMap<String, Controller.Button>[] button_maps = new HashMap[]{
+        HashMap<String, Controller.Button>[] buttonMaps = new HashMap[]{
                 controlBoardBridge.getDriverButtonMap(),
                 controlBoardBridge.getOperatorButtonMap(),
                 controlBoardBridge.getButtonBoardMap()
         };
 
-        HashMap<String, Integer>[] dpad_maps = new HashMap[] {
+        HashMap<String, Integer>[] dpadMaps = new HashMap[] {
                 controlBoardBridge.getDriverDpadMap(),
                 controlBoardBridge.getOperatorDpadMap(),
         };
 
-        for (var axis_map : axis_maps) {
-            if (axis_map.containsKey(name)) {
-                return driverController.getTrigger(axis_map.get(name));
+        Controller[] controllers = new Controller[] {
+                driverController,
+                operatorController,
+                buttonBoardController
+        };
+
+        for (var i = 0; i < axisMaps.length; i++) {
+            var axisMap = axisMaps[i];
+            var controller = controllers[i];
+
+            if (axisMap.containsKey(name)) {
+                return controller.getTrigger(axisMap.get(name));
             }
         }
 
-        for (var button_map : button_maps) {
-            if (button_map.containsKey(name)) {
-                return driverController.getButton(button_map.get(name));
+        for (var i = 0; i < buttonMaps.length; i++) {
+            var buttonMap = buttonMaps[i];
+            var controller = controllers[i];
+
+            if (buttonMap.containsKey(name)) {
+                return controller.getButton(buttonMap.get(name));
             }
         }
 
-        for (var dpad_map : dpad_maps) {
-            if (dpad_map.containsKey(name)) {
-                return driverController.getDPad() == dpad_map.get(name);
+        for (var i = 0; i < dpadMaps.length; i++) {
+            var dpadMap = dpadMaps[i];
+            var controller = controllers[i];
+
+            if (dpadMap.containsKey(name)) {
+                return controller.getDPad() == dpadMap.get(name);
             }
         }
 
