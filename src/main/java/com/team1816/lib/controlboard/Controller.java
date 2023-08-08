@@ -33,6 +33,16 @@ public abstract class Controller {
     protected final EnumMap<Axis, Integer> mJoystickAxisMap = new EnumMap<>(Axis.class);
 
     /**
+     * Enum for all types of controllers implemented
+     */
+    public enum Type {
+        WASD,
+        LOGITECH,
+        XBOX,
+        BUTTON_BOARD,
+    }
+
+    /**
      * Enum for axes on a controller
      */
     public enum Axis {

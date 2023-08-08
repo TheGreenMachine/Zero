@@ -1,5 +1,5 @@
 driver:
-    controllerType: Xbox
+    controllerType: Wasd
     rumble: false
     joysticks:
         left:
