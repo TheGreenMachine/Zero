@@ -1,4 +1,4 @@
-package com.team1816.lib.controlboard;
+package com.team1816.lib.input_handler;
 
 import com.team1816.lib.events.EventAggregator;
 import com.team1816.lib.events.PubSubConsumer;

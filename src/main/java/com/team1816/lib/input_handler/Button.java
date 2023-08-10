@@ -1,4 +1,4 @@
-package com.team1816.lib.controlboard;
+package com.team1816.lib.input_handler;
 
 /**
  * An abstraction to provide a consistent interface for users.

@@ -1,4 +1,4 @@
-package com.team1816.lib.controlboard;
+package com.team1816.lib.input_handler;
 
 public class WasdControllerBinding extends ControllerBinding {
     public WasdControllerBinding() {

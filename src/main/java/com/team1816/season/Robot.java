@@ -5,6 +5,8 @@ import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.controlboard.*;
 import com.team1816.lib.hardware.factory.RobotFactory;
+import com.team1816.lib.input_handler.Button;
+import com.team1816.lib.input_handler.InputHandler;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
@@ -28,9 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import static com.team1816.lib.controlboard.ControlUtils.createAction;
-import static com.team1816.lib.controlboard.ControlUtils.createHoldAction;
 
 public class Robot extends TimedRobot {
 
