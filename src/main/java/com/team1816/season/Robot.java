@@ -3,10 +3,7 @@ package com.team1816.season;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
-import com.team1816.lib.controlboard.ActionManager;
-import com.team1816.lib.controlboard.ControlBoard;
-import com.team1816.lib.controlboard.Controller;
-import com.team1816.lib.controlboard.IControlBoard;
+import com.team1816.lib.controlboard.*;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.LedManager;
@@ -47,6 +44,7 @@ public class Robot extends TimedRobot {
      * Controls
      */
     private ControlBoard controlBoard;
+    private InputHandler inputHandler;
     private ActionManager actionManager;
 
     private final Infrastructure infrastructure;
@@ -216,6 +214,32 @@ public class Robot extends TimedRobot {
             /** Register ControlBoard */
             controlBoard = Injector.get(ControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
+
+            // Input handler
+            // - Singleton
+            // - It would not need an interface.
+            // - Holds a bunch of events
+            // - Demo Mode through YAML
+            // - Can Couple with Driver, Operator, and Button Board Controller.
+            // - Robot calls the update for the input handler.
+            // -
+
+            inputHandler = Injector.get(InputHandler.class);
+
+            inputHandler.init();
+
+            inputHandler.listenDriverButtonHold(Button.X, () -> {
+                GreenLogger.log("Holding X.");
+            });
+
+            inputHandler.listenDriverButtonPress(Button.X, () -> {
+                GreenLogger.log("Just Pressed X.");
+            });
+
+            inputHandler.listenDriverButtonRelease(Button.X, () -> {
+                GreenLogger.log("Just Released X.");
+            });
+
 
             controlBoard.addActionToDriver((controller) -> {
                 if (controller.getButton(Controller.Button.START)) {
@@ -622,6 +646,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
+        inputHandler.update();
+
         robotState.field
             .getObject("Trajectory")
             .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
@@ -632,7 +658,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-
         try {
             manualControl();
         } catch (Throwable t) {
@@ -646,6 +671,7 @@ public class Robot extends TimedRobot {
      */
     public void manualControl() {
         controlBoard.update();
+        inputHandler.update();
     }
 
     /**
