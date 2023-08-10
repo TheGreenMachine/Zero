@@ -5,6 +5,7 @@ import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.controlboard.*;
 import com.team1816.lib.hardware.factory.RobotFactory;
+import com.team1816.lib.input_handler.Axis;
 import com.team1816.lib.input_handler.Button;
 import com.team1816.lib.input_handler.InputHandler;
 import com.team1816.lib.loops.Looper;
@@ -227,18 +228,34 @@ public class Robot extends TimedRobot {
 
             inputHandler.init();
 
-            inputHandler.listenDriverButtonHold(Button.X, () -> {
+            inputHandler.listenDriverButton(Button.X, Button.State.HOLD, () -> {
                 GreenLogger.log("Holding X.");
             });
 
-            inputHandler.listenDriverButtonPress(Button.X, () -> {
+            inputHandler.listenDriverButton(Button.X, Button.State.PRESSED, () -> {
                 GreenLogger.log("Just Pressed X.");
             });
 
-            inputHandler.listenDriverButtonRelease(Button.X, () -> {
+            inputHandler.listenDriverButton(Button.X, Button.State.RELEASED, () -> {
                 GreenLogger.log("Just Released X.");
             });
 
+            inputHandler.listenDriverButton(Button.A, Button.State.HOLD, () -> GreenLogger.log("Holding A."));
+            inputHandler.listenDriverButton(Button.B, Button.State.HOLD, () -> GreenLogger.log("Holding B."));
+            inputHandler.listenDriverButton(Button.Y, Button.State.HOLD, () -> GreenLogger.log("Holding Y."));
+
+            inputHandler.listenDriverAxis(Axis.LEFT_HORIZONTAL, (value) -> {
+                if (value == 1.0) GreenLogger.log("Going Right On Left Joystick.");
+                if (value == -1.0) GreenLogger.log("Going Left On Left Joystick.");
+            });
+
+            inputHandler.listenOperatorButton(Button.X, Button.State.PRESSED, () -> GreenLogger.log("Operator Button X Pressed."));
+
+            inputHandler.listenButtonBoardButton(
+                    Button.LEFT,
+                    Button.State.PRESSED,
+                    () -> GreenLogger.log("I PRESSED A BUTTON ON THE BUTTON BOARD.")
+            );
 
             controlBoard.addActionToDriver((controller) -> {
                 if (controller.getButton(Controller.Button.START)) {

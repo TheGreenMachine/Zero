@@ -6,33 +6,61 @@ import com.team1816.lib.events.PubSubRunnable;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.lib.util.team254.LatchedBoolean;
 import edu.wpi.first.wpilibj.Joystick;
+import org.checkerframework.checker.units.qual.A;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.function.Consumer;
 
 /**
  * Handles all the input coming from the main three controllers
  */
 @Singleton
 public class InputHandler {
-    public static class ButtonPressEvent extends PubSubRunnable {}
-    public static class ButtonReleaseEvent extends PubSubRunnable {}
-    public static class ButtonHoldEvent extends PubSubRunnable {}
-    public static class AxisEvent extends PubSubConsumer<Double> {}
-
     protected class ButtonData {
-        public Integer buttonId;
-        public ButtonPressEvent pressEvent;
-        public ButtonReleaseEvent releaseEvent;
-        public ButtonHoldEvent holdEvent;
+        public Integer buttonId = -1;
+        public ArrayList<Runnable> pressActions = new ArrayList<>();
+        public ArrayList<Runnable> releaseActions = new ArrayList<>();
+        public ArrayList<Runnable> holdActions = new ArrayList<>();
         public final LatchedBoolean pressedState = new LatchedBoolean();
         public final LatchedBoolean releasedState = new LatchedBoolean();
+
+        public void publish(boolean held) {
+            boolean justPressed = pressedState.update(held);
+            boolean justReleased = releasedState.update(!held);
+
+            if (justPressed) {
+                for (var action : pressActions) {
+                    action.run();
+                }
+            }
+
+            if (held) {
+                for (var action : holdActions) {
+                    action.run();
+                }
+            }
+
+            if (justReleased) {
+                for (var action : releaseActions) {
+                    action.run();
+                }
+            }
+        }
     }
 
     protected class AxisData {
-        public Integer axisId;
-        public AxisEvent event;
+        public Integer axisId = -1;
+        public ArrayList<Consumer<Double>> actions = new ArrayList<>();
+
+        public void publish(double value) {
+            for (var action : actions) {
+                action.accept(value);
+            }
+        }
     }
 
     private EnumMap<Button, ButtonData> driverButtonMappings = new EnumMap<>(Button.class);
@@ -57,7 +85,7 @@ public class InputHandler {
     private final int operatorPort = 1;
     private final int buttonBoardPort = 2;
 
-    public void listenDriverButtonHold(Button button, Runnable action) {
+    public void listenDriverButton(Button button, Button.State state, Runnable action) {
         if (!driverButtonMappings.containsKey(button)) {
             GreenLogger.log("   INPUT HANDLER: BUTTON " + button.toString() + " is not mapped.");
             return;
@@ -65,51 +93,125 @@ public class InputHandler {
 
         ButtonData data = driverButtonMappings.get(button);
 
-        GreenLogger.log(button.toString());
-
-        data.holdEvent.Subscribe(action);
+        switch (state) {
+            case HOLD -> data.holdActions.add(action);
+            case PRESSED ->  data.pressActions.add(action);
+            case RELEASED -> data.releaseActions.add(action);
+        }
     }
 
-    public void listenDriverButtonPress(Button button, Runnable action) {
-        if (!driverButtonMappings.containsKey(button)) {
-            GreenLogger.log("   INPUT HANDLER: BUTTON " + button.toString() + " is not mapped.");
+    public void listenDriverAxis(Axis axis, Consumer<Double> action) {
+        if (!driverAxisMappings.containsKey(axis)) {
+            GreenLogger.log("   INPUT HANDLER: AXIS " + axis.toString() + " is not mapped.");
             return;
         }
 
-        ButtonData data = driverButtonMappings.get(button);
+        AxisData data = driverAxisMappings.get(axis);
 
-        data.pressEvent.Subscribe(action);
+        data.actions.add(action);
     }
 
-    public void listenDriverButtonRelease(Button button, Runnable action) {
-        if (!driverButtonMappings.containsKey(button)) {
+    public void listenOperatorButton(Button button, Button.State state, Runnable action) {
+        if (!operatorButtonMappings.containsKey(button)) {
             GreenLogger.log("   INPUT HANDLER: BUTTON " + button.toString() + " is not mapped.");
             return;
         }
 
-        ButtonData data = driverButtonMappings.get(button);
+        ButtonData data = operatorButtonMappings.get(button);
 
-        data.releaseEvent.Subscribe(action);
+        switch (state) {
+            case HOLD -> data.holdActions.add(action);
+            case PRESSED ->  data.pressActions.add(action);
+            case RELEASED -> data.releaseActions.add(action);
+        }
+    }
+
+    public void listenOperatorAxis(Axis axis, Consumer<Double> action) {
+        if (!operatorAxisMappings.containsKey(axis)) {
+            GreenLogger.log("   INPUT HANDLER: AXIS " + axis.toString() + " is not mapped.");
+            return;
+        }
+
+        AxisData data = operatorAxisMappings.get(axis);
+
+        data.actions.add(action);
+    }
+
+    public void listenButtonBoardButton(Button button, Button.State state, Runnable action) {
+        if (!buttonBoardButtonMappings.containsKey(button)) {
+            GreenLogger.log("   INPUT HANDLER: BUTTON " + button.toString() + " is not mapped.");
+            return;
+        }
+
+        ButtonData data = buttonBoardButtonMappings.get(button);
+
+        switch (state) {
+            case HOLD -> data.holdActions.add(action);
+            case PRESSED ->  data.pressActions.add(action);
+            case RELEASED -> data.releaseActions.add(action);
+        }
+    }
+
+    public void listenButtonBoardAxis(Axis axis, Consumer<Double> action) {
+        if (!buttonBoardAxisMappings.containsKey(axis)) {
+            GreenLogger.log("   INPUT HANDLER: AXIS " + axis.toString() + " is not mapped.");
+            return;
+        }
+
+        AxisData data = buttonBoardAxisMappings.get(axis);
+
+        data.actions.add(action);
     }
 
     public void update() {
-        for (var button : Button.values()) {
-            if (!driverButtonMappings.containsKey(button)) {
-                continue;
-            }
-
+        // Updating buttons
+        for (var button : driverButtonMappings.keySet()) {
             ButtonData driverButtonData = driverButtonMappings.get(button);
 
-            if (driverButtonData.buttonId != -1) {
-                boolean held = driverJoystick.getRawButton(driverButtonData.buttonId);
-                boolean justPressed = driverButtonData.pressedState.update(held);
-                boolean justReleased = driverButtonData.releasedState.update(!held);
+            boolean held = driverJoystick.getRawButton(driverButtonData.buttonId);
 
-                if (justPressed) driverButtonData.pressEvent.Publish();
-                if (held) driverButtonData.holdEvent.Publish();
-                if (justReleased) driverButtonData.releaseEvent.Publish();
-            }
+            driverButtonData.publish(held);
+        }
 
+        for (var button : operatorButtonMappings.keySet()) {
+            ButtonData operatorButtonData = operatorButtonMappings.get(button);
+
+            boolean held = operatorJoystick.getRawButton(operatorButtonData.buttonId);
+
+            operatorButtonData.publish(held);
+        }
+
+        for (var button : buttonBoardButtonMappings.keySet()) {
+            ButtonData buttonBoardButtonData = buttonBoardButtonMappings.get(button);
+
+            boolean held = buttonBoardJoystick.getRawButton(buttonBoardButtonData.buttonId);
+
+            buttonBoardButtonData.publish(held);
+        }
+
+        // Updating Axes
+        for (var axis : driverAxisMappings.keySet()) {
+            AxisData driverAxisData = driverAxisMappings.get(axis);
+
+            double value = driverJoystick.getRawAxis(driverAxisData.axisId);
+
+            driverAxisData.publish(value);
+        }
+
+        for (var axis : operatorAxisMappings.keySet()) {
+            AxisData operatorAxisData = operatorAxisMappings.get(axis);
+
+            double value = operatorJoystick.getRawAxis(operatorAxisData.axisId);
+
+            operatorAxisData.publish(value);
+        }
+
+        for (var axis : buttonBoardAxisMappings.keySet()) {
+            AxisData buttonBoardAxisData = buttonBoardAxisMappings.get(axis);
+
+            double value = buttonBoardJoystick.getRawAxis(buttonBoardAxisData.axisId);
+
+            buttonBoardAxisData.publish(value);
         }
     }
 
@@ -118,9 +220,9 @@ public class InputHandler {
         eventAggregator = new EventAggregator();
 
         // NOTE(Michael): This is a temporary thing to test whether the mappings work.
-        driverBinding = new WasdControllerBinding();
+        driverBinding = new XboxControllerBinding();
         operatorBinding = new WasdControllerBinding();
-        buttonBoardBinding = new WasdControllerBinding();
+        buttonBoardBinding = new ButtonBoardControllerBinding();
 
         driverJoystick = new Joystick(driverPort);
         operatorJoystick = new Joystick(operatorPort);
@@ -128,112 +230,60 @@ public class InputHandler {
     }
 
     public void init() {
-        interface MapButtonFunction<M, B, H, P, R> {
-            void apply(M m, B b, H h, P p, R r);
-        }
-
-        MapButtonFunction<
-                EnumMap<Button, ButtonData>,
-                Button,
-                Class<? extends ButtonHoldEvent>,
-                Class<? extends ButtonPressEvent>,
-                Class<? extends ButtonReleaseEvent>
-        >
-        mapButton = (
-                mapping,
-                button,
-                holdEventClass,
-                pressEventClass,
-                releaseEventClass
-        ) -> {
-            ButtonHoldEvent holdEvent = eventAggregator.GetEvent(holdEventClass);
-            ButtonPressEvent pressEvent = eventAggregator.GetEvent(pressEventClass);
-            ButtonReleaseEvent releaseEvent = eventAggregator.GetEvent(releaseEventClass);
-
-            ButtonData buttonData = new ButtonData();
-
-            buttonData.buttonId = -1;
-            buttonData.holdEvent = holdEvent;
-            buttonData.pressEvent = pressEvent;
-            buttonData.releaseEvent = releaseEvent;
-
-            mapping.put(button, buttonData);
-        };
-
-        // Mapping Driver Events
-        mapButton.apply(
-                driverButtonMappings,
-                Button.X,
-                DriverXButtonHoldEvent.class,
-                DriverXButtonPressEvent.class,
-                DriverXButtonReleaseEvent.class
-        );
-
-        mapButton.apply(
-                driverButtonMappings,
-                Button.Y,
-                DriverYButtonHoldEvent.class,
-                DriverYButtonPressEvent.class,
-                DriverYButtonReleaseEvent.class
-        );
-
-        for (var button : Button.values()) {
-            if (!driverBinding.buttonMap.containsKey(button)) {
-                driverButtonMappings.remove(button);
-                continue;
-            }
-
-            if (!driverButtonMappings.containsKey(button)) {
-                continue;
-            }
-
+        // Filling Button Mappings
+        for (var button : driverBinding.buttonMap.keySet()) {
             Integer driverButtonId = driverBinding.buttonMap.get(button);
-            ButtonData driverButtonData = driverButtonMappings.get(button);
+            ButtonData driverButtonData = new ButtonData();
 
             driverButtonData.buttonId = driverButtonId;
+
+            driverButtonMappings.put(button, driverButtonData);
         }
 
-        // Mapping Operator Events
-        mapButton.apply(
-                operatorButtonMappings,
-                Button.X,
-                OperatorXButtonHoldEvent.class,
-                OperatorXButtonPressEvent.class,
-                OperatorXButtonReleaseEvent.class
-        );
+        for (var button : operatorBinding.buttonMap.keySet()) {
+            Integer operatorButtonId = operatorBinding.buttonMap.get(button);
+            ButtonData operatorButtonData = new ButtonData();
 
-        mapButton.apply(
-                operatorButtonMappings,
-                Button.Y,
-                OperatorYButtonHoldEvent.class,
-                OperatorYButtonPressEvent.class,
-                OperatorYButtonReleaseEvent.class
-        );
+            operatorButtonData.buttonId = operatorButtonId;
 
-        // Mapping Button Board Events
-        // TODO: Add Button Board Events
+            operatorButtonMappings.put(button, operatorButtonData);
+        }
 
+        for (var button : buttonBoardBinding.buttonMap.keySet()) {
+            Integer buttonBoardButtonId = buttonBoardBinding.buttonMap.get(button);
+            ButtonData buttonBoardButtonData = new ButtonData();
+
+            buttonBoardButtonData.buttonId = buttonBoardButtonId;
+
+            buttonBoardButtonMappings.put(button, buttonBoardButtonData);
+        }
+
+        // Filling Axis Mappings
+        for (var axis : driverBinding.axisMap.keySet()) {
+            Integer driverAxisId = driverBinding.axisMap.get(axis);
+            AxisData driverAxisData = new AxisData();
+
+            driverAxisData.axisId = driverAxisId;
+
+            driverAxisMappings.put(axis, driverAxisData);
+        }
+
+        for (var axis : operatorBinding.axisMap.keySet()) {
+            Integer operatorAxisId = operatorBinding.axisMap.get(axis);
+            AxisData operatorAxisData = new AxisData();
+
+            operatorAxisData.axisId = operatorAxisId;
+
+            operatorAxisMappings.put(axis, operatorAxisData);
+        }
+
+        for (var axis : buttonBoardBinding.axisMap.keySet()) {
+            Integer buttonBoardAxisId = buttonBoardBinding.axisMap.get(axis);
+            AxisData buttonBoardAxisData = new AxisData();
+
+            buttonBoardAxisData.axisId = buttonBoardAxisId;
+
+            buttonBoardAxisMappings.put(axis, buttonBoardAxisData);
+        }
     }
-
-    // Driver Events
-    public static class DriverXButtonPressEvent extends ButtonPressEvent {}
-    public static class DriverXButtonReleaseEvent extends ButtonReleaseEvent {}
-    public static class DriverXButtonHoldEvent extends ButtonHoldEvent {}
-
-    public static class DriverYButtonPressEvent extends ButtonPressEvent {}
-    public static class DriverYButtonReleaseEvent extends ButtonReleaseEvent {}
-    public static class DriverYButtonHoldEvent extends ButtonHoldEvent {}
-
-    // Operator Events
-    public static class OperatorXButtonPressEvent extends ButtonPressEvent {}
-    public static class OperatorXButtonReleaseEvent extends ButtonReleaseEvent {}
-    public static class OperatorXButtonHoldEvent extends ButtonHoldEvent {}
-
-    public static class OperatorYButtonPressEvent extends ButtonPressEvent {}
-    public static class OperatorYButtonReleaseEvent extends ButtonReleaseEvent {}
-    public static class OperatorYButtonHoldEvent extends ButtonHoldEvent {}
-
-    // Button Board Events
-
-
 }
