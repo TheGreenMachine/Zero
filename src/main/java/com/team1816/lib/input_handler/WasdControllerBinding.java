@@ -16,6 +16,6 @@ public class WasdControllerBinding extends ControllerBinding {
 
         axisMap.put(Axis.RIGHT_HORIZONTAL, 0);
         axisMap.put(Axis.LEFT_HORIZONTAL, 1);
-        axisMap.put(Axis.LEFT_HORIZONTAL, 2);
+        axisMap.put(Axis.LEFT_VERTICAL, 2);
     }
 }

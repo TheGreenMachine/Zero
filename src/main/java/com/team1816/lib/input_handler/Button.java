@@ -28,7 +28,7 @@ public enum Button {
 
     public enum State {
         PRESSED,
-        HOLD,
+        HELD,
         RELEASED,
     }
 }

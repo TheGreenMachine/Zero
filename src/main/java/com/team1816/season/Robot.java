@@ -7,6 +7,7 @@ import com.team1816.lib.controlboard.*;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.input_handler.Axis;
 import com.team1816.lib.input_handler.Button;
+import com.team1816.lib.input_handler.Dpad;
 import com.team1816.lib.input_handler.InputHandler;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.LedManager;
@@ -27,6 +28,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.*;
 
+import javax.lang.model.element.ElementVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -215,236 +217,357 @@ public class Robot extends TimedRobot {
             controlBoard = Injector.get(ControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            // Input handler
-            // - Singleton
-            // - It would not need an interface.
-            // - Holds a bunch of events
-            // - Demo Mode through YAML
-            // - Can Couple with Driver, Operator, and Button Board Controller.
-            // - Robot calls the update for the input handler.
-            // -
-
+            /** Register inputHandler */
             inputHandler = Injector.get(InputHandler.class);
 
-            inputHandler.init();
+            // Driver commands:
 
-            inputHandler.listenDriverButton(Button.X, Button.State.HOLD, () -> {
-                GreenLogger.log("Holding X.");
-            });
+            inputHandler.listenDriverButton(
+                    Button.START,
+                    Button.State.PRESSED,
+                    () ->
+                            drive.zeroSensors(
+                                    robotState.allianceColor == Color.BLUE ?
+                                    Constants.kDefaultZeroingPose :
+                                    Constants.kFlippedZeroingPose
+                            )
+            );
 
-            inputHandler.listenDriverButton(Button.X, Button.State.PRESSED, () -> {
-                GreenLogger.log("Just Pressed X.");
-            });
+            inputHandler.listenDriverButton(
+                    Button.A,
+                    Button.State.PRESSED,
+                    () -> {
+                        if (robotState.allianceColor == Color.BLUE) {
+                            robotState.target = DrivetrainTargets.blueTargets.get(grid * 3 + node);
+                        } else {
+                            robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
+                        }
+                        orchestrator.autoTargetAlign(level);
+                    }
+            );
 
-            inputHandler.listenDriverButton(Button.X, Button.State.RELEASED, () -> {
-                GreenLogger.log("Just Released X.");
-            });
 
-            inputHandler.listenDriverButton(Button.A, Button.State.HOLD, () -> GreenLogger.log("Holding A."));
-            inputHandler.listenDriverButton(Button.B, Button.State.HOLD, () -> GreenLogger.log("Holding B."));
-            inputHandler.listenDriverButton(Button.Y, Button.State.HOLD, () -> GreenLogger.log("Holding Y."));
+            inputHandler.listenOperatorButton(
+                    Button.B,
+                    Button.State.PRESSED,
+                    () -> drive.setBraking(true)
+            );
 
-            inputHandler.listenDriverAxis(Axis.LEFT_HORIZONTAL, (value) -> {
-                if (value == 1.0) GreenLogger.log("Going Right On Left Joystick.");
-                if (value == -1.0) GreenLogger.log("Going Left On Left Joystick.");
-            });
+            inputHandler.listenOperatorButton(
+                    Button.B,
+                    Button.State.RELEASED,
+                    () -> drive.setBraking(false)
+            );
 
-            inputHandler.listenOperatorButton(Button.X, Button.State.PRESSED, () -> GreenLogger.log("Operator Button X Pressed."));
+            inputHandler.listenDriverAxis(
+                    Axis.RIGHT_TRIGGER,
+                    (value) -> drive.setSlowMode(value > Axis.axisThreshold)
+            );
 
+            inputHandler.listenDriverAxis(
+                    Axis.LEFT_TRIGGER,
+                    (value) -> {
+                        boolean pressed = value > Axis.axisThreshold;
+
+                        drive.setAutoBalance(pressed);
+
+                        ledManager.indicateStatus(
+                                LedManager.RobotStatus.BALANCE,
+                                pressed ?
+                                        LedManager.ControlState.BLINK :
+                                        LedManager.ControlState.SOLID
+                        );
+                    }
+            );
+
+            // picking up and letting go of a cone.
+            inputHandler.listenDriverButton(
+                    Button.RIGHT_BUMPER,
+                    Button.State.PRESSED,
+                    () -> {
+                        if (
+                                elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
+                        ) { // collects from shelf
+                            collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.SHELF);
+                        } else { // collects from floor
+                            collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR);
+                        }
+
+                        ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK); // indicates on LEDs
+                    }
+            );
+
+            inputHandler.listenDriverButton(
+                    Button.RIGHT_BUMPER,
+                    Button.State.RELEASED,
+                    () -> {
+                        collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
+                        ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.SOLID);
+                    }
+            );
+
+            // picking up and letting go of a cube.
+            inputHandler.listenDriverButton(
+                    Button.LEFT_BUMPER,
+                    Button.State.PRESSED,
+                    () -> {
+                        if (
+                                elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
+                        ) { // collects from shelf
+                            collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.SHELF);
+                        } else { // collects from floor
+                            collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.FLOOR);
+                        }
+                        ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK); // indicates on LEDs
+                    }
+            );
+
+            inputHandler.listenDriverButton(
+                    Button.LEFT_BUMPER,
+                    Button.State.RELEASED,
+                    () -> {
+                        collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
+                        ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.SOLID);
+                    }
+            );
+
+            // Toggle the arm and score collect (or whatever that means)
+            inputHandler.listenDriverButton(
+                    Button.X,
+                    Button.State.HELD,
+                    () -> {
+                        if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
+                                && robotState.actualElevatorExtensionState != Elevator.EXTENSION_STATE.MIN) {
+                            elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
+                        } else if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
+                            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
+                        } else {
+                            elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
+                            collector.setDesiredPivotState(Collector.PIVOT_STATE.STOW);
+                        }
+                    }
+            );
+
+            inputHandler.listenDriverButton(
+                    Button.Y,
+                    Button.State.PRESSED,
+                    () ->
+                            elevator.setDesiredState(
+                                    Elevator.ANGLE_STATE.SHELF_COLLECT,
+                                    Elevator.EXTENSION_STATE.SHELF_COLLECT
+                            )
+            );
+
+            // Logic for snapping to player.
+            inputHandler.listenDriverDpad(
+                    Dpad.UP,
+                    Dpad.State.PRESSED,
+                    () -> {
+                        snappingToHumanPlayer = true;
+                        snappingToDriver = false;
+                    }
+            );
+
+            inputHandler.listenDriverDpad(
+                    Dpad.UP,
+                    Dpad.State.RELEASED,
+                    () -> {
+                        snappingToHumanPlayer = false;
+                        snappingToDriver = false;
+                    }
+            );
+
+            // Logic for snapping to driver.
+            inputHandler.listenDriverDpad(
+                    Dpad.DOWN,
+                    Dpad.State.PRESSED,
+                    () -> {
+                        snappingToDriver = true;
+                        snappingToHumanPlayer = false;
+                    }
+            );
+
+            inputHandler.listenDriverDpad(
+                    Dpad.DOWN,
+                    Dpad.State.RELEASED,
+                    () -> {
+                        snappingToDriver = false;
+                        snappingToHumanPlayer = false;
+                    }
+            );
+
+            // Operator commands now:
+            inputHandler.listenOperatorButton(
+                    Button.LEFT_BUMPER,
+                    Button.State.PRESSED,
+                    () -> orchestrator.updatePoseWithCamera()
+            );
+
+            inputHandler.listenOperatorButton(
+                    Button.RIGHT_BUMPER,
+                    Button.State.PRESSED,
+                    () -> {
+                        collector.outtakeGamePiece(true);
+
+                        if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
+                            ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK);
+                        } else if (robotState.actualGameElement == Collector.GAME_ELEMENT.CUBE) {
+                            ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK);
+                        }
+                    }
+            );
+
+            inputHandler.listenOperatorButton(
+                    Button.RIGHT_BUMPER,
+                    Button.State.RELEASED,
+                    () -> {
+                        collector.outtakeGamePiece(false);
+
+                        ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
+                    }
+            );
+
+            // extend min
+            inputHandler.listenOperatorButton(
+                    Button.A,
+                    Button.State.PRESSED,
+                    () -> {
+                        GreenLogger.log("extend min");
+                        orchestrator.alignMin();
+                    }
+            );
+
+            // extend mid
+            inputHandler.listenOperatorButton(
+                    Button.X,
+                    Button.State.PRESSED,
+                    () -> {
+                        GreenLogger.log("extend mid");
+                        orchestrator.alignMid();
+                    }
+            );
+
+            // extend max
+            inputHandler.listenOperatorButton(
+                    Button.Y,
+                    Button.State.PRESSED,
+                    () -> {
+                        GreenLogger.log("extend max");
+                        orchestrator.alignMax();
+                    }
+            );
+
+            // auto score
+            inputHandler.listenOperatorButton(
+                    Button.B,
+                    Button.State.PRESSED,
+                    () -> {
+                        GreenLogger.log("auto score");
+                        orchestrator.autoScore();
+                    }
+            );
+
+            // toggle collector pivot
+            inputHandler.listenOperatorButton(
+                    Button.START,
+                    Button.State.PRESSED,
+                    () -> {
+                        if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.SCORE) {
+                            if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.SCORE) {
+                                collector.setDesiredState(collector.getDesiredRollerState(), Collector.PIVOT_STATE.STOW);
+                            } else if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.STOW) {
+                                collector.setCurrentGameElement(Collector.GAME_ELEMENT.CONE);
+                                collector.setDesiredState(collector.getDesiredRollerState(), Collector.PIVOT_STATE.SCORE);
+                            }
+                        }
+                    }
+            );
+
+            // Button Board Commands:
+
+            // grid commands:
+            inputHandler.listenButtonBoardButton(
+                    Button.UP_LEFT,
+                    Button.State.PRESSED,
+                    () -> {
+                        grid = robotState.allianceColor == Color.RED ? 0 : 2;
+                        GreenLogger.log("Grid changed to FEEDER");
+                    }
+            );
+
+            inputHandler.listenButtonBoardButton(
+                    Button.UP,
+                    Button.State.PRESSED,
+                    () -> {
+                        grid = 1;
+                        GreenLogger.log("Grid changed to BALANCE");
+                    }
+            );
+
+            inputHandler.listenButtonBoardButton(
+                    Button.UP_RIGHT,
+                    Button.State.PRESSED,
+                    () -> {
+                        grid = robotState.allianceColor == Color.RED ? 2 : 0;
+                        GreenLogger.log("Grid changed to WALL");
+                    }
+            );
+
+            // node commands:
             inputHandler.listenButtonBoardButton(
                     Button.LEFT,
                     Button.State.PRESSED,
-                    () -> GreenLogger.log("I PRESSED A BUTTON ON THE BUTTON BOARD.")
+                    () -> {
+                        node = robotState.allianceColor == Color.RED ? 0 : 2;
+                        GreenLogger.log("Node changed to LEFT");
+                    }
             );
 
-            controlBoard.addActionToDriver((controller) -> {
-                if (controller.getButton(Controller.Button.START)) {
-                    drive.zeroSensors(robotState.allianceColor == Color.BLUE ?  Constants.kDefaultZeroingPose : Constants.kFlippedZeroingPose);
-                }
-
-                if (controller.getButton(Controller.Button.A)) {
-                    if (robotState.allianceColor == Color.BLUE) {
-                        robotState.target = DrivetrainTargets.blueTargets.get(grid * 3 + node);
-                    } else {
-                        robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
+            inputHandler.listenButtonBoardButton(
+                    Button.CENTER,
+                    Button.State.PRESSED,
+                    () -> {
+                        node = 1;
+                        GreenLogger.log("Node changed to CENTER");
                     }
-                    orchestrator.autoTargetAlign(level);
-                }
+            );
 
-                drive.setBraking(controller.getButton(Controller.Button.B));
-
-                drive.setSlowMode(controller.getTrigger(Controller.Axis.RIGHT_TRIGGER));
-
-                var autoBalance = controller.getTrigger(Controller.Axis.LEFT_TRIGGER);
-                drive.setAutoBalance(autoBalance);
-
-                var controlState = autoBalance ? LedManager.ControlState.BLINK : LedManager.ControlState.SOLID;
-                ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, controlState);
-
-                var isCorrectAngle = elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT;
-                var pivotState = isCorrectAngle ? Collector.PIVOT_STATE.SHELF : Collector.PIVOT_STATE.FLOOR;
-
-                if (controller.getButton(Controller.Button.RIGHT_BUMPER)) {
-                    collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, pivotState);
-                    ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK); // indicates on LEDs
-                } else {
-                    collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
-                    ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.SOLID);
-                }
-
-                if (controller.getButton(Controller.Button.LEFT_BUMPER)) {
-                    collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, pivotState);
-                    ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK); // indicates on LEDs
-                } else {
-                    collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
-                    ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.SOLID);
-                }
-
-                if (controller.getButton(Controller.Button.Y)) {
-                    elevator.setDesiredState(Elevator.ANGLE_STATE.SHELF_COLLECT, Elevator.EXTENSION_STATE.SHELF_COLLECT);
-                }
-
-                snappingToHumanPlayer = controller.getDPad() == 0;
-                snappingToDriver = controller.getDPad() == 180;
-            });
-
-            controlBoard.addActionToOperator((controller) -> {
-                if (controller.getButton(Controller.Button.LEFT_BUMPER)) {
-                    orchestrator.updatePoseWithCamera();
-                }
-
-                var outtake = controller.getButton(Controller.Button.RIGHT_BUMPER);
-                collector.outtakeGamePiece(outtake);
-
-                if (outtake) {
-                    switch (robotState.actualGameElement) {
-                        case CONE:
-                            ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK);
-                            break;
-
-                        case CUBE:
-                            ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK);
-                            break;
+            inputHandler.listenButtonBoardButton(
+                    Button.RIGHT,
+                    Button.State.PRESSED,
+                    () -> {
+                        node = robotState.allianceColor == Color.RED ? 2 : 0;
+                        GreenLogger.log("Node changed to RIGHT");
                     }
-                } else {
-                    ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
-                }
+            );
 
-                if (controller.getButton(Controller.Button.A)) {
-                    GreenLogger.log("extend min");
-                    orchestrator.alignMin();
-                }
-
-                if (controller.getButton(Controller.Button.X)) {
-                    GreenLogger.log("extend mid");
-                    orchestrator.alignMid();
-                }
-
-                if (controller.getButton(Controller.Button.Y)) {
-                    GreenLogger.log("extend max");
-                    orchestrator.alignMax();
-                }
-
-                if (controller.getButton(Controller.Button.B)) {
-                    GreenLogger.log("auto score");
-                    orchestrator.autoScore();
-                }
-
-                if (controller.getButton(Controller.Button.START)) {
-                    if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.SCORE) {
-                        if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.SCORE) {
-                            collector.setDesiredState(collector.getDesiredRollerState(), Collector.PIVOT_STATE.STOW);
-                        } else if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.STOW) {
-                            collector.setCurrentGameElement(Collector.GAME_ELEMENT.CONE);
-                            collector.setDesiredState(collector.getDesiredRollerState(), Collector.PIVOT_STATE.SCORE);
-                        }
+            // level commands:
+            inputHandler.listenButtonBoardButton(
+                    Button.DOWN_LEFT,
+                    Button.State.PRESSED,
+                    () -> {
+                        level = Elevator.EXTENSION_STATE.MIN;
+                        GreenLogger.log("Score level changed to Low");
                     }
-                }
-            });
+            );
 
-            controlBoard.addActionToButtonBoard((controller) -> {
-                if (controller.getButton(Controller.Button.UP_LEFT)) {
-                    grid = robotState.allianceColor == Color.RED ? 0 : 2;
-                    GreenLogger.log("Grid changed to FEEDER");
-                }
-
-                if (controller.getButton(Controller.Button.UP)) {
-                    grid = 1;
-                    GreenLogger.log("Grid changed to BALANCE");
-                }
-
-                if (controller.getButton(Controller.Button.UP_RIGHT)) {
-                    grid = robotState.allianceColor == Color.RED ? 2 : 0;
-                    GreenLogger.log("Grid changed to WALL");
-                }
-
-                if (controller.getButton(Controller.Button.LEFT)) {
-                    node = robotState.allianceColor == Color.RED ? 0 : 2;
-                    GreenLogger.log("Node changed to LEFT");
-                }
-
-                if (controller.getButton(Controller.Button.CENTER)) {
-                    node = 1;
-                    GreenLogger.log("Node changed to CENTER");
-                }
-
-                if (controller.getButton(Controller.Button.RIGHT)) {
-                    node = robotState.allianceColor == Color.RED ? 2 : 0;
-                    GreenLogger.log("Node changed to RIGHT");
-                }
-
-                if (controller.getButton(Controller.Button.DOWN_LEFT)) {
-                    level = Elevator.EXTENSION_STATE.MIN;
-                    GreenLogger.log("Score level changed to Low");
-                }
-
-                if (controller.getButton(Controller.Button.DOWN)) {
-                    level = Elevator.EXTENSION_STATE.MID;
-                    GreenLogger.log("Score level changed to Mid");
-                }
-
-                if (controller.getButton(Controller.Button.DOWN_RIGHT)) {
-                    level = Elevator.EXTENSION_STATE.MAX;
-                    GreenLogger.log("Score level changed to High");
-                }
-            });
-
-            controlBoard.addActionToDriver((controller) -> {
-                var strafe = controller.getJoystick(Controller.Axis.LEFT_X);
-                var throttle = controller.getJoystick(Controller.Axis.LEFT_Y);
-
-                if (drive.isAutoBalancing()) {
-                    ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
-                            0,
-                            -strafe,
-                            0,
-                            robotState.driverRelativeFieldToVehicle.getRotation());
-                    drive.autoBalance(fieldRelativeChassisSpeed);
-                } else {
-                    double rotation;
-                    if (snappingToDriver || snappingToHumanPlayer) {
-                        double rotVal = MathUtil.inputModulus(
-                                robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
-                        );
-                        if (snappingToDriver) {
-                            if (rotVal == 0)
-                                rotVal += 0.01d;
-                            rotation = Math.min(0.5, (180 - Math.abs(rotVal)) / 40) * -Math.signum(rotVal);
-                        } else {
-                            rotation = Math.min(0.5, Math.abs(rotVal) / 40) * Math.signum(rotVal);
-                        }
-                    } else {
-                        rotation = controller.getJoystick(Controller.Axis.RIGHT_X);
+            inputHandler.listenButtonBoardButton(
+                    Button.DOWN,
+                    Button.State.PRESSED,
+                    () -> {
+                        level = Elevator.EXTENSION_STATE.MID;
+                        GreenLogger.log("Score level changed to Mid");
                     }
+            );
 
-                    drive.setTeleopInputs(
-                            -throttle,
-                            -strafe,
-                            rotation
-                    );
-                }
-            });
-
+            inputHandler.listenButtonBoardButton(
+                    Button.DOWN_RIGHT,
+                    Button.State.PRESSED,
+                    () -> {
+                        level = Elevator.EXTENSION_STATE.MAX;
+                        GreenLogger.log("Score level changed to Max");
+                    }
+            );
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -662,8 +785,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
-        inputHandler.update();
-
         robotState.field
             .getObject("Trajectory")
             .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
@@ -686,8 +807,40 @@ public class Robot extends TimedRobot {
      * Sets manual inputs for subsystems like the drivetrain when criteria met
      */
     public void manualControl() {
-        controlBoard.update();
+//        controlBoard.update();
         inputHandler.update();
+
+        double strafe = inputHandler.getDriverAxisAsDouble(Axis.LEFT_HORIZONTAL);
+        double throttle = inputHandler.getDriverAxisAsDouble(Axis.LEFT_VERTICAL);
+
+        if (drive.isAutoBalancing()) {
+            ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    0,
+                    -strafe,
+                    0,
+                    robotState.driverRelativeFieldToVehicle.getRotation());
+            drive.autoBalance(fieldRelativeChassisSpeed);
+        } else {
+            double rotation = inputHandler.getDriverAxisAsDouble(Axis.RIGHT_HORIZONTAL);
+            if (snappingToDriver || snappingToHumanPlayer) {
+                double rotVal = MathUtil.inputModulus(
+                        robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
+                );
+                if (snappingToDriver) {
+                    if (rotVal == 0)
+                        rotVal += 0.01d;
+                    rotation = Math.min(0.5, (180 - Math.abs(rotVal)) / 40) * -Math.signum(rotVal);
+                } else {
+                    rotation = Math.min(0.5, Math.abs(rotVal) / 40) * Math.signum(rotVal);
+                }
+            }
+
+            drive.setTeleopInputs(
+                    -throttle,
+                    -strafe,
+                    rotation
+            );
+        }
     }
 
     /**
