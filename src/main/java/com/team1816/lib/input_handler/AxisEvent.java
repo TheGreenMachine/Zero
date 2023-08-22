@@ -3,6 +3,11 @@ package com.team1816.lib.input_handler;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
+/**
+ * An event that holds actions to run when the axes state changes.
+ *
+ * @see Axis
+ */
 public class AxisEvent {
     private final Integer id;
     private final ArrayList<Consumer<Double>> actions = new ArrayList<>();

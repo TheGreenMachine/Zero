@@ -1,5 +1,8 @@
 package com.team1816.lib.input_handler;
 
+/**
+ * Dpad values
+ */
 public enum Dpad {
     UP(0),
     UP_RIGHT(45),

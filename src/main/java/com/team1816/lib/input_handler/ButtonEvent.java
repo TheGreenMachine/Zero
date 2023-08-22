@@ -4,6 +4,12 @@ import com.team1816.lib.util.team254.LatchedBoolean;
 
 import java.util.ArrayList;
 
+/**
+ * An event that holds actions to run when the button's state changes.
+ *
+ * @see Button
+ * @see Button.State
+ */
 public class ButtonEvent {
     private final Integer id;
     private final ArrayList<Runnable> pressActions = new ArrayList<>();

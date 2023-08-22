@@ -1,7 +1,7 @@
 package com.team1816.lib.input_handler;
 
 /**
- * An abstraction to provide a consistent interface for users.
+ * A virtual Button mapping.
  */
 public enum Button {
     A,

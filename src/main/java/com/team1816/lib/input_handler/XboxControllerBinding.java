@@ -1,7 +1,5 @@
 package com.team1816.lib.input_handler;
 
-import com.team1816.lib.controlboard.Controller;
-
 public class XboxControllerBinding extends ControllerBinding {
     public XboxControllerBinding() {
         buttonMap.put(Button.A, 1);

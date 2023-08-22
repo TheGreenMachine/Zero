@@ -1,7 +1,5 @@
 package com.team1816.lib.input_handler;
 
-import com.team1816.lib.controlboard.Controller;
-
 public class ButtonBoardControllerBinding extends ControllerBinding {
     public ButtonBoardControllerBinding() {
         buttonMap.put(Button.UP_LEFT, 2);

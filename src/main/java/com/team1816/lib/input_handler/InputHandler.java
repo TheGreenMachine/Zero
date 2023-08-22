@@ -8,6 +8,18 @@ import javax.inject.Singleton;
 import java.util.EnumMap;
 import java.util.function.Consumer;
 
+/**
+ * A single object that facilities the assignment of actions to
+ * specific button, axis, and dpad events.
+ *
+ * @see ControllerBinding
+ * @see Button
+ * @see ButtonEvent
+ * @see Axis
+ * @see AxisEvent
+ * @see Dpad
+ * @see DpadEvent
+ */
 @Singleton
 public class InputHandler {
     protected class Controller {
@@ -18,7 +30,6 @@ public class InputHandler {
         public final EnumMap<Dpad, DpadEvent> dpadEventMapping = new EnumMap<>(Dpad.class);
     }
 
-    // Note(Michael): Potentially rename `driver` to `main`?
     private Controller driver;
     private Controller operator;
     private Controller buttonBoard;
@@ -30,25 +41,17 @@ public class InputHandler {
     private Controller[] controllers = new Controller[3];
 
     @Inject
-    public InputHandler() {
+    public InputHandler(InputHandlerBridge bridge) {
         driver = new Controller();
         operator = new Controller();
         buttonBoard = new Controller();
 
-        // Note(Michael): I could make the controllers be an enum map to hold
-        // which controller the thing belongs to.
-        //
-        // For Example:
-        // DriverType.DRIVER
-        // DriverType.OPERATOR
-        // DriverType.BUTTON_BOARD
         controllers[0] = driver;
         controllers[1] = operator;
         controllers[2] = buttonBoard;
 
-        // Temp solution
-        driver.binding = new WasdControllerBinding();
-        operator.binding = new WasdControllerBinding();
+        driver.binding = bridge.getDriverControllerBinding();
+        operator.binding = bridge.getOperatorControllerBinding();
 
         // Permanent solution
         buttonBoard.binding = new ButtonBoardControllerBinding();
@@ -108,7 +111,7 @@ public class InputHandler {
        ButtonEvent event = controller.buttonEventMapping.get(button);
 
        if (event == null) {
-           GreenLogger.log("    INPUT HANDLER: Button `" + button.toString() + "` is not mapped!");
+           GreenLogger.log("INPUT HANDLER: Button `" + button.toString() + "` is not mapped!");
            return;
        }
 
@@ -140,7 +143,7 @@ public class InputHandler {
         AxisEvent event = controller.axisEventMapping.get(axis);
 
         if (event == null) {
-            GreenLogger.log("   INPUT HANDLER: Axis `" + axis.toString() + "` is not mapped!");
+            GreenLogger.log("INPUT HANDLER: Axis `" + axis.toString() + "` is not mapped!");
             return;
         }
 
@@ -165,7 +168,7 @@ public class InputHandler {
         DpadEvent event = controller.dpadEventMapping.get(dpad);
 
         if (event == null) {
-            GreenLogger.log("   INPUT HANDLER: Dpad Button `" + dpad.toString() + "` is not mapped!");
+            GreenLogger.log("INPUT HANDLER: Dpad Button `" + dpad.toString() + "` is not mapped!");
             return;
         }
 

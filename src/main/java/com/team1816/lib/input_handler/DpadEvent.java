@@ -4,6 +4,12 @@ import com.team1816.lib.util.team254.LatchedBoolean;
 
 import java.util.ArrayList;
 
+/**
+ * An event that holds actions to run when the Dpad's state changes.
+ *
+ * @see Dpad
+ * @see Dpad.State
+ */
 public class DpadEvent {
     private final ArrayList<Runnable> pressActions = new ArrayList<>();
     private final ArrayList<Runnable> holdActions = new ArrayList<>();
