@@ -45,9 +45,7 @@ public class Robot extends TimedRobot {
     /**
      * Controls
      */
-    private ControlBoard controlBoard;
     private InputHandler inputHandler;
-    private ActionManager actionManager;
 
     private final Infrastructure infrastructure;
     private final SubsystemLooper subsystemManager;
@@ -208,17 +206,15 @@ public class Robot extends TimedRobot {
 
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
+
             // zeroing ypr - (-90) b/c our pigeon is mounted with the "y" axis facing forward
             infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
             subsystemManager.zeroSensors();
             faulted = true; // elevator not zeroed on bootup - letting ppl know
 
-            /** Register ControlBoard */
-            controlBoard = Injector.get(ControlBoard.class);
-            DriverStation.silenceJoystickConnectionWarning(true);
-
             /** Register inputHandler */
             inputHandler = Injector.get(InputHandler.class);
+            DriverStation.silenceJoystickConnectionWarning(true);
 
             // Driver commands:
 
