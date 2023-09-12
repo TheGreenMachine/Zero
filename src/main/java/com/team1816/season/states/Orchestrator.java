@@ -7,13 +7,8 @@ import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.lib.util.visionUtil.VisionPoint;
-import com.team1816.season.auto.commands.AlignElevatorCommand;
-import com.team1816.season.auto.commands.AutoScoreCommand;
-import com.team1816.season.auto.commands.TargetAlignCommand;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
-import com.team1816.season.subsystems.Collector;
-import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -40,168 +35,60 @@ public class Orchestrator {
     private static Drive drive;
     private static Camera camera;
     private static LedManager ledManager;
-    private static Collector collector;
-    private static Elevator elevator;
 
     /**
      * Properties
      */
-    private Thread alignElevatorThread;
-    private Thread autoScoreThread;
-    private Thread autoTargetAlignThread;
+
+    // Place threads here.
+    // e.g. private Thread [ThreadName]Thread;
 
     public static boolean runningAutoTarget = false;
-    public static boolean runningAutoTargetAlign = false;
-    public static boolean runningAutoAlign = false;
-    public static boolean runningAutoScore = false;
+
+    // Place appropriate running booleans here.
+    // e.g. public static boolean running[ThreadName] = false;
 
     /**
      * Instantiates an Orchestrator with all its subsystems
      *
      * @param df  Drive.Factory (derives drivetrain)
      * @param led LedManager
-     * @param el  Elevator
-     * @param col Collector
      */
     @Inject
-    public Orchestrator(Drive.Factory df, Camera cam, LedManager led, Collector col, Elevator el) {
+    public Orchestrator(Drive.Factory df, Camera cam, LedManager led) {
+        /**
+         * Insert any other parameters into the constructor if you need to
+         * manage them.
+         *
+         * e.g. a Subsystem of some kind like the LEDManager.
+         */
+
         drive = df.getInstance();
         camera = cam;
         ledManager = led;
-        collector = col;
-        elevator = el;
     }
 
     /**
      * Actions
      */
 
-    /**
-     * Uses AutoCommand framework and A* path finding algorithms to drive and align to a specific
-     *
-     * @param level - Extension State
-     * @see com.team1816.lib.auto.commands.AutoCommand
-     * @see TargetAlignCommand
-     * @see com.team1816.lib.auto.PathFinder
-     */
-    public void autoTargetAlign(Elevator.EXTENSION_STATE level) {
-        if (!runningAutoTargetAlign) {
-            runningAutoTargetAlign = true;
-            updatePoseWithCamera();
-            double distance = robotState.fieldToVehicle.getTranslation().getDistance(robotState.target.getTranslation());
-            if (distance < Constants.kMinTrajectoryDistance) {
-                GreenLogger.log("Distance to target is " + distance + " m");
-                GreenLogger.log("Too close to target! can not start trajectory! setting elevator extension to: " + level.name());
-                AlignElevatorCommand command = new AlignElevatorCommand(level);
-                autoTargetAlignThread = new Thread(command::run);
-            } else {
-                GreenLogger.log("Drive trajectory action started!");
-                TargetAlignCommand command = new TargetAlignCommand(level);
-                autoTargetAlignThread = new Thread(command::run);
-            }
-            ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS, LedManager.ControlState.SOLID);
-            autoTargetAlignThread.start();
-        } else {
-            autoTargetAlignThread.stop();
-            GreenLogger.log("Stopped! driving to trajectory canceled!");
-            ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
-            runningAutoTargetAlign = !runningAutoTargetAlign;
-        }
-    }
+    // Place any actions here.
 
-    /**
-     * Aligns to score at a low node
-     *
-     * @see com.team1816.lib.auto.commands.AutoCommand
-     * @see AlignElevatorCommand
-     */
-    public void alignMin() {
-        if (!runningAutoAlign) {
-            runningAutoAlign = true;
-            GreenLogger.log("Auto align action started!");
-            AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MIN);
-            alignElevatorThread = new Thread(command::run);
-            alignElevatorThread.start();
-        } else {
-            alignElevatorThread.stop();
-            GreenLogger.log("Stopped! Auto align cancelled!");
-            runningAutoAlign = !runningAutoAlign;
-        }
-    }
-
-    /**
-     * Aligns to score at a middle node
-     *
-     * @see com.team1816.lib.auto.commands.AutoCommand
-     * @see AlignElevatorCommand
-     */
-    public void alignMid() {
-        if (!runningAutoAlign) {
-            runningAutoAlign = true;
-            GreenLogger.log("Auto align action started!");
-            AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MID);
-            alignElevatorThread = new Thread(command::run);
-            alignElevatorThread.start();
-        } else {
-            alignElevatorThread.stop();
-            GreenLogger.log("Stopped! Auto align cancelled!");
-            runningAutoAlign = !runningAutoAlign;
-        }
-    }
-
-    /**
-     * Aligns to score at a high node
-     *
-     * @see com.team1816.lib.auto.commands.AutoCommand
-     * @see AlignElevatorCommand
-     */
-    public void alignMax() {
-        if (!runningAutoAlign) {
-            runningAutoAlign = true;
-            GreenLogger.log("Auto align action started!");
-            AlignElevatorCommand command = new AlignElevatorCommand(Elevator.EXTENSION_STATE.MAX);
-            alignElevatorThread = new Thread(command::run);
-            alignElevatorThread.start();
-        } else {
-            alignElevatorThread.stop();
-            GreenLogger.log("Stopped! Auto align cancelled!");
-            runningAutoAlign = !runningAutoAlign;
-        }
-    }
-
-    /**
-     * Scores the current game piece
-     *
-     * @see com.team1816.lib.auto.commands.AutoCommand
-     * @see AutoScoreCommand
-     */
-    public void autoScore() {
-        if (!runningAutoScore) {
-            runningAutoScore = true;
-            GreenLogger.log("Auto Score action started!");
-            AutoScoreCommand command = new AutoScoreCommand(collector.getCurrentGameElement(), elevator.getDesiredExtensionState());
-            autoScoreThread = new Thread(command::run);
-            autoScoreThread.start();
-        } else {
-            autoScoreThread.stop();
-            GreenLogger.log("Stopped! Auto Score sequence cancelled!");
-            runningAutoScore = !runningAutoScore;
-        }
-    }
 
     /**
      * Clears executable threads
      */
     public void clearThreads() {
-        if (autoScoreThread != null && autoScoreThread.isAlive()) {
-            autoScoreThread.stop();
-        }
-        if (alignElevatorThread != null && alignElevatorThread.isAlive()) {
-            alignElevatorThread.stop();
-        }
-        if (autoTargetAlignThread != null && autoTargetAlignThread.isAlive()) {
-            autoTargetAlignThread.stop();
-        }
+        /**
+            For clearing a thread, here is the general pattern we follow:
+
+            if (thread != null && thread.isAlive()) {
+                thread.stop();
+            }
+
+            Make sure to use the pattern above to avoid causing exceptions
+            and any errors, when stopping the work on a thread.
+         */
     }
 
     /** Superseded Odometry Handling */

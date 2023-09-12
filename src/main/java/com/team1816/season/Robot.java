@@ -17,8 +17,6 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.DrivetrainTargets;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.subsystems.Collector;
-import com.team1816.season.subsystems.Elevator;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -63,8 +61,6 @@ public class Robot extends TimedRobot {
 
     private final LedManager ledManager;
     private final Camera camera;
-    private final Elevator elevator;
-    private final Collector collector;
 
     private DigitalInput zeroingButton;
     private Boolean zeroing = false;
@@ -101,11 +97,6 @@ public class Robot extends TimedRobot {
      * Properties
      */
     private boolean faulted;
-    private int grid = 0;
-    private int node = 0;
-    private Elevator.EXTENSION_STATE level = Elevator.EXTENSION_STATE.MIN;
-
-    public Elevator.ANGLE_STATE prevAngleState;
 
     private boolean snappingToHumanPlayer;
     private boolean snappingToDriver;
@@ -120,8 +111,9 @@ public class Robot extends TimedRobot {
         enabledLoop = new Looper(this);
         disabledLoop = new Looper(this);
         drive = (Injector.get(Drive.Factory.class)).getInstance();
-        elevator = Injector.get(Elevator.class);
-        collector = Injector.get(Collector.class);
+
+        // TODO: Set up any other subsystems here.
+
         ledManager = Injector.get(LedManager.class);
         camera = Injector.get(Camera.class);
         robotState = Injector.get(RobotState.class);
@@ -130,7 +122,6 @@ public class Robot extends TimedRobot {
         subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
 
-        prevAngleState = Elevator.ANGLE_STATE.STOW;
         if (RobotBase.isReal()) {
             zeroingButton = new DigitalInput((int) factory.getConstant("zeroingButton", -1));
         }
@@ -177,13 +168,12 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         try {
             /** Register All Subsystems */
-            controlBoard = Injector.get(IControlBoard.class);
-            DriverStation.silenceJoystickConnectionWarning(true);
 
-            // Remember to register our elevator and collector subsystems below!! The subsystem manager deals with calling
-            // read/writetohardware on a loop, but it can only call read/write if it recognizes said subsystem. To recognize
-            // your subsystem, just add it alongside the drive, ledManager, and camera parameters :)
-            subsystemManager.setSubsystems(drive, ledManager, camera, elevator, collector);
+            // Remember to register our subsystems below! The subsystem manager deals with calling
+            // readFromHardware and writeToHardware on a loop, but it can only call read/write it if it
+            // can recognize the subsystem. To recognize your subsystem, just add it alongside the
+            // drive, ledManager, and camera parameters.
+            subsystemManager.setSubsystems(drive, ledManager, camera);
 
             /** Logging */
             if (Constants.kLoggingRobot) {
@@ -209,10 +199,14 @@ public class Robot extends TimedRobot {
 
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
-            // zeroing ypr - (-90) b/c our pigeon is mounted with the "y" axis facing forward
+
+            // zeroing ypr - (-90) b/c our pigeon is mounted with the "y" axis facing forward.
+            // Might change later for different robots.
             infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
             subsystemManager.zeroSensors();
-            faulted = true; // elevator not zeroed on bootup - letting ppl know
+
+            /** [Specific subsystem] not zeroed on boot up - letting ppl know */
+            faulted = true;
 
             /** Register ControlBoard */
             controlBoard = Injector.get(IControlBoard.class);
@@ -221,250 +215,10 @@ public class Robot extends TimedRobot {
             actionManager =
                 new ActionManager(
                     // Driver Gamepad
-                    createAction(
-                        () -> controlBoard.getAsBool("zeroPose"),
-                        () -> {
-                            drive.zeroSensors(robotState.allianceColor == Color.BLUE ? Constants.kDefaultZeroingPose : Constants.kFlippedZeroingPose);
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("autoTargetAlign"),
-                        () -> {
-                            if (robotState.allianceColor == Color.BLUE) {
-                                robotState.target = DrivetrainTargets.blueTargets.get(grid * 3 + node);
-                            } else {
-                                robotState.target = DrivetrainTargets.redTargets.get(grid * 3 + node);
-                            }
-                            orchestrator.autoTargetAlign(level);
-                        }
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("brakeMode"),
-                        drive::setBraking
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("slowMode"),
-                        drive::setSlowMode
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("autoBalance"),
-                        (pressed) -> {
-                            if (pressed) {
-                                drive.setAutoBalance(true);
-                                ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.BLINK);
-                            } else {
-                                drive.setAutoBalance(false);
-                                ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.SOLID);
-                            }
-                        }
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("intakeCone"),
-                        (pressed) -> {
-                            if (pressed) {
-                                if (
-                                    elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
-                                ) { // collects from shelf
-                                    collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.SHELF);
-                                } else { // collects from floor
-                                    collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR);
-                                }
-                                ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK); // indicates on LEDs
-                            } else {
-                                collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
-                                ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.SOLID);
-                            }
-                        }
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("intakeCube"),
-                        (pressed) -> {
-                            if (pressed) {
-                                if (
-                                    elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
-                                ) { // collects from shelf
-                                    collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.SHELF);
-                                } else { // collects from floor
-                                    collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.FLOOR);
-                                }
-                                ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK); // indicates on LEDs
-                            } else {
-                                collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
-                                ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.SOLID);
-                            }
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("toggleArmScoreCollect"),
-                        () -> {
-                            if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
-                                && robotState.actualElevatorExtensionState != Elevator.EXTENSION_STATE.MIN) {
-                                elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
-                            } else if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
-                                elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
-                            } else {
-                                elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
-                                collector.setDesiredPivotState(Collector.PIVOT_STATE.STOW);
-                            }
-                        }
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("shelfPos"),
-                        (pressed) -> {
-                            elevator.setDesiredState(Elevator.ANGLE_STATE.SHELF_COLLECT, Elevator.EXTENSION_STATE.SHELF_COLLECT);
-                        }
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("snapToHumanPlayer"),
-                        (pressed) -> {
-                            snappingToHumanPlayer = pressed;
-                            snappingToDriver = false;
-                        }
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("snapToDriver"),
-                        (pressed) -> {
-                            snappingToDriver = pressed;
-                            snappingToHumanPlayer = false;
-                        }
-                    ),
+                        // TODO: new Action
+                        // TODO: new HoldAction
                     // Operator Gamepad
-                    createAction(
-                        () -> controlBoard.getAsBool("updatePoseWithCamera"),
-                        orchestrator::updatePoseWithCamera
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("outtake"),
-                        (pressed) -> {
-                            collector.outtakeGamePiece(pressed);
-                            if (pressed) {
-                                if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
-                                    ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK);
-                                } else if (robotState.actualGameElement == Collector.GAME_ELEMENT.CUBE) {
-                                    ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK);
-                                }
-                            } else {
-                                ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
-                            }
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("armStow"),
-                        () -> {
-                            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
-                            collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("armCollect"),
-                        () -> {
-                            elevator.setDesiredAngleState(Elevator.ANGLE_STATE.COLLECT);
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("extendMin"),
-                        () -> {
-                            GreenLogger.log("extend min");
-                            orchestrator.alignMin();
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("extendMid"),
-                        () -> {
-                            GreenLogger.log("extend mid");
-                            orchestrator.alignMid();
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("extendMax"),
-                        () -> {
-                            GreenLogger.log("extend max");
-                            orchestrator.alignMax();
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("autoScore"),
-                        () -> {
-                            GreenLogger.log("autoscore");
-                            orchestrator.autoScore();
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("toggleCollectorPivot"),
-                        () -> {
-                            if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.SCORE) {
-                                if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.SCORE) {
-                                    collector.setDesiredState(collector.getDesiredRollerState(), Collector.PIVOT_STATE.STOW);
-                                } else if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.STOW) {
-                                    collector.setCurrentGameElement(Collector.GAME_ELEMENT.CONE);
-                                    collector.setDesiredState(collector.getDesiredRollerState(), Collector.PIVOT_STATE.SCORE);
-                                }
-                            }
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("grid1"),
-                        () -> {
-                            grid = robotState.allianceColor == Color.RED ? 0 : 2;
-                            GreenLogger.log("Grid changed to FEEDER");
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("grid2"),
-                        () -> {
-                            grid = 1;
-                            GreenLogger.log("Grid changed to BALANCE");
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("grid3"),
-                        () -> {
-                            grid = robotState.allianceColor == Color.RED ? 2 : 0;
-                            GreenLogger.log("Grid changed to WALL");
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("node1"),
-                        () -> {
-                            node = robotState.allianceColor == Color.RED ? 0 : 2;
-                            GreenLogger.log("Node changed to LEFT");
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("node2"),
-                        () -> {
-                            node = 1;
-                            GreenLogger.log("Node changed to CENTER");
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("node3"),
-                        () -> {
-                            node = robotState.allianceColor == Color.RED ? 2 : 0;
-                            GreenLogger.log("Node changed to RIGHT");
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("level1"),
-                        () -> {
-                            level = Elevator.EXTENSION_STATE.MIN;
-                            GreenLogger.log("Score level changed to Low");
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("level2"),
-                        () -> {
-                            level = Elevator.EXTENSION_STATE.MID;
-                            GreenLogger.log("Score level changed to Mid");
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("level3"),
-                        () -> {
-                            level = Elevator.EXTENSION_STATE.MAX;
-                            GreenLogger.log("Score level changed to High");
-                        }
-                    )
+                    // Button Board Gamepad
                 );
         } catch (Throwable t) {
             faulted = true;
@@ -513,10 +267,7 @@ public class Robot extends TimedRobot {
 
         drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
 
-        collector.currentGameElement = Collector.GAME_ELEMENT.CONE;
-        robotState.actualGameElement = Collector.GAME_ELEMENT.CONE;
-        elevator.setDesiredState(Elevator.ANGLE_STATE.SCORE, Elevator.EXTENSION_STATE.MIN);
-        collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
+        // TODO: Set up subsystem states
 
         drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
         autoModeManager.startAuto();
@@ -536,7 +287,6 @@ public class Robot extends TimedRobot {
             ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
 
             infrastructure.startCompressor();
-            elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
 
             teleopStart = Timer.getFPGATimestamp();
             enabledLoop.start();
@@ -624,38 +374,8 @@ public class Robot extends TimedRobot {
             }
 
             if (RobotBase.isReal()) {
-                // logic for zeroing elevator
-                if (lastButton != zeroingButton.get() && lastButton) { // will only be true when changing from false to true
-                    if (zeroing == null) { // zeroing
-                        faulted = false;
-                        zeroing = true;
-                        elevator.zeroSensors();
-                        collector.zeroSensors();
-                        ledManager.indicateStatus(LedManager.RobotStatus.ZEROING, LedManager.ControlState.BLINK);
-                        ledManager.writeToHardware();
-                        infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
-                    } else if (zeroing) { // ready
-                        zeroing = false;
-                        elevator.setBraking(true);
-                        collector.setBraking(true);
-                        ledManager.indicateStatus(LedManager.RobotStatus.DISABLED, LedManager.ControlState.SOLID);
-                        ledManager.writeToHardware();
-                    } else { // needs zeroing
-                        zeroing = null;
-                        elevator.setBraking(false);
-                        collector.setBraking(false);
-                        ledManager.indicateStatus(LedManager.RobotStatus.ERROR, LedManager.ControlState.BLINK);
-                        ledManager.writeToHardware();
-
-                        faulted = true;
-                    }
-                }
-                lastButton = zeroingButton.get();
-
-                if (ledManager.getCurrentControlStatus() == LedManager.RobotStatus.ZEROING) {
-                    // only keep looping through write if zeroing elevator cus we need to update its blinking
-                    ledManager.writeToHardware();
-                }
+                // TODO: Logic for if the robot is not a simulation
+                // TODO: Also don't forget to add logic to make faulted false.
             }
 
             // Periodically check if drivers changed desired auto - if yes, then update the robot's position on the field
@@ -693,7 +413,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-
         try {
             manualControl();
         } catch (Throwable t) {
@@ -707,6 +426,8 @@ public class Robot extends TimedRobot {
      */
     public void manualControl() {
         actionManager.update();
+
+        // TODO: This logic looks pretty sound, but might want to do something else here.
 
         if (drive.isAutoBalancing()) {
             ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(

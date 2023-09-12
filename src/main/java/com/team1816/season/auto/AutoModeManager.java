@@ -179,22 +179,7 @@ public class AutoModeManager {
         LIVING_ROOM,
         DRIVE_STRAIGHT,
 
-        // 2023
-        PLACE_CONE,
-        PLACE_CUBE,
-        PLACE_CONE_EXIT_COMMUNITY,
-        PLACE_CONE_AUTO_BALANCE_FEEDER,
-        PLACE_CONE_AUTO_BALANCE_MIDDLE,
-        PLACE_CONE_AUTO_BALANCE_WALL,
-
-        PLACE_CONE_EXIT_COMMUNITY_AUTO_BALANCE_MIDDLE,
-        PLACE_CUBE_EXIT_COMMUNITY_AUTO_BALANCE_MIDDLE,
-
-        DOUBLE_CONE_FEEDER,
-        DOUBLE_CONE_WALL,
-
-//        TRIPLE_CONE_FEEDER,
-//        TRIPLE_CONE_WALL
+        // New Auto Modes : 20??
     }
 
     /**
@@ -212,30 +197,6 @@ public class AutoModeManager {
 //                return new TuneDrivetrainMode();
 //            case LIVING_ROOM:
 //                return (new LivingRoomMode(color));
-            case PLACE_CONE_EXIT_COMMUNITY:
-                return (new PlaceConeExitCommunityMode(color));
-            case PLACE_CONE:
-                return (new PlaceConeMode());
-            case PLACE_CUBE:
-                return (new PlaceCubeMode());
-            case PLACE_CONE_AUTO_BALANCE_FEEDER:
-                return (new PlaceConeAutoBalanceFeederMode(color));
-            case PLACE_CONE_AUTO_BALANCE_MIDDLE:
-                return (new PlaceConeAutoBalanceMiddleMode(color));
-            case PLACE_CONE_AUTO_BALANCE_WALL:
-                return (new PlaceConeAutoBalanceWallMode(color));
-            case PLACE_CONE_EXIT_COMMUNITY_AUTO_BALANCE_MIDDLE:
-                return (new PlaceConeExitCommunityAutoBalanceMiddleMode(color));
-            case PLACE_CUBE_EXIT_COMMUNITY_AUTO_BALANCE_MIDDLE:
-                return (new PlaceCubeExitCommunityAutoBalanceMiddleMode(color));
-            case DOUBLE_CONE_FEEDER:
-                return (new DoublePlaceConeFeederMode(color));
-            case DOUBLE_CONE_WALL:
-                return (new DoublePlaceConeWallMode(color));
-//            case TRIPLE_CONE_FEEDER:
-//                return (new TriplePlaceConeFeederMode(color));
-//            case TRIPLE_CONE_WALL:
-//                return (new TriplePlaceConeWallMode(color));
             default:
                 GreenLogger.log("Defaulting to drive straight mode");
                 return new DriveStraightMode();
