@@ -27,8 +27,10 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
 
 import javax.annotation.Nonnull;
+import java.io.File;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Scanner;
 
 /**
  * This class employs the MotorFactory and SensorFactory with yaml integrations and is the initial entry point to
@@ -62,6 +64,15 @@ public class RobotFactory {
                 );
         } catch (Exception e) {
             DriverStation.reportError("Yaml Config error!", e.getStackTrace());
+        }
+    }
+
+    public String getGitHash() {
+        try {
+            Scanner scanner = new Scanner(new File("build/resources/main/git_hash.data"));
+            return scanner.nextLine();
+        } catch (Exception e) {
+            return "NO VALID GIT HASH FOUND";
         }
     }
 

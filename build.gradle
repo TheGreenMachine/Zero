@@ -11,9 +11,22 @@ targetCompatibility = JavaVersion.VERSION_17
 
 def ROBOT_MAIN_CLASS = "com.team1816.season.Main"
 
+def getGitHash() {
+    return ext.githash='git log --pretty=format:%h -1'.execute().text.trim()
+}
+
+def writeGitHashToFile() {
+    def directory = "build/resources/main"
+    def fileName = "git_hash.data"
+
+    delete "$directory/$fileName"
+    file("$directory/$fileName") << getGitHash()
+}
+
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
 deploy {
+    writeGitHashToFile()
     targets {
         roborio(getTargetTypeClass('RoboRIO')) {
             // Team number is loaded either from the .wpilib/wpilib_preferences.json
