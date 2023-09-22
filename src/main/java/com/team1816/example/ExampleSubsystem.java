@@ -23,7 +23,7 @@ public class ExampleSubsystem extends Subsystem {
      * <p>string value = the name we give this subsystem in yaml (zero.config.yml)
      */
     // Constants
-    private static final String NAME = "examplesubsystem";
+    private static final String NAME = "exampleSubsystem";
     private final double someDouble;
     private final boolean isBrakeMode;
 

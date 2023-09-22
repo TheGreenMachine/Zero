@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
  */
 @Singleton
 public class Constants {
-
     /**
      * Factory & Stem
      */
@@ -93,10 +92,6 @@ public class Constants {
     public static double kMaxProximityThresholdCentimeters = 25; // cm
     public static double preTargetDistance = 0.4; // m
 
-    /**
-     * Elevator characterization
-     */
-    public static final double maxArmFeedForward = 0.075;
 
     /**
      * Camera characterization
