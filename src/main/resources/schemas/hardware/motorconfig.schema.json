@@ -2,10 +2,13 @@
     "type": "object",
     "title": "Motor Configuration",
     "properties": {
-        "pid": {
-            "$ref": "pidconfig.schema.json"
+        "motorType": {
+            "type" : "string"
         },
-        "currentlimit": {
+        "motorName": {
+            "type" : "string"
+        },
+        "currentLimit": {
             "type": "number"
         }
     }

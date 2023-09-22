@@ -28,7 +28,7 @@ public class Collector extends Subsystem {
     /**
      * Components
      */
-    private final IGreenMotor intakeMotor;
+    private final IGreenMotor intakeMotor; //TODO this one is REV
 
     private final IGreenMotor pivotMotor;
 

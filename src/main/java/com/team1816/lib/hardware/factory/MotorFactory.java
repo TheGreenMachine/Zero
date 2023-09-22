@@ -3,6 +3,7 @@ package com.team1816.lib.hardware.factory;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.*;
+import com.team1816.lib.hardware.MotorConfiguration;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.SubsystemConfig;
 import com.team1816.lib.hardware.components.motor.*;
@@ -173,34 +174,33 @@ public class MotorFactory {
         Map<String, PIDSlotConfiguration> pidConfigList,
         int remoteSensorId
     ) {
-        // note this is not necessarily a talon! we're faking out CTRE to be able to "configure" spark/ghost motors
-        BaseTalonConfiguration motorConfig;
+        MotorConfiguration motorConfiguration = new MotorConfiguration();
+        motorConfiguration.motorName = name;
 
-        // type of configuration (based on motor type)
         if (motor instanceof TalonFX) {
-            motorConfig = new TalonFXConfiguration();
+            BaseTalonConfiguration talonFXConfiguration = new TalonFXConfiguration();
+            motorConfiguration.motorType = "TalonFX";
+        } else if (motor instanceof TalonSRX) {
+            BaseTalonConfiguration talonSRXConfiguration = new TalonSRXConfiguration();
+            motorConfiguration.motorType = "TalonSRX";
+        } else if (motor instanceof LazySparkMax) {
+            motorConfiguration.motorType = "SparkMax";
         } else {
-            // note: spark and ghost motors won't do anything with the motorConfig
-            motorConfig = new TalonSRXConfiguration();
+            motorConfiguration.motorType = "Ghost";
         }
+        // note this is not necessarily a talon! we're faking out CTRE to be able to "configure" spark/ghost motors
+        BaseTalonConfiguration motorConfig = new TalonFXConfiguration();
+
 
         // setting pid
         if (pidConfigList != null) {
             pidConfigList.forEach(
                 (slot, slotConfig) -> {
                     switch (slot.toLowerCase()) {
-                        case "slot0":
-                            motorConfig.slot0 = toSlotConfiguration(slotConfig);
-                            break;
-                        case "slot1":
-                            motorConfig.slot1 = toSlotConfiguration(slotConfig);
-                            break;
-                        case "slot2":
-                            motorConfig.slot2 = toSlotConfiguration(slotConfig);
-                            break;
-                        case "slot3":
-                            motorConfig.slot3 = toSlotConfiguration(slotConfig);
-                            break;
+                        case "slot0" -> motorConfig.slot0 = toSlotConfiguration(slotConfig);
+                        case "slot1" -> motorConfig.slot1 = toSlotConfiguration(slotConfig);
+                        case "slot2" -> motorConfig.slot2 = toSlotConfiguration(slotConfig);
+                        case "slot3" -> motorConfig.slot3 = toSlotConfiguration(slotConfig);
                     }
                 }
             );
@@ -303,7 +303,7 @@ public class MotorFactory {
             if (pidConfiguration.kP != null) slotConfig.kP = pidConfiguration.kP;
             if (pidConfiguration.kI != null) slotConfig.kI = pidConfiguration.kI;
             if (pidConfiguration.kD != null) slotConfig.kD = pidConfiguration.kD;
-            if (pidConfiguration.kP != null) slotConfig.kF = pidConfiguration.kF;
+            if (pidConfiguration.kP != null) slotConfig.kF = pidConfiguration.kF; // TODO should be kF notnull?
             if (pidConfiguration.iZone != null) slotConfig.integralZone =
                 pidConfiguration.iZone;
             if (
