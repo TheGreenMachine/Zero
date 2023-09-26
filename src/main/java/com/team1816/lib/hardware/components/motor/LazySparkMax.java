@@ -14,7 +14,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
-import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.util.logUtil.GreenLogger;
 
 /**
@@ -343,7 +342,7 @@ public class LazySparkMax implements IGreenMotor {
         return ErrorCode.OK;
     }
 
-    public ErrorCode config_Pid_manual(int slotIdx, SlotConfiguration slotConfiguration) {
+    public ErrorCode config_Pid_Manual(int slotIdx, SlotConfiguration slotConfiguration) {
         pidController.setP(slotConfiguration.kP, slotIdx);
         pidController.setI(slotConfiguration.kI, slotIdx);
         pidController.setD(slotConfiguration.kD, slotIdx);
@@ -400,7 +399,7 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public ErrorCode setIntegralAccumulator(double iaccum, int pidIdx, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override

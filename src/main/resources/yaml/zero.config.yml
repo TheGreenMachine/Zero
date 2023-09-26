@@ -2,7 +2,7 @@ subsystems:
     drivetrain:
         implemented: true
         motors:
-            - FLDr:
+            FLDr:
                 motorType: falcon
                 motorName: FLDr
                 id: 11

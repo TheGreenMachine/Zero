@@ -287,13 +287,12 @@ public class MotorFactory {
                 for (Map.Entry<String, PIDSlotConfiguration> slot : pidConfigList.entrySet())
                     switch (slot.getKey().toLowerCase()) {
                         //toSlotConfiguration is kept to avoid notnulls making this totally unreadable
-                        case "slot0" -> ((LazySparkMax) motor).config_Pid_manual(0,toSlotConfiguration(slot.getValue()));
-                        case "slot1" -> ((LazySparkMax) motor).config_Pid_manual(1,toSlotConfiguration(slot.getValue()));
-                        case "slot2" -> ((LazySparkMax) motor).config_Pid_manual(2,toSlotConfiguration(slot.getValue()));
-                        case "slot3" -> ((LazySparkMax) motor).config_Pid_manual(3,toSlotConfiguration(slot.getValue()));
+                        case "slot0" -> ((LazySparkMax) motor).config_Pid_Manual(0,toSlotConfiguration(slot.getValue()));
+                        case "slot1" -> ((LazySparkMax) motor).config_Pid_Manual(1,toSlotConfiguration(slot.getValue()));
+                        case "slot2" -> ((LazySparkMax) motor).config_Pid_Manual(2,toSlotConfiguration(slot.getValue()));
+                        case "slot3" -> ((LazySparkMax) motor).config_Pid_Manual(3,toSlotConfiguration(slot.getValue()));
                 }
             }
-
 
             //spark profile slot
             //TODO
@@ -307,6 +306,7 @@ public class MotorFactory {
             //TODO misc configurations: clear forward -> setcontrolframeperiod
 
             //TODO create a spark configallsettings?
+                //TODO SparkConfiguration class?
 
             //Spark inversion
             //TODO
