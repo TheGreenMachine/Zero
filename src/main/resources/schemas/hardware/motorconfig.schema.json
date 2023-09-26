@@ -8,8 +8,14 @@
         "motorName": {
             "type" : "string"
         },
+        "id": {
+            "type" : "number"
+        },
         "currentLimit": {
             "type": "number"
+        },
+        "invertMotor" : {
+            "type": "boolean"
         }
     }
 }

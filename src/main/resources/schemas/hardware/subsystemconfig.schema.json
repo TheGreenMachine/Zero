@@ -10,11 +10,8 @@
             "implemented"
         ],
         "motors": {
-            "type": "array",
-            "uniqueItems": true,
-            "items": {
-                "$ref": "motorconfig.schema.json"
-            }
+            "type": "object",
+            "existingJavaType": "java.util.Map<String,MotorConfiguration>"
         },
         "canifier": {
             "type": "integer"
