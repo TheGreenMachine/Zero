@@ -3,6 +3,7 @@ package com.team1816.lib.hardware.factory;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
+import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.*;
 import com.team1816.lib.hardware.components.gyro.GhostPigeonIMU;
@@ -28,6 +29,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
@@ -68,12 +71,23 @@ public class RobotFactory {
     }
 
     public String getGitHash() {
+        String gitHashStr;
         try {
-            Scanner scanner = new Scanner(new File("build/resources/main/git_hash.data"));
-            return scanner.nextLine();
+            URL input = Resources.getResource("git_hash.txt");
+
+            if (input == null) {
+                gitHashStr = "UNABLE TO FIND THE GIT HASH.";
+            } else {
+                gitHashStr = Resources.toString(input, Charset.defaultCharset());
+            }
         } catch (Exception e) {
-            return "NO VALID GIT HASH FOUND";
+            System.out.println("Exception occurred: " + e.toString());
+            gitHashStr = "NO VALID GIT HASH FOUND";
         }
+
+        System.out.println("Git Hash: " + gitHashStr);
+
+        return gitHashStr;
     }
 
     public IGreenMotor getMotor(

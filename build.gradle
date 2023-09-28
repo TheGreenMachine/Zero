@@ -17,7 +17,7 @@ def getGitHash() {
 
 def writeGitHashToFile() {
     def directory = "build/resources/main"
-    def fileName = "git_hash.data"
+    def fileName = "git_hash"
 
     delete "$directory/$fileName"
     file("$directory/$fileName") << getGitHash()

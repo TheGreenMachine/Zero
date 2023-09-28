@@ -35,7 +35,7 @@ public class Constants {
     /**
      * Git Hash
      */
-    public static final String gitHash = factory.getGitHash();
+    public static final String kGitHash = factory.getGitHash();
 
     /**
      * CAN Timeouts
