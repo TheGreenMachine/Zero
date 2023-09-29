@@ -59,9 +59,9 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 3.8 # 6.0
+                    kP: 3 # 6.0
                     kI: 0.00075
-                    kD: 77
+                    kD: 65
                     kF: 0
                     allowableError: 5
         constants:
