@@ -600,7 +600,7 @@ public class Robot extends TimedRobot {
             robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
 
-            SmartDashboard.putString("Git Hash", Constants.gitHash);
+            SmartDashboard.putString("Git Hash", Constants.kGitHash);
         } catch (Throwable t) {
             faulted = true;
             GreenLogger.log(t.getMessage());

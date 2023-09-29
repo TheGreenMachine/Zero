@@ -70,7 +70,15 @@ public class RobotFactory {
         }
     }
 
-    public String getGitHash() {
+    /**
+     * This method reads a resource file called 'git_hash.txt'.
+     *
+     * The resource contains the git hash for the current version of the repository
+     * you're on.
+     *
+     * @return a string representation of the current git hash
+     */
+    public static String getGitHash() {
         String gitHashStr;
         try {
             URL input = Resources.getResource("git_hash.txt");
