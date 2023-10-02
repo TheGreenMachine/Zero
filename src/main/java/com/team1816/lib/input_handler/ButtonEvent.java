@@ -27,14 +27,29 @@ public class ButtonEvent {
         return this.id;
     }
 
+    /**
+     * Adds an action to be performed when once when a button is pressed
+     *
+     * @param action
+     */
     public void addPressAction(Runnable action) {
         pressActions.add(action);
     }
 
+    /**
+     * Adds an action to be performed while a button is held
+     *
+     * @param action
+     */
     public void addHoldAction(Runnable action) {
         holdActions.add(action);
     }
 
+    /**
+     * Adds an action to be performed once when a button is released
+     *
+     * @param action
+     */
     public void addReleaseAction(Runnable action) {
         releaseActions.add(action);
     }

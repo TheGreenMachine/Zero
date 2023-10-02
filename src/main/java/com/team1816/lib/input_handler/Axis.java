@@ -13,5 +13,5 @@ public enum Axis {
     LEFT_TRIGGER,
     RIGHT_TRIGGER;
 
-    public static final double axisThreshold = 0.04;
+    public static final double kAxisThreshold = 0.04;
 }

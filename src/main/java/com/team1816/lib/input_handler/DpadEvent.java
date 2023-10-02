@@ -20,14 +20,29 @@ public class DpadEvent {
 
     public DpadEvent() {}
 
+    /**
+     * Adds an action to be performed once when a dpad axis is pressed
+     *
+     * @param action
+     */
     public void addPressAction(Runnable action) {
         pressActions.add(action);
     }
 
+    /**
+     * Adds an action to be performed while a dpad axis is pressed
+     *
+     * @param action
+     */
     public void addHoldAction(Runnable action) {
         holdActions.add(action);
     }
 
+    /**
+     * Adds an action to be performed once when a dpad axis is released
+     *
+     * @param action
+     */
     public void addReleaseAction(Runnable action) {
         releaseActions.add(action);
     }

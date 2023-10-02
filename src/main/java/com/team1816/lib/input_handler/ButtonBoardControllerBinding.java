@@ -1,6 +1,6 @@
 package com.team1816.lib.input_handler;
 
-public class ButtonBoardControllerBinding extends ControllerBinding {
+public class ButtonBoardControllerBinding implements IControllerBinding {
     public ButtonBoardControllerBinding() {
         buttonMap.put(Button.UP_LEFT, 2);
         buttonMap.put(Button.UP, 5);

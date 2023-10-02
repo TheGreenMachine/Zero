@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  * A single object that facilities the assignment of actions to
  * specific button, axis, and dpad events.
  *
- * @see ControllerBinding
+ * @see IControllerBinding
  * @see Button
  * @see ButtonEvent
  * @see Axis
@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 public class InputHandler {
     protected class Controller {
         public Joystick joystick;
-        public ControllerBinding binding;
+        public IControllerBinding binding;
         public final EnumMap<Button, ButtonEvent> buttonEventMapping = new EnumMap<>(Button.class);
         public final EnumMap<Axis, AxisEvent> axisEventMapping = new EnumMap<>(Axis.class);
         public final EnumMap<Dpad, DpadEvent> dpadEventMapping = new EnumMap<>(Dpad.class);

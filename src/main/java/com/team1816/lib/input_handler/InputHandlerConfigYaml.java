@@ -1,6 +1,5 @@
 package com.team1816.lib.input_handler;
 
-import com.team1816.lib.input_handler.InputHandlerBridge;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
@@ -9,7 +8,7 @@ import org.yaml.snakeyaml.representer.Representer;
 import java.io.InputStream;
 
 /**
- * The yaml parsing integration for the input handler
+ * The yaml parsing integration for an input handler
  *
  * @see InputHandlerBridge
  */

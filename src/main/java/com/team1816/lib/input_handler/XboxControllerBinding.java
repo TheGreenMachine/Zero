@@ -1,7 +1,8 @@
 package com.team1816.lib.input_handler;
 
-public class XboxControllerBinding extends ControllerBinding {
+public class XboxControllerBinding implements IControllerBinding {
     public XboxControllerBinding() {
+        //TODO Due to improper DriverStation simulation, these controls will be inaccurate in simulation if DS is not also open
         buttonMap.put(Button.A, 1);
         buttonMap.put(Button.B, 2);
         buttonMap.put(Button.X, 3);

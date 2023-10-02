@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 
 /**
- * An event that holds actions to run when the axes state changes.
+ * An event that holds actions to run when the axes' states change.
  *
  * @see Axis
  */

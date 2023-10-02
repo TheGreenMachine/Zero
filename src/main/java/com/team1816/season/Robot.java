@@ -3,7 +3,6 @@ package com.team1816.season;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
-import com.team1816.lib.controlboard.*;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.input_handler.Axis;
 import com.team1816.lib.input_handler.Button;
@@ -28,7 +27,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.*;
 
-import javax.lang.model.element.ElementVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -218,6 +216,7 @@ public class Robot extends TimedRobot {
 
             // Driver commands:
 
+            //zeroPose
             inputHandler.listenDriverButton(
                     Button.START,
                     Button.State.PRESSED,
@@ -229,6 +228,7 @@ public class Robot extends TimedRobot {
                             )
             );
 
+            //autoTargetAlign
             inputHandler.listenDriverButton(
                     Button.A,
                     Button.State.PRESSED,
@@ -242,28 +242,32 @@ public class Robot extends TimedRobot {
                     }
             );
 
-
+            //brakeMode start
             inputHandler.listenOperatorButton(
                     Button.B,
                     Button.State.PRESSED,
                     () -> drive.setBraking(true)
             );
 
+            //brakeMode end
             inputHandler.listenOperatorButton(
                     Button.B,
                     Button.State.RELEASED,
                     () -> drive.setBraking(false)
             );
 
+            //slowMode
             inputHandler.listenDriverAxis(
                     Axis.RIGHT_TRIGGER,
-                    (value) -> drive.setSlowMode(value > Axis.axisThreshold)
+                    (value) -> drive.setSlowMode(value > Axis.kAxisThreshold)
             );
 
+            //autoBalance
+            //TODO axis pressed, released for this one
             inputHandler.listenDriverAxis(
                     Axis.LEFT_TRIGGER,
                     (value) -> {
-                        boolean pressed = value > Axis.axisThreshold;
+                        boolean pressed = value > Axis.kAxisThreshold;
 
                         drive.setAutoBalance(pressed);
 
@@ -276,13 +280,13 @@ public class Robot extends TimedRobot {
                     }
             );
 
-            // picking up and letting go of a cone.
+            // intakeCone
             inputHandler.listenDriverButton(
                     Button.RIGHT_BUMPER,
                     Button.State.PRESSED,
                     () -> {
                         if (
-                                elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
+                            elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
                         ) { // collects from shelf
                             collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.SHELF);
                         } else { // collects from floor
@@ -293,6 +297,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
+            //intakeCone stop
             inputHandler.listenDriverButton(
                     Button.RIGHT_BUMPER,
                     Button.State.RELEASED,
@@ -302,13 +307,13 @@ public class Robot extends TimedRobot {
                     }
             );
 
-            // picking up and letting go of a cube.
+            //intakeCube
             inputHandler.listenDriverButton(
                     Button.LEFT_BUMPER,
                     Button.State.PRESSED,
                     () -> {
                         if (
-                                elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
+                            elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
                         ) { // collects from shelf
                             collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.SHELF);
                         } else { // collects from floor
@@ -318,6 +323,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
+            //intakeCube stop
             inputHandler.listenDriverButton(
                     Button.LEFT_BUMPER,
                     Button.State.RELEASED,
@@ -327,7 +333,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
-            // Toggle the arm and score collect (or whatever that means)
+            //toggleArmScoreCollect
             inputHandler.listenDriverButton(
                     Button.X,
                     Button.State.HELD,
@@ -344,6 +350,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
+            //shelfPos
             inputHandler.listenDriverButton(
                     Button.Y,
                     Button.State.PRESSED,
@@ -354,7 +361,7 @@ public class Robot extends TimedRobot {
                             )
             );
 
-            // Logic for snapping to player.
+            //snapToHumanPlayer start
             inputHandler.listenDriverDpad(
                     Dpad.UP,
                     Dpad.State.PRESSED,
@@ -364,6 +371,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
+            //snapToHumanPlayer stop
             inputHandler.listenDriverDpad(
                     Dpad.UP,
                     Dpad.State.RELEASED,
@@ -373,7 +381,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
-            // Logic for snapping to driver.
+            // snapToDriver start
             inputHandler.listenDriverDpad(
                     Dpad.DOWN,
                     Dpad.State.PRESSED,
@@ -383,6 +391,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
+            // snapToDriver stop
             inputHandler.listenDriverDpad(
                     Dpad.DOWN,
                     Dpad.State.RELEASED,
@@ -392,13 +401,14 @@ public class Robot extends TimedRobot {
                     }
             );
 
-            // Operator commands now:
+            //updatePoseWithCamera
             inputHandler.listenOperatorButton(
                     Button.LEFT_BUMPER,
                     Button.State.PRESSED,
                     () -> orchestrator.updatePoseWithCamera()
             );
 
+            //outtake start
             inputHandler.listenOperatorButton(
                     Button.RIGHT_BUMPER,
                     Button.State.PRESSED,
@@ -413,6 +423,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
+            //outtake stop
             inputHandler.listenOperatorButton(
                     Button.RIGHT_BUMPER,
                     Button.State.RELEASED,
@@ -423,7 +434,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
-            // extend min
+            //extendMin
             inputHandler.listenOperatorButton(
                     Button.A,
                     Button.State.PRESSED,
@@ -433,7 +444,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
-            // extend mid
+            //extendMid
             inputHandler.listenOperatorButton(
                     Button.X,
                     Button.State.PRESSED,
@@ -443,7 +454,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
-            // extend max
+            //extendMax
             inputHandler.listenOperatorButton(
                     Button.Y,
                     Button.State.PRESSED,
@@ -453,7 +464,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
-            // auto score
+            //autoScore
             inputHandler.listenOperatorButton(
                     Button.B,
                     Button.State.PRESSED,
@@ -463,7 +474,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
-            // toggle collector pivot
+            //toggleCollectorPivot
             inputHandler.listenOperatorButton(
                     Button.START,
                     Button.State.PRESSED,
@@ -481,7 +492,7 @@ public class Robot extends TimedRobot {
 
             // Button Board Commands:
 
-            // grid commands:
+            //grid1
             inputHandler.listenButtonBoardButton(
                     Button.UP_LEFT,
                     Button.State.PRESSED,
@@ -491,6 +502,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
+            //grid2
             inputHandler.listenButtonBoardButton(
                     Button.UP,
                     Button.State.PRESSED,
@@ -500,6 +512,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
+            //grid3
             inputHandler.listenButtonBoardButton(
                     Button.UP_RIGHT,
                     Button.State.PRESSED,
@@ -509,7 +522,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
-            // node commands:
+            //node1
             inputHandler.listenButtonBoardButton(
                     Button.LEFT,
                     Button.State.PRESSED,
@@ -519,6 +532,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
+            //node2
             inputHandler.listenButtonBoardButton(
                     Button.CENTER,
                     Button.State.PRESSED,
@@ -528,6 +542,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
+            //node3
             inputHandler.listenButtonBoardButton(
                     Button.RIGHT,
                     Button.State.PRESSED,
@@ -537,7 +552,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
-            // level commands:
+            //level1
             inputHandler.listenButtonBoardButton(
                     Button.DOWN_LEFT,
                     Button.State.PRESSED,
@@ -547,6 +562,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
+            //level2
             inputHandler.listenButtonBoardButton(
                     Button.DOWN,
                     Button.State.PRESSED,
@@ -556,6 +572,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
+            //level3
             inputHandler.listenButtonBoardButton(
                     Button.DOWN_RIGHT,
                     Button.State.PRESSED,
@@ -803,7 +820,6 @@ public class Robot extends TimedRobot {
      * Sets manual inputs for subsystems like the drivetrain when criteria met
      */
     public void manualControl() {
-//        controlBoard.update();
         inputHandler.update();
 
         double strafe = inputHandler.getDriverAxisAsDouble(Axis.LEFT_HORIZONTAL);

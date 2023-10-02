@@ -7,18 +7,18 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class InputHandlerBridge {
     private InputHandlerConfig config;
 
-    private ControllerBinding driverBinding;
-    private ControllerBinding operatorBinding;
+    private IControllerBinding driverBinding;
+    private IControllerBinding operatorBinding;
 
-    public ControllerBinding getDriverControllerBinding() {
+    public IControllerBinding getDriverControllerBinding() {
         return driverBinding;
     }
 
-    public ControllerBinding getOperatorControllerBinding() {
+    public IControllerBinding getOperatorControllerBinding() {
         return operatorBinding;
     }
 
-    private ControllerBinding stringToControllerBinding(String nameType) {
+    private IControllerBinding stringToControllerBinding(String nameType) {
         switch (nameType) {
             case "Wasd": return new WasdControllerBinding();
             case "Xbox": return new XboxControllerBinding();

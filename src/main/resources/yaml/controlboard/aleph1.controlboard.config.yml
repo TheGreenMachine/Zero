@@ -1,5 +1,5 @@
 driver:
-    controllerType: Wasd
+    controllerType: Xbox
     rumble: false
     joysticks:
         left:
@@ -23,7 +23,7 @@ driver:
         up: snapToHumanPlayer
         down: snapToDriver
 operator:
-    controllerType: Wasd
+    controllerType: Xbox
     rumble: false
     buttons:
         leftBumper: updatePoseWithCamera
