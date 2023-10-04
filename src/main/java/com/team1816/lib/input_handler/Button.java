@@ -12,8 +12,8 @@ public enum Button {
     RIGHT_BUMPER,
     BACK,
     START,
-    L_JOYSTICK,
-    R_JOYSTICK,
+    LEFT_JOYSTICK,
+    RIGHT_JOYSTICK,
 
     // Button Board
     CENTER,

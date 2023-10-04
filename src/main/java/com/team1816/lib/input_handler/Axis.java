@@ -9,9 +9,4 @@ public enum Axis {
 
     RIGHT_HORIZONTAL,
     RIGHT_VERTICAL,
-
-    LEFT_TRIGGER,
-    RIGHT_TRIGGER;
-
-    public static final double kAxisThreshold = 0.04;
 }

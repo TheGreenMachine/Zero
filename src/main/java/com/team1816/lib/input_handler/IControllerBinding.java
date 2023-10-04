@@ -13,4 +13,5 @@ public interface IControllerBinding {
 
     EnumMap<Axis, Integer> axisMap = new EnumMap<>(Axis.class);
 
+    EnumMap<Trigger, Integer> triggerMap = new EnumMap<>(Trigger.class);
 }

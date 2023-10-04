@@ -1,6 +1,0 @@
-driver:
-  controllerType: Xbox
-  rumble: false
-operator:
-  controllerType: Wasd
-  rumble: false

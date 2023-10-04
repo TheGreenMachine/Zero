@@ -86,7 +86,7 @@ infrastructure:
         RLProximitySensor: 2
         RRProximitySensor: 3
     proximityThreshold: 26 # cm
-controlboard: example
+inputHandler: example
 constants:
     ## Drivetrain Dimensions and Parameters ##
     maxAllowablePoseError: 0.1

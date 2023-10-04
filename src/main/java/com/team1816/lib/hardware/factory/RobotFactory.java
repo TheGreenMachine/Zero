@@ -375,8 +375,8 @@ public class RobotFactory {
         return getConstants().get(name);
     }
 
-    public String getControlBoard() {
-        return Objects.requireNonNullElse(config.controlboard, "empty");
+    public String getInputHandlerName() {
+        return Objects.requireNonNullElse(config.inputHandler, "empty");
     }
 
     public double getConstant(String subsystemName, String name) {

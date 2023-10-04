@@ -32,12 +32,11 @@
         }
     },
     "anyOf": [
-    {
-        "required": [
-            "controllerType",
-            "rumble"
-        ]
-    }
-]
-
+        {
+            "required": [
+                "controllerType",
+                "rumble"
+            ]
+        }
+    ]
 }

@@ -1,6 +1,8 @@
 package com.team1816.lib.input_handler;
 
 import com.google.inject.Inject;
+import com.team1816.lib.Injector;
+import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -31,12 +33,19 @@ public class InputHandlerBridge {
     @Inject
     public InputHandlerBridge() {
         try {
+            RobotFactory factory = Injector.get(RobotFactory.class);
+            String inputHandlerConfigFileName = factory.getInputHandlerName();
+
+            String location =
+                    "yaml/input_handler/" +
+                    inputHandlerConfigFileName +
+                    ".input_handler.config.yml";
+
+            GreenLogger.log("Attempting to load input handler yaml at: " + location);
             config = InputHandlerConfigYaml.loadFrom(
                     this.getClass()
                         .getClassLoader()
-                        .getResourceAsStream(
-                                "yaml/input_handler.config.yml"
-                        )
+                        .getResourceAsStream(location)
             );
         } catch (Exception e) {
             GreenLogger.log(e);

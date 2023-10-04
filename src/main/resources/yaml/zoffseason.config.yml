@@ -88,7 +88,7 @@ infrastructure:
     # pigeon
     pigeonId: 32
     isPigeon2: true
-controlboard: example
+inputHandler: example
 constants:
     # drivetrain misc
     maxAllowablePoseError: 0.1

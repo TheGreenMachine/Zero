@@ -4,10 +4,7 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.hardware.factory.RobotFactory;
-import com.team1816.lib.input_handler.Axis;
-import com.team1816.lib.input_handler.Button;
-import com.team1816.lib.input_handler.Dpad;
-import com.team1816.lib.input_handler.InputHandler;
+import com.team1816.lib.input_handler.*;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
@@ -214,18 +211,18 @@ public class Robot extends TimedRobot {
             inputHandler = Injector.get(InputHandler.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            // Driver commands:
+            /** Driver Commands */
 
             //zeroPose
             inputHandler.listenDriverButton(
                     Button.START,
                     Button.State.PRESSED,
                     () ->
-                            drive.zeroSensors(
-                                    robotState.allianceColor == Color.BLUE ?
-                                    Constants.kDefaultZeroingPose :
-                                    Constants.kFlippedZeroingPose
-                            )
+                        drive.zeroSensors(
+                                robotState.allianceColor == Color.BLUE ?
+                                Constants.kDefaultZeroingPose :
+                                Constants.kFlippedZeroingPose
+                        )
             );
 
             //autoTargetAlign
@@ -242,41 +239,29 @@ public class Robot extends TimedRobot {
                     }
             );
 
-            //brakeMode start
-            inputHandler.listenOperatorButton(
+            //brakeMode
+            inputHandler.listenOperatorButtonPressAndRelease(
                     Button.B,
-                    Button.State.PRESSED,
-                    () -> drive.setBraking(true)
-            );
-
-            //brakeMode end
-            inputHandler.listenOperatorButton(
-                    Button.B,
-                    Button.State.RELEASED,
-                    () -> drive.setBraking(false)
+                    drive::setBraking
             );
 
             //slowMode
-            inputHandler.listenDriverAxis(
-                    Axis.RIGHT_TRIGGER,
-                    (value) -> drive.setSlowMode(value > Axis.kAxisThreshold)
+            inputHandler.listenDriverTriggerPressAndRelease(
+                    Trigger.RIGHT,
+                    drive::setSlowMode
             );
 
             //autoBalance
-            //TODO axis pressed, released for this one
-            inputHandler.listenDriverAxis(
-                    Axis.LEFT_TRIGGER,
-                    (value) -> {
-                        boolean pressed = value > Axis.kAxisThreshold;
-
+            inputHandler.listenDriverTriggerPressAndRelease(
+                    Trigger.LEFT,
+                    (pressed) -> {
                         drive.setAutoBalance(pressed);
 
-                        ledManager.indicateStatus(
-                                LedManager.RobotStatus.BALANCE,
-                                pressed ?
-                                        LedManager.ControlState.BLINK :
-                                        LedManager.ControlState.SOLID
-                        );
+                        if (pressed) {
+                            ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.BLINK);
+                        } else {
+                            ledManager.indicateStatus(LedManager.RobotStatus.BALANCE, LedManager.ControlState.SOLID);
+                        }
                     }
             );
 
@@ -339,7 +324,7 @@ public class Robot extends TimedRobot {
                     Button.State.HELD,
                     () -> {
                         if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
-                                && robotState.actualElevatorExtensionState != Elevator.EXTENSION_STATE.MIN) {
+                            && robotState.actualElevatorExtensionState != Elevator.EXTENSION_STATE.MIN) {
                             elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
                         } else if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
                             elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
@@ -355,82 +340,54 @@ public class Robot extends TimedRobot {
                     Button.Y,
                     Button.State.PRESSED,
                     () ->
-                            elevator.setDesiredState(
-                                    Elevator.ANGLE_STATE.SHELF_COLLECT,
-                                    Elevator.EXTENSION_STATE.SHELF_COLLECT
-                            )
+                        elevator.setDesiredState(
+                                Elevator.ANGLE_STATE.SHELF_COLLECT,
+                                Elevator.EXTENSION_STATE.SHELF_COLLECT
+                        )
             );
 
-            //snapToHumanPlayer start
-            inputHandler.listenDriverDpad(
+            //snapToHumanPlayer
+            inputHandler.listenDriverDpadPressAndRelease(
                     Dpad.UP,
-                    Dpad.State.PRESSED,
-                    () -> {
-                        snappingToHumanPlayer = true;
+                    (pressed) -> {
+                        snappingToHumanPlayer = pressed;
                         snappingToDriver = false;
                     }
             );
 
-            //snapToHumanPlayer stop
-            inputHandler.listenDriverDpad(
-                    Dpad.UP,
-                    Dpad.State.RELEASED,
-                    () -> {
-                        snappingToHumanPlayer = false;
-                        snappingToDriver = false;
-                    }
-            );
-
-            // snapToDriver start
-            inputHandler.listenDriverDpad(
+            // snapToDriver
+            inputHandler.listenDriverDpadPressAndRelease(
                     Dpad.DOWN,
-                    Dpad.State.PRESSED,
-                    () -> {
-                        snappingToDriver = true;
+                    (pressed) -> {
+                        snappingToDriver = pressed;
                         snappingToHumanPlayer = false;
                     }
             );
 
-            // snapToDriver stop
-            inputHandler.listenDriverDpad(
-                    Dpad.DOWN,
-                    Dpad.State.RELEASED,
-                    () -> {
-                        snappingToDriver = false;
-                        snappingToHumanPlayer = false;
-                    }
-            );
+            /** Operator Commands */
 
             //updatePoseWithCamera
             inputHandler.listenOperatorButton(
                     Button.LEFT_BUMPER,
                     Button.State.PRESSED,
-                    () -> orchestrator.updatePoseWithCamera()
+                    orchestrator::updatePoseWithCamera
             );
 
-            //outtake start
-            inputHandler.listenOperatorButton(
+            //outtake
+            inputHandler.listenOperatorButtonPressAndRelease(
                     Button.RIGHT_BUMPER,
-                    Button.State.PRESSED,
-                    () -> {
-                        collector.outtakeGamePiece(true);
+                    (pressed) -> {
+                        collector.outtakeGamePiece(pressed);
 
-                        if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
-                            ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK);
-                        } else if (robotState.actualGameElement == Collector.GAME_ELEMENT.CUBE) {
-                            ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK);
+                        if (pressed) {
+                            if (robotState.actualGameElement == Collector.GAME_ELEMENT.CONE) {
+                                ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK);
+                            } else if (robotState.actualGameElement == Collector.GAME_ELEMENT.CUBE) {
+                                ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK);
+                            }
+                        } else {
+                            ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
                         }
-                    }
-            );
-
-            //outtake stop
-            inputHandler.listenOperatorButton(
-                    Button.RIGHT_BUMPER,
-                    Button.State.RELEASED,
-                    () -> {
-                        collector.outtakeGamePiece(false);
-
-                        ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.SOLID);
                     }
             );
 
@@ -490,7 +447,7 @@ public class Robot extends TimedRobot {
                     }
             );
 
-            // Button Board Commands:
+            /** Button Board Commands */
 
             //grid1
             inputHandler.listenButtonBoardButton(
