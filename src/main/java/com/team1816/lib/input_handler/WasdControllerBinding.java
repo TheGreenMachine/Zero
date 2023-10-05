@@ -1,6 +1,6 @@
 package com.team1816.lib.input_handler;
 
-public class WasdControllerBinding extends IControllerBinding {
+public class WasdControllerBinding extends ControllerBinding {
     public WasdControllerBinding() {
         super();
         buttonMap.put(Button.A, 2);

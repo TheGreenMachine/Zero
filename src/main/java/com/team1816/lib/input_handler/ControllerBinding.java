@@ -8,7 +8,7 @@ import java.util.EnumMap;
  *
  * @see InputHandler
  */
-public abstract class IControllerBinding {
+public abstract class ControllerBinding {
     EnumMap<Button, Integer> buttonMap = new EnumMap<>(Button.class);
 
     EnumMap<Axis, Integer> axisMap = new EnumMap<>(Axis.class);
