@@ -28,7 +28,7 @@ public class ButtonEvent {
     }
 
     /**
-     * Adds an action to be performed when once when a button is pressed
+     * Adds an action to be performed once when a button is pressed
      *
      * @param action
      */

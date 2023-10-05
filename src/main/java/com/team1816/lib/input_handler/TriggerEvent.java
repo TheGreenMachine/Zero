@@ -28,7 +28,7 @@ public class TriggerEvent {
     }
 
     /**
-     * Adds an action to be performed when once when a trigger is pressed
+     * Adds an action to be performed once when a trigger is pressed
      *
      * @param action
      */
