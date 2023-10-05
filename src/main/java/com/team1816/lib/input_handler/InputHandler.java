@@ -89,11 +89,6 @@ public class InputHandler {
     private double getControllerAxisAsDouble(Controller controller, Axis axis) {
         Integer id = controller.binding.axisMap.get(axis);
 
-        if (axis == Axis.RIGHT_HORIZONTAL) {
-            GreenLogger.log("Is the controller an instance of WASD? " + (boolean)(controller.binding instanceof WasdControllerBinding));
-            GreenLogger.log("Is there no mapping of RIGHT HORIZONTAL on the controller? " + id);
-        }
-
         if (id == null) return 0.0;
 
         return controller.joystick.getRawAxis(id);
