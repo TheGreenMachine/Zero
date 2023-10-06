@@ -20,6 +20,17 @@ public class DriveOpenLoopAction implements AutoAction {
             );
     }
 
+    public DriveOpenLoopAction(double driveTime, double percentOutput, double rotation) {
+        drive = Injector.get(Drive.Factory.class).getInstance();
+        this.driveTimer =
+            new AsyncTimer(
+                driveTime,
+                () -> drive.setTeleopInputs(percentOutput, 0, 0),
+                () -> drive.setTeleopInputs(percentOutput, 0, rotation),
+                () -> drive.setTeleopInputs(0, 0, 0)
+            );
+    }
+
     @Override
     public void start() {
         driveTimer.update();
