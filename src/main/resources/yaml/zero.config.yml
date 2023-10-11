@@ -18,6 +18,7 @@ subsystems:
         invertMotor:
             - FRDr
             - RRDr
+            - RLDr
         invertCanCoder:
             - FREnc
             - BREnc
@@ -28,28 +29,28 @@ subsystems:
                     azimuth: FLAz
                     canCoder: FLEnc
                     constants:
-                        encoderOffset: 99 #1442 remote, 110 pid0
+                        encoderOffset: 117 #was 99 #1442 remote, 110 pid0
                         invertSensorPhase: 1
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
                     canCoder: FREnc
                     constants:
-                        encoderOffset: 1589 # 683 remote, 1589 pid0
+                        encoderOffset: 1626 #was 1589 # 683 remote, 1589 pid0
                         invertSensorPhase: 1
                 backLeft:
                     drive: RLDr
                     azimuth: RLAz
                     canCoder: RLEnc
                     constants:
-                        encoderOffset: 556 #1149 remote, 556 pid0
+                        encoderOffset: 2592 #was 556 #1149 remote, 556 pid0
                         invertSensorPhase: 1
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     canCoder: RREnc
                     constants:
-                        encoderOffset: 2854 #1150 remote, 2854 id0
+                        encoderOffset: 2856 #was 2854,  #1150 remote, 2854 id0
                         invertSensorPhase: 1
             drivePID:
                 slot0:
@@ -59,9 +60,9 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 3.8 # 6.0
+                    kP: 3.8 # formerly 3.8
                     kI: 0.00075
-                    kD: 77
+                    kD: 77 # formerly 77
                     kF: 0
                     allowableError: 5
         constants:
