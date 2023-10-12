@@ -1,8 +1,8 @@
 package com.team1816.lib.events;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class EventAggregatorTests {
 
@@ -19,7 +19,7 @@ public class EventAggregatorTests {
 
     private EventAggregator _target;
 
-    @Before
+    @BeforeEach
     public void TestInit() {
         _target = new EventAggregator();
         _eventText = "";
@@ -29,14 +29,14 @@ public class EventAggregatorTests {
     public void GetEventTest() {
         var evt = _target.GetEvent(StringEvent.class);
         // verify same class gets returned
-        Assert.assertEquals(
-            "New class created",
+        Assertions.assertEquals(
             evt.hashCode(),
-            _target.GetEvent(StringEvent.class).hashCode()
-        );
+            _target.GetEvent(StringEvent.class).hashCode(),
+            "New class created"
+            );
         evt.Subscribe(this::EventFired);
         evt.Publish("foobar");
-        Assert.assertEquals("foobar", _eventText);
+        Assertions.assertEquals("foobar", _eventText);
     }
 
     @Test
@@ -48,7 +48,7 @@ public class EventAggregatorTests {
             }
         );
         evt.Publish();
-        Assert.assertEquals("noData", _eventText);
+        Assertions.assertEquals("noData", _eventText);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class EventAggregatorTests {
         var evt = _target.GetEvent(StringEvent.class);
         evt.Subscribe(this::EventFired);
         evt.Publish("single");
-        Assert.assertEquals("single", _eventText);
+        Assertions.assertEquals("single", _eventText);
     }
 
     private void EventFired(String arg) {

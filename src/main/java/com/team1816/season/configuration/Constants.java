@@ -118,18 +118,19 @@ public class Constants {
     /**
      * Pathfinder characterization
      */
-    public static final Polygon blueChargeStation = new Polygon(
-        new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMax),
-        new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax),
-        new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin),
-        new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin)
-    );
-    public static final Polygon redChargeStation = new Polygon(
-        new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMax),
-        new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMax),
-        new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMin),
-        new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMin)
-    );
+    // 2023 legacy, kept as example
+//    public static final Polygon blueChargeStation = new Polygon(
+//        new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMax),
+//        new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMax),
+//        new Translation2d(Constants.chargeStationThresholdXMinBlue, Constants.chargeStationThresholdYMin),
+//        new Translation2d(Constants.chargeStationThresholdXMaxBlue, Constants.chargeStationThresholdYMin)
+//    );
+//    public static final Polygon redChargeStation = new Polygon(
+//        new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMax),
+//        new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMax),
+//        new Translation2d(Constants.chargeStationThresholdXMinRed, Constants.chargeStationThresholdYMin),
+//        new Translation2d(Constants.chargeStationThresholdXMaxRed, Constants.chargeStationThresholdYMin)
+//    );
 
     /**
      * Simulation

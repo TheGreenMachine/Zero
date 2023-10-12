@@ -54,13 +54,9 @@ public class RobotState {
 
     // TODO: Insert any states that you may need to keep track of.
 
-    public double actualElevatorAngle = 0;
-    public double actualElevatorExtensionInches = 0; // INCHES
-    public double actualCollectorAngle = 0;
     public VisionPoint superlativeTarget = new VisionPoint();
     public List<VisionPoint> visibleTargets = new ArrayList<>();
 
-    public boolean gameElementChanged = false;
 
     public final Mechanism2d mechCanvas = new Mechanism2d(3, 3);
     public final MechanismRoot2d root = mechCanvas.getRoot("ElevatorArm", 1.3, 0.38);
@@ -126,10 +122,6 @@ public class RobotState {
         visibleTargets = new ArrayList<>();
         drivetrainTemp = 0;
         vehicleToFloorProximityCentimeters = 0;
-        gameElementChanged = false;
-        actualElevatorAngle = 0;
-        actualElevatorExtensionInches = 0;
-        actualCollectorAngle = 0;
     }
 
     /**

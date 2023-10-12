@@ -1,5 +1,7 @@
 package com.team1816.lib.controlboard;
 
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
@@ -29,9 +31,9 @@ public class ControlBoardYamlConfig {
     }
 
     static ControlBoardConfig loadRaw(InputStream input) {
-        Representer representer = new Representer();
+        Representer representer = new Representer(new DumperOptions()); //TODO mess w/ dumperoptions?
         representer.getPropertyUtils().setSkipMissingProperties(true);
-        Yaml yaml = new Yaml(new Constructor(ControlBoardConfig.class), representer);
+        Yaml yaml = new Yaml(new Constructor(ControlBoardConfig.class, new LoaderOptions()), representer); //TODO ensure this works or fix
         yaml.setBeanAccess(BeanAccess.FIELD);
 
         return yaml.load(input);

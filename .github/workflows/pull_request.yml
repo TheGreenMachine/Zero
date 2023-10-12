@@ -10,7 +10,7 @@ jobs:
             -   uses: actions/setup-java@v2
                 with:
                     distribution: 'zulu'
-                    java-version: 11
+                    java-version: 17
             -   id: assemble
                 name: Gradle assemble
                 run: gradle assemble
@@ -32,7 +32,7 @@ jobs:
             -   uses: actions/setup-java@v2
                 with:
                     distribution: 'zulu'
-                    java-version: 11
+                    java-version: 17
             -   id: spotless
                 name: Run Spotless check
                 run: gradle spotlessCheck

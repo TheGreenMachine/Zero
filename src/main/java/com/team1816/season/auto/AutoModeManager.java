@@ -1,5 +1,7 @@
 package com.team1816.season.auto;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.auto.PathFinder;
 import com.team1816.lib.auto.modes.AutoMode;
@@ -13,8 +15,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.List;
 
 /**
@@ -111,11 +111,12 @@ public class AutoModeManager {
         teamColor = selectedColor;
         robotState.allianceColor = teamColor;
 
-        if (robotState.allianceColor == Color.BLUE) {
-            robotState.pathFinder = new PathFinder(List.of(Constants.blueChargeStation));
-        } else {
-            robotState.pathFinder = new PathFinder(List.of(Constants.redChargeStation));
-        }
+        //Legacy 2023 pathfinder code
+//                if (robotState.allianceColor == Color.BLUE) {
+//            robotState.pathFinder = new PathFinder(List.of(Constants.blueChargeStation));
+//        } else {
+//            robotState.pathFinder = new PathFinder(List.of(Constants.redChargeStation));
+//        }
 
         return autoChanged || colorChanged;
     }

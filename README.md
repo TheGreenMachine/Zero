@@ -1,5 +1,5 @@
-# Zero
-Zero is FRC Team 1816's robot for the 2023 FRC season, *FIRST Charged Up*. This software uses Java 17, 
+# Robot Name
+Robot name is FRC Team 1816's robot for the 20?? FRC season, *Season name*. This software uses Java 17, 
 [WPILib](https://github.com/wpilibsuite/allwpilib), the [CTRE Phoenix](https://github.com/CrossTheRoadElec/Phoenix-api) Library, [Guice](https://github.com/google/guice), and [Apache Commons Math](https://github.com/apache/commons-math).
 
 ## Prerequisites
@@ -52,4 +52,4 @@ To clear previous built binaries and minimize the possibility of bugs, it is rec
 $ ./gradlew clean deploy
 ```
 ---
-2023 - FRC Team 1816 The Green Machine
+20?? - FRC Team 1816 The Green Machine

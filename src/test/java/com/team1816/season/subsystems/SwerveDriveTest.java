@@ -13,13 +13,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.OngoingStubbing;
 
 import static com.team1816.lib.subsystems.drive.Drive.*;
 import static com.team1816.lib.subsystems.drive.SwerveDrive.swerveKinematics;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,7 +50,7 @@ public class SwerveDriveTest {
         mDrive = Injector.get(SwerveDrive.class);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(mDriveFactory.getInstance()).thenReturn(mDrive);
         mDrive.zeroSensors();
@@ -125,14 +126,14 @@ public class SwerveDriveTest {
         for (int i = 0; i < states.length; i++) {
             var actVel = states[i].speedMetersPerSecond;
             assertEquals(
-                "Velocity does not match",
                 Math.abs(expected[i].speedMetersPerSecond),
                 Math.abs(actVel),
-                .01
-            );
+                .01,
+                "Velocity does not match"
+                );
             var actRot = states[i].angle.getRadians();
             var expRot = expected[i].angle.getRadians();
-            assertEquals("Rotation does not match", expRot, actRot, .2);
+            assertEquals( expRot, actRot, .2,"Rotation does not match");
         }
     }
 }

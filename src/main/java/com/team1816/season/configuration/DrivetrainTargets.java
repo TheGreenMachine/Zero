@@ -1,10 +1,10 @@
 package com.team1816.season.configuration;
 
+import com.google.inject.Singleton;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
-import javax.inject.Singleton;
 import java.util.HashMap;
 
 /**

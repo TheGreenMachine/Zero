@@ -4,11 +4,11 @@ import com.team1816.TestUtil;
 import com.team1816.lib.Injector;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
-import junit.framework.TestCase;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class OrchestratorTest extends TestCase {
 
+public class OrchestratorTest {
     private final RobotState state;
 
     private Orchestrator mOrchestrator;
@@ -18,27 +18,33 @@ public class OrchestratorTest extends TestCase {
         state = Injector.get(RobotState.class);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mOrchestrator = Injector.get(Orchestrator.class);
         state.resetPosition();
     }
 
+    @Test
     public void testSetStopped() {
     }
 
+    @Test
     public void testSetCollecting() {
     }
 
+    @Test
     public void testSetRevving() {
     }
 
+    @Test
     public void testSetFiring() {
     }
 
+    @Test
     public void testGetDistance() {
     }
 
+    @Test
     public void testGetPredictedDistance() {
     }
 }

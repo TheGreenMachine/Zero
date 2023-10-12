@@ -62,9 +62,6 @@ public class Robot extends TimedRobot {
     private final LedManager ledManager;
     private final Camera camera;
 
-    private DigitalInput zeroingButton;
-    private Boolean zeroing = false;
-    private boolean lastButton;
 
     /**
      * Factory
@@ -75,9 +72,6 @@ public class Robot extends TimedRobot {
      * Autonomous
      */
     private final AutoModeManager autoModeManager;
-
-    private Thread alignElevatorThread;
-    private Thread autoScoreThread;
 
     private Thread autoTargetAlignThread;
 
@@ -98,8 +92,6 @@ public class Robot extends TimedRobot {
      */
     private boolean faulted;
 
-    private boolean snappingToHumanPlayer;
-    private boolean snappingToDriver;
 
     /**
      * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
@@ -122,9 +114,6 @@ public class Robot extends TimedRobot {
         subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
 
-        if (RobotBase.isReal()) {
-            zeroingButton = new DigitalInput((int) factory.getConstant("zeroingButton", -1));
-        }
         if (Constants.kLoggingRobot) {
             robotLoopLogger = new DoubleLogEntry(DataLogManager.getLog(), "Timings/Robot");
             looperLogger = new DoubleLogEntry(DataLogManager.getLog(), "Timings/RobotState");
@@ -427,39 +416,37 @@ public class Robot extends TimedRobot {
     public void manualControl() {
         actionManager.update();
 
-        // TODO: This logic looks pretty sound, but might want to do something else here.
+        drive.setTeleopInputs(
+            -controlBoard.getAsDouble("throttle"),
+            -controlBoard.getAsDouble("strafe"),
+            controlBoard.getAsDouble("rotation")
+        );
 
-        if (drive.isAutoBalancing()) {
-            ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
-                0,
-                -controlBoard.getAsDouble("strafe"),
-                0,
-                robotState.driverRelativeFieldToVehicle.getRotation());
-            drive.autoBalance(fieldRelativeChassisSpeed);
-        } else {
-            double rotation;
-            if (snappingToDriver || snappingToHumanPlayer) {
-                double rotVal = MathUtil.inputModulus(
-                    robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
-                );
-                if (snappingToDriver) {
-                    if (rotVal == 0)
-                        rotVal += 0.01d;
-                    rotation = Math.min(0.5, (180 - Math.abs(rotVal)) / 40) * -Math.signum(rotVal);
-                } else {
-                    rotation = Math.min(0.5, Math.abs(rotVal) / 40) * Math.signum(rotVal);
-                }
-            } else {
-                rotation = controlBoard.getAsDouble("rotation");
-            }
+        // 2023 legacy autobalance code
+//        if (drive.isAutoBalancing()) {
+//            ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
+//                0,
+//                -controlBoard.getAsDouble("strafe"),
+//                0,
+//                robotState.driverRelativeFieldToVehicle.getRotation());
+//            drive.autoBalance(fieldRelativeChassisSpeed);
+//        }
+        //2023 legacy snapping code
+//            double rotation;
+//            if (snappingToDriver || snappingToHumanPlayer) {
+//                double rotVal = MathUtil.inputModulus(
+//                    robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
+//                );
+//                if (snappingToDriver) {
+//                    if (rotVal == 0)
+//                        rotVal += 0.01d;
+//                    rotation = Math.min(0.5, (180 - Math.abs(rotVal)) / 40) * -Math.signum(rotVal);
+//                } else {
+//                    rotation = Math.min(0.5, Math.abs(rotVal) / 40) * Math.signum(rotVal);
+//                }
+//            }
 
-            drive.setTeleopInputs(
-                -controlBoard.getAsDouble("throttle"),
-                -controlBoard.getAsDouble("strafe"),
-                rotation
-            );
         }
-    }
 
     /**
      * Actions to perform periodically when the robot is in the test period

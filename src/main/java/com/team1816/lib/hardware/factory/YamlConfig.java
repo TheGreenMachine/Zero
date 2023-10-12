@@ -1,6 +1,8 @@
 package com.team1816.lib.hardware.factory;
 
 import com.team1816.lib.hardware.RobotConfiguration;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
@@ -34,9 +36,9 @@ public class YamlConfig {
     }
 
     static RobotConfiguration loadFromRaw(InputStream input) {
-        Representer representer = new Representer();
+        Representer representer = new Representer(new DumperOptions());
         representer.getPropertyUtils().setSkipMissingProperties(true);
-        Yaml yaml = new Yaml(new Constructor(RobotConfiguration.class), representer);
+        Yaml yaml = new Yaml(new Constructor(RobotConfiguration.class, new LoaderOptions()), representer);
         yaml.setBeanAccess(BeanAccess.FIELD);
 
         return yaml.load(input);

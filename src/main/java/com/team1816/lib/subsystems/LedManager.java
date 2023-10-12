@@ -1,6 +1,7 @@
 package com.team1816.lib.subsystems;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton; // Switched from javax.inject.Singleton
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.ledManager.ILEDManager;
 import com.team1816.lib.util.logUtil.GreenLogger;
@@ -13,7 +14,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.util.Color;
 
-import javax.inject.Singleton;
 import java.util.Map;
 import java.util.Objects;
 
