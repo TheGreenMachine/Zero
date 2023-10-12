@@ -81,7 +81,7 @@ public class RobotFactory {
     public static String getGitHash() {
         String gitHashStr;
         try {
-            URL input = Resources.getResource("git_hash.txt");
+            URL input = Resources.getResource("git_hash");
 
             if (input == null) {
                 gitHashStr = "UNABLE TO FIND THE GIT HASH.";
@@ -89,11 +89,11 @@ public class RobotFactory {
                 gitHashStr = Resources.toString(input, Charset.defaultCharset());
             }
         } catch (Exception e) {
-            System.out.println("Exception occurred: " + e.toString());
+            GreenLogger.log("Exception occurred: " + e.toString());
             gitHashStr = "NO VALID GIT HASH FOUND";
         }
 
-        System.out.println("Git Hash: " + gitHashStr);
+        GreenLogger.log("Git Hash: " + gitHashStr);
 
         return gitHashStr;
     }
