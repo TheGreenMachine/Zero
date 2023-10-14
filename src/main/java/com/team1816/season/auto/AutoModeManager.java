@@ -183,9 +183,6 @@ public class AutoModeManager {
         PLACE_CONE,
         PLACE_CUBE,
         PLACE_CONE_EXIT_COMMUNITY,
-        PLACE_CONE_AUTO_BALANCE_FEEDER,
-        PLACE_CONE_AUTO_BALANCE_MIDDLE,
-        PLACE_CONE_AUTO_BALANCE_WALL,
 
         PLACE_CONE_EXIT_COMMUNITY_AUTO_BALANCE_MIDDLE,
         PLACE_CUBE_EXIT_COMMUNITY_AUTO_BALANCE_MIDDLE,
@@ -218,12 +215,6 @@ public class AutoModeManager {
                 return (new PlaceConeMode());
             case PLACE_CUBE:
                 return (new PlaceCubeMode());
-            case PLACE_CONE_AUTO_BALANCE_FEEDER:
-                return (new PlaceConeAutoBalanceFeederMode(color));
-            case PLACE_CONE_AUTO_BALANCE_MIDDLE:
-                return (new PlaceConeAutoBalanceMiddleMode(color));
-            case PLACE_CONE_AUTO_BALANCE_WALL:
-                return (new PlaceConeAutoBalanceWallMode(color));
             case PLACE_CONE_EXIT_COMMUNITY_AUTO_BALANCE_MIDDLE:
                 return (new PlaceConeExitCommunityAutoBalanceMiddleMode(color));
             case PLACE_CUBE_EXIT_COMMUNITY_AUTO_BALANCE_MIDDLE:
