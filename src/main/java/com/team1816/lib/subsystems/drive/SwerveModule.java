@@ -300,6 +300,25 @@ public class SwerveModule implements ISwerveModule {
     }
 
     /**
+     * Returns the drive motor
+     *
+     * @return driveMotor
+     */
+    public IGreenMotor getDriveMotor() {
+        return driveMotor;
+    }
+
+    /**
+     * Returns the azimuth motor
+     *
+     * @return azimuthMotor
+     */
+    public IGreenMotor getAzimuthMotor() {
+        return azimuthMotor;
+    }
+
+
+    /**
      * Tests the Swerve Module based on its ability to move back and forth and rotate
      *
      * @return true if tests passed

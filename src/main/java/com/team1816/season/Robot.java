@@ -2,6 +2,7 @@ package com.team1816.season;
 
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
+import com.team1816.lib.PlaylistManager;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.controlboard.ActionManager;
 import com.team1816.lib.controlboard.IControlBoard;
@@ -50,11 +51,13 @@ public class Robot extends TimedRobot {
     private final Infrastructure infrastructure;
     private final SubsystemLooper subsystemManager;
 
+
     /**
      * State Managers
      */
     private final Orchestrator orchestrator;
     private final RobotState robotState;
+    private PlaylistManager playlistManager;
 
     /**
      * Subsystems
@@ -74,6 +77,7 @@ public class Robot extends TimedRobot {
      * Factory
      */
     private static RobotFactory factory;
+
 
     /**
      * Autonomous
@@ -129,6 +133,7 @@ public class Robot extends TimedRobot {
         infrastructure = Injector.get(Infrastructure.class);
         subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
+        playlistManager = Injector.get(PlaylistManager.class);
 
         prevAngleState = Elevator.ANGLE_STATE.STOW;
         if (RobotBase.isReal()) {
@@ -598,6 +603,7 @@ public class Robot extends TimedRobot {
             subsystemManager.outputToSmartDashboard(); // update shuffleboard for subsystem values
             robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
+
         } catch (Throwable t) {
             faulted = true;
             GreenLogger.log(t.getMessage());
@@ -672,6 +678,9 @@ public class Robot extends TimedRobot {
                 drive.update();
             }
 
+            if (playlistManager.update()) {
+
+            }
         } catch (Throwable t) {
             faulted = true;
             throw t;

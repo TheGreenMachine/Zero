@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
@@ -588,6 +589,19 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             ? factory.getSubsystem(NAME).pidConfig.getOrDefault("slot0", defaultPIDConfig)
             : defaultPIDConfig;
     }
+
+    /**
+     * Adds each motor to the orchestra object
+     */
+    public void configureOrchestra() {
+        orchestra.addInstrument((TalonFX) leftMain);
+        orchestra.addInstrument((TalonFX) leftFollowerA);
+        orchestra.addInstrument((TalonFX) leftFollowerB);
+        orchestra.addInstrument((TalonFX) rightMain);
+        orchestra.addInstrument((TalonFX) rightFollowerA);
+        orchestra.addInstrument((TalonFX) rightFollowerB);
+    }
+
 
     /**
      * Returns the associated kinematics with the drivetrain

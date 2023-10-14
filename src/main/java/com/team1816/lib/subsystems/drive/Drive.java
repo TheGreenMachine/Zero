@@ -1,5 +1,6 @@
 package com.team1816.lib.subsystems.drive;
 
+import com.ctre.phoenix.music.Orchestra;
 import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
@@ -22,6 +23,7 @@ import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -66,6 +68,7 @@ public abstract class Drive
      * Components
      */
     protected static LedManager ledManager;
+    public Orchestra orchestra;
 
     /**
      * Localized state
@@ -189,6 +192,7 @@ public abstract class Drive
     public Drive(LedManager lm, Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         ledManager = lm;
+        orchestra = new Orchestra();
 
         if (isDemoMode) {
             demoModeChooser = new SendableChooser<>();
@@ -199,7 +203,6 @@ public abstract class Drive
 
             demoModeChooser = new SendableChooser<>();
             SmartDashboard.putData("Demo Mode", demoModeChooser);
-
             for (DemoMode demoMode : DemoMode.values()) {
                 demoModeChooser.addOption(demoMode.name(), demoMode);
             }
@@ -210,6 +213,10 @@ public abstract class Drive
         if (Constants.kLoggingDrivetrain) {
             drivetrainPoseLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Drivetrain/Pose");
             drivetrainChassisSpeedsLogger = new DoubleArrayLogEntry(DataLogManager.getLog(), "Drivetrain/ChassisSpeeds");
+        }
+
+        if (RobotBase.isReal()) {
+            configureOrchestra();
         }
     }
 
@@ -586,6 +593,11 @@ public abstract class Drive
         gyroDrift -= 0;
         infrastructure.simulateGyro(simGyroOffset, gyroDrift);
     }
+
+    /**
+     * Adds each motor to the orchestra object
+     */
+    public abstract void configureOrchestra();
 
     /**
      * Enum for the ControlState

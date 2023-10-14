@@ -87,6 +87,7 @@
       "/SmartDashboard/Robot color": "String Chooser",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/SendableChooser[2]": "String Chooser",
+      "/SmartDashboard/Song": "String Chooser",
       "/SmartDashboard/Starting Position": "String Chooser",
       "/SmartDashboard/Turret Sim": "Mechanism2d"
     },
@@ -165,6 +166,11 @@
         }
       },
       "/SmartDashboard/Robot color": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Song": {
         "window": {
           "visible": true
         }
