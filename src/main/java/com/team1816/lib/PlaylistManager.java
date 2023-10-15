@@ -1,8 +1,14 @@
 package com.team1816.lib;
 
+import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.util.logUtil.GreenLogger;
+import edu.wpi.first.networktables.BooleanTopic;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.button.NetworkButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,22 +25,24 @@ public class PlaylistManager {
     protected SendableChooser<Playlist> songChooser;
     protected Playlist desiredSong;
 
+    private Drive drive;
+
     /**
      * Instantiates the Playlist manager
      */
     @Inject
     public PlaylistManager() {
+        drive = (Injector.get(Drive.Factory.class)).getInstance();
         songChooser = new SendableChooser<>();
         SmartDashboard.putData("Song", songChooser);
         for (Playlist playlist : Playlist.values()) {
             songChooser.addOption(playlist.name(), playlist);
         }
         songChooser.setDefaultOption(Playlist.COCONUT_MALL.name(), Playlist.COCONUT_MALL);
-
     }
 
     /**
-     * Updates the song to the desiredSong
+     * Updates the song to the desiredSong and stops the song if it has been playing for too long
      *
      * @return songChanged
      */
@@ -45,6 +53,12 @@ public class PlaylistManager {
         if (songChanged) {
             GreenLogger.log("Song changed from: " + desiredSong + ", to: " + selectedSong.name());
             desiredSong = selectedSong;
+
+            drive.gaudette.loadMusic(getFilePath());
+        }
+
+        if (drive.gaudette.getCurrentTime() > 10) {
+            drive.gaudette.stop();
         }
 
         return songChanged;
@@ -57,7 +71,6 @@ public class PlaylistManager {
         if (desiredSong != null) {
             SmartDashboard.putString("SongSelected", desiredSong.name());
         }
-        //TODO add  putData() with sendable later
     }
 
 
@@ -72,7 +85,7 @@ public class PlaylistManager {
             case COCONUT_MALL -> path = "coconutMall";
             case TIMBER_PITBULL -> path = "timber";
         }
-        return "/songs/" + path;
+        return "src/resources/songs/" + path + ".chrp";
     }
 
     /**
@@ -82,7 +95,4 @@ public class PlaylistManager {
         COCONUT_MALL,
         TIMBER_PITBULL,
     }
-
-
-
 }

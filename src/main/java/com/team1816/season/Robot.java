@@ -513,6 +513,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         disabledLoop.stop();
+        drive.gaudette.stop();
         ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
         ledManager.indicateStatus(LedManager.RobotStatus.AUTONOMOUS);
 
@@ -537,6 +538,7 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         try {
             disabledLoop.stop();
+            drive.gaudette.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.ENABLED);
             ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
 
@@ -557,6 +559,7 @@ public class Robot extends TimedRobot {
     @Override
     public void testInit() {
         try {
+            drive.gaudette.stop();
             double initTime = System.currentTimeMillis();
 
             ledManager.indicateStatus(LedManager.RobotStatus.ENABLED, LedManager.ControlState.BLINK);
@@ -678,9 +681,8 @@ public class Robot extends TimedRobot {
                 drive.update();
             }
 
-            if (playlistManager.update()) {
-
-            }
+            playlistManager.update();
+            actionManager.updateDisabled();
         } catch (Throwable t) {
             faulted = true;
             throw t;

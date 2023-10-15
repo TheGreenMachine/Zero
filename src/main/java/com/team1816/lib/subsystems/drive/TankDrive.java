@@ -594,12 +594,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      * Adds each motor to the orchestra object
      */
     public void configureOrchestra() {
-        orchestra.addInstrument((TalonFX) leftMain);
-        orchestra.addInstrument((TalonFX) leftFollowerA);
-        orchestra.addInstrument((TalonFX) leftFollowerB);
-        orchestra.addInstrument((TalonFX) rightMain);
-        orchestra.addInstrument((TalonFX) rightFollowerA);
-        orchestra.addInstrument((TalonFX) rightFollowerB);
+        gaudette.addInstrument((TalonFX) leftMain);
+        gaudette.addInstrument((TalonFX) leftFollowerA);
+        gaudette.addInstrument((TalonFX) leftFollowerB);
+        gaudette.addInstrument((TalonFX) rightMain);
+        gaudette.addInstrument((TalonFX) rightFollowerA);
+        gaudette.addInstrument((TalonFX) rightFollowerB);
     }
 
 

@@ -68,7 +68,7 @@ public abstract class Drive
      * Components
      */
     protected static LedManager ledManager;
-    public Orchestra orchestra;
+    public Orchestra gaudette;
 
     /**
      * Localized state
@@ -192,7 +192,7 @@ public abstract class Drive
     public Drive(LedManager lm, Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         ledManager = lm;
-        orchestra = new Orchestra();
+        gaudette = new Orchestra();
 
         if (isDemoMode) {
             demoModeChooser = new SendableChooser<>();

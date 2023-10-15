@@ -26,7 +26,6 @@ import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -584,8 +583,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
      */
     public void configureOrchestra() {
         for (SwerveModule s : swerveModules) {
-            orchestra.addInstrument((TalonFX) (s.getDriveMotor()));
-            orchestra.addInstrument((TalonFX) (s.getAzimuthMotor()));
+            gaudette.addInstrument((TalonFX) (s.getDriveMotor()));
+            gaudette.addInstrument((TalonFX) (s.getAzimuthMotor()));
         }
     }
 
