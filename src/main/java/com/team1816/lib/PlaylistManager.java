@@ -2,13 +2,8 @@ package com.team1816.lib;
 
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.util.logUtil.GreenLogger;
-import edu.wpi.first.networktables.BooleanTopic;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.button.NetworkButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -51,7 +46,7 @@ public class PlaylistManager {
         boolean songChanged = desiredSong != selectedSong;
 
         if (songChanged) {
-            GreenLogger.log("Song changed from: " + desiredSong + ", to: " + selectedSong.name());
+            GreenLogger.log("Song changed from: " + desiredSong + " to: " + selectedSong.name());
             desiredSong = selectedSong;
 
             drive.gaudette.loadMusic(getFilePath());
@@ -85,7 +80,7 @@ public class PlaylistManager {
             case COCONUT_MALL -> path = "coconutMall";
             case TIMBER_PITBULL -> path = "timber";
         }
-        return "src/resources/songs/" + path + ".chrp";
+        return "src/main/resources/songs/" + path + ".chrp";
     }
 
     /**

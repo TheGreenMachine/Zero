@@ -30,6 +30,7 @@ public class ActionManager {
 
     public ActionManager(ControlUtils.ButtonAction... actions) {
         this.actions = Arrays.asList(actions);
+        registerDisabledActions();
         this.update(); // Used to insure actions are in an initialized state and aren't prematurely triggered
         controlBoard = Injector.get(IControlBoard.class);
         drive = (Injector.get(Drive.Factory.class)).getInstance();
