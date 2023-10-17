@@ -13,6 +13,7 @@ import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.vision.Camera;
 import com.team1816.lib.util.logUtil.GreenLogger;
+import com.team1816.lib.util.team254.LatchedBoolean;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.DrivetrainTargets;
@@ -25,6 +26,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -57,7 +59,10 @@ public class Robot extends TimedRobot {
      */
     private final Orchestrator orchestrator;
     private final RobotState robotState;
+
     private PlaylistManager playlistManager;
+    private boolean desireToPlaySong;
+    private LatchedBoolean playSongJustPressed, playSongJustReleased;
 
     /**
      * Subsystems
@@ -134,6 +139,15 @@ public class Robot extends TimedRobot {
         subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
         playlistManager = Injector.get(PlaylistManager.class);
+
+        desireToPlaySong = false;
+        playSongJustPressed = new LatchedBoolean();
+        playSongJustPressed.update(false);
+        playSongJustReleased = new LatchedBoolean();
+        playSongJustPressed.update(false);
+
+
+
 
         prevAngleState = Elevator.ANGLE_STATE.STOW;
         if (RobotBase.isReal()) {
@@ -222,6 +236,8 @@ public class Robot extends TimedRobot {
             /** Register ControlBoard */
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
+
+            SmartDashboard.putBoolean("Play song", false);
 
             actionManager =
                 new ActionManager(
@@ -683,7 +699,13 @@ public class Robot extends TimedRobot {
             }
 
             playlistManager.update();
-            actionManager.updateDisabled();
+
+            desireToPlaySong = SmartDashboard.getBoolean("Play song", false);
+            if (playSongJustPressed.update(desireToPlaySong)) {
+               drive.gaudette.play();
+            } else if (playSongJustReleased.update(!desireToPlaySong)) {
+                drive.gaudette.pause();
+            }
         } catch (Throwable t) {
             faulted = true;
             throw t;

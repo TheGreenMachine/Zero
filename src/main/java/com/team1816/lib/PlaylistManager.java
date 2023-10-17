@@ -28,12 +28,15 @@ public class PlaylistManager {
     @Inject
     public PlaylistManager() {
         drive = (Injector.get(Drive.Factory.class)).getInstance();
+        GreenLogger.log("Result of file load = " + drive.gaudette.loadMusic("src/main/resources/songs/coconutMall.chrp"));
+
         songChooser = new SendableChooser<>();
         SmartDashboard.putData("Song", songChooser);
         for (Playlist playlist : Playlist.values()) {
             songChooser.addOption(playlist.name(), playlist);
         }
         songChooser.setDefaultOption(Playlist.COCONUT_MALL.name(), Playlist.COCONUT_MALL);
+
     }
 
     /**
@@ -52,8 +55,10 @@ public class PlaylistManager {
             drive.gaudette.loadMusic(getFilePath());
         }
 
-        if (drive.gaudette.getCurrentTime() > 10) {
+        int time = drive.gaudette.getCurrentTime();
+        if (drive.gaudette.isPlaying() && time > 10000) {
             drive.gaudette.stop();
+            GreenLogger.log("Orchestra object stopped after" + time + "ms!");
         }
 
         return songChanged;
