@@ -9,6 +9,7 @@ public class DeviceIdMismatchException extends Exception {
     public DeviceIdMismatchException() {
         super();
     }
+
     public DeviceIdMismatchException(String deviceName) {
         super("device id of " + deviceName + " does not match yml configuration");
     }
