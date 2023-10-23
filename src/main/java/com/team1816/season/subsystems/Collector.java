@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
+import com.team1816.lib.hardware.components.motor.configurations.GreenControlMode;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
@@ -106,13 +107,13 @@ public class Collector extends Subsystem {
         pivotCubeShelfPosition = (factory.getConstant(NAME, "shelfCubeAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
         pivotFloorPosition = (factory.getConstant(NAME, "floorAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
 
-        intakeMotor.configSupplyCurrentLimit(
+        intakeMotor.configCurrentLimit( //TODO move out of class
             new SupplyCurrentLimitConfiguration(
                 true, factory.getConstant(NAME, "intakeStallAmps", 5), 0, 0),
             Constants.kCANTimeoutMs
         );
 
-        intakeMotor.configOpenloopRamp(0.25, Constants.kCANTimeoutMs);
+        intakeMotor.configOpenLoopRampRate(0.25, Constants.kCANTimeoutMs);
 
         allowablePivotError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
 
@@ -196,8 +197,8 @@ public class Collector extends Subsystem {
      */
     @Override
     public void readFromHardware() {
-        rollerVelocity = intakeMotor.getSelectedSensorVelocity(0);
-        actualPivotPosition = pivotMotor.getSelectedSensorPosition(0);
+        rollerVelocity = intakeMotor.getSensorVelocity(0);
+        actualPivotPosition = pivotMotor.getSensorPosition(0);
 
         robotState.gameElementChanged = robotState.actualGameElement != currentGameElement;
         robotState.actualGameElement = currentGameElement;
@@ -234,28 +235,28 @@ public class Collector extends Subsystem {
             switch (desiredRollerState) {
                 case STOP -> {
                     if (currentGameElement == GAME_ELEMENT.CUBE) {
-                        intakeMotor.set(ControlMode.PercentOutput, 0.05);
+                        intakeMotor.set(GreenControlMode.PERCENT_OUTPUT, 0.05);
                     } else if (currentGameElement == GAME_ELEMENT.CONE) {
-                        intakeMotor.set(ControlMode.PercentOutput, -0.1);
+                        intakeMotor.set(GreenControlMode.PERCENT_OUTPUT, -0.1);
                     } else {
-                        intakeMotor.set(ControlMode.PercentOutput, 0);
+                        intakeMotor.set(GreenControlMode.PERCENT_OUTPUT, 0);
                     }
                 }
                 case INTAKE_CONE -> {
                     currentGameElement = GAME_ELEMENT.CONE;
-                    intakeMotor.set(ControlMode.PercentOutput, coneIntakePower);
+                    intakeMotor.set(GreenControlMode.PERCENT_OUTPUT, coneIntakePower);
                 }
                 case INTAKE_CUBE -> {
                     currentGameElement = GAME_ELEMENT.CUBE;
-                    intakeMotor.set(ControlMode.PercentOutput, cubeIntakePower);
+                    intakeMotor.set(GreenControlMode.PERCENT_OUTPUT, cubeIntakePower);
                 }
                 case OUTTAKE_CONE -> {
                     currentGameElement = GAME_ELEMENT.NOTHING;
-                    intakeMotor.set(ControlMode.PercentOutput, coneOuttakePower);
+                    intakeMotor.set(GreenControlMode.PERCENT_OUTPUT, coneOuttakePower);
                 }
                 case OUTTAKE_CUBE -> {
                     currentGameElement = GAME_ELEMENT.NOTHING;
-                    intakeMotor.set(ControlMode.PercentOutput, cubeOuttakePower);
+                    intakeMotor.set(GreenControlMode.PERCENT_OUTPUT, cubeOuttakePower);
                 }
             }
         }
@@ -286,7 +287,7 @@ public class Collector extends Subsystem {
             }
             desiredPivotPosition = pos;
 
-            pivotMotor.set(ControlMode.Position, pos);
+            pivotMotor.set(GreenControlMode.POSITION_CONTROL, pos);
         }
     }
 
@@ -295,7 +296,7 @@ public class Collector extends Subsystem {
      */
     @Override
     public void zeroSensors() {
-        pivotMotor.setSelectedSensorPosition(0, 0, Constants.kCANTimeoutMs);
+        pivotMotor.setSensorPosition(0, 0, Constants.kCANTimeoutMs);
     }
 
     /**
