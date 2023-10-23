@@ -1,14 +1,14 @@
 package com.team1816.lib.hardware.components.motor;
 
 import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.team1816.lib.hardware.components.motor.configurations.*;
 import com.team1816.lib.util.ConfigurationTranslator;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 
-public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
+public class LazyTalonFX extends TalonFX implements IGreenMotor {
     protected double lastSet = Double.NaN;
     protected String name = "";
     protected ControlMode lastControlMode = null;
@@ -22,14 +22,12 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
 
     protected double arbitraryFeedForward = 0;
 
-    /**
-     * Constructor
-     *
-     * @param deviceNumber [0,62]
-     */
-    public LazyVictorSPXDev(int deviceNumber, String motorName) {
-        super(deviceNumber);
+    public LazyTalonFX(int deviceNumber, String motorName, String canBus) {
+        super(deviceNumber, canBus);
         name = motorName;
+        faults = new Faults();
+        stickyFaults = new StickyFaults();
+        softLimitStatus = SoftLimitStatus.DISABLED;
     }
 
     @Override
@@ -39,7 +37,7 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
 
     @Override
     public MotorType get_MotorType() {
-        return MotorType.VICTORSPX;
+        return MotorType.TALONFX;
     }
 
     @Override
@@ -49,7 +47,7 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
 
     public void selectFeedbackSensor(FeedbackDeviceType deviceType, int closedLoopSlotID) {
         super.configSelectedFeedbackSensor(
-            ConfigurationTranslator.toRemoteFeedbackDevice(deviceType),
+            ConfigurationTranslator.toTalonFXFeedbackDevice(deviceType),
             closedLoopSlotID,
             Constants.kCANTimeoutMs
         );
@@ -57,23 +55,26 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
 
     @Override
     public void configCurrentLimit(SupplyCurrentLimitConfiguration configuration) {
-        GreenLogger.log("Current Limits nonexistent for VictorSPX!!!");
+        super.configSupplyCurrentLimit(configuration);
     }
 
     @Override
     public void configCurrentLimit(SupplyCurrentLimitConfiguration configuration, int timeoutMs) {
-        GreenLogger.log("Current Limits nonexistent for VictorSPX!!!");
+        super.configSupplyCurrentLimit(configuration, timeoutMs);
     }
+
 
     @Override
     public void configCurrentLimit(int current) {
-        GreenLogger.log("Current Limits nonexistent for VictorSPX!!!");
+        super.configSupplyCurrentLimit(
+            new SupplyCurrentLimitConfiguration(true, current, 0, 0)
+        );
     }
 
     @Override
     public void setPeriodicStatusFramePeriod(PeriodicStatusFrame statusFrame, int periodms) {
         super.setStatusFramePeriod(
-            ConfigurationTranslator.toStatusFrame(statusFrame),
+            ConfigurationTranslator.toStatusFrameEnhanced(statusFrame),
             periodms
         );
     }
@@ -81,13 +82,13 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     @Override
     public int getPeriodicStatusFramePeriod(PeriodicStatusFrame statusFrame) {
         return super.getStatusFramePeriod(
-            ConfigurationTranslator.toStatusFrame(statusFrame)
+            ConfigurationTranslator.toStatusFrameEnhanced(statusFrame)
         );
     }
 
     @Override
     public double getOutputCurrent() {
-        return super.getOutputCurrent(); // Deprecated & victors are so old that they don't have getSupplyCurrent() or getStatorCurrent() smile
+        return super.getStatorCurrent();
     }
 
     @Override
@@ -115,7 +116,7 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     public void configForwardLimitSwitch(boolean normallyOpen) {
         LimitSwitchNormal openOrClosed = normallyOpen ? LimitSwitchNormal.NormallyOpen : LimitSwitchNormal.NormallyClosed;
         super.configForwardLimitSwitchSource(
-            RemoteLimitSwitchSource.Deactivated,
+            LimitSwitchSource.FeedbackConnector,
             openOrClosed,
             Constants.kCANTimeoutMs
         );
@@ -125,10 +126,35 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     public void configReverseLimitSwitch(boolean normallyOpen) {
         LimitSwitchNormal openOrClosed = normallyOpen ? LimitSwitchNormal.NormallyOpen : LimitSwitchNormal.NormallyClosed;
         super.configReverseLimitSwitchSource(
-            RemoteLimitSwitchSource.Deactivated,
+            LimitSwitchSource.FeedbackConnector,
             openOrClosed,
             Constants.kCANTimeoutMs
         );
+    }
+
+    @Override
+    public void neutralOutput() {
+        super.neutralOutput();
+    }
+
+    @Override
+    public void setNeutralMode(NeutralMode neutralMode) {
+        super.setNeutralMode(neutralMode);
+    }
+
+    @Override
+    public void setSensorPhase(boolean isInverted) {
+        super.setSensorPhase(isInverted);
+    }
+
+    @Override
+    public void setInverted(boolean isInverted) {
+        super.setInverted(isInverted);
+    }
+
+    @Override
+    public boolean getInverted() {
+        return super.getInverted();
     }
 
     @Override
@@ -140,7 +166,6 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     public void configOpenLoopRampRate(double secondsNeutralToFull, int timeoutMs) {
         super.configOpenloopRamp(secondsNeutralToFull, timeoutMs);
     }
-
 
     @Override
     public void configClosedLoopRampRate(double secondsNeutralToFull) {
@@ -163,13 +188,13 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     }
 
     @Override
-    public void config_PeakOutputReverse(double percentOut, int timeoutMs) {
-        super.configPeakOutputReverse(percentOut, timeoutMs);
+    public void config_PeakOutputReverse(double percentOut) {
+        super.configPeakOutputReverse(percentOut);
     }
 
     @Override
-    public void config_PeakOutputReverse(double percentOut) {
-        super.configPeakOutputReverse(percentOut);
+    public void config_PeakOutputReverse(double percentOut, int timeoutMs) {
+        super.configPeakOutputReverse(percentOut, timeoutMs);
     }
 
     @Override
@@ -182,7 +207,6 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
         super.configNominalOutputForward(percentOut, timeoutMs);
     }
 
-
     @Override
     public void config_NominalOutputReverse(double percentOut) {
         super.configNominalOutputReverse(percentOut);
@@ -193,7 +217,6 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
         super.configNominalOutputReverse(percentOut, timeoutMs);
     }
 
-
     @Override
     public void config_NeutralDeadband(double deadbandPercent) {
         super.configNeutralDeadband(deadbandPercent);
@@ -202,6 +225,26 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     @Override
     public void configVoltageCompensation(double voltage) {
         super.configVoltageCompSaturation(voltage);
+    }
+
+    @Override
+    public void enableVoltageCompensation(boolean isEnabled) {
+        super.enableVoltageCompensation(isEnabled);
+    }
+
+    @Override
+    public double getBusVoltage() {
+        return super.getBusVoltage();
+    }
+
+    @Override
+    public double getMotorOutputPercent() {
+        return super.getMotorOutputPercent();
+    }
+
+    @Override
+    public double getMotorOutputVoltage() {
+        return super.getMotorOutputVoltage();
     }
 
     @Override
@@ -271,6 +314,7 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
             isEnabled ? SoftLimitStatus.FORWARD : SoftLimitStatus.FORWARD_DISABLE
         );
     }
+
 
     @Override
     public void enableReverseSoftLimit(boolean isEnabled) {
@@ -349,6 +393,7 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
         super.configAllowableClosedloopError(pidSlotID, allowableError, timeoutMs);
     }
 
+
     @Override
     public void setMaxIAccumulation(int pidSlotID, double maxIAccum) {
         super.configMaxIntegralAccumulator(pidSlotID, maxIAccum);
@@ -370,8 +415,18 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     }
 
     @Override
+    public double getClosedLoopError() {
+        return super.getClosedLoopError();
+    }
+
+    @Override
     public double getIAccum(int closedLoopSlotID) {
         return super.getIntegralAccumulator(closedLoopSlotID);
+    }
+
+    @Override
+    public double getErrorDerivative(int closedLoopSlotID) {
+        return super.getErrorDerivative(closedLoopSlotID);
     }
 
     @Override
@@ -429,6 +484,21 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     }
 
     @Override
+    public int getFirmwareVersion() {
+        return super.getFirmwareVersion();
+    }
+
+    @Override
+    public boolean hasResetOccurred() {
+        return super.hasResetOccurred();
+    }
+
+    @Override
+    public int getDeviceID() {
+        return super.getDeviceID();
+    }
+
+    @Override
     public GreenControlMode get_ControlMode() {
         return ConfigurationTranslator.toGreenControlMode(super.getControlMode());
     }
@@ -438,7 +508,7 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
         isFollower = true;
         // ONLY works to follow CTRE Motor Controllers.
         if (leader.get_MotorType() == MotorType.SPARKMAX || leader.get_MotorType() == MotorType.GHOST) {
-            GreenLogger.log("TalonFX cannot follow non-CTRE motor " + leader.getName() + " of type " + leader.get_MotorType());
+           GreenLogger.log("TalonFX cannot follow non-CTRE motor " + leader.getName() + " of type " + leader.get_MotorType());
         } else {
             super.follow((IMotorController) leader); //I Really hope this works as intended, it SHOULD only do this when it can be cast but I'm not sure- have DDay or Mika check
         }
@@ -446,8 +516,7 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
 
     @Override
     public double getSupplyCurrent() {
-        GreenLogger.log("getSupplyCurrent() not present for VictorSPX, using getOutputCurrent() instead.");
-        return super.getOutputCurrent();
+        return super.getSupplyCurrent();
     }
 
     @Override
@@ -456,20 +525,24 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     }
 
     @Override
-    public int getQuadraturePosition() {
-        GreenLogger.log("Quadrature Position is nonexistent for VictorSPXs");
-        return -1;
+    public boolean isVoltageCompensationEnabled() {
+        return super.isVoltageCompensationEnabled();
+    }
 
+    @Override
+    public int getQuadraturePosition() {
+        GreenLogger.log("Quadrature Position is nonexistent for TalonFXs");
+        return -1;
     }
 
     @Override
     public void setQuadraturePosition(int quadraturePosition) {
-        GreenLogger.log("Quadrature Position is nonexistent for VictorSPXs");
+        GreenLogger.log("Quadrature Position is nonexistent for TalonFXs");
     }
 
     @Override
     public int getPulseWidthPosition() {
-        GreenLogger.log("Pulse Width Position is nonexistent for VictorSPXs");
+        GreenLogger.log("Pulse Width Position is nonexistent for TalonFXs");
         return -1;
     }
 
@@ -488,3 +561,4 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
         super.setControlFramePeriod(controlFrame, periodms);
     }
 }
+

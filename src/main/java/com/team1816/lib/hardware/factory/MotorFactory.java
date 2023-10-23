@@ -9,7 +9,6 @@ import com.team1816.lib.hardware.SubsystemConfig;
 import com.team1816.lib.hardware.components.DeviceIdMismatchException;
 import com.team1816.lib.hardware.components.motor.*;
 import com.team1816.lib.hardware.components.motor.configurations.FeedbackDeviceType;
-import com.team1816.lib.legacy.*;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -96,8 +95,8 @@ public class MotorFactory {
         String canBus
     ) {
         IGreenMotor talon = isFalcon
-            ? new LazyTalonFXDev(id, name, canBus)
-            : new LazyTalonSRXDev(id, name);
+            ? new LazyTalonFX(id, name, canBus)
+            : new LazyTalonSRX(id, name);
         configMotor(talon, name, subsystem, pidConfigList, remoteSensorId);
 
         return talon;
@@ -133,7 +132,7 @@ public class MotorFactory {
 
     // This is currently treating a VictorSPX, which implements IMotorController as an IGreenMotor, which implements IMotorControllerEnhanced
     public static IGreenMotor createVictor(int id, String name) {
-        IGreenMotor victor = new LazyVictorSPXDev(id, name);
+        IGreenMotor victor = new LazyVictorSPX(id, name);
 
         victor.configReverseLimitSwitch(true);
         return victor;
@@ -145,7 +144,7 @@ public class MotorFactory {
         SubsystemConfig subsystem,
         Map<String, PIDSlotConfiguration> pidConfigList
     ) {
-        return new LazySparkMaxDev(id, name);
+        return new LazySparkMax(id, name);
     }
 
     public static IGreenMotor createSpark(
@@ -153,7 +152,7 @@ public class MotorFactory {
         String name,
         SubsystemConfig subsystem
     ) {
-        return new LazySparkMaxDev(id, name);
+        return new LazySparkMax(id, name);
     }
 
     public static IGreenMotor createFollowerSpark(
@@ -162,7 +161,7 @@ public class MotorFactory {
         SubsystemConfig subsystem,
         IGreenMotor leader
     ) {
-        LazySparkMaxDev followerSpark = new LazySparkMaxDev(id,name);
+        LazySparkMax followerSpark = new LazySparkMax(id,name);
         followerSpark.follow(leader);
         followerSpark.setInverted(leader.getInverted());
         return followerSpark;
@@ -185,7 +184,7 @@ public class MotorFactory {
         int remoteSensorId
     ) {
         MotorConfiguration motorConfiguration = subsystem.motors.get(name);
-        boolean isTalon = !(motor instanceof LazySparkMaxDev); // Talon also refers to VictorSPX, isCTRE just looks worse :)
+        boolean isTalon = !(motor instanceof LazySparkMax); // Talon also refers to VictorSPX, isCTRE just looks worse :)
 
         // PID configuration
         if (pidConfigList != null) {

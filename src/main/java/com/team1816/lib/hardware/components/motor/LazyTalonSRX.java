@@ -8,7 +8,7 @@ import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 
-public class LazyTalonSRXDev extends TalonSRX implements IGreenMotor {
+public class LazyTalonSRX extends TalonSRX implements IGreenMotor {
     protected double lastSet = Double.NaN;
     protected String name = "";
     protected ControlMode lastControlMode = null;
@@ -28,7 +28,7 @@ public class LazyTalonSRXDev extends TalonSRX implements IGreenMotor {
      *
      * @param deviceNumber CAN Device ID of Device
      */
-    public LazyTalonSRXDev(int deviceNumber, String motorName) {
+    public LazyTalonSRX(int deviceNumber, String motorName) {
         super(deviceNumber);
         sensors = super.getSensorCollection();
         name = motorName;

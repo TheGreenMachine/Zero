@@ -6,7 +6,7 @@ import com.team1816.lib.hardware.components.motor.configurations.*;
 import com.team1816.lib.util.ConfigurationTranslator;
 import com.team1816.lib.util.logUtil.GreenLogger;
 
-public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
+public class LazySparkMax extends CANSparkMax implements IGreenMotor {
     private SparkMaxPIDController pidController;
     private RelativeEncoder encoder;
 
@@ -32,7 +32,7 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
      * @param deviceNumber The device ID.
      * @param motorName The name of the motor
      */
-    public LazySparkMaxDev(int deviceNumber, String motorName) {
+    public LazySparkMax(int deviceNumber, String motorName) {
         super(deviceNumber, CANSparkMaxLowLevel.MotorType.kBrushless);
         pidController = super.getPIDController();
         encoder = configureRelativeEncoder(FeedbackDeviceType.HALL_SENSOR);
@@ -490,7 +490,7 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
 
     @Override
     public void follow(IGreenMotor leader) {
-        if (leader instanceof LazySparkMaxDev) {
+        if (leader instanceof LazySparkMax) {
             super.follow((CANSparkMax) leader);
         } else {
             super.follow(ExternalFollower.kFollowerPhoenix, leader.getDeviceID());
