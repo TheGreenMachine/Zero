@@ -5,9 +5,8 @@ import com.revrobotics.*;
 import com.team1816.lib.hardware.components.motor.configurations.*;
 import com.team1816.lib.util.ConfigurationTranslator;
 import com.team1816.lib.util.logUtil.GreenLogger;
-import edu.wpi.first.wpilibj.RobotController;
 
-public class LazySparkMaxDev extends CANSparkMax implements IGreenMotorDev {
+public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
     private SparkMaxPIDController pidController;
     private RelativeEncoder encoder;
 
@@ -47,8 +46,8 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotorDev {
     }
 
     @Override
-    public IGreenMotorDev.MotorType get_MotorType() {
-        return IGreenMotorDev.MotorType.SPARKMAX;
+    public IGreenMotor.MotorType get_MotorType() {
+        return IGreenMotor.MotorType.SPARKMAX;
     }
 
     @Override
@@ -66,6 +65,11 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotorDev {
     @Override
     public void configCurrentLimit(SupplyCurrentLimitConfiguration configuration) {
         configCurrentLimit((int) configuration.currentLimit);
+    }
+
+    @Override
+    public void configCurrentLimit(SupplyCurrentLimitConfiguration configuration, int timeoutMs) {
+        configCurrentLimit(configuration);
     }
 
     @Override
@@ -140,6 +144,11 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotorDev {
     }
 
     @Override
+    public void configOpenLoopRampRate(double secondsNeutralToFull, int timeoutMs) {
+        configOpenLoopRampRate(secondsNeutralToFull);
+    }
+
+    @Override
     public void configClosedLoopRampRate(double secondsNeutralToFull) {
         super.setClosedLoopRampRate(secondsNeutralToFull);
     }
@@ -151,11 +160,23 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotorDev {
     }
 
     @Override
+    public void config_PeakOutputForward(double percentOut, int timeoutMs) {
+        config_PeakOutputForward(percentOut);
+    }
+
+
+    @Override
     public void config_PeakOutputReverse(double percentOut) {
         //Use negative values for backwards range
         peakOutputBackward = percentOut;
         pidController.setOutputRange(peakOutputBackward, peakOutputForward, currentPIDSlot);
     }
+
+    @Override
+    public void config_PeakOutputReverse(double percentOut, int timeoutMs) {
+        config_PeakOutputReverse(percentOut);
+    }
+
 
     @Override
     public void config_NominalOutputForward(double percentOut) {
@@ -299,6 +320,12 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotorDev {
     }
 
     @Override
+    public void configAllowableErrorClosedLoop(int pidSlotID, double allowableError, int timeoutMs) {
+        configAllowableErrorClosedLoop(pidSlotID, allowableError);
+    }
+
+
+    @Override
     public void setMaxIAccumulation(int pidSlotID, double maxIAccum) {
         pidController.setIMaxAccum(maxIAccum, pidSlotID);
     }
@@ -392,7 +419,7 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotorDev {
     }
 
     @Override
-    public void follow(IGreenMotorDev leader) {
+    public void follow(IGreenMotor leader) {
         if (leader instanceof LazySparkMaxDev) {
             super.follow((CANSparkMax) leader);
         } else {

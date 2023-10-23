@@ -1,9 +1,7 @@
 package com.team1816.lib.hardware.components.motor;
 
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.team1816.lib.hardware.components.motor.configurations.*;
-import com.team1816.lib.util.ConfigurationTranslator;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.Robot;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -11,9 +9,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 
 import static java.lang.Double.NaN;
-import static java.lang.Double.max;
 
-public class GhostMotorDev implements IGreenMotorDev{
+public class GhostMotorDev implements IGreenMotor {
     protected String name = "";
 
     /**
@@ -65,6 +62,12 @@ public class GhostMotorDev implements IGreenMotorDev{
     public void configCurrentLimit(SupplyCurrentLimitConfiguration configuration) {
 
     }
+
+    @Override
+    public void configCurrentLimit(SupplyCurrentLimitConfiguration configuration, int timeoutMs) {
+
+    }
+
 
     @Override
     public void configCurrentLimit(int current) {
@@ -212,6 +215,12 @@ public class GhostMotorDev implements IGreenMotorDev{
     }
 
     @Override
+    public void configOpenLoopRampRate(double secondsNeutralToFull, int timeoutMs) {
+
+    }
+
+
+    @Override
     public void configClosedLoopRampRate(double secondsNeutralToFull) {
 
     }
@@ -222,7 +231,18 @@ public class GhostMotorDev implements IGreenMotorDev{
     }
 
     @Override
+    public void config_PeakOutputForward(double percentOut, int timeoutMs) {
+
+    }
+
+
+    @Override
     public void config_PeakOutputReverse(double percentOut) {
+
+    }
+
+    @Override
+    public void config_PeakOutputReverse(double percentOut, int timeoutMs) {
 
     }
 
@@ -371,6 +391,12 @@ public class GhostMotorDev implements IGreenMotorDev{
     }
 
     @Override
+    public void configAllowableErrorClosedLoop(int pidSlotID, double allowableError, int timeoutMs) {
+
+    }
+
+
+    @Override
     public void setMaxIAccumulation(int pidSlotID, double maxIAccum) {
 
     }
@@ -456,7 +482,7 @@ public class GhostMotorDev implements IGreenMotorDev{
     }
 
     @Override
-    public void follow(IGreenMotorDev leader) {
+    public void follow(IGreenMotor leader) {
 
     }
 

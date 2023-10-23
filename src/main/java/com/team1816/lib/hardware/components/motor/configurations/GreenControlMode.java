@@ -8,7 +8,7 @@ package com.team1816.lib.hardware.components.motor.configurations;
  */
 public enum GreenControlMode {
     // Universal
-    PERCENT_OUTPUT,
+    PERCENT_OUTPUT, //TODO when phoenix 6 is brought in, change to DUTY_CYCLE
     VELOCITY_CONTROL,
     POSITION_CONTROL,
     MOTION_PROFILE,

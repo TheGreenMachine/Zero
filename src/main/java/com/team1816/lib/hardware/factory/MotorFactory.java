@@ -170,7 +170,7 @@ public class MotorFactory {
     }
 
     private static void configMotorDev(
-        IGreenMotorDev motor,
+        IGreenMotor motor,
         String name,
         SubsystemConfig subsystem,
         Map<String, PIDSlotConfiguration> pidConfigList,

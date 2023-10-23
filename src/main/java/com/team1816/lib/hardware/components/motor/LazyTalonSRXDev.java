@@ -8,7 +8,7 @@ import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 
-public class LazyTalonSRXDev extends TalonSRX implements IGreenMotorDev{
+public class LazyTalonSRXDev extends TalonSRX implements IGreenMotor {
     protected double lastSet = Double.NaN;
     protected String name = "";
     protected ControlMode lastControlMode = null;
@@ -62,7 +62,12 @@ public class LazyTalonSRXDev extends TalonSRX implements IGreenMotorDev{
 
     @Override
     public void configCurrentLimit(SupplyCurrentLimitConfiguration configuration) {
-        super.configSupplyCurrentLimit(configuration, Constants.kCANTimeoutMs);
+        super.configSupplyCurrentLimit(configuration);
+    }
+
+    @Override
+    public void configCurrentLimit(SupplyCurrentLimitConfiguration configuration, int timeoutMs) {
+        super.configSupplyCurrentLimit(configuration, timeoutMs);
     }
 
     @Override
@@ -134,6 +139,12 @@ public class LazyTalonSRXDev extends TalonSRX implements IGreenMotorDev{
     }
 
     @Override
+    public void configOpenLoopRampRate(double secondsNeutralToFull, int timeoutMs) {
+        super.configOpenloopRamp(secondsNeutralToFull, timeoutMs);
+    }
+
+
+    @Override
     public void configClosedLoopRampRate(double secondsNeutralToFull) {
         super.configClosedloopRamp(secondsNeutralToFull);
     }
@@ -144,8 +155,19 @@ public class LazyTalonSRXDev extends TalonSRX implements IGreenMotorDev{
     }
 
     @Override
+    public void config_PeakOutputForward(double percentOut, int timeoutMs) {
+        super.configPeakOutputForward(percentOut, timeoutMs);
+    }
+
+
+    @Override
     public void config_PeakOutputReverse(double percentOut) {
         super.configPeakOutputReverse(percentOut);
+    }
+
+    @Override
+    public void config_PeakOutputReverse(double percentOut, int timeoutMs) {
+        super.configPeakOutputReverse(percentOut, timeoutMs);
     }
 
     @Override
@@ -267,6 +289,11 @@ public class LazyTalonSRXDev extends TalonSRX implements IGreenMotorDev{
     }
 
     @Override
+    public void configAllowableErrorClosedLoop(int pidSlotID, double allowableError, int timeoutMs) {
+        super.configAllowableClosedloopError(pidSlotID, allowableError, timeoutMs);
+    }
+
+    @Override
     public void setMaxIAccumulation(int pidSlotID, double maxIAccum) {
         super.configMaxIntegralAccumulator(pidSlotID, maxIAccum);
     }
@@ -336,7 +363,7 @@ public class LazyTalonSRXDev extends TalonSRX implements IGreenMotorDev{
     }
 
     @Override
-    public void follow(IGreenMotorDev leader) {
+    public void follow(IGreenMotor leader) {
         isFollower = true;
         // ONLY works to follow CTRE Motor Controllers.
         if (leader.get_MotorType() == MotorType.SPARKMAX || leader.get_MotorType() == MotorType.GHOST) {
