@@ -238,7 +238,7 @@ public class MotorFactory {
 
             //Current limit configuration does NOT need to be done differently for SRXs. Old method is dumb.
             motor.configCurrentLimit(
-                new SupplyCurrentLimitConfiguration(ENABLE_CURRENT_LIMIT, 40, 80, 1)
+                new SupplyCurrentLimitConfiguration(ENABLE_CURRENT_LIMIT, motorConfiguration.currentLimit, 80, 1)
             );
 
 
