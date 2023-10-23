@@ -44,9 +44,9 @@ public interface IGreenMotorDev {
 
     boolean getInverted();
 
-    void configOpenLoopRampRate(int secondsNeutralToFull);
+    void configOpenLoopRampRate(double secondsNeutralToFull);
 
-    void configClosedLoopRampRate(int secondsNeutralToFull);
+    void configClosedLoopRampRate(double secondsNeutralToFull);
 
     void config_PeakOutputForward(double percentOut);
 

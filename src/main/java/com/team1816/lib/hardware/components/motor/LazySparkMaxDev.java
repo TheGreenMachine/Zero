@@ -19,7 +19,7 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotorDev {
 
     protected SparkMaxLimitSwitch forwardLimitSwitch, reverseLimitSwitch = null;
 
-    protected double peakOutputForward, peakOutputBackward = 0;
+    protected double peakOutputForward, peakOutputBackward = -0;
     protected double nominalOutputForward, nominalOutputBackward = 0;
 
     protected double voltageForCompensation = 0;
@@ -135,25 +135,26 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotorDev {
     }
 
     @Override
-    public void configOpenLoopRampRate(int secondsNeutralToFull) {
+    public void configOpenLoopRampRate(double secondsNeutralToFull) {
         super.setOpenLoopRampRate(secondsNeutralToFull);
     }
 
     @Override
-    public void configClosedLoopRampRate(int secondsNeutralToFull) {
+    public void configClosedLoopRampRate(double secondsNeutralToFull) {
         super.setClosedLoopRampRate(secondsNeutralToFull);
     }
 
     @Override
     public void config_PeakOutputForward(double percentOut) {
         peakOutputForward = percentOut;
-        pidController.setOutputRange(-peakOutputBackward, peakOutputForward, currentPIDSlot);
+        pidController.setOutputRange(peakOutputBackward, peakOutputForward, currentPIDSlot);
     }
 
     @Override
     public void config_PeakOutputReverse(double percentOut) {
+        //Use negative values for backwards range
         peakOutputBackward = percentOut;
-        pidController.setOutputRange(-peakOutputBackward, peakOutputForward, currentPIDSlot);
+        pidController.setOutputRange(peakOutputBackward, peakOutputForward, currentPIDSlot);
     }
 
     @Override

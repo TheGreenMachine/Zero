@@ -8,6 +8,7 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.SubsystemConfig;
 import com.team1816.lib.hardware.components.DeviceIdMismatchException;
 import com.team1816.lib.hardware.components.motor.*;
+import com.team1816.lib.hardware.components.motor.configurations.FeedbackDeviceType;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -168,6 +169,117 @@ public class MotorFactory {
         return canCoder;
     }
 
+    private static void configMotorDev(
+        IGreenMotorDev motor,
+        String name,
+        SubsystemConfig subsystem,
+        Map<String, PIDSlotConfiguration> pidConfigList,
+        int remoteSensorId
+    ) {
+        MotorConfiguration motorConfiguration = subsystem.motors.get(name);
+        boolean isTalon = !(motor instanceof LazySparkMaxDev); // Talon also refers to VictorSPX, isCTRE just looks worse :)
+
+        // PID configuration
+        if (pidConfigList != null) {
+            pidConfigList.forEach(
+                (slot, slotConfig) -> {
+                    int slotNum = ((int)slot.charAt(4)) - 48; //Minus 48 because charAt processes as a char, and digit ASCII values are themselves + 48
+                    motor.set_kP(slotNum, slotConfig.kP);
+                    motor.set_kI(slotNum, slotConfig.kI);
+                    motor.set_kD(slotNum, slotConfig.kD);
+                    motor.set_iZone(slotNum, slotConfig.iZone);
+                    motor.configAllowableErrorClosedLoop(slotNum, slotConfig.allowableError);
+                }
+            );
+        }
+
+        // Setting to PID slot 0 and primary closed loop
+        motor.selectPIDSlot(0,0);
+
+        // Configuring feedback sensor
+        if (remoteSensorId >= 0) {
+            motor.selectFeedbackSensor(FeedbackDeviceType.REMOTE_SENSOR_0);
+        } else {
+            FeedbackDeviceType deviceType = FeedbackDeviceType.NO_SENSOR;
+            switch (motor.get_MotorType()) {
+                case TALONFX -> deviceType = FeedbackDeviceType.INTEGRATED_SENSOR;
+                case TALONSRX, VICTORSPX, GHOST -> deviceType = FeedbackDeviceType.RELATIVE_MAG_ENCODER;
+                case SPARKMAX -> deviceType = FeedbackDeviceType.HALL_SENSOR; //I'm pretty sure at least.
+            }
+            motor.selectFeedbackSensor(deviceType);
+        }
+        // for newly attached motors only
+        if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
+            GreenLogger.log("Resetting motor factory defaults");
+            motor.restore_FactoryDefaults();
+
+            motor.configForwardSoftLimit(FORWARD_SOFT_LIMIT);
+            motor.enableForwardSoftLimit(ENABLE_SOFT_LIMIT);
+
+            motor.configReverseSlotLimit(REVERSE_SOFT_LIMIT);
+            motor.enableReverseSoftLimit(ENABLE_SOFT_LIMIT);
+
+            motor.config_NominalOutputForward(0);
+            motor.config_NominalOutputReverse(0);
+            motor.config_NeutralDeadband(NEUTRAL_DEADBAND);
+
+            motor.config_PeakOutputForward(1.0);
+            motor.config_PeakOutputReverse(-1.0); // Use negative values for reverse peak output.
+
+            motor.configOpenLoopRampRate(OPEN_LOOP_RAMP_RATE);
+            motor.configClosedLoopRampRate(CLOSED_LOOP_RAMP_RATE);
+
+            //Current limit configuration does NOT need to be done differently for SRXs. Old method is dumb.
+            motor.configCurrentLimit(
+                new SupplyCurrentLimitConfiguration(ENABLE_CURRENT_LIMIT, 40, 80, 1)
+            );
+
+
+            // CTRE exclusive configs
+            if (isTalon) {
+                ((BaseMotorController)motor).configVelocityMeasurementWindow(VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW);
+            }
+        }
+
+        motor.enableLimitSwitches(ENABLE_LIMIT_SWITCH);
+
+        // Setting up control frame with milliseconds (time is unused for sparks)
+        motor.configControlFramePeriod(
+            ControlFrame.Control_3_General,
+            CONTROL_FRAME_PERIOD_MS
+        );
+
+        // inversion
+        int id = motor.getDeviceID();
+        if (id != motorConfiguration.id) {
+            GreenLogger.log(new DeviceIdMismatchException(name));
+        } else {
+            boolean invertMotor = motorConfiguration.invertMotor;
+            if (invertMotor) {
+                GreenLogger.log("        Inverting " + name + " with ID " + id);
+            }
+            motor.setInverted(invertMotor);
+
+            boolean invertSensorPhase = subsystem.invertSensorPhase.contains(name);
+            if (invertSensorPhase) {
+                GreenLogger.log(
+                    "       Inverting sensor phase of " + name + " with ID " + id
+                );
+            }
+            motor.setSensorPhase(invertSensorPhase);
+        }
+
+        motor.setNeutralMode(NEUTRAL_MODE);
+
+        // CTRE-Exclusive configurations
+        if (isTalon) {
+            //Casting might not work. Make sure to check.
+            ((BaseMotorController)motor).configRemoteFeedbackFilter(remoteSensorId, RemoteSensorSource.CANCoder, 0);
+            ((BaseMotorController)motor).configClearPositionOnLimitF(false, kTimeoutMs);
+            ((BaseMotorController)motor).configClearPositionOnLimitR(false, kTimeoutMs);
+        }
+
+    }
     private static void configMotor(
         IGreenMotor motor,
         String name,

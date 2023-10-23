@@ -127,12 +127,12 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotorDev {
     }
 
     @Override
-    public void configOpenLoopRampRate(int secondsNeutralToFull) {
+    public void configOpenLoopRampRate(double secondsNeutralToFull) {
         super.configOpenloopRamp(secondsNeutralToFull);
     }
 
     @Override
-    public void configClosedLoopRampRate(int secondsNeutralToFull) {
+    public void configClosedLoopRampRate(double secondsNeutralToFull) {
         super.configClosedloopRamp(secondsNeutralToFull);
     }
 
