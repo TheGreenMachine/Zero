@@ -439,9 +439,4 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotorDev {
     public void configControlFramePeriod(ControlFrame controlFrame, int periodms) {
         super.setControlFramePeriodMs(periodms);
     }
-
-    @Override
-    public SoftLimitStatus updateSoftLimitStatus(SoftLimitStatus softLimitStatus, SoftLimitStatus statusDemand) {
-        return IGreenMotorDev.super.updateSoftLimitStatus(softLimitStatus, statusDemand);
-    }
 }
