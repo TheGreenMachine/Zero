@@ -14,7 +14,7 @@ import com.team1816.lib.hardware.components.ledManager.CanifierImpl;
 import com.team1816.lib.hardware.components.ledManager.GhostLEDManager;
 import com.team1816.lib.hardware.components.ledManager.ILEDManager;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
-import com.team1816.lib.legacy.LegacyLazySparkMax;
+import com.team1816.lib.hardware.components.motor.LazySparkMaxDev;
 import com.team1816.lib.hardware.components.pcm.*;
 import com.team1816.lib.hardware.components.sensor.GhostProximitySensor;
 import com.team1816.lib.hardware.components.sensor.IProximitySensor;
@@ -169,16 +169,12 @@ public class RobotFactory {
                     );
             } else if (isHardwareValid(subsystem.sparkmaxes, name)) {
                 followerMotor =
-                    MotorFactory.createSpark(
+                    MotorFactory.createFollowerSpark(
                         subsystem.sparkmaxes.get(name),
                         name,
-                        subsystem
+                        subsystem,
+                        main
                     );
-                ((LegacyLazySparkMax) followerMotor).follow(
-                    main,
-                    subsystem.invertMotor.contains(name)
-                );
-                followerMotor.setInverted(main.getInverted());
             } else if (isHardwareValid(subsystem.victors, name)) {
                 // Victors can follow Talons or another Victor.
                 followerMotor =

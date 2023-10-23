@@ -24,6 +24,7 @@ import com.team1816.lib.util.logUtil.GreenLogger;
  * @see IGreenMotor
  * @see CANSparkMax
  */
+@Deprecated
 public class LegacyLazySparkMax implements LegacyIGreenMotor {
 
     private CANSparkMax motor;

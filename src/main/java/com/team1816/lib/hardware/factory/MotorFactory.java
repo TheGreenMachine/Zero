@@ -156,6 +156,18 @@ public class MotorFactory {
         return new LazySparkMaxDev(id, name);
     }
 
+    public static IGreenMotor createFollowerSpark(
+        int id,
+        String name,
+        SubsystemConfig subsystem,
+        IGreenMotor leader
+    ) {
+        LazySparkMaxDev followerSpark = new LazySparkMaxDev(id,name);
+        followerSpark.follow(leader);
+        followerSpark.setInverted(leader.getInverted());
+        return followerSpark;
+    }
+
     public static CANCoder createCanCoder(int canCoderID, boolean invertCanCoder) {
         CANCoder canCoder = new CANCoder(canCoderID);
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
