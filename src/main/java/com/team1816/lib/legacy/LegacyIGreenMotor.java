@@ -1,4 +1,4 @@
-package com.team1816.lib.hardware.components.motor;
+package com.team1816.lib.legacy;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;

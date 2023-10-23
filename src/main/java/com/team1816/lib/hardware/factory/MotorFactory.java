@@ -9,6 +9,7 @@ import com.team1816.lib.hardware.SubsystemConfig;
 import com.team1816.lib.hardware.components.DeviceIdMismatchException;
 import com.team1816.lib.hardware.components.motor.*;
 import com.team1816.lib.hardware.components.motor.configurations.FeedbackDeviceType;
+import com.team1816.lib.legacy.*;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -95,8 +96,8 @@ public class MotorFactory {
         String canBus
     ) {
         IGreenMotor talon = isFalcon
-            ? new LazyTalonFX(id, name, canBus)
-            : new LazyTalonSRX(id, name);
+            ? new LegacyLazyTalonFX(id, name, canBus)
+            : new LegacyLazyTalonSRX(id, name);
         configMotor(talon, name, subsystem, pidConfigList, remoteSensorId);
 
         return talon;
@@ -108,7 +109,7 @@ public class MotorFactory {
         String name,
         SubsystemConfig subsystem
     ) {
-        IGreenMotor motor = new GhostMotor(maxVelTicks100ms, absInitOffset, name);
+        IGreenMotor motor = new LegacyGhostMotor(maxVelTicks100ms, absInitOffset, name);
         configMotor(motor, name, subsystem, null, -1);
         return motor;
     }
@@ -132,7 +133,7 @@ public class MotorFactory {
 
     // This is currently treating a VictorSPX, which implements IMotorController as an IGreenMotor, which implements IMotorControllerEnhanced
     public static IGreenMotor createVictor(int id, String name) {
-        IGreenMotor victor = new LazyVictorSPX(id, name);
+        IGreenMotor victor = new LegacyLazyVictorSPX(id, name);
 
         victor.configReverseLimitSwitchSource(
             LimitSwitchSource.Deactivated,
@@ -149,7 +150,7 @@ public class MotorFactory {
         Map<String, PIDSlotConfiguration> pidConfigList
     ) {
         // TODO add sparkMax config pid based on pidConfigList thru configAllSettings?
-        return new LazySparkMax(id, name);
+        return new LegacyLazySparkMax(id, name);
     }
 
     public static IGreenMotor createSpark(
@@ -157,7 +158,7 @@ public class MotorFactory {
         String name,
         SubsystemConfig subsystem
     ) {
-        return new LazySparkMax(id, name);
+        return new LegacyLazySparkMax(id, name);
     }
 
     public static CANCoder createCanCoder(int canCoderID, boolean invertCanCoder) {
@@ -391,7 +392,7 @@ public class MotorFactory {
                 //TODO if we can add REV sensor phase, we can generalize inversion
                 motor.setSensorPhase(invertSensorPhase);
             }
-        } else if (motorConfiguration.motorType.equals("sparkmax") && motor instanceof LazySparkMax) {
+        } else if (motorConfiguration.motorType.equals("sparkmax") && motor instanceof LegacyLazySparkMax) {
 
             //Spark pid assignment
             if (pidConfigList != null) {
@@ -399,10 +400,10 @@ public class MotorFactory {
                 for (Map.Entry<String, PIDSlotConfiguration> slot : pidConfigList.entrySet())
                     switch (slot.getKey().toLowerCase()) {
                         //toSlotConfiguration is kept to avoid notnulls making this totally unreadable
-                        case "slot0" -> ((LazySparkMax) motor).config_Pid_Manual(0,toSlotConfiguration(slot.getValue()));
-                        case "slot1" -> ((LazySparkMax) motor).config_Pid_Manual(1,toSlotConfiguration(slot.getValue()));
-                        case "slot2" -> ((LazySparkMax) motor).config_Pid_Manual(2,toSlotConfiguration(slot.getValue()));
-                        case "slot3" -> ((LazySparkMax) motor).config_Pid_Manual(3,toSlotConfiguration(slot.getValue()));
+                        case "slot0" -> ((LegacyLazySparkMax) motor).config_Pid_Manual(0,toSlotConfiguration(slot.getValue()));
+                        case "slot1" -> ((LegacyLazySparkMax) motor).config_Pid_Manual(1,toSlotConfiguration(slot.getValue()));
+                        case "slot2" -> ((LegacyLazySparkMax) motor).config_Pid_Manual(2,toSlotConfiguration(slot.getValue()));
+                        case "slot3" -> ((LegacyLazySparkMax) motor).config_Pid_Manual(3,toSlotConfiguration(slot.getValue()));
                 }
             }
 
