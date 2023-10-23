@@ -251,7 +251,7 @@ public class MotorFactory {
 
         // inversion
         int id = motor.getDeviceID();
-        if (id != motorConfiguration.id) {
+        if (id != motorConfiguration.id && RobotBase.isReal()) {
             GreenLogger.log(new DeviceIdMismatchException(name));
         } else {
             boolean invertMotor = motorConfiguration.invertMotor;
