@@ -257,7 +257,17 @@ public class GhostMotorDev implements IGreenMotor {
     }
 
     @Override
+    public void config_NominalOutputForward(double percentOut, int timeoutMs) {
+
+    }
+
+    @Override
     public void config_NominalOutputReverse(double percentOut) {
+
+    }
+
+    @Override
+    public void config_NominalOutputReverse(double percentOut, int timeoutMs) {
 
     }
 
@@ -378,6 +388,14 @@ public class GhostMotorDev implements IGreenMotor {
         enableReverseSoftLimit(isEnabled);
     }
 
+    @Override
+    public void enableSoftLimits(boolean isEnabled) {
+        usingLimit = isEnabled;
+        softLimitStatus = updateSoftLimitStatus(
+            softLimitStatus,
+            isEnabled ? SoftLimitStatus.BOTH : SoftLimitStatus.DISABLED
+        );
+    }
 
     @Override
     public void set_kP(int pidSlotID, double kP) {

@@ -65,7 +65,11 @@ public interface IGreenMotor {
 
     void config_NominalOutputForward(double percentOut);
 
+    void config_NominalOutputForward(double percentOut, int timeoutMs);
+
     void config_NominalOutputReverse(double percentOut);
+
+    void config_NominalOutputReverse(double percentOut, int timeoutMs);
 
     void config_NeutralDeadband(double deadbandPercent);
 
@@ -106,6 +110,8 @@ public interface IGreenMotor {
     void enableReverseSoftLimit(boolean isEnabled);
 
     void enableReverseSoftLimit(boolean isEnabled, int timeoutMs);
+
+    void enableSoftLimits(boolean isEnabled);
 
     void set_kP(int pidSlotID, double kP);
 

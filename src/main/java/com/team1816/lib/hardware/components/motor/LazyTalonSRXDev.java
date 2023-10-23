@@ -181,8 +181,18 @@ public class LazyTalonSRXDev extends TalonSRX implements IGreenMotor {
     }
 
     @Override
+    public void config_NominalOutputForward(double percentOut, int timeoutMs) {
+        super.configNominalOutputForward(percentOut, timeoutMs);
+    }
+
+    @Override
     public void config_NominalOutputReverse(double percentOut) {
         super.configNominalOutputReverse(percentOut);
+    }
+
+    @Override
+    public void config_NominalOutputReverse(double percentOut, int timeoutMs) {
+        super.configNominalOutputReverse(percentOut, timeoutMs);
     }
 
     @Override
@@ -281,6 +291,14 @@ public class LazyTalonSRXDev extends TalonSRX implements IGreenMotor {
         );
     }
 
+    @Override
+    public void enableSoftLimits(boolean isEnabled) {
+        super.overrideSoftLimitsEnable(isEnabled);
+        softLimitStatus = updateSoftLimitStatus(
+            softLimitStatus,
+            isEnabled ? SoftLimitStatus.BOTH : SoftLimitStatus.DISABLED
+        );
+    }
 
     @Override
     public void set_kP(int pidSlotID, double kP) {

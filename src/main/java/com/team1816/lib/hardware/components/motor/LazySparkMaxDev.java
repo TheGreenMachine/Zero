@@ -12,7 +12,7 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
 
     protected String name = "";
     protected GreenControlMode currentControlMode = GreenControlMode.PERCENT_OUTPUT;
-    protected SoftLimitStatus currentSoftLimitStatus;
+    protected SoftLimitStatus softLimitStatus;
     protected int currentPeriodicFrame = -1;
     protected int currentPIDSlot = 0;
 
@@ -37,7 +37,7 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
         pidController = super.getPIDController();
         encoder = configureRelativeEncoder(FeedbackDeviceType.HALL_SENSOR);
         name = motorName;
-        currentSoftLimitStatus = SoftLimitStatus.DISABLED;
+        softLimitStatus = SoftLimitStatus.DISABLED;
     }
 
     @Override
@@ -189,9 +189,20 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
     }
 
     @Override
+    public void config_NominalOutputForward(double percentOut, int timeoutMs) {
+        config_NominalOutputForward(percentOut);
+    }
+
+    @Override
     public void config_NominalOutputReverse(double percentOut) {
         nominalOutputBackward = percentOut;
     }
+
+    @Override
+    public void config_NominalOutputReverse(double percentOut, int timeoutMs) {
+        config_NominalOutputReverse(percentOut);
+    }
+
 
     /**
      * @see <a href="https://docs.revrobotics.com/sparkmax/operating-modes/control-interfaces">Documentation</a>
@@ -280,8 +291,8 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
     @Override
     public void enableForwardSoftLimit(boolean isEnabled) {
         super.enableSoftLimit(SoftLimitDirection.kForward, isEnabled);
-        currentSoftLimitStatus = updateSoftLimitStatus(
-            currentSoftLimitStatus,
+        softLimitStatus = updateSoftLimitStatus(
+            softLimitStatus,
             isEnabled ? SoftLimitStatus.FORWARD : SoftLimitStatus.FORWARD_DISABLE
         );
     }
@@ -295,9 +306,19 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
     @Override
     public void enableReverseSoftLimit(boolean isEnabled) {
         super.enableSoftLimit(SoftLimitDirection.kReverse, isEnabled);
-        currentSoftLimitStatus = updateSoftLimitStatus(
-            currentSoftLimitStatus,
+        softLimitStatus = updateSoftLimitStatus(
+            softLimitStatus,
             isEnabled ? SoftLimitStatus.REVERSE : SoftLimitStatus.REVERSE_DISABLE
+        );
+    }
+
+    @Override
+    public void enableSoftLimits(boolean isEnabled) {
+        super.enableSoftLimit(SoftLimitDirection.kForward, isEnabled);
+        super.enableSoftLimit(SoftLimitDirection.kReverse, isEnabled);
+        softLimitStatus = updateSoftLimitStatus(
+            softLimitStatus,
+            isEnabled ? SoftLimitStatus.BOTH : SoftLimitStatus.DISABLED
         );
     }
 
@@ -509,7 +530,7 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
 
     @Override
     public SoftLimitStatus getSoftLimitStatus() {
-        return currentSoftLimitStatus;
+        return softLimitStatus;
     }
 
     @Override
