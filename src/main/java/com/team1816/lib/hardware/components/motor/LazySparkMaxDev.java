@@ -482,7 +482,7 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
     }
 
     @Override
-    public void restore_FactoryDefaults() {
+    public void restore_FactoryDefaults(int timeoutMs) {
         super.restoreFactoryDefaults();
     }
 

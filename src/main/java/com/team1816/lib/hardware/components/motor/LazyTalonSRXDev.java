@@ -428,8 +428,8 @@ public class LazyTalonSRXDev extends TalonSRX implements IGreenMotor {
     }
 
     @Override
-    public void restore_FactoryDefaults() {
-        super.configFactoryDefault();
+    public void restore_FactoryDefaults(int timeoutMs) {
+        super.configFactoryDefault(timeoutMs);
     }
 
     @Override

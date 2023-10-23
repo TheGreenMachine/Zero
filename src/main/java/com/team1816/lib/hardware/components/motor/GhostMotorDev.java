@@ -543,7 +543,7 @@ public class GhostMotorDev implements IGreenMotor {
     }
 
     @Override
-    public void restore_FactoryDefaults() {
+    public void restore_FactoryDefaults(int timeoutMs) {
 
     }
 

@@ -172,7 +172,7 @@ public interface IGreenMotor {
 
     double getSupplyCurrent();
 
-    void restore_FactoryDefaults();
+    void restore_FactoryDefaults(int timeoutMs);
 
     boolean isVoltageCompensationEnabled();
 
@@ -189,10 +189,10 @@ public interface IGreenMotor {
     void configControlFramePeriod(ControlFrame controlFrame, int periodms);
 
     /**
-     * Updates the tracked enabled/disabled status of a motor
+     * Updates the tracked enabled/disabled status of a motor's soft limit
      *
      * @see SoftLimitStatus
-     * @param softLimitStatus The current status of the motor
+     * @param softLimitStatus The current soft limit status of the motor
      * @param statusDemand The status demand applied
      */
     default SoftLimitStatus updateSoftLimitStatus(SoftLimitStatus softLimitStatus, SoftLimitStatus statusDemand) {

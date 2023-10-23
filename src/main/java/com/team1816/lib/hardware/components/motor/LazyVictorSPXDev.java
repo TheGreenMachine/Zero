@@ -115,7 +115,7 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     public void configForwardLimitSwitch(boolean normallyOpen) {
         LimitSwitchNormal openOrClosed = normallyOpen ? LimitSwitchNormal.NormallyOpen : LimitSwitchNormal.NormallyClosed;
         super.configForwardLimitSwitchSource(
-            RemoteLimitSwitchSource.RemoteCANifier,
+            RemoteLimitSwitchSource.Deactivated,
             openOrClosed,
             Constants.kCANTimeoutMs
         );
@@ -125,7 +125,7 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     public void configReverseLimitSwitch(boolean normallyOpen) {
         LimitSwitchNormal openOrClosed = normallyOpen ? LimitSwitchNormal.NormallyOpen : LimitSwitchNormal.NormallyClosed;
         super.configReverseLimitSwitchSource(
-            RemoteLimitSwitchSource.RemoteCANifier,
+            RemoteLimitSwitchSource.Deactivated,
             openOrClosed,
             Constants.kCANTimeoutMs
         );
@@ -431,8 +431,8 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     }
 
     @Override
-    public void restore_FactoryDefaults() {
-        super.configFactoryDefault();
+    public void restore_FactoryDefaults(int timeoutMs) {
+        super.configFactoryDefault(timeoutMs);
     }
 
     @Override
