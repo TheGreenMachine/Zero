@@ -3,13 +3,14 @@
     "title": "Motor Configuration",
     "properties": {
         "motorType": {
-            "type" : "string"
+            "type" : "object",
+            "existingJavaType" : "com.team1816.lib.hardware.components.motor.IGreenMotor.MotorType"
         },
         "motorName": {
             "type" : "string"
         },
         "id": {
-            "type" : "number"
+            "type" : "integer"
         },
         "currentLimit": {
             "type": "number"

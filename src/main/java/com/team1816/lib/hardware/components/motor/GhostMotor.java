@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 import static java.lang.Double.NaN;
 
-public class GhostMotorDev implements IGreenMotor {
+public class GhostMotor implements IGreenMotor {
     protected String name = "";
 
     /**
@@ -37,7 +37,7 @@ public class GhostMotorDev implements IGreenMotor {
 
     protected SoftLimitStatus softLimitStatus = SoftLimitStatus.DISABLED;
 
-    public GhostMotorDev(int maxTickVel, int absInitOffset, String motorName) {
+    public GhostMotor(int maxTickVel, int absInitOffset, String motorName) {
         this.absInitOffset = absInitOffset;
         maxVelTicks100ms = maxTickVel;
         name = motorName;
@@ -96,7 +96,7 @@ public class GhostMotorDev implements IGreenMotor {
 
     @Override
     public void set(GreenControlMode Mode, double demand) {
-        processSet(controlMode, demand);
+        processSet(Mode, demand);
     }
 
     private void processSet(GreenControlMode controlModeDemand, double demand) {
@@ -114,7 +114,7 @@ public class GhostMotorDev implements IGreenMotor {
             this.desiredDemand[1] = NaN;
             this.desiredDemand[2] = demand;
         } else {
-            GreenLogger.log("no support for this Mode in GhostMotor!");
+            GreenLogger.log("no support for Mode " + controlModeDemand + " in GhostMotor!");
             return;
         }
         controlMode = controlModeDemand;

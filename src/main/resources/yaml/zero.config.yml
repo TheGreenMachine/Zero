@@ -3,20 +3,53 @@ subsystems:
         implemented: true
         motors:
             FLDr:
-                motorType: falcon
+                motorType: TALONFX
                 motorName: FLDr
                 id: 11
                 currentLimit: 40
                 invertMotor: false
-        falcons:
-            FLDr: 11
-            FRDr: 9
-            RLDr: 18
-            RRDr: 1
-            FLAz: 10
-            FRAz: 8
-            RLAz: 19
-            RRAz: 2
+            FRDr:
+                motorType: TALONFX
+                motorName: FLDr
+                id: 9
+                currentLimit: 40
+                invertMotor: true
+            RLDr:
+                motorType: TALONFX
+                motorName: FLDr
+                id: 18
+                currentLimit: 40
+                invertMotor: false
+            RRDr:
+                motorType: TALONFX
+                motorName: FLDr
+                id: 1
+                currentLimit: 40
+                invertMotor: true
+            FLAz:
+                motorType: TALONFX
+                motorName: FLDr
+                id: 10
+                currentLimit: 40
+                invertMotor: false
+            FRAz:
+                motorType: TALONFX
+                motorName: FLDr
+                id: 8
+                currentLimit: 40
+                invertMotor: false
+            RLAz:
+                motorType: TALONFX
+                motorName: FLDr
+                id: 19
+                currentLimit: 40
+                invertMotor: false
+            RRAz:
+                motorType: TALONFX
+                motorName: FLDr
+                id: 2
+                currentLimit: 40
+                invertMotor: false
         canCoders:
             FLEnc: 25
             FREnc: 27
@@ -93,10 +126,25 @@ subsystems:
             autoBalanceThreshold: 2.5 # degrees
     elevator:
         implemented: true
-        falcons:
-            angleMotorMain: 6
-            angleMotorFollower: 7
-            extensionMotor: 15
+        motors:
+            angleMotorMain:
+                motorType: TALONFX
+                motorName: angleMotorMain
+                id: 6
+                currentLimit: 40
+                invertMotor: false
+            angleMotorFollower:
+                motorType: TALONFX
+                motorName: angleMotorFollower
+                id: 7
+                currentLimit: 40
+                invertMotor: false
+            extensionMotor:
+                motorType: TALONFX
+                motorName: angleMotorMain
+                id: 15
+                currentLimit: 40
+                invertMotor: false
         pidConfig:
             slot0: # arm motion
                 kP: 0.02
@@ -148,9 +196,19 @@ subsystems:
             shelfCubeExtension: 10 # in - 150000 ticks
     collector:
         implemented: true
-        sparkmaxes:
-            pivotMotor: 13
-            intakeMotor: 14
+        motors:
+            pivotMotor:
+                motorType: SPARKMAX
+                motorName: pivotMotor
+                id: 13
+                currentLimit: 40
+                invertMotor: false
+            intakeMotor:
+                motorType: SPARKMAX
+                motorName: intakeMotor
+                id: 14
+                currentLimit: 40
+                invertMotor: false
         pidConfig:
             slot0: # intakeMotor - only really works when locking motor max - min input is +/- 0.3 percent
                 kP: 0.001

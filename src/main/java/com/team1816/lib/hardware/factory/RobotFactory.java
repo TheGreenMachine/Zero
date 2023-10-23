@@ -73,40 +73,48 @@ public class RobotFactory {
         IGreenMotor motor = null;
         var subsystem = getSubsystem(subsystemName);
 
-        // Identifying motor type
+        // Identifying motor
         if (subsystem.implemented) {
-            if (isHardwareValid(subsystem.talons, name)) {
-                motor =
-                    MotorFactory.createDefaultTalon(
-                        subsystem.talons.get(name),
-                        name,
-                        false,
-                        subsystem,
-                        pidConfigs,
-                        remoteSensorId,
-                        config.infrastructure.canivoreBusName
-                    );
-            } else if (isHardwareValid(subsystem.falcons, name)) {
-                motor =
-                    MotorFactory.createDefaultTalon(
-                        subsystem.falcons.get(name),
-                        name,
-                        true,
-                        subsystem,
-                        pidConfigs,
-                        remoteSensorId,
-                        config.infrastructure.canivoreBusName
-                    );
-            } else if (isHardwareValid(subsystem.sparkmaxes, name)) {
-                motor =
-                    MotorFactory.createSpark(
-                        subsystem.sparkmaxes.get(name),
-                        name,
-                        subsystem,
-                        pidConfigs
-                    );
+            if (isHardwareValid(subsystem.motors, name)) {
+                switch (subsystem.motors.get(name).motorType) {
+                    case TALONFX -> {
+                        motor =
+                            MotorFactory.createDefaultTalon(
+                                subsystem.motors.get(name).id,
+                                name,
+                                true,
+                                subsystem,
+                                pidConfigs,
+                                remoteSensorId,
+                                config.infrastructure.canivoreBusName
+                            );
+                    }
+                    case TALONSRX -> {
+                        motor =
+                            MotorFactory.createDefaultTalon(
+                                subsystem.motors.get(name).id,
+                                name,
+                                false,
+                                subsystem,
+                                pidConfigs,
+                                remoteSensorId,
+                                config.infrastructure.canivoreBusName
+                            );
+                    }
+                    case SPARKMAX -> {
+                        motor =
+                            MotorFactory.createSpark(
+                                subsystem.motors.get(name).id,
+                                name,
+                                subsystem,
+                                pidConfigs
+                            );
+                    }
+                    case VICTORSPX -> {
+                        GreenLogger.log("Victors cannot be main!");
+                    }
+                }
             }
-            // Never make the victor a main
         }
 
         // report creation of motor
@@ -143,45 +151,49 @@ public class RobotFactory {
         IGreenMotor followerMotor = null;
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented && main != null) {
-            if (isHardwareValid(subsystem.talons, name)) {
-                // Talons must be following another Talon, cannot follow a Victor.
-                followerMotor =
-                    MotorFactory.createFollowerTalon(
-                        subsystem.talons.get(name),
-                        name,
-                        false,
-                        main,
-                        subsystem,
-                        subsystem.pidConfig,
-                        config.infrastructure.canivoreBusName
-                    );
-            } else if (isHardwareValid(subsystem.falcons, name)) {
-                followerMotor =
-                    MotorFactory.createFollowerTalon(
-                        subsystem.falcons.get(name),
-                        name,
-                        true,
-                        main,
-                        subsystem,
-                        subsystem.pidConfig,
-                        config.infrastructure.canivoreBusName
-                    );
-            } else if (isHardwareValid(subsystem.sparkmaxes, name)) {
-                followerMotor =
-                    MotorFactory.createFollowerSpark(
-                        subsystem.sparkmaxes.get(name),
-                        name,
-                        subsystem,
-                        main
-                    );
-            } else if (isHardwareValid(subsystem.victors, name)) {
-                // Victors can follow Talons or another Victor.
-                followerMotor =
-                    MotorFactory.createFollowerVictor(
-                        subsystem.victors.get(name),
-                        name,
-                        main
-                    );
+            if (isHardwareValid(subsystem.motors, name)) {
+                switch(subsystem.motors.get(name).motorType) {
+                    case TALONFX -> {
+                        followerMotor =
+                            MotorFactory.createFollowerTalon(
+                                subsystem.falcons.get(name),
+                                name,
+                                true,
+                                main,
+                                subsystem,
+                                subsystem.pidConfig,
+                                config.infrastructure.canivoreBusName
+                            );
+                    }
+                    case TALONSRX -> {
+                        followerMotor =
+                            MotorFactory.createFollowerTalon(
+                                subsystem.talons.get(name),
+                                name,
+                                false,
+                                main,
+                                subsystem,
+                                subsystem.pidConfig,
+                                config.infrastructure.canivoreBusName
+                            );
+                    }
+                    case SPARKMAX -> {
+                        MotorFactory.createFollowerSpark(
+                            subsystem.sparkmaxes.get(name),
+                            name,
+                            subsystem,
+                            main
+                        );
+                    }
+                    case VICTORSPX -> {
+                        followerMotor =
+                            MotorFactory.createFollowerVictor(
+                                subsystem.victors.get(name),
+                                name,
+                                main
+                            );
+                    }
+                }
             }
         }
         if (followerMotor == null) {
@@ -250,7 +262,7 @@ public class RobotFactory {
     public ISolenoid getSolenoid(String subsystemName, String name) {
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented) {
-            if (isHardwareValid(subsystem.solenoids, name) && isPcmEnabled()) {
+            if (isSubsystemHardwareValid(subsystem.solenoids, name) && isPcmEnabled()) {
                 return new SolenoidImpl(
                     config.infrastructure.pcmId,
                     config.infrastructure.pcmIsRev
@@ -327,10 +339,19 @@ public class RobotFactory {
         return new GhostCompressor();
     }
 
-    private boolean isHardwareValid(Map<String, Integer> map, String name) {
+    //For use with non-motor subsystems
+    private boolean isSubsystemHardwareValid(Map<String, Integer> map, String name) {
         if (map != null) {
             Integer hardwareId = map.get(name);
             return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
+        }
+        return false;
+    }
+
+    private boolean isHardwareValid(Map<String, MotorConfiguration> map, String name) {
+        if (map != null) {
+           Integer hardwareId = map.get(name).id;
+           return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
         }
         return false;
     }

@@ -108,7 +108,7 @@ public class MotorFactory {
         String name,
         SubsystemConfig subsystem
     ) {
-        IGreenMotor motor = new GhostMotorDev(maxVelTicks100ms, absInitOffset, name);
+        IGreenMotor motor = new GhostMotor(maxVelTicks100ms, absInitOffset, name);
         configMotor(motor, name, subsystem, null, -1);
         return motor;
     }
@@ -184,7 +184,7 @@ public class MotorFactory {
         int remoteSensorId
     ) {
         MotorConfiguration motorConfiguration = subsystem.motors.get(name);
-        boolean isTalon = !(motor instanceof LazySparkMax); // Talon also refers to VictorSPX, isCTRE just looks worse :)
+        boolean isTalon = !(motor instanceof LazySparkMax || motor instanceof GhostMotor); // Talon also refers to VictorSPX, isCTRE just looks worse :)
 
         // PID configuration
         if (pidConfigList != null) {
