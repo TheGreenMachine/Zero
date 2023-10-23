@@ -154,6 +154,11 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
     }
 
     @Override
+    public void configClosedLoopRampRate(double secondsNeutralToFull, int timeoutMs) {
+        configClosedLoopRampRate(secondsNeutralToFull);
+    }
+
+    @Override
     public void config_PeakOutputForward(double percentOut) {
         peakOutputForward = percentOut;
         pidController.setOutputRange(peakOutputBackward, peakOutputForward, currentPIDSlot);
@@ -239,6 +244,11 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
     }
 
     @Override
+    public void setSensorPosition(double sensorPosition, int closedLoopSlotID, int timeoutMs) {
+        setSensorPosition(sensorPosition, closedLoopSlotID);
+    }
+
+    @Override
     public void enableLimitSwitches(boolean isEnabled) {
         //WHY DO LIMIT SWITCHES HAVE A TOGGLE PARAMETER BUT VOLTAGE COMPENSATION DOESNT
         forwardLimitSwitch.enableLimitSwitch(isEnabled);
@@ -252,8 +262,19 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
     }
 
     @Override
-    public void configReverseSlotLimit(double reverseSoftLimit) {
+    public void configForwardSoftLimit(double forwardSoftLimit, int timeoutMs) {
+        configForwardSoftLimit(forwardSoftLimit);
+    }
+
+
+    @Override
+    public void configReverseSoftLimit(double reverseSoftLimit) {
         super.setSoftLimit(SoftLimitDirection.kReverse, (float) reverseSoftLimit);
+    }
+
+    @Override
+    public void configReverseSoftLimit(double reverseSoftLimit, int timeoutMs) {
+        configReverseSoftLimit(reverseSoftLimit);
     }
 
     @Override
@@ -266,6 +287,12 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
     }
 
     @Override
+    public void enableForwardSoftLimit(boolean isEnabled, int timeoutMs) {
+        enableForwardSoftLimit(isEnabled);
+    }
+
+
+    @Override
     public void enableReverseSoftLimit(boolean isEnabled) {
         super.enableSoftLimit(SoftLimitDirection.kReverse, isEnabled);
         currentSoftLimitStatus = updateSoftLimitStatus(
@@ -273,6 +300,12 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
             isEnabled ? SoftLimitStatus.REVERSE : SoftLimitStatus.REVERSE_DISABLE
         );
     }
+
+    @Override
+    public void enableReverseSoftLimit(boolean isEnabled, int timeoutMs) {
+        enableReverseSoftLimit(isEnabled);
+    }
+
 
     @Override
     public void set_kP(int pidSlotID, double kP) {
@@ -336,6 +369,11 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
     }
 
     @Override
+    public void setPeakOutputClosedLoop(int pidSlotID, double peakOutput, int timeoutMs) {
+        setPeakOutputClosedLoop(pidSlotID, peakOutput);
+    }
+
+    @Override
     public void setIAccumulation(int closedLoopSlotID, double IAccum) {
         pidController.setIAccum(IAccum);
     }
@@ -368,8 +406,19 @@ public class LazySparkMaxDev extends CANSparkMax implements IGreenMotor {
     }
 
     @Override
+    public void setMotionProfileMaxVelocity(double maxVelocity, int timeoutMs) {
+        setMotionProfileMaxVelocity(maxVelocity);
+    }
+
+
+    @Override
     public void setMotionProfileMaxAcceleration(double maxAcceleration) {
         pidController.setSmartMotionMaxAccel(maxAcceleration, currentPIDSlot);
+    }
+
+    @Override
+    public void setMotionProfileMaxAcceleration(double maxAcceleration, int timeoutMs) {
+        setMotionProfileMaxAcceleration(maxAcceleration);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
+import com.team1816.lib.hardware.components.motor.configurations.GreenControlMode;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
@@ -103,24 +104,24 @@ public class Elevator extends Subsystem {
         this.extensionMotor = factory.getMotor(NAME, "extensionMotor");
 
         double extensionPeakOutput = (!isDemoMode) ? 1 : 0.5;
-        extensionMotor.configPeakOutputForward(extensionPeakOutput, Constants.kCANTimeoutMs);
-        extensionMotor.configPeakOutputReverse(-extensionPeakOutput, Constants.kCANTimeoutMs);
-        extensionMotor.configForwardSoftLimitEnable(true, Constants.kCANTimeoutMs);
-        extensionMotor.configReverseSoftLimitEnable(true, Constants.kCANTimeoutMs);
-        extensionMotor.configForwardSoftLimitThreshold(factory.getConstant(NAME, "forwardExtensionLimit") * extensionTicksPerInch, Constants.kCANTimeoutMs);
-        extensionMotor.configReverseSoftLimitThreshold(factory.getConstant(NAME, "reverseExtensionLimit") * extensionTicksPerInch, Constants.kCANTimeoutMs);
-        extensionMotor.configClosedLoopPeakOutput(2, extensionPeakOutput, Constants.kCANTimeoutMs);
-        extensionMotor.selectProfileSlot(extensionPIDSlot, 0); // uses the system slot2 configuration for extension control
+        extensionMotor.config_PeakOutputForward(extensionPeakOutput, Constants.kCANTimeoutMs);
+        extensionMotor.config_PeakOutputReverse(-extensionPeakOutput, Constants.kCANTimeoutMs);
+        extensionMotor.enableForwardSoftLimit(true, Constants.kCANTimeoutMs);
+        extensionMotor.enableReverseSoftLimit(true, Constants.kCANTimeoutMs);
+        extensionMotor.configForwardSoftLimit(factory.getConstant(NAME, "forwardExtensionLimit") * extensionTicksPerInch, Constants.kCANTimeoutMs);
+        extensionMotor.configReverseSoftLimit(factory.getConstant(NAME, "reverseExtensionLimit") * extensionTicksPerInch, Constants.kCANTimeoutMs);
+        extensionMotor.setPeakOutputClosedLoop(2, extensionPeakOutput, Constants.kCANTimeoutMs);
+        extensionMotor.selectPIDSlot(extensionPIDSlot, 0); // uses the system slot2 configuration for extension control
 
         // for some odd reason if these nums aren't specified as doubles they make the angle motor not work in sim
         double angularPeakOutput = (!isDemoMode) ? 1 : 0.5;
-        angleMotorMain.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
-        angleMotorMain.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
-        angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
-        angleMotorFollower.configPeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
-        angleMotorFollower.configPeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
-        angleMotorMain.configClosedLoopPeakOutput(0, angularPeakOutput, Constants.kCANTimeoutMs);
-        angleMotorMain.configClosedloopRamp(0.2, Constants.kCANTimeoutMs);
+        angleMotorMain.config_PeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorMain.config_PeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorMain.setPeakOutputClosedLoop(0, angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorFollower.config_PeakOutputForward(angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorFollower.config_PeakOutputReverse(-angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorMain.setPeakOutputClosedLoop(0, angularPeakOutput, Constants.kCANTimeoutMs);
+        angleMotorMain.configClosedLoopRampRate(0.2, Constants.kCANTimeoutMs);
 
         motionMagicEnabled = factory.getConstant(NAME, "motionMagicEnabled") > 0;
 
@@ -136,8 +137,8 @@ public class Elevator extends Subsystem {
                 motionMagicCruiseVelTicksPer100ms = factory.getConstant(NAME, "motionMagicCruiseVelocity");
                 motionMagicAccelTicksPer100msPerSecond = factory.getConstant(NAME, "motionMagicAcceleration");
             }
-            extensionMotor.configMotionCruiseVelocity(motionMagicCruiseVelTicksPer100ms, Constants.kCANTimeoutMs);
-            extensionMotor.configMotionAcceleration(motionMagicAccelTicksPer100msPerSecond, Constants.kCANTimeoutMs);
+            extensionMotor.setMotionProfileMaxVelocity(motionMagicCruiseVelTicksPer100ms, Constants.kCANTimeoutMs);
+            extensionMotor.setMotionProfileMaxAcceleration(motionMagicAccelTicksPer100msPerSecond, Constants.kCANTimeoutMs);
         }
 
         if (Constants.kLoggingRobot) {
@@ -260,14 +261,14 @@ public class Elevator extends Subsystem {
      */
     @Override
     public void readFromHardware() {
-        actualAngleTicks = angleMotorMain.getSelectedSensorPosition(0);
-        actualAngleVel = angleMotorMain.getSelectedSensorVelocity(0);
+        actualAngleTicks = angleMotorMain.getSensorPosition(0);
+        actualAngleVel = angleMotorMain.getSensorVelocity(0);
 
-        actualExtensionTicks = extensionMotor.getSelectedSensorPosition(0); // not slot id
-        actualExtensionVel = extensionMotor.getSelectedSensorVelocity(0); // not slot id
+        actualExtensionTicks = extensionMotor.getSensorPosition(0); // not slot id
+        actualExtensionVel = extensionMotor.getSensorVelocity(0); // not slot id
 
         if (!armAtTarget()) {
-            angleMotorMain.selectProfileSlot(movingArmSlot, 0);
+            angleMotorMain.selectPIDSlot(movingArmSlot, 0);
         }
         if (robotState.actualElevatorAngleState != desiredAngleState && armAtTarget()) {
             angleOutputsChanged = true;
@@ -327,15 +328,15 @@ public class Elevator extends Subsystem {
             }
             desiredAngleTicks = anglePos;
 
-            angleMotorMain.selectProfileSlot(slot, 0);
-            angleMotorMain.set(ControlMode.Position, anglePos);
+            angleMotorMain.selectPIDSlot(slot, 0);
+            angleMotorMain.set(GreenControlMode.POSITION_CONTROL, anglePos);
         }
 
         if (extensionOutputsChanged) {
             extensionOutputsChanged = false;
 
-            ControlMode controlMode = motionMagicEnabled // && robotState.actualElevatorExtensionState != desiredExtensionState
-                ? ControlMode.MotionMagic : ControlMode.Position;
+            GreenControlMode controlMode = motionMagicEnabled // && robotState.actualElevatorExtensionState != desiredExtensionState
+                ? GreenControlMode.MOTION_MAGIC : GreenControlMode.POSITION_CONTROL;
 
             double extension = 0;
 
@@ -377,8 +378,8 @@ public class Elevator extends Subsystem {
 
     @Override
     public void zeroSensors() {
-        angleMotorMain.setSelectedSensorPosition(0, 0, Constants.kCANTimeoutMs);
-        angleMotorMain.selectProfileSlot(movingArmSlot, 0);
+        angleMotorMain.setSensorPosition(0, 0, Constants.kCANTimeoutMs);
+        angleMotorMain.selectPIDSlot(movingArmSlot, 0);
         setBraking(false);
     }
 

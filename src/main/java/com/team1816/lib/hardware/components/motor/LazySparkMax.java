@@ -23,7 +23,7 @@ import com.team1816.lib.util.logUtil.GreenLogger;
  * @see IGreenMotor
  * @see CANSparkMax
  */
-public class LazySparkMax implements IGreenMotor {
+public class LazySparkMax implements LegacyIGreenMotor {
 
     private CANSparkMax motor;
     private SparkMaxPIDController pidController;

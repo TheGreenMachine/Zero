@@ -216,7 +216,7 @@ public class MotorFactory {
             motor.configForwardSoftLimit(FORWARD_SOFT_LIMIT);
             motor.enableForwardSoftLimit(ENABLE_SOFT_LIMIT);
 
-            motor.configReverseSlotLimit(REVERSE_SOFT_LIMIT);
+            motor.configReverseSoftLimit(REVERSE_SOFT_LIMIT);
             motor.enableReverseSoftLimit(ENABLE_SOFT_LIMIT);
 
             motor.config_NominalOutputForward(0);

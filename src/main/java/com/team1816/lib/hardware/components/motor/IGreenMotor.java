@@ -53,6 +53,8 @@ public interface IGreenMotor {
 
     void configClosedLoopRampRate(double secondsNeutralToFull);
 
+    void configClosedLoopRampRate(double secondsNeutralToFull, int timeoutMs);
+
     void config_PeakOutputForward(double percentOut);
 
     void config_PeakOutputForward(double percentOut, int timeoutMs);
@@ -85,15 +87,25 @@ public interface IGreenMotor {
 
     void setSensorPosition(double sensorPosition, int closedLoopSlotID);
 
+    void setSensorPosition(double sensorPosition, int closedLoopSlotID, int timeoutMs);
+
     void enableLimitSwitches(boolean isEnabled);
 
     void configForwardSoftLimit(double forwardSoftLimit);
 
-    void configReverseSlotLimit(double reverseSoftLimit);
+    void configForwardSoftLimit(double forwardSoftLimit, int timeoutMs);
+
+    void configReverseSoftLimit(double reverseSoftLimit);
+
+    void configReverseSoftLimit(double reverseSoftLimit, int timeoutMs);
 
     void enableForwardSoftLimit(boolean isEnabled);
 
+    void enableForwardSoftLimit(boolean isEnabled, int timeoutMs);
+
     void enableReverseSoftLimit(boolean isEnabled);
+
+    void enableReverseSoftLimit(boolean isEnabled, int timeoutMs);
 
     void set_kP(int pidSlotID, double kP);
 
@@ -115,10 +127,11 @@ public interface IGreenMotor {
 
     void configAllowableErrorClosedLoop(int pidSlotID, double allowableError, int timeoutMs);
 
-
     void setMaxIAccumulation(int pidSlotID, double maxIAccum);
 
     void setPeakOutputClosedLoop(int pidSlotID, double peakOutput);
+
+    void setPeakOutputClosedLoop(int pidSlotID, double peakOutput, int timeoutMs);
 
     void setIAccumulation(int closedLoopSlotID, double IAccum);
 
@@ -130,7 +143,11 @@ public interface IGreenMotor {
 
     void setMotionProfileMaxVelocity(double maxVelocity);
 
+    void setMotionProfileMaxVelocity(double maxVelocity, int timeoutMs);
+
     void setMotionProfileMaxAcceleration(double maxAcceleration);
+
+    void setMotionProfileMaxAcceleration(double maxAcceleration, int timeoutMs);
 
     void configMotionCurve(MotionCurveType motionCurveType, int curveStrength);
 

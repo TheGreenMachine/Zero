@@ -148,6 +148,11 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     }
 
     @Override
+    public void configClosedLoopRampRate(double secondsNeutralToFull, int timeoutMs) {
+        super.configClosedloopRamp(secondsNeutralToFull, timeoutMs);
+    }
+
+    @Override
     public void config_PeakOutputForward(double percentOut) {
         super.configPeakOutputForward(percentOut);
     }
@@ -208,6 +213,11 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     }
 
     @Override
+    public void setSensorPosition(double sensorPosition, int closedLoopSlotID, int timeoutMs) {
+        super.setSelectedSensorPosition(sensorPosition, closedLoopSlotID, timeoutMs);
+    }
+
+    @Override
     public void enableLimitSwitches(boolean isEnabled) {
         super.overrideLimitSwitchesEnable(isEnabled);
     }
@@ -218,13 +228,32 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     }
 
     @Override
-    public void configReverseSlotLimit(double reverseSoftLimit) {
+    public void configForwardSoftLimit(double forwardSoftLimit, int timeoutMs) {
+        super.configForwardSoftLimitThreshold(forwardSoftLimit, timeoutMs);
+    }
+
+    @Override
+    public void configReverseSoftLimit(double reverseSoftLimit) {
         super.configReverseSoftLimitThreshold(reverseSoftLimit);
+    }
+
+    @Override
+    public void configReverseSoftLimit(double reverseSoftLimit, int timeoutMs) {
+        super.configReverseSoftLimitThreshold(reverseSoftLimit, timeoutMs);
     }
 
     @Override
     public void enableForwardSoftLimit(boolean isEnabled) {
         super.configForwardSoftLimitEnable(isEnabled);
+        softLimitStatus = updateSoftLimitStatus(
+            softLimitStatus,
+            isEnabled ? SoftLimitStatus.FORWARD : SoftLimitStatus.FORWARD_DISABLE
+        );
+    }
+
+    @Override
+    public void enableForwardSoftLimit(boolean isEnabled, int timeoutMs) {
+        super.configForwardSoftLimitEnable(isEnabled, timeoutMs);
         softLimitStatus = updateSoftLimitStatus(
             softLimitStatus,
             isEnabled ? SoftLimitStatus.FORWARD : SoftLimitStatus.FORWARD_DISABLE
@@ -239,6 +268,16 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
             isEnabled ? SoftLimitStatus.REVERSE : SoftLimitStatus.REVERSE_DISABLE
         );
     }
+
+    @Override
+    public void enableReverseSoftLimit(boolean isEnabled, int timeoutMs) {
+        super.configReverseSoftLimitEnable(isEnabled, timeoutMs);
+        softLimitStatus = updateSoftLimitStatus(
+            softLimitStatus,
+            isEnabled ? SoftLimitStatus.REVERSE : SoftLimitStatus.REVERSE_DISABLE
+        );
+    }
+
 
     @Override
     public void set_kP(int pidSlotID, double kP) {
@@ -301,6 +340,11 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     }
 
     @Override
+    public void setPeakOutputClosedLoop(int pidSlotID, double peakOutput, int timeoutMs) {
+        super.configClosedLoopPeakOutput(pidSlotID, peakOutput, timeoutMs);
+    }
+
+    @Override
     public void setIAccumulation(int closedLoopSlotID, double IAccum) {
         super.setIntegralAccumulator(IAccum, closedLoopSlotID, Constants.kCANTimeoutMs);
     }
@@ -316,8 +360,18 @@ public class LazyVictorSPXDev extends VictorSPX implements IGreenMotor {
     }
 
     @Override
+    public void setMotionProfileMaxVelocity(double maxVelocity, int timeoutMs) {
+        super.configMotionCruiseVelocity(maxVelocity, timeoutMs);
+    }
+
+    @Override
     public void setMotionProfileMaxAcceleration(double maxAcceleration) {
         super.configMotionAcceleration(maxAcceleration);
+    }
+
+    @Override
+    public void setMotionProfileMaxAcceleration(double maxAcceleration, int timeoutMs) {
+        super.configMotionAcceleration(maxAcceleration, timeoutMs);
     }
 
     @Override

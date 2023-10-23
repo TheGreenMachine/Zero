@@ -226,6 +226,11 @@ public class GhostMotorDev implements IGreenMotor {
     }
 
     @Override
+    public void configClosedLoopRampRate(double secondsNeutralToFull, int timeoutMs) {
+
+    }
+
+    @Override
     public void config_PeakOutputForward(double percentOut) {
 
     }
@@ -310,6 +315,12 @@ public class GhostMotorDev implements IGreenMotor {
     }
 
     @Override
+    public void setSensorPosition(double sensorPosition, int closedLoopSlotID, int timeoutMs) {
+        setSensorPosition(sensorPosition, closedLoopSlotID);
+    }
+
+
+    @Override
     public void enableLimitSwitches(boolean isEnabled) {
 
     }
@@ -321,11 +332,22 @@ public class GhostMotorDev implements IGreenMotor {
     }
 
     @Override
-    public void configReverseSlotLimit(double reverseSoftLimit) {
+    public void configForwardSoftLimit(double forwardSoftLimit, int timeoutMs) {
+        configForwardSoftLimit(forwardSoftLimit);
+    }
+
+
+    @Override
+    public void configReverseSoftLimit(double reverseSoftLimit) {
         usingLimit = true;
         revLimit = (int) reverseSoftLimit;
-
     }
+
+    @Override
+    public void configReverseSoftLimit(double reverseSoftLimit, int timeoutMs) {
+        configReverseSoftLimit(reverseSoftLimit);
+    }
+
 
     @Override
     public void enableForwardSoftLimit(boolean isEnabled) {
@@ -337,6 +359,12 @@ public class GhostMotorDev implements IGreenMotor {
     }
 
     @Override
+    public void enableForwardSoftLimit(boolean isEnabled, int timeoutMs) {
+        enableForwardSoftLimit(isEnabled);
+    }
+
+
+    @Override
     public void enableReverseSoftLimit(boolean isEnabled) {
         usingLimit = isEnabled;
         softLimitStatus = updateSoftLimitStatus(
@@ -344,6 +372,12 @@ public class GhostMotorDev implements IGreenMotor {
             isEnabled ? SoftLimitStatus.REVERSE : SoftLimitStatus.REVERSE_DISABLE
         );
     }
+
+    @Override
+    public void enableReverseSoftLimit(boolean isEnabled, int timeoutMs) {
+        enableReverseSoftLimit(isEnabled);
+    }
+
 
     @Override
     public void set_kP(int pidSlotID, double kP) {
@@ -407,6 +441,12 @@ public class GhostMotorDev implements IGreenMotor {
     }
 
     @Override
+    public void setPeakOutputClosedLoop(int pidSlotID, double peakOutput, int timeoutMs) {
+
+    }
+
+
+    @Override
     public void setIAccumulation(int closedLoopSlotID, double IAccum) {
 
     }
@@ -432,8 +472,19 @@ public class GhostMotorDev implements IGreenMotor {
     }
 
     @Override
+    public void setMotionProfileMaxVelocity(double maxVelocity, int timeoutMs) {
+        setMotionProfileMaxVelocity(maxVelocity);
+    }
+
+
+    @Override
     public void setMotionProfileMaxAcceleration(double maxAcceleration) {
         motionMagicAccel = maxAcceleration;
+    }
+
+    @Override
+    public void setMotionProfileMaxAcceleration(double maxAcceleration, int timeoutMs) {
+        setMotionProfileMaxAcceleration(maxAcceleration);
     }
 
     @Override
