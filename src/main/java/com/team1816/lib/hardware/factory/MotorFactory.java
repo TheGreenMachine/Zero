@@ -210,9 +210,9 @@ public class MotorFactory {
         } else {
             FeedbackDeviceType deviceType = FeedbackDeviceType.NO_SENSOR;
             switch (motor.get_MotorType()) {
-                case TALONFX -> deviceType = FeedbackDeviceType.INTEGRATED_SENSOR;
-                case TALONSRX, VICTORSPX, GHOST -> deviceType = FeedbackDeviceType.RELATIVE_MAG_ENCODER;
-                case SPARKMAX -> deviceType = FeedbackDeviceType.HALL_SENSOR; //I'm pretty sure at least.
+                case TalonFX -> deviceType = FeedbackDeviceType.INTEGRATED_SENSOR;
+                case TalonSRX, VictorSPX, GHOST -> deviceType = FeedbackDeviceType.RELATIVE_MAG_ENCODER;
+                case SparkMax -> deviceType = FeedbackDeviceType.HALL_SENSOR; //I'm pretty sure at least.
             }
             motor.selectFeedbackSensor(deviceType);
         }

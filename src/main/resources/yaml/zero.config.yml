@@ -3,42 +3,42 @@ subsystems:
         implemented: true
         motors:
             FLDr:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: FLDr
                 id: 11
                 invertMotor: false
             FRDr:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: FLDr
                 id: 9
                 invertMotor: true
             RLDr:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: FLDr
                 id: 18
                 invertMotor: false
             RRDr:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: FLDr
                 id: 1
                 invertMotor: true
             FLAz:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: FLDr
                 id: 10
                 invertMotor: false
             FRAz:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: FLDr
                 id: 8
                 invertMotor: false
             RLAz:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: FLDr
                 id: 19
                 invertMotor: false
             RRAz:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: FLDr
                 id: 2
                 invertMotor: false
@@ -117,17 +117,17 @@ subsystems:
         implemented: true
         motors:
             angleMotorMain:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: angleMotorMain
                 id: 6
                 invertMotor: false
             angleMotorFollower:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: angleMotorFollower
                 id: 7
                 invertMotor: false
             extensionMotor:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: angleMotorMain
                 id: 15
                 invertMotor: false
@@ -184,12 +184,12 @@ subsystems:
         implemented: true
         motors:
             pivotMotor:
-                motorType: SPARKMAX
+                motorType: SparkMax
                 motorName: pivotMotor
                 id: 13
                 invertMotor: false
             intakeMotor:
-                motorType: SPARKMAX
+                motorType: SparkMax
                 motorName: intakeMotor
                 id: 14
                 currentLimit: 30

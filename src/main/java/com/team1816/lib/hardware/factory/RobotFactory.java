@@ -77,7 +77,7 @@ public class RobotFactory {
         if (subsystem.implemented) {
             if (isHardwareValid(subsystem.motors, name)) {
                 switch (subsystem.motors.get(name).motorType) {
-                    case TALONFX -> {
+                    case TalonFX -> {
                         motor =
                             MotorFactory.createDefaultTalon(
                                 subsystem.motors.get(name).id,
@@ -89,7 +89,7 @@ public class RobotFactory {
                                 config.infrastructure.canivoreBusName
                             );
                     }
-                    case TALONSRX -> {
+                    case TalonSRX -> {
                         motor =
                             MotorFactory.createDefaultTalon(
                                 subsystem.motors.get(name).id,
@@ -101,7 +101,7 @@ public class RobotFactory {
                                 config.infrastructure.canivoreBusName
                             );
                     }
-                    case SPARKMAX -> {
+                    case SparkMax -> {
                         motor =
                             MotorFactory.createSpark(
                                 subsystem.motors.get(name).id,
@@ -110,7 +110,7 @@ public class RobotFactory {
                                 pidConfigs
                             );
                     }
-                    case VICTORSPX -> {
+                    case VictorSPX -> {
                         GreenLogger.log("Victors cannot be main!");
                     }
                 }
@@ -153,7 +153,7 @@ public class RobotFactory {
         if (subsystem.implemented && main != null) {
             if (isHardwareValid(subsystem.motors, name)) {
                 switch(subsystem.motors.get(name).motorType) {
-                    case TALONFX -> {
+                    case TalonFX -> {
                         followerMotor =
                             MotorFactory.createFollowerTalon(
                                 subsystem.falcons.get(name),
@@ -165,7 +165,7 @@ public class RobotFactory {
                                 config.infrastructure.canivoreBusName
                             );
                     }
-                    case TALONSRX -> {
+                    case TalonSRX -> {
                         followerMotor =
                             MotorFactory.createFollowerTalon(
                                 subsystem.talons.get(name),
@@ -177,7 +177,7 @@ public class RobotFactory {
                                 config.infrastructure.canivoreBusName
                             );
                     }
-                    case SPARKMAX -> {
+                    case SparkMax -> {
                         MotorFactory.createFollowerSpark(
                             subsystem.sparkmaxes.get(name),
                             name,
@@ -185,7 +185,7 @@ public class RobotFactory {
                             main
                         );
                     }
-                    case VICTORSPX -> {
+                    case VictorSPX -> {
                         followerMotor =
                             MotorFactory.createFollowerVictor(
                                 subsystem.victors.get(name),

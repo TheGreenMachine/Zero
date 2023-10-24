@@ -4,22 +4,22 @@ subsystems:
         implemented: true
         motors:
             leftMain:
-                motorType: TALONSRX
+                motorType: TalonSRX
                 motorName: leftMain
                 id: 15
                 invertMotor: true
             leftFollower:
-                motorType: TALONSRX
+                motorType: TalonSRX
                 motorName: leftFollower
                 id: -1
                 invertMotor: false
             rightMain:
-                motorType: TALONSRX
+                motorType: TalonSRX
                 motorName: rightMain
                 id: 13
                 invertMotor: false
             rightFollower:
-                motorType: TALONSRX
+                motorType: TalonSRX
                 motorName: rightFollower
                 id: -1
                 invertMotor: false
@@ -49,7 +49,7 @@ subsystems:
         implemented: false
         motors:
             turretMotor:
-                motorType: TALONSRX
+                motorType: TalonSRX
                 motorName: turretMotor
                 id: 3
                 invertMotor: false

@@ -20,7 +20,6 @@ public interface IGreenMotor {
 
     int getDeviceID();
 
-
     /** Active Motor Information */
     //From motor
     double getOutputCurrent();
@@ -220,7 +219,7 @@ public interface IGreenMotor {
     void clearMotionProfileTrajectoryBuffer();
 
     /**
-     * Updates the tracked enabled/disabled status of a motor's soft limit
+     * Updates the tracked enabled/disabled status of a motor's soft limits
      *
      * @see SoftLimitStatus
      * @param softLimitStatus The current soft limit status of the motor
@@ -262,10 +261,10 @@ public interface IGreenMotor {
     }
 
     enum MotorType {
-        TALONFX,
-        TALONSRX,
-        VICTORSPX,
-        SPARKMAX,
+        TalonFX,
+        TalonSRX,
+        VictorSPX,
+        SparkMax,
         GHOST
     }
 

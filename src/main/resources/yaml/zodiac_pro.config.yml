@@ -3,32 +3,32 @@ subsystems:
         implemented: true
         motors:
             leftMain:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: leftMain
                 id: 17
                 invertMotor: true
             leftFollower:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: leftFollower
                 id: -1
                 invertMotor: false
             leftFollowerTwo:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: leftFollowerTwo
                 id: -1
                 invertMotor: false
             rightMain:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: rightMain
                 id: 14
                 invertMotor: false
             rightFollower:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: rightFollower
                 id: -1
                 invertMotor: false
             rightFollowerTwo:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: rightFollowerTwo
                 id: -1
                 invertMotor: false
@@ -73,7 +73,7 @@ subsystems:
                 allowableError: 40
         motors:
             turretMotor:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: turretMotor
                 id: 13
                 invertMotor: true
@@ -90,12 +90,12 @@ subsystems:
         implemented: true
         motors:
             shooterMain:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: shooterMain
                 id: 2
                 invertMotor: false
             shooterFollower:
-                motorType: TALONFX
+                motorType: TalonFX
                 motorName: shooterFollower
                 id: -1
                 invertMotor: false
@@ -121,7 +121,7 @@ subsystems:
         implemented: true
         motors:
             elevator:
-                motorType: TALONSRX
+                motorType: TalonSRX
                 motorName: elevator
                 id: 5
                 invertMotor: true
@@ -143,7 +143,7 @@ subsystems:
         implemented: true
         motors:
             spindexer:
-                motorType: TALONSRX
+                motorType: TalonSRX
                 motorName: spindexer
                 id: 4
                 invertMotor: true
@@ -159,7 +159,7 @@ subsystems:
         implemented: true
         motors:
             intake: # maxVelTicks100ms 10617
-                motorType: TALONSRX
+                motorType: TalonSRX
                 motorName: intake
                 id: 11
                 invertMotor: true

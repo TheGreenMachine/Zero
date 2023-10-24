@@ -47,7 +47,7 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
 
     @Override
     public IGreenMotor.MotorType get_MotorType() {
-        return IGreenMotor.MotorType.SPARKMAX;
+        return IGreenMotor.MotorType.SparkMax;
     }
 
     @Override
