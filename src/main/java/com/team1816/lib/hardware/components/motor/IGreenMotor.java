@@ -6,46 +6,108 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.team1816.lib.hardware.components.motor.configurations.*;
 
 public interface IGreenMotor {
-    //TODO sort & annotate
+    //TODO Annotate
+    //TODO sort child class methods
 
     //Some getter methods add an underscore after get to avoid conflicts in LazyMotor classes
 
+    /** Static Motor Information */
     String getName();
 
     MotorType get_MotorType();
 
-    void selectFeedbackSensor(FeedbackDeviceType deviceType);
+    int getFirmwareVersion();
 
+    int getDeviceID();
+
+
+    /** Active Motor Information */
+    //From motor
+    double getOutputCurrent();
+
+    boolean getInverted();
+
+    double getMotorTemperature();
+
+    double getBusVoltage();
+
+    boolean hasResetOccurred();
+
+    double getSupplyCurrent();
+
+    //From encoder
+    double getMotorOutputPercent();
+
+    double getMotorOutputVoltage();
+
+    double getSensorPosition(int closedLoopSlotID);
+
+    double getSensorVelocity(int closedLoopSlotID);
+
+    double getClosedLoopError();
+
+    double getIAccum(int closedLoopSlotID);
+
+    double getErrorDerivative(int closedLoopSlotID);
+
+    int getQuadraturePosition();
+
+    int getPulseWidthPosition();
+
+    //From us! Sometimes.
+    GreenControlMode get_ControlMode();
+
+    boolean isVoltageCompensationEnabled();
+
+    boolean isFollower();
+
+    SoftLimitStatus getSoftLimitStatus();
+
+
+    //Faults
+        //Why are these Strings? Because I refuse to write a translator method with 50ish cases. Just no.
+    String get_LastError();
+
+    String get_Faults();
+
+    String get_StickyFaults();
+
+
+    /** Control */
+    void set(GreenControlMode controlMode, double demand);
+
+    void neutralOutput();
+
+    void setSensorPosition(double sensorPosition, int closedLoopSlotID);
+
+    void setSensorPosition(double sensorPosition, int closedLoopSlotID, int timeoutMs);
+
+    void follow(IGreenMotor leader);
+
+    void setQuadraturePosition(int quadraturePosition);
+
+    /** Configurations */
+    // Current limits
     void configCurrentLimit(SupplyCurrentLimitConfiguration configuration);
 
     void configCurrentLimit(SupplyCurrentLimitConfiguration configuration, int timeoutMs);
 
     void configCurrentLimit(int current);
 
+    // Status frames
     void setPeriodicStatusFramePeriod(PeriodicStatusFrame statusFrame, int periodms);
 
     int getPeriodicStatusFramePeriod(PeriodicStatusFrame statusFrame);
 
-    double getOutputCurrent();
-
-    void setVelocityMeasurementPeriod(int periodms);
-
-    void set(GreenControlMode controlMode, double demand);
-
+    // Limit Switches
     void configForwardLimitSwitch(boolean normallyOpen);
 
     void configReverseLimitSwitch(boolean normallyOpen);
 
-    void neutralOutput();
+    void enableLimitSwitches(boolean isEnabled);
 
-    void setNeutralMode(NeutralMode neutralMode);
 
-    void setSensorPhase(boolean isInverted);
-
-    void setInverted(boolean isInverted);
-
-    boolean getInverted();
-
+    // Ramp rates
     void configOpenLoopRampRate(double secondsNeutralToFull);
 
     void configOpenLoopRampRate(double secondsNeutralToFull, int timeoutMs);
@@ -54,6 +116,7 @@ public interface IGreenMotor {
 
     void configClosedLoopRampRate(double secondsNeutralToFull, int timeoutMs);
 
+    // Peak Outputs
     void config_PeakOutputForward(double percentOut);
 
     void config_PeakOutputForward(double percentOut, int timeoutMs);
@@ -62,6 +125,7 @@ public interface IGreenMotor {
 
     void config_PeakOutputReverse(double percentOut, int timeoutMs);
 
+    // Nominal Outputs
     void config_NominalOutputForward(double percentOut);
 
     void config_NominalOutputForward(double percentOut, int timeoutMs);
@@ -70,30 +134,12 @@ public interface IGreenMotor {
 
     void config_NominalOutputReverse(double percentOut, int timeoutMs);
 
-    void config_NeutralDeadband(double deadbandPercent);
-
+    // Voltage compensation
     void configVoltageCompensation(double voltage);
 
     void enableVoltageCompensation(boolean isEnabled);
 
-    double getBusVoltage();
-
-    double getMotorOutputPercent();
-
-    double getMotorOutputVoltage();
-
-    double getMotorTemperature();
-
-    double getSensorPosition(int closedLoopSlotID);
-
-    double getSensorVelocity(int closedLoopSlotID);
-
-    void setSensorPosition(double sensorPosition, int closedLoopSlotID);
-
-    void setSensorPosition(double sensorPosition, int closedLoopSlotID, int timeoutMs);
-
-    void enableLimitSwitches(boolean isEnabled);
-
+    // Soft limits
     void configForwardSoftLimit(double forwardSoftLimit);
 
     void configForwardSoftLimit(double forwardSoftLimit, int timeoutMs);
@@ -112,6 +158,25 @@ public interface IGreenMotor {
 
     void enableSoftLimits(boolean isEnabled);
 
+    //Misc
+    void selectFeedbackSensor(FeedbackDeviceType deviceType);
+
+    void setVelocityMeasurementPeriod(int periodms);
+
+    void setNeutralMode(NeutralMode neutralMode);
+
+    void setSensorPhase(boolean isInverted);
+
+    void setInverted(boolean isInverted);
+
+    void config_NeutralDeadband(double deadbandPercent);
+
+    void restore_FactoryDefaults(int timeoutMs);
+
+    void configControlFramePeriod(ControlFrame controlFrame, int periodms);
+
+    /** PID, Motion Profiling, and other motion goodies */
+    //PID
     void set_kP(int pidSlotID, double kP);
 
     void set_kI(int pidSlotID, double kI);
@@ -128,24 +193,20 @@ public interface IGreenMotor {
 
     void set_iZone(int pidSlotID, double iZone);
 
+    void setMaxIAccumulation(int pidSlotID, double maxIAccum);
+
+    void setIAccumulation(int closedLoopSlotID, double IAccum);
+
+    //Motion Miscellaneous
     void configAllowableErrorClosedLoop(int pidSlotID, double allowableError);
 
     void configAllowableErrorClosedLoop(int pidSlotID, double allowableError, int timeoutMs);
-
-    void setMaxIAccumulation(int pidSlotID, double maxIAccum);
 
     void setPeakOutputClosedLoop(int pidSlotID, double peakOutput);
 
     void setPeakOutputClosedLoop(int pidSlotID, double peakOutput, int timeoutMs);
 
-    void setIAccumulation(int closedLoopSlotID, double IAccum);
-
-    double getClosedLoopError();
-
-    double getIAccum(int closedLoopSlotID);
-
-    double getErrorDerivative(int closedLoopSlotID);
-
+    //Motion Profiling
     void setMotionProfileMaxVelocity(double maxVelocity);
 
     void setMotionProfileMaxVelocity(double maxVelocity, int timeoutMs);
@@ -157,41 +218,6 @@ public interface IGreenMotor {
     void configMotionCurve(MotionCurveType motionCurveType, int curveStrength);
 
     void clearMotionProfileTrajectoryBuffer();
-
-    //Why are these Strings? Because I refuse to write a translator method with 50ish cases. Just no.
-    String get_LastError();
-
-    String get_Faults();
-
-    String get_StickyFaults();
-
-    int getFirmwareVersion();
-
-    boolean hasResetOccurred();
-
-    int getDeviceID();
-
-    GreenControlMode get_ControlMode();
-
-    void follow(IGreenMotor leader);
-
-    double getSupplyCurrent();
-
-    void restore_FactoryDefaults(int timeoutMs);
-
-    boolean isVoltageCompensationEnabled();
-
-    int getQuadraturePosition();
-
-    void setQuadraturePosition(int quadraturePosition);
-
-    int getPulseWidthPosition();
-
-    boolean isFollower();
-
-    SoftLimitStatus getSoftLimitStatus();
-
-    void configControlFramePeriod(ControlFrame controlFrame, int periodms);
 
     /**
      * Updates the tracked enabled/disabled status of a motor's soft limit

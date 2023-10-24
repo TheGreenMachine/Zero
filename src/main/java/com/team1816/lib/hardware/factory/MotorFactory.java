@@ -194,6 +194,7 @@ public class MotorFactory {
                     motor.set_kP(slotNum, slotConfig.kP);
                     motor.set_kI(slotNum, slotConfig.kI);
                     motor.set_kD(slotNum, slotConfig.kD);
+                    motor.set_kF(slotNum, slotConfig.kF);
                     motor.set_iZone(slotNum, slotConfig.iZone);
                     motor.configAllowableErrorClosedLoop(slotNum, slotConfig.allowableError);
                 }
