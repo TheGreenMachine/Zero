@@ -236,9 +236,24 @@ public class MotorFactory {
             motor.configOpenLoopRampRate(OPEN_LOOP_RAMP_RATE);
             motor.configClosedLoopRampRate(CLOSED_LOOP_RAMP_RATE);
 
+            // Current limit defaults
+            double currentLimit = 40;
+            double currentLimitThreshold = 80;
+            double currentLimitTriggerTime = 1;
+
+            if (motorConfiguration.currentLimit != null) {
+                currentLimit = motorConfiguration.currentLimit;
+            }
+            if (motorConfiguration.currentLimitThreshold != null) {
+                currentLimitThreshold = motorConfiguration.currentLimitThreshold;
+            }
+            if (motorConfiguration.currentLimitTriggerTime != null) {
+                currentLimitTriggerTime = motorConfiguration.currentLimitTriggerTime;
+            }
+
             //Current limit configuration does NOT need to be done differently for SRXs. Old method is dumb.
             motor.configCurrentLimit(
-                new SupplyCurrentLimitConfiguration(ENABLE_CURRENT_LIMIT, motorConfiguration.currentLimit, 80, 1)
+                new SupplyCurrentLimitConfiguration(ENABLE_CURRENT_LIMIT, currentLimit, currentLimitThreshold, currentLimitTriggerTime)
             );
 
 

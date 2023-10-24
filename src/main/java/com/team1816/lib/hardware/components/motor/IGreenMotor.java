@@ -20,7 +20,6 @@ public interface IGreenMotor {
 
     void configCurrentLimit(SupplyCurrentLimitConfiguration configuration, int timeoutMs);
 
-
     void configCurrentLimit(int current);
 
     void setPeriodicStatusFramePeriod(PeriodicStatusFrame statusFrame, int periodms);

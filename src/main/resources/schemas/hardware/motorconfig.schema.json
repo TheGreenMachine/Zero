@@ -15,6 +15,12 @@
         "currentLimit": {
             "type": "number"
         },
+        "currentLimitThreshold" : {
+            "type" : "number"
+        },
+        "currentLimitTriggerTime" : {
+            "type" : "number"
+        },
         "invertMotor" : {
             "type": "boolean"
         }

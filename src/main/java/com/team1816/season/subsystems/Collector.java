@@ -107,12 +107,6 @@ public class Collector extends Subsystem {
         pivotCubeShelfPosition = (factory.getConstant(NAME, "shelfCubeAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
         pivotFloorPosition = (factory.getConstant(NAME, "floorAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
 
-        intakeMotor.configCurrentLimit( //TODO move out of class
-            new SupplyCurrentLimitConfiguration(
-                true, factory.getConstant(NAME, "intakeStallAmps", 5), 0, 0),
-            Constants.kCANTimeoutMs
-        );
-
         intakeMotor.configOpenLoopRampRate(0.25, Constants.kCANTimeoutMs);
 
         allowablePivotError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
