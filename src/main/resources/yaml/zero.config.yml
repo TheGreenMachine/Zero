@@ -47,9 +47,6 @@ subsystems:
             FREnc: 27
             RLEnc: 28
             RREnc: 26
-        invertMotor:
-            - FRDr
-            - RRDr
         invertCanCoder:
             - FREnc
             - BREnc

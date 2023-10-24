@@ -1,15 +1,37 @@
 subsystems:
     drivetrain:
         implemented: true
-        falcons:
-            leftMain: 17
-            leftFollower: -1
-            leftFollowerTwo: -1
-            rightMain: 14
-            rightFollower: -1
-            rightFollowerTwo: -1
-        invertMotor:
-            - leftMain
+        motors:
+            leftMain:
+                motorType: TALONFX
+                motorName: leftMain
+                id: 17
+                invertMotor: true
+            leftFollower:
+                motorType: TALONFX
+                motorName: leftFollower
+                id: -1
+                invertMotor: false
+            leftFollowerTwo:
+                motorType: TALONFX
+                motorName: leftFollowerTwo
+                id: -1
+                invertMotor: false
+            rightMain:
+                motorType: TALONFX
+                motorName: rightMain
+                id: 14
+                invertMotor: false
+            rightFollower:
+                motorType: TALONFX
+                motorName: rightFollower
+                id: -1
+                invertMotor: false
+            rightFollowerTwo:
+                motorType: TALONFX
+                motorName: rightFollowerTwo
+                id: -1
+                invertMotor: false
         pidConfig:
             slot0:
                 kP: 0.1 # 0.18
@@ -49,10 +71,12 @@ subsystems:
                 kD: 40.5
                 kF: 0 # Should be 0 for position control
                 allowableError: 40
-        talons:
-            turretMotor: 13
-        invertMotor:
-            - turretMotor
+        motors:
+            turretMotor:
+                motorType: TALONFX
+                motorName: turretMotor
+                id: 13
+                invertMotor: true
         invertSensorPhase:
             - turretMotor
         constants:
@@ -64,9 +88,17 @@ subsystems:
             turretPPR: 4096
     shooter:
         implemented: true
-        falcons:
-            shooterMain: 2
-            shooterFollower: -1
+        motors:
+            shooterMain:
+                motorType: TALONFX
+                motorName: shooterMain
+                id: 2
+                invertMotor: false
+            shooterFollower:
+                motorType: TALONFX
+                motorName: shooterFollower
+                id: -1
+                invertMotor: false
         solenoids:
             hood: -1
         pidConfig:
@@ -87,8 +119,12 @@ subsystems:
             coast: 0
     elevator:
         implemented: true
-        talons:
-            elevator: 5
+        motors:
+            elevator:
+                motorType: TALONSRX
+                motorName: elevator
+                id: 5
+                invertMotor: true
         pidConfig:
             slot0:
                 kP: 0.060
@@ -96,8 +132,6 @@ subsystems:
                 kD: 2
                 kF: 0.05
                 allowableError: 3000
-        invertMotor:
-            - elevator
         constants:
             isVelocity: 0
             maxVelTicks100ms: 20000
@@ -107,12 +141,14 @@ subsystems:
             intakePow: 0
     spindexer:
         implemented: true
-        talons:
-            spindexer: 4
+        motors:
+            spindexer:
+                motorType: TALONSRX
+                motorName: spindexer
+                id: 4
+                invertMotor: true
         solenoids:
             feederFlap: -1
-        invertMotor:
-            - spindexer
         constants:
             collectPow: 0.5
             indexPow: -0.5
@@ -121,10 +157,12 @@ subsystems:
             firePow: 0.85
     collector:
         implemented: true
-        talons:
-            intake: 11 # maxVelTicks100ms 10617
-        invertMotor:
-            - intake
+        motors:
+            intake: # maxVelTicks100ms 10617
+                motorType: TALONSRX
+                motorName: intake
+                id: 11
+                invertMotor: true
         solenoids:
             arm: 0
         pidConfig:

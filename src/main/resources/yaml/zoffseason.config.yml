@@ -1,23 +1,47 @@
 subsystems:
     drivetrain:
         implemented: true
-        talons:
-            FLAz: 2
-            FRAz: 12
-            RLAz: 10
-            RRAz: 15
-        falcons:
-            FLDr: 3
-            FRDr: 13
-            RLDr: 1
-            RRDr: 14
-        invertMotor:
-            - FRDr
-            - RRDr
-            - FLAz
-            - FRAz
-            - RLAz
-            - RRAz
+        motors:
+            FLDr:
+                motorType: TALONFX
+                motorName: FLDr
+                id: 3
+                invertMotor: false
+            FRDr:
+                motorType: TALONFX
+                motorName: FLDr
+                id: 13
+                invertMotor: true
+            RLDr:
+                motorType: TALONFX
+                motorName: FLDr
+                id: 1
+                invertMotor: false
+            RRDr:
+                motorType: TALONFX
+                motorName: FLDr
+                id: 14
+                invertMotor: true
+            FLAz:
+                motorType: TALONSRX
+                motorName: FLDr
+                id: 2
+                invertMotor: true
+            FRAz:
+                motorType: TALONSRX
+                motorName: FLDr
+                id: 12
+                invertMotor: true
+            RLAz:
+                motorType: TALONSRX
+                motorName: FLDr
+                id: 10
+                invertMotor: true
+            RRAz:
+                motorType: TALONSRX
+                motorName: FLDr
+                id: 15
+                invertMotor: true
         invertSensorPhase:
             - FLAz
             - FRAz
