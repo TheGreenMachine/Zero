@@ -25,10 +25,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.*;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 import static com.team1816.lib.controlboard.ControlUtils.createAction;
 import static com.team1816.lib.controlboard.ControlUtils.createHoldAction;
@@ -201,18 +203,41 @@ public class Robot extends TimedRobot {
                     } else {
                         logFileDir = System.getProperty("user.dir") + "/";
                     }
+                } else { // rio disk space management
+                    File root = new File("/");
+                    while (root.getUsableSpace() < (long) (Constants.kLoggingDiskPartitionRatio * root.getTotalSpace())) {
+                        System.out.println("Current Disk Usage: " + ((double) root.getUsableSpace() / root.getTotalSpace()) * 100 + "%");
+                        File oldestLog = null, logDir = new File(logFileDir);
+                        long ols = Long.MAX_VALUE;
+                        for (String f : Objects.requireNonNull(logDir.list())) {
+                            File cur = new File(f);
+                            // retains official match logs (practice, qualification, elimination)
+                            if (!(f.contains("P") || f.contains("Q") || f.contains("E")) && ols > cur.lastModified()) { // smaller value indicates older file
+                                ols = cur.lastModified();
+                                oldestLog = cur;
+                            }
+                        }
+                        if (oldestLog != null && oldestLog.delete()) {
+                            System.out.println("Deleting File: " + oldestLog);
+                        } else {
+                            System.out.println("Unable to Delete Log Files - Manual Deletion Required");
+                            DriverStation.reportError("Allotted Disk Space Exceeded - Unable to Delete Log Files", true);
+                            break;
+                        }
+                    }
+                    System.out.println("Current Disk Usage: " + (100) * ((double) root.getUsableSpace() / root.getTotalSpace()) + "%");
                 }
-                var filePath = logFileDir + robotName + "_" + logFile + ".bag";
-                DataLogManager.start();
-                DriverStation.startDataLog(DataLogManager.getLog(), true);
+                // start logging
+                DataLogManager.start(logFileDir, "", Constants.kLooperDt);
+                DriverStation.startDataLog(DataLogManager.getLog(), false);
             }
 
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
-            // zeroing ypr - (-90) b/c our pigeon is mounted with the "y" axis facing forward
+            // zeroing ypr - (-90) pigeon is mounted with the "y" axis facing forward
             infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
             subsystemManager.zeroSensors();
-            faulted = true; // elevator not zeroed on bootup - letting ppl know
+            faulted = true; // robot faulted: elevator not zeroed on start-up
 
             /** Register ControlBoard */
             controlBoard = Injector.get(IControlBoard.class);
