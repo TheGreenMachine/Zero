@@ -14,6 +14,7 @@ import com.team1816.lib.hardware.components.ledManager.CanifierImpl;
 import com.team1816.lib.hardware.components.ledManager.GhostLEDManager;
 import com.team1816.lib.hardware.components.ledManager.ILEDManager;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
+import com.team1816.lib.hardware.components.motor.configurations.FeedbackDeviceType;
 import com.team1816.lib.hardware.components.pcm.*;
 import com.team1816.lib.hardware.components.sensor.GhostProximitySensor;
 import com.team1816.lib.hardware.components.sensor.IProximitySensor;
@@ -75,7 +76,7 @@ public class RobotFactory {
 
         // Identifying motor
         if (subsystem.implemented) {
-            if (isHardwareValid(subsystem.motors, name)) {
+            if (isMotorValid(subsystem.motors, name)) {
                 switch (subsystem.motors.get(name).motorType) {
                     case TalonFX -> {
                         motor =
@@ -107,7 +108,8 @@ public class RobotFactory {
                                 subsystem.motors.get(name).id,
                                 name,
                                 subsystem,
-                                pidConfigs
+                                pidConfigs,
+                                FeedbackDeviceType.HALL_SENSOR
                             );
                     }
                     case VictorSPX -> {
@@ -151,7 +153,7 @@ public class RobotFactory {
         IGreenMotor followerMotor = null;
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented && main != null) {
-            if (isHardwareValid(subsystem.motors, name)) {
+            if (isMotorValid(subsystem.motors, name)) {
                 switch(subsystem.motors.get(name).motorType) {
                     case TalonFX -> {
                         followerMotor =
@@ -182,6 +184,8 @@ public class RobotFactory {
                             subsystem.sparkmaxes.get(name),
                             name,
                             subsystem,
+                            subsystem.pidConfig,
+                            FeedbackDeviceType.HALL_SENSOR,
                             main
                         );
                     }
@@ -190,7 +194,9 @@ public class RobotFactory {
                             MotorFactory.createFollowerVictor(
                                 subsystem.victors.get(name),
                                 name,
-                                main
+                                main,
+                                subsystem,
+                                subsystem.pidConfig
                             );
                     }
                 }
@@ -262,7 +268,7 @@ public class RobotFactory {
     public ISolenoid getSolenoid(String subsystemName, String name) {
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented) {
-            if (isSubsystemHardwareValid(subsystem.solenoids, name) && isPcmEnabled()) {
+            if (isHardwareValid(subsystem.solenoids, name) && isPcmEnabled()) {
                 return new SolenoidImpl(
                     config.infrastructure.pcmId,
                     config.infrastructure.pcmIsRev
@@ -339,8 +345,7 @@ public class RobotFactory {
         return new GhostCompressor();
     }
 
-    //For use with non-motor subsystems
-    private boolean isSubsystemHardwareValid(Map<String, Integer> map, String name) {
+    private boolean isHardwareValid(Map<String, Integer> map, String name) {
         if (map != null) {
             Integer hardwareId = map.get(name);
             return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
@@ -348,16 +353,16 @@ public class RobotFactory {
         return false;
     }
 
-    private boolean isHardwareValid(Map<String, MotorConfiguration> map, String name) {
-        if (map != null) {
-           Integer hardwareId = map.get(name).id;
-           return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
-        }
-        return false;
-    }
-
     private boolean isHardwareValid(Integer hardwareId) {
         return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
+    }
+
+    private boolean isMotorValid(Map<String, MotorConfiguration> map, String name) {
+        if (map != null) {
+            Integer hardwareId = map.get(name).id;
+            return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
+        }
+        return false;
     }
 
     public Double getConstant(String name) {

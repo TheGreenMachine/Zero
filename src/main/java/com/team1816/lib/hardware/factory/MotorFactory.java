@@ -113,16 +113,24 @@ public class MotorFactory {
         return motor;
     }
 
-    public static IGreenMotor createDefaultVictor(int id, String name) {
-        return createVictor(id, name);
+    public static IGreenMotor createDefaultVictor(
+        int id,
+        String name,
+        SubsystemConfig subsystem,
+        Map<String, PIDSlotConfiguration> pidConfigList,
+        int remoteSensorId
+    ) {
+        return createVictor(id, name,subsystem,pidConfigList,remoteSensorId);
     }
 
     public static IGreenMotor createFollowerVictor(
         int id,
         String name,
-        IGreenMotor main
+        IGreenMotor main,
+        SubsystemConfig subsystem,
+        Map<String, PIDSlotConfiguration> pidConfigList
     ) {
-        final IGreenMotor victor = createVictor(id, name);
+        final IGreenMotor victor = createVictor(id, name,subsystem,pidConfigList,-1);
         GreenLogger.log(
             "Slaving victor on " + id + " to talon on " + main.getDeviceID()
         );
@@ -130,10 +138,16 @@ public class MotorFactory {
         return victor;
     }
 
-    // This is currently treating a VictorSPX, which implements IMotorController as an IGreenMotor, which implements IMotorControllerEnhanced
-    public static IGreenMotor createVictor(int id, String name) {
+    public static IGreenMotor createVictor(
+        int id,
+        String name,
+        SubsystemConfig subsystem,
+        Map<String, PIDSlotConfiguration> pidConfigList,
+        int remoteSensorId
+    ) {
         IGreenMotor victor = new LazyVictorSPX(id, name);
 
+        configMotor(victor,name,subsystem,pidConfigList,remoteSensorId);
         victor.configReverseLimitSwitch(true);
         return victor;
     }
@@ -142,16 +156,11 @@ public class MotorFactory {
         int id,
         String name,
         SubsystemConfig subsystem,
-        Map<String, PIDSlotConfiguration> pidConfigList
+        Map<String, PIDSlotConfiguration> pidConfigList,
+        FeedbackDeviceType deviceType
     ) {
-        return new LazySparkMax(id, name);
-    }
-
-    public static IGreenMotor createSpark(
-        int id,
-        String name,
-        SubsystemConfig subsystem
-    ) {
+        IGreenMotor spark = new LazySparkMax(id, name);
+        configMotor(spark,name,subsystem,pidConfigList,0);
         return new LazySparkMax(id, name);
     }
 
@@ -159,9 +168,11 @@ public class MotorFactory {
         int id,
         String name,
         SubsystemConfig subsystem,
+        Map<String, PIDSlotConfiguration> pidConfigList,
+        FeedbackDeviceType deviceType,
         IGreenMotor leader
     ) {
-        LazySparkMax followerSpark = new LazySparkMax(id,name);
+        IGreenMotor followerSpark = createSpark(id,name,subsystem,pidConfigList,deviceType);
         followerSpark.follow(leader);
         followerSpark.setInverted(leader.getInverted());
         return followerSpark;
@@ -182,6 +193,22 @@ public class MotorFactory {
         SubsystemConfig subsystem,
         Map<String, PIDSlotConfiguration> pidConfigList,
         int remoteSensorId
+    ) {
+        FeedbackDeviceType deviceType = FeedbackDeviceType.NO_SENSOR;
+        if (remoteSensorId == 0) {
+            deviceType = FeedbackDeviceType.REMOTE_SENSOR_0;
+        } else if (remoteSensorId == 1) {
+            deviceType = FeedbackDeviceType.REMOTE_SENSOR_1;
+        }
+        configMotor(motor, name, subsystem, pidConfigList, deviceType);
+    }
+
+    private static void configMotor(
+        IGreenMotor motor,
+        String name,
+        SubsystemConfig subsystem,
+        Map<String, PIDSlotConfiguration> pidConfigList,
+        FeedbackDeviceType feedbackDeviceType
     ) {
         MotorConfiguration motorConfiguration = subsystem.motors.get(name);
         boolean isTalon = !(motor instanceof LazySparkMax || motor instanceof GhostMotor); // Talon also refers to VictorSPX, isCTRE just looks worse :)
@@ -205,17 +232,9 @@ public class MotorFactory {
         motor.selectPIDSlot(0,0);
 
         // Configuring feedback sensor
-        if (remoteSensorId >= 0) {
-            motor.selectFeedbackSensor(FeedbackDeviceType.REMOTE_SENSOR_0);
-        } else {
-            FeedbackDeviceType deviceType = FeedbackDeviceType.NO_SENSOR;
-            switch (motor.get_MotorType()) {
-                case TalonFX -> deviceType = FeedbackDeviceType.INTEGRATED_SENSOR;
-                case TalonSRX, VictorSPX, GHOST -> deviceType = FeedbackDeviceType.RELATIVE_MAG_ENCODER;
-                case SparkMax -> deviceType = FeedbackDeviceType.HALL_SENSOR; //I'm pretty sure at least.
-            }
-            motor.selectFeedbackSensor(deviceType);
-        }
+        motor.selectFeedbackSensor(feedbackDeviceType);
+
+
         // for newly attached motors only
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
             GreenLogger.log("Resetting motor factory defaults");
@@ -297,6 +316,7 @@ public class MotorFactory {
         // CTRE-Exclusive configurations
         if (isTalon) {
             //Casting might not work. Make sure to check.
+            int remoteSensorId = feedbackDeviceType == FeedbackDeviceType.REMOTE_SENSOR_0 ? 0 : 1;
             ((BaseMotorController)motor).configRemoteFeedbackFilter(remoteSensorId, RemoteSensorSource.CANCoder, 0);
             ((BaseMotorController)motor).configClearPositionOnLimitF(false, kTimeoutMs);
             ((BaseMotorController)motor).configClearPositionOnLimitR(false, kTimeoutMs);
