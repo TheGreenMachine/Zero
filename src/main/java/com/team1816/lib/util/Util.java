@@ -92,14 +92,6 @@ public class Util {
         return angle;
     }
 
-    /**
-     * Returns whichever int in an array a given int is closest to
-     *
-     * @see <a href="https://stackoverflow.com/a/13318769">Credit To Chris Hayes under the WTFPL license</a>
-     * @param numbers The array of ints
-     * @param value The given int
-     * @return The element that the given value is closest to
-     */
     public static int closestTo(Integer[] numbers, int value) {
         int distance = Math.abs(numbers[0] - value);
         int idx = 0;
