@@ -160,7 +160,7 @@ public class MotorFactory {
         FeedbackDeviceType deviceType
     ) {
         IGreenMotor spark = new LazySparkMax(id, name);
-        configMotor(spark,name,subsystem,pidConfigList,0);
+        configMotor(spark,name,subsystem,pidConfigList,deviceType);
         return new LazySparkMax(id, name);
     }
 

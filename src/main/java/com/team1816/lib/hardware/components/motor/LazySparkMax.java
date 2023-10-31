@@ -209,7 +209,7 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
      */
     @Override
     public void config_NeutralDeadband(double deadbandPercent) {
-        GreenLogger.log("*EXTREMELY LOUD BUZZER SOUND* Neutral deadband is only configurable through USB for Spark Max. Factory default is ±5%");
+        GreenLogger.log("Neutral deadband is only configurable through USB for Spark Max. Factory default is ±5%");
 
     }
 
@@ -370,7 +370,7 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
 
     @Override
     public void configAllowableErrorClosedLoop(int pidSlotID, double allowableError) {
-        // TODO This is almost definitely exclusive to the USB interface. Investigate.
+        GreenLogger.log("Allowable error is only configurable through USB for Spark Max.");
     }
 
     @Override
