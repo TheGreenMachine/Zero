@@ -183,7 +183,7 @@ subsystems:
         constants:
             useMultiTargetOdometry: 1
 infrastructure:
-    canivoreBusName: highSpeed
+    canBusName: highSpeed
     ## Power Distribution ##
     pdId: 1
     pdIsRev: true

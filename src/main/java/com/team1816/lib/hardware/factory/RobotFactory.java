@@ -85,7 +85,7 @@ public class RobotFactory {
                         subsystem,
                         pidConfigs,
                         remoteSensorId,
-                        config.infrastructure.canivoreBusName
+                        config.infrastructure.canBusName
                     );
             } else if (isHardwareValid(subsystem.falcons, name)) {
                 motor =
@@ -96,7 +96,7 @@ public class RobotFactory {
                         subsystem,
                         pidConfigs,
                         remoteSensorId,
-                        config.infrastructure.canivoreBusName
+                        config.infrastructure.canBusName
                     );
             } else if (isHardwareValid(subsystem.sparkmaxes, name)) {
                 motor =
@@ -154,7 +154,7 @@ public class RobotFactory {
                         main,
                         subsystem,
                         subsystem.pidConfig,
-                        config.infrastructure.canivoreBusName
+                        config.infrastructure.canBusName
                     );
             } else if (isHardwareValid(subsystem.falcons, name)) {
                 followerMotor =
@@ -165,7 +165,7 @@ public class RobotFactory {
                         main,
                         subsystem,
                         subsystem.pidConfig,
-                        config.infrastructure.canivoreBusName
+                        config.infrastructure.canBusName
                     );
             } else if (isHardwareValid(subsystem.sparkmaxes, name)) {
                 followerMotor =
@@ -304,7 +304,7 @@ public class RobotFactory {
                 ledManager =
                     new CANdleImpl(
                         subsystem.candle,
-                        config.infrastructure.canivoreBusName
+                        config.infrastructure.canBusName
                     );
             }
             if (ledManager != null) {
@@ -481,7 +481,7 @@ public class RobotFactory {
             pigeon = new GhostPigeonIMU(id);
         } else if (config.infrastructure.isPigeon2) {
             GreenLogger.log("Using Pigeon 2 for id: " + id);
-            pigeon = new Pigeon2Impl(id, config.infrastructure.canivoreBusName);
+            pigeon = new Pigeon2Impl(id, config.infrastructure.canBusName);
         } else {
             GreenLogger.log("Using old Pigeon for id: " + id);
             pigeon = new PigeonIMUImpl(id);

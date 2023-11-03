@@ -12,7 +12,7 @@
         "compressorEnabled": {
             "type": "boolean"
         },
-        "canivoreBusName": {
+        "canBusName": {
             "type": "string"
         },
         "pdIsRev": {

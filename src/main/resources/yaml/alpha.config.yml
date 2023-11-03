@@ -68,7 +68,7 @@ subsystems:
     camera:
         implemented: true
 infrastructure:
-    canivoreBusName: rio
+    canBusName: rio
     # power distribution
     pdId: 0
     pdIsRev: false
