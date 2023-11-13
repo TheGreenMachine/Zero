@@ -29,7 +29,7 @@ public class Collector extends Subsystem {
     /**
      * Components
      */
-    private final IGreenMotor intakeMotor; //TODO this one is REV
+    private final IGreenMotor intakeMotor;
 
     private final IGreenMotor pivotMotor;
 
@@ -92,8 +92,6 @@ public class Collector extends Subsystem {
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
         pivotMotor = factory.getMotor(NAME, "pivotMotor");
 
-        pivotMotor.selectPIDSlot(1,0);
-
         cubeIntakePower = factory.getConstant(NAME, "cubeIntakePower", 0.70);
         cubeOuttakePower = factory.getConstant(NAME, "cubeOuttakePower", 0.45);
         coneIntakePower = factory.getConstant(NAME, "coneIntakePower", -1.00);
@@ -110,6 +108,8 @@ public class Collector extends Subsystem {
         pivotFloorPosition = (factory.getConstant(NAME, "floorAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
 
         intakeMotor.configOpenLoopRampRate(0.25, Constants.kCANTimeoutMs);
+
+        pivotMotor.selectPIDSlot(1,0);
 
         allowablePivotError = factory.getPidSlotConfig(NAME, "slot1").allowableError;
 

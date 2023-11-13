@@ -12,6 +12,8 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
 
     protected String name = "";
     protected GreenControlMode currentControlMode = GreenControlMode.PERCENT_OUTPUT;
+    protected GreenControlMode lastControlMode = null;
+    protected double lastSet = Double.NaN;
     protected SoftLimitStatus softLimitStatus;
     protected int currentPeriodicFrame = -1;
     protected int currentPIDSlot = 0;
@@ -24,7 +26,6 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
     protected double voltageForCompensation = 0;
     protected boolean voltageCompensationEnabled = false;
     protected double arbitraryFeedForward = 0;
-
 
     /**
      * Create a new object to control a SPARK MAX motor Controller
@@ -104,13 +105,17 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
             demand = -nominalOutputBackward;
         }
         currentControlMode = controlMode;
-        pidController.setReference(
-            demand,
-            ConfigurationTranslator.toSparkMaxControlType(controlMode),
-            currentPIDSlot,
-            arbitraryFeedForward, //Note that arbitraryFF is initialized to 0
-            SparkMaxPIDController.ArbFFUnits.kPercentOut
-        );
+        if (demand != lastSet || currentControlMode != lastControlMode) {
+            lastSet = demand;
+            lastControlMode = currentControlMode;
+            pidController.setReference(
+                demand,
+                ConfigurationTranslator.toSparkMaxControlType(controlMode),
+                currentPIDSlot,
+                arbitraryFeedForward, //Note that arbitraryFF is initialized to 0
+                SparkMaxPIDController.ArbFFUnits.kPercentOut
+            );
+        }
     }
 
     @Override
@@ -135,7 +140,9 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
 
     @Override
     public void setSensorPhase(boolean isInverted) {
-        encoder.setInverted(isInverted); // This is NOT the same as a call to super.getInverted().
+        GreenLogger.log("Cannot invert sensor phase of a Spark in brushless mode!");
+        //If we ever have a spark controlling a brushed motor, the next line can be uncommented.
+            //encoder.setInverted(isInverted); // This is NOT the same as a call to super.getInverted().
     }
 
     @Override

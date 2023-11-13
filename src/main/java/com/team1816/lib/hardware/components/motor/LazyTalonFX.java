@@ -510,7 +510,7 @@ public class LazyTalonFX extends TalonFX implements IGreenMotor {
         if (leader.get_MotorType() == MotorType.SparkMax || leader.get_MotorType() == MotorType.GHOST) {
            GreenLogger.log("TalonFX cannot follow non-CTRE motor " + leader.getName() + " of type " + leader.get_MotorType());
         } else {
-            super.follow((IMotorController) leader); //I Really hope this works as intended, it SHOULD only do this when it can be cast but I'm not sure- have DDay or Mika check
+            super.follow((IMotorController) leader);
         }
     }
 
