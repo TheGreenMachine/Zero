@@ -262,6 +262,11 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
     @Override
     public void enableLimitSwitches(boolean isEnabled) {
         //WHY DO LIMIT SWITCHES HAVE A TOGGLE PARAMETER BUT VOLTAGE COMPENSATION DOESNT
+        if (forwardLimitSwitch == null || reverseLimitSwitch == null) {
+            configForwardLimitSwitch(true);
+            configReverseLimitSwitch(true);
+        }
+
         forwardLimitSwitch.enableLimitSwitch(isEnabled);
         reverseLimitSwitch.enableLimitSwitch(isEnabled);
     }

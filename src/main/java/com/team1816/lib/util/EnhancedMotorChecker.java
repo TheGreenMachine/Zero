@@ -1,8 +1,10 @@
 package com.team1816.lib.util;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.team1816.lib.Injector;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.configurations.GreenControlMode;
+import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.Robot;
@@ -39,7 +41,7 @@ public class EnhancedMotorChecker {
             IGreenMotor motor
         ) {
             var name = subsystem.getSubsystemName();
-            var factory = Robot.getFactory();
+            var factory = Injector.get(RobotFactory.class);
             return new EnhancedMotorChecker.CheckerConfig() {
                 {
                     mCurrentFloor = factory.getConstant(name, "currentFloorCheck");

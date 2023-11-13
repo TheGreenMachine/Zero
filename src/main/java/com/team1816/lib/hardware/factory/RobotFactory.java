@@ -71,8 +71,10 @@ public class RobotFactory {
         Map<String, PIDSlotConfiguration> pidConfigs,
         int remoteSensorId
     ) {
+
         IGreenMotor motor = null;
         var subsystem = getSubsystem(subsystemName);
+
 
         // Identifying motor
         if (subsystem.implemented) {
@@ -158,7 +160,7 @@ public class RobotFactory {
                     case TalonFX -> {
                         followerMotor =
                             MotorFactory.createFollowerTalon(
-                                subsystem.falcons.get(name),
+                                subsystem.motors.get(name).id,
                                 name,
                                 true,
                                 main,
@@ -170,7 +172,7 @@ public class RobotFactory {
                     case TalonSRX -> {
                         followerMotor =
                             MotorFactory.createFollowerTalon(
-                                subsystem.talons.get(name),
+                                subsystem.motors.get(name).id,
                                 name,
                                 false,
                                 main,
@@ -181,7 +183,7 @@ public class RobotFactory {
                     }
                     case SparkMax -> {
                         MotorFactory.createFollowerSpark(
-                            subsystem.sparkmaxes.get(name),
+                            subsystem.motors.get(name).id,
                             name,
                             subsystem,
                             subsystem.pidConfig,
@@ -192,7 +194,7 @@ public class RobotFactory {
                     case VictorSPX -> {
                         followerMotor =
                             MotorFactory.createFollowerVictor(
-                                subsystem.victors.get(name),
+                                subsystem.motors.get(name).id,
                                 name,
                                 main,
                                 subsystem,

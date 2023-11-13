@@ -38,8 +38,8 @@ public class Robot extends TimedRobot {
     /**
      * Looper
      */
-    private final Looper enabledLoop;
-    private final Looper disabledLoop;
+    private Looper enabledLoop;
+    private Looper disabledLoop;
 
     /**
      * Controls
@@ -47,24 +47,24 @@ public class Robot extends TimedRobot {
     private IControlBoard controlBoard;
     private ActionManager actionManager;
 
-    private final Infrastructure infrastructure;
-    private final SubsystemLooper subsystemManager;
+    private Infrastructure infrastructure;
+    private SubsystemLooper subsystemManager;
 
     /**
      * State Managers
      */
-    private final Orchestrator orchestrator;
-    private final RobotState robotState;
+    private Orchestrator orchestrator;
+    private RobotState robotState;
 
     /**
      * Subsystems
      */
-    private final Drive drive;
+    private Drive drive;
 
-    private final LedManager ledManager;
-    private final Camera camera;
-    private final Elevator elevator;
-    private final Collector collector;
+    private LedManager ledManager;
+    private Camera camera;
+    private Elevator elevator;
+    private Collector collector;
 
     private DigitalInput zeroingButton;
     private Boolean zeroing = false;
@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
     /**
      * Autonomous
      */
-    private final AutoModeManager autoModeManager;
+    private AutoModeManager autoModeManager;
 
     private Thread alignElevatorThread;
     private Thread autoScoreThread;
@@ -115,40 +115,14 @@ public class Robot extends TimedRobot {
      */
     Robot() {
         super();
-        // initialize injector
-        Injector.registerModule(new SeasonModule());
-        enabledLoop = new Looper(this);
-        disabledLoop = new Looper(this);
-        drive = (Injector.get(Drive.Factory.class)).getInstance();
-        elevator = Injector.get(Elevator.class);
-        collector = Injector.get(Collector.class);
-        ledManager = Injector.get(LedManager.class);
-        camera = Injector.get(Camera.class);
-        robotState = Injector.get(RobotState.class);
-        orchestrator = Injector.get(Orchestrator.class);
-        infrastructure = Injector.get(Infrastructure.class);
-        subsystemManager = Injector.get(SubsystemLooper.class);
-        autoModeManager = Injector.get(AutoModeManager.class);
 
         prevAngleState = Elevator.ANGLE_STATE.STOW;
-        if (RobotBase.isReal()) {
-            zeroingButton = new DigitalInput((int) factory.getConstant("zeroingButton", -1));
-        }
         if (Constants.kLoggingRobot) {
             robotLoopLogger = new DoubleLogEntry(DataLogManager.getLog(), "Timings/Robot");
             looperLogger = new DoubleLogEntry(DataLogManager.getLog(), "Timings/RobotState");
         }
     }
 
-    /**
-     * Returns the static factory instance of the Robot
-     *
-     * @return RobotFactory
-     */
-    public static RobotFactory getFactory() {
-        if (factory == null) factory = Injector.get(RobotFactory.class);
-        return factory;
-    }
 
     /**
      * Returns the length of the last loop that the Robot was on
@@ -159,7 +133,7 @@ public class Robot extends TimedRobot {
         return (Timer.getFPGATimestamp() - loopStart) * 1000;
     }
 
-    /**
+    /*
      * Returns the duration of the last enabled loop
      *
      * @return duration (ms)
@@ -177,8 +151,31 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         try {
             /** Register All Subsystems */
+            // initialize injector
+            Injector.registerModule(new SeasonModule());
+            enabledLoop = new Looper(this);
+            disabledLoop = new Looper(this);
+            drive = (Injector.get(Drive.Factory.class)).getInstance();
+            elevator = Injector.get(Elevator.class);
+            collector = Injector.get(Collector.class);
+            ledManager = Injector.get(LedManager.class);
+            camera = Injector.get(Camera.class);
+            robotState = Injector.get(RobotState.class);
+            orchestrator = Injector.get(Orchestrator.class);
+            infrastructure = Injector.get(Infrastructure.class);
+            subsystemManager = Injector.get(SubsystemLooper.class);
+            autoModeManager = Injector.get(AutoModeManager.class);
+            factory = Injector.get(RobotFactory.class);
+
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
+
+            if (RobotBase.isReal()) {
+                zeroingButton = new DigitalInput((int) factory.getConstant("zeroingButton", -1));
+            }
+
+
+
 
             // Remember to register our elevator and collector subsystems below!! The subsystem manager deals with calling
             // read/writetohardware on a loop, but it can only call read/write if it recognizes said subsystem. To recognize

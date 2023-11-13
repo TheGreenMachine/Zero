@@ -12,6 +12,7 @@ import com.team1816.lib.hardware.components.motor.configurations.FeedbackDeviceT
 import com.team1816.lib.util.logUtil.GreenLogger;
 import edu.wpi.first.wpilibj.RobotBase;
 
+import javax.inject.Singleton;
 import java.util.Map;
 
 import static com.team1816.lib.subsystems.Subsystem.factory;
@@ -20,6 +21,7 @@ import static com.team1816.lib.subsystems.Subsystem.factory;
  * A class to create and configure Falcon (TalonFX), TalonSRX, VictorSPX, SparkMax and GhostMotor objects.
  * Based on FRC Team 254 The Cheesy Poof's 2018 TalonSRXFactory
  */
+@Singleton
 public class MotorFactory {
 
     private static final int kTimeoutMs = RobotBase.isSimulation() ? 0 : 100;
@@ -49,6 +51,13 @@ public class MotorFactory {
         int remoteSensorId,
         String canBus
     ) {
+        GreenLogger.log(
+                "Creating " +
+                        "TalonFX" +
+                        " id:" +
+                        id
+        );
+
         return createTalon(
             id,
             name,
@@ -159,9 +168,10 @@ public class MotorFactory {
         Map<String, PIDSlotConfiguration> pidConfigList,
         FeedbackDeviceType deviceType
     ) {
+
         IGreenMotor spark = new LazySparkMax(id, name);
         configMotor(spark,name,subsystem,pidConfigList,deviceType);
-        return new LazySparkMax(id, name);
+        return spark;
     }
 
     public static IGreenMotor createFollowerSpark(
@@ -218,12 +228,12 @@ public class MotorFactory {
             pidConfigList.forEach(
                 (slot, slotConfig) -> {
                     int slotNum = ((int)slot.charAt(4)) - 48; //Minus 48 because charAt processes as a char, and digit ASCII values are themselves + 48
-                    motor.set_kP(slotNum, slotConfig.kP);
-                    motor.set_kI(slotNum, slotConfig.kI);
-                    motor.set_kD(slotNum, slotConfig.kD);
-                    motor.set_kF(slotNum, slotConfig.kF);
-                    motor.set_iZone(slotNum, slotConfig.iZone);
-                    motor.configAllowableErrorClosedLoop(slotNum, slotConfig.allowableError);
+                    motor.set_kP(slotNum, slotConfig.kP != null ? slotConfig.kP : 0);
+                    motor.set_kI(slotNum, slotConfig.kI != null ? slotConfig.kI : 0);
+                    motor.set_kD(slotNum, slotConfig.kD != null ? slotConfig.kD : 0);
+                    motor.set_kF(slotNum, slotConfig.kF != null ? slotConfig.kF : 0);
+                    motor.set_iZone(slotNum, slotConfig.iZone != null ? slotConfig.iZone : 0);
+                    motor.configAllowableErrorClosedLoop(slotNum, slotConfig.allowableError != null ? slotConfig.allowableError : 0);
                 }
             );
         }
@@ -302,13 +312,6 @@ public class MotorFactory {
             }
             motor.setInverted(invertMotor);
 
-            boolean invertSensorPhase = subsystem.invertSensorPhase.contains(name);
-            if (invertSensorPhase) {
-                GreenLogger.log(
-                    "       Inverting sensor phase of " + name + " with ID " + id
-                );
-            }
-            motor.setSensorPhase(invertSensorPhase);
         }
 
         motor.setNeutralMode(NEUTRAL_MODE);
@@ -320,6 +323,16 @@ public class MotorFactory {
             ((BaseMotorController)motor).configRemoteFeedbackFilter(remoteSensorId, RemoteSensorSource.CANCoder, 0);
             ((BaseMotorController)motor).configClearPositionOnLimitF(false, kTimeoutMs);
             ((BaseMotorController)motor).configClearPositionOnLimitR(false, kTimeoutMs);
+
+            // sensor phase inversion
+            boolean invertSensorPhase = subsystem.invertSensorPhase.contains(name);
+            if (invertSensorPhase) {
+                GreenLogger.log(
+                        "       Inverting sensor phase of " + name + " with ID " + id
+                );
+            }
+            motor.setSensorPhase(invertSensorPhase);
+
         }
 
     }

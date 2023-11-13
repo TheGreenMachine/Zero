@@ -1,6 +1,7 @@
 package com.team1816.season.configuration;
 
 import com.google.inject.Singleton;
+import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Polygon;
 import com.team1816.lib.auto.Symmetry;
 import com.team1816.lib.hardware.factory.RobotFactory;
@@ -20,7 +21,7 @@ public class Constants {
     /**
      * Factory & Stem
      */
-    private static final RobotFactory factory = Robot.getFactory();
+    private static final RobotFactory factory = Injector.get(RobotFactory.class);
 
     public static final Pose2d EmptyPose2d = new Pose2d();
     public static final Rotation2d EmptyRotation2d = new Rotation2d();

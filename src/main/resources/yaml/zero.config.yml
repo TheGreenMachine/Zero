@@ -200,7 +200,7 @@ subsystems:
             slot0: # intakeMotor - only really works when locking motor max - min input is +/- 0.3 percent
                 kP: 0.001
             slot1: # pivotMotor
-                kP: 0.025
+                kP: 0.015
                 allowableError: 3 # this is only being used to compare states
         constants:
             maxVelTicks100ms: 10.83
@@ -256,4 +256,4 @@ constants:
     ## General ##
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .025 # seconds
-    resetFactoryDefaults: 0 # whether motors get reset to factory default
+    resetFactoryDefaults: 1 # whether motors get reset to factory default

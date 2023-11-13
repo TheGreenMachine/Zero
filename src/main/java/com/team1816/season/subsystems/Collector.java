@@ -92,6 +92,8 @@ public class Collector extends Subsystem {
         intakeMotor = factory.getMotor(NAME, "intakeMotor");
         pivotMotor = factory.getMotor(NAME, "pivotMotor");
 
+        pivotMotor.selectPIDSlot(1,0);
+
         cubeIntakePower = factory.getConstant(NAME, "cubeIntakePower", 0.70);
         cubeOuttakePower = factory.getConstant(NAME, "cubeOuttakePower", 0.45);
         coneIntakePower = factory.getConstant(NAME, "coneIntakePower", -1.00);
