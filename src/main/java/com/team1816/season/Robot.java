@@ -207,7 +207,9 @@ public class Robot extends TimedRobot {
                 }
                 // start logging
                 DataLogManager.start(logFileDir, "", Constants.kLooperDt);
-                Util.cleanLogFiles();
+                if (RobotBase.isReal()) {
+                    Util.cleanLogFiles();
+                }
                 DriverStation.startDataLog(DataLogManager.getLog(), false);
             }
 
