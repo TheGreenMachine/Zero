@@ -120,8 +120,6 @@ public class Turret extends Subsystem implements PidProvider {
         double peakOutput = 0.75;
         pidConfig = factory.getPidSlotConfig(NAME);
         turretMotor.config_PeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
-        turretMotor.config_NominalOutputForward(0, Constants.kCANTimeoutMs);
-        turretMotor.config_NominalOutputReverse(0, Constants.kCANTimeoutMs);
         turretMotor.config_PeakOutputReverse(-peakOutput, Constants.kCANTimeoutMs);
 
         // Soft Limits

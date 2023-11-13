@@ -21,7 +21,6 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
     protected SparkMaxLimitSwitch forwardLimitSwitch, reverseLimitSwitch = null;
 
     protected double peakOutputForward, peakOutputBackward = -0;
-    protected double nominalOutputForward, nominalOutputBackward = 0;
 
     protected double voltageForCompensation = 0;
     protected boolean voltageCompensationEnabled = false;
@@ -99,11 +98,6 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
 
     @Override
     public void set(GreenControlMode controlMode, double demand) {
-        if (demand > 0 && demand < nominalOutputForward) {
-            demand = nominalOutputForward;
-        } else if (demand < 0 && demand > -nominalOutputBackward) {
-            demand = -nominalOutputBackward;
-        }
         currentControlMode = controlMode;
         if (demand != lastSet || currentControlMode != lastControlMode) {
             lastSet = demand;
@@ -187,27 +181,6 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
     @Override
     public void config_PeakOutputReverse(double percentOut, int timeoutMs) {
         config_PeakOutputReverse(percentOut);
-    }
-
-
-    @Override
-    public void config_NominalOutputForward(double percentOut) {
-        nominalOutputForward = percentOut;
-    }
-
-    @Override
-    public void config_NominalOutputForward(double percentOut, int timeoutMs) {
-        config_NominalOutputForward(percentOut);
-    }
-
-    @Override
-    public void config_NominalOutputReverse(double percentOut) {
-        nominalOutputBackward = percentOut;
-    }
-
-    @Override
-    public void config_NominalOutputReverse(double percentOut, int timeoutMs) {
-        config_NominalOutputReverse(percentOut);
     }
 
 

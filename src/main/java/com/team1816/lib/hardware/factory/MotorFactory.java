@@ -256,8 +256,6 @@ public class MotorFactory {
             motor.configReverseSoftLimit(REVERSE_SOFT_LIMIT);
             motor.enableReverseSoftLimit(ENABLE_SOFT_LIMIT);
 
-            motor.config_NominalOutputForward(0);
-            motor.config_NominalOutputReverse(0);
             motor.config_NeutralDeadband(NEUTRAL_DEADBAND);
 
             motor.config_PeakOutputForward(1.0);
@@ -290,6 +288,9 @@ public class MotorFactory {
             // CTRE exclusive configs
             if (isTalon) {
                 ((BaseMotorController)motor).configVelocityMeasurementWindow(VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW);
+
+                ((IMotorController)motor).configNominalOutputForward(0, kTimeoutMs); //TODO these should get remo
+                ((IMotorController)motor).configNominalOutputReverse(0, kTimeoutMs);
             }
         }
 

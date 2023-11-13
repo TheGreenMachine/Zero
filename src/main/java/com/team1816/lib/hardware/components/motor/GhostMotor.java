@@ -252,26 +252,6 @@ public class GhostMotor implements IGreenMotor {
     }
 
     @Override
-    public void config_NominalOutputForward(double percentOut) {
-
-    }
-
-    @Override
-    public void config_NominalOutputForward(double percentOut, int timeoutMs) {
-
-    }
-
-    @Override
-    public void config_NominalOutputReverse(double percentOut) {
-
-    }
-
-    @Override
-    public void config_NominalOutputReverse(double percentOut, int timeoutMs) {
-
-    }
-
-    @Override
     public void config_NeutralDeadband(double deadbandPercent) {
 
     }

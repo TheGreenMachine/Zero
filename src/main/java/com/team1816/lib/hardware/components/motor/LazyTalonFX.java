@@ -198,26 +198,6 @@ public class LazyTalonFX extends TalonFX implements IGreenMotor {
     }
 
     @Override
-    public void config_NominalOutputForward(double percentOut) {
-        super.configNominalOutputForward(percentOut);
-    }
-
-    @Override
-    public void config_NominalOutputForward(double percentOut, int timeoutMs) {
-        super.configNominalOutputForward(percentOut, timeoutMs);
-    }
-
-    @Override
-    public void config_NominalOutputReverse(double percentOut) {
-        super.configNominalOutputReverse(percentOut);
-    }
-
-    @Override
-    public void config_NominalOutputReverse(double percentOut, int timeoutMs) {
-        super.configNominalOutputReverse(percentOut, timeoutMs);
-    }
-
-    @Override
     public void config_NeutralDeadband(double deadbandPercent) {
         super.configNeutralDeadband(deadbandPercent);
     }

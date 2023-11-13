@@ -124,15 +124,6 @@ public interface IGreenMotor {
 
     void config_PeakOutputReverse(double percentOut, int timeoutMs);
 
-    // Nominal Outputs
-    void config_NominalOutputForward(double percentOut);
-
-    void config_NominalOutputForward(double percentOut, int timeoutMs);
-
-    void config_NominalOutputReverse(double percentOut);
-
-    void config_NominalOutputReverse(double percentOut, int timeoutMs);
-
     // Voltage compensation
     void configVoltageCompensation(double voltage);
 
