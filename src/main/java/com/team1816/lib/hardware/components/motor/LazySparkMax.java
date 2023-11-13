@@ -333,6 +333,15 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
         pidController.setFF(kF, pidSlotID);
     }
 
+    public String getPIDConfiguration(int pidSlotID) {
+        return "Motor " + name + ", slot " + pidSlotID +" pid configuration:" +
+            "\nkP: " + pidController.getP(pidSlotID) +
+            "\nkI: " + pidController.getI(pidSlotID) +
+            "\nkD: " + pidController.getD(pidSlotID) +
+            "\nkF: " + pidController.getFF(pidSlotID)
+        ;
+    }
+
     @Override
     public void setArbitraryFeedForward( double feedForward) {
         arbitraryFeedForward = feedForward;

@@ -1,12 +1,12 @@
 package com.team1816.season.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
+import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.motor.configurations.GreenControlMode;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -120,6 +120,11 @@ public class Collector extends Subsystem {
             rollerCurrentDraw = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/currentDraw");
             pivotCurrentDraw = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/currentDraw");
         }
+
+        //TEMPORARY FOR VALIDATION PURPOSES
+        GreenLogger.log(((LazySparkMax) intakeMotor).getPIDConfiguration(0));
+        GreenLogger.log(((LazySparkMax) intakeMotor).getPIDConfiguration(1));
+
     }
 
     /**

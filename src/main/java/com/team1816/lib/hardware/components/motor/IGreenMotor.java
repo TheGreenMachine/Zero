@@ -186,7 +186,6 @@ public interface IGreenMotor {
     void setMaxIAccumulation(int pidSlotID, double maxIAccum);
 
     void setIAccumulation(int closedLoopSlotID, double IAccum);
-
     //Motion Miscellaneous
     void configAllowableErrorClosedLoop(int pidSlotID, double allowableError);
 
