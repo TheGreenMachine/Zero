@@ -188,8 +188,8 @@ public class MotorFactory {
         return followerSpark;
     }
 
-    public static CANCoder createCanCoder(int canCoderID, boolean invertCanCoder) {
-        CANCoder canCoder = new CANCoder(canCoderID);
+    public static CANCoder createCanCoder(int canCoderID, String canBus, boolean invertCanCoder) {
+        CANCoder canCoder = new CANCoder(canCoderID, canBus);
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
             canCoder.configFactoryDefault(kTimeoutMs);
         }
