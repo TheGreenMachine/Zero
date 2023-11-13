@@ -11,6 +11,7 @@ import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.vision.Camera;
+import com.team1816.lib.util.Util;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.configuration.Constants;
@@ -203,32 +204,10 @@ public class Robot extends TimedRobot {
                     } else {
                         logFileDir = System.getProperty("user.dir") + "/";
                     }
-                } else { // rio disk space management
-                    File root = new File("/");
-                    while (root.getUsableSpace() < (long) (Constants.kLoggingDiskPartitionRatio * root.getTotalSpace())) {
-                        System.out.println("Current Disk Usage: " + ((double) root.getUsableSpace() / root.getTotalSpace()) * 100 + "%");
-                        File oldestLog = null, logDir = new File(logFileDir);
-                        long ols = Long.MAX_VALUE;
-                        for (String f : Objects.requireNonNull(logDir.list())) {
-                            File cur = new File(f);
-                            // retains official match logs (practice, qualification, elimination)
-                            if (!(f.contains("P") || f.contains("Q") || f.contains("E")) && ols > cur.lastModified()) { // smaller value indicates older file
-                                ols = cur.lastModified();
-                                oldestLog = cur;
-                            }
-                        }
-                        if (oldestLog != null && oldestLog.delete()) {
-                            System.out.println("Deleting File: " + oldestLog);
-                        } else {
-                            System.out.println("Unable to Delete Log Files - Manual Deletion Required");
-                            DriverStation.reportError("Allotted Disk Space Exceeded - Unable to Delete Log Files", true);
-                            break;
-                        }
-                    }
-                    System.out.println("Current Disk Usage: " + (100) * ((double) root.getUsableSpace() / root.getTotalSpace()) + "%");
                 }
                 // start logging
                 DataLogManager.start(logFileDir, "", Constants.kLooperDt);
+                Util.cleanLogFiles();
                 DriverStation.startDataLog(DataLogManager.getLog(), false);
             }
 
