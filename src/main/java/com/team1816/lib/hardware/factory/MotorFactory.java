@@ -223,27 +223,8 @@ public class MotorFactory {
         MotorConfiguration motorConfiguration = subsystem.motors.get(name);
         boolean isTalon = !(motor instanceof LazySparkMax || motor instanceof GhostMotor); // Talon also refers to VictorSPX, isCTRE just looks worse :)
 
-        // PID configuration
-        if (pidConfigList != null) {
-            pidConfigList.forEach(
-                (slot, slotConfig) -> {
-                    int slotNum = ((int)slot.charAt(4)) - 48; //Minus 48 because charAt processes as a char, and digit ASCII values are themselves + 48
-                    motor.set_kP(slotNum, slotConfig.kP != null ? slotConfig.kP : 0);
-                    motor.set_kI(slotNum, slotConfig.kI != null ? slotConfig.kI : 0);
-                    motor.set_kD(slotNum, slotConfig.kD != null ? slotConfig.kD : 0);
-                    motor.set_kF(slotNum, slotConfig.kF != null ? slotConfig.kF : 0);
-                    motor.set_iZone(slotNum, slotConfig.iZone != null ? slotConfig.iZone : 0);
-                    motor.configAllowableErrorClosedLoop(slotNum, slotConfig.allowableError != null ? slotConfig.allowableError : 0);
-                }
-            );
-        }
-
-        // Setting to PID slot 0 and primary closed loop
-        motor.selectPIDSlot(0,0);
-
         // Configuring feedback sensor
         motor.selectFeedbackSensor(feedbackDeviceType);
-
 
         // for newly attached motors only
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
@@ -264,27 +245,6 @@ public class MotorFactory {
             motor.configOpenLoopRampRate(OPEN_LOOP_RAMP_RATE);
             motor.configClosedLoopRampRate(CLOSED_LOOP_RAMP_RATE);
 
-            // Current limit defaults
-            double currentLimit = 40;
-            double currentLimitThreshold = 80;
-            double currentLimitTriggerTime = 1;
-
-            if (motorConfiguration.currentLimit != null) {
-                currentLimit = motorConfiguration.currentLimit;
-            }
-            if (motorConfiguration.currentLimitThreshold != null) {
-                currentLimitThreshold = motorConfiguration.currentLimitThreshold;
-            }
-            if (motorConfiguration.currentLimitTriggerTime != null) {
-                currentLimitTriggerTime = motorConfiguration.currentLimitTriggerTime;
-            }
-
-            //Current limit configuration does NOT need to be done differently for SRXs. Old method is dumb.
-            motor.configCurrentLimit(
-                new SupplyCurrentLimitConfiguration(ENABLE_CURRENT_LIMIT, currentLimit, currentLimitThreshold, currentLimitTriggerTime)
-            );
-
-
             // CTRE exclusive configs
             if (isTalon) {
                 ((BaseMotorController)motor).configVelocityMeasurementWindow(VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW);
@@ -293,6 +253,33 @@ public class MotorFactory {
                 ((IMotorController)motor).configNominalOutputReverse(0, kTimeoutMs);
             }
         }
+
+        // PID configuration
+        if (pidConfigList != null) {
+            pidConfigList.forEach(
+                (slot, slotConfig) -> {
+                    int slotNum = ((int)slot.charAt(4)) - 48; //Minus 48 because charAt processes as a char, and digit ASCII values are themselves + 48
+                    motor.set_kP(slotNum, slotConfig.kP != null ? slotConfig.kP : 0);
+                    motor.set_kI(slotNum, slotConfig.kI != null ? slotConfig.kI : 0);
+                    motor.set_kD(slotNum, slotConfig.kD != null ? slotConfig.kD : 0);
+                    motor.set_kF(slotNum, slotConfig.kF != null ? slotConfig.kF : 0);
+                    motor.set_iZone(slotNum, slotConfig.iZone != null ? slotConfig.iZone : 0);
+                    motor.configAllowableErrorClosedLoop(slotNum, slotConfig.allowableError != null ? slotConfig.allowableError : 0);
+                }
+            );
+        }
+
+        // Setting to PID slot 0 and primary closed loop
+        motor.selectPIDSlot(0,0);
+
+        // Current limits
+        motor.configCurrentLimit(
+            new SupplyCurrentLimitConfiguration(ENABLE_CURRENT_LIMIT,
+                motorConfiguration.currentLimit != null ? motorConfiguration.currentLimit : 40, //Default 40
+                motorConfiguration.currentLimitThreshold != null ? motorConfiguration.currentLimitThreshold : 80, // Default 80
+                motorConfiguration.currentLimitTriggerTime != null ? motorConfiguration.currentLimitTriggerTime : 1 // Default 1
+            )
+        );
 
         motor.enableLimitSwitches(ENABLE_LIMIT_SWITCH);
 
