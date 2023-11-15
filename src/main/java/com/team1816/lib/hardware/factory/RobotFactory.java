@@ -242,6 +242,7 @@ public class RobotFactory {
             canCoder =
                 MotorFactory.createCanCoder(
                     subsystem.canCoders.get(module.canCoder),
+                    config.infrastructure.canBusName,
                     subsystem.canCoders.get(subsystem.invertCanCoder) != null &&
                         subsystem.invertCanCoder.contains(module.canCoder)
                 );
