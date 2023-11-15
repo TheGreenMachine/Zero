@@ -121,9 +121,8 @@ public class Collector extends Subsystem {
             pivotCurrentDraw = new DoubleLogEntry(DataLogManager.getLog(), "Elevator/currentDraw");
         }
 
-        //TEMPORARY FOR VALIDATION PURPOSES
-        GreenLogger.log(((LazySparkMax) intakeMotor).getPIDConfiguration(0));
-        GreenLogger.log(((LazySparkMax) intakeMotor).getPIDConfiguration(1));
+//        GreenLogger.log(((LazySparkMax) intakeMotor).getPIDConfiguration(0));
+//        GreenLogger.log(((LazySparkMax) pivotMotor).getPIDConfiguration(1));
 
     }
 

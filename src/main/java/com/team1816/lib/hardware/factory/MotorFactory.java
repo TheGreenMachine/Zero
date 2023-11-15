@@ -249,7 +249,7 @@ public class MotorFactory {
             if (isTalon) {
                 ((BaseMotorController)motor).configVelocityMeasurementWindow(VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW);
 
-                ((IMotorController)motor).configNominalOutputForward(0, kTimeoutMs); //TODO these should get remo
+                ((IMotorController)motor).configNominalOutputForward(0, kTimeoutMs); //TODO these should get removed when phoenix 6 rolls around
                 ((IMotorController)motor).configNominalOutputReverse(0, kTimeoutMs);
             }
         }
