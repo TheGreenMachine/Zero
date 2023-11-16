@@ -158,7 +158,7 @@ public class MotorFactory {
     }
 
     public static CANCoder createCanCoder(int canCoderID, String canBus, boolean invertCanCoder) {
-        CANCoder canCoder = new CANCoder(canCoderID,canBus);
+        CANCoder canCoder = new CANCoder(canCoderID); // Canbus name removed temporarily
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
             canCoder.configFactoryDefault(kTimeoutMs);
         }
