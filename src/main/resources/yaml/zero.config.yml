@@ -187,7 +187,7 @@ subsystems:
                 motorType: SparkMax
                 motorName: pivotMotor
                 id: 13
-                invertMotor: false
+                invertMotor: true
             intakeMotor:
                 motorType: SparkMax
                 motorName: intakeMotor
