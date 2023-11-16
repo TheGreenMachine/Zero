@@ -395,10 +395,12 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
 
     @Override
     public double getClosedLoopError() {
-        //This is theoretically possible in a few ways
-            // The actual firmware implementation is here https://docs.revrobotics.com/sparkmax/operating-modes/closed-loop-control but error is not retrievable
-                //if we figured out what pv meant then we could calc it ourselves
-            // Could also reverse engineer the output from the PID equation but that could potentially be really slow
+        // This isn't worth implementing as of 2023-24 because we aren't using rev motors for driving or anything that needs that much precision.
+        // If anyone in the future wants to take a stab at it go ahead:
+            //This is theoretically possible in a few ways
+                // The actual firmware implementation is here https://docs.revrobotics.com/sparkmax/operating-modes/closed-loop-control but error is not retrievable
+                    //if we figured out what pv meant then we could calc it ourselves
+                // Could also reverse engineer the output from the PID equation but that could potentially be really slow
         return Double.NaN;
     }
 
@@ -409,8 +411,6 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
 
     @Override
     public double getErrorDerivative(int closedLoopSlotID) {
-        // Literally just dy/dx error for each loop iteration (I HAD TO LOOK THROUGH 5 YEAR OLD DOCUMENTATION TO FIGURE OUT THAT ITS SO SIMPLE THANK YOU UNCLEAR METHOD NAMES)
-        // Easy to do Math wise but have urva do anyways cause she wants to learn more CS
         GreenLogger.log("Error Derivative unavailable for Spark Max Motors +C");
         return Double.NaN;
     }
@@ -468,7 +468,7 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
 
     @Override
     public boolean hasResetOccurred() {
-        GreenLogger.log("SparkMax does not track resets.");
+        GreenLogger.log("SparkMax does not track resets."); //Apparently tracks resets as a fault but I'm not implementing a method for that
         return false;
     }
 
@@ -498,7 +498,7 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
 
     @Override
     public void restore_FactoryDefaults(int timeoutMs) {
-        super.restoreFactoryDefaults();
+        //This method doesn't do anything because sparkmax restorefactorydefaults also resets USB-exclusive settings and that's annoying to deal with
     }
 
     @Override
@@ -506,19 +506,16 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
         return voltageCompensationEnabled;
     }
 
+    //These 3 don't matter for sparks bcs we'll never use a non-brushless rev motor
     @Override
     public int getQuadraturePosition() {
-        return encoder.getAverageDepth(); //I think. Check w DDAY
+        return -1;
     }
-
     @Override
     public void setQuadraturePosition(int quadraturePosition) {
-        encoder.setAverageDepth(quadraturePosition); //I think. Check w DDAY
     }
-
     @Override
     public int getPulseWidthPosition() {
-        //I Think this could be done with some math? ask DDAY
         return -1;
     }
 
