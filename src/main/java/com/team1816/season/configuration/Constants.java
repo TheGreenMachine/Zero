@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
  */
 @Singleton
 public class Constants {
-
     /**
      * Factory & Stem
      */
@@ -32,6 +31,11 @@ public class Constants {
     public static final Quaternion EmptyQuaternion = new Quaternion();
 
     public static final double kLooperDt = factory.getConstant("kLooperDt", .020);
+
+    /**
+     * Git Hash
+     */
+    public static final String kGitHash = factory.getGitHash();
 
     /**
      * CAN Timeouts

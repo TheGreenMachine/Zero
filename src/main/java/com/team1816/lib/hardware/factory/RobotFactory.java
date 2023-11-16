@@ -3,6 +3,7 @@ package com.team1816.lib.hardware.factory;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
+import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.*;
 import com.team1816.lib.hardware.components.gyro.GhostPigeonIMU;
@@ -27,8 +28,12 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
 
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Scanner;
 
 /**
  * This class employs the MotorFactory and SensorFactory with yaml integrations and is the initial entry point to
@@ -63,6 +68,34 @@ public class RobotFactory {
         } catch (Exception e) {
             DriverStation.reportError("Yaml Config error!", e.getStackTrace());
         }
+    }
+
+    /**
+     * This method reads a resource file called 'git_hash.txt'.
+     *
+     * The resource contains the git hash for the current version of the repository
+     * you're on.
+     *
+     * @return a string representation of the current git hash
+     */
+    public static String getGitHash() {
+        String gitHashStr;
+        try {
+            URL input = Resources.getResource("git_hash");
+
+            if (input == null) {
+                gitHashStr = "UNABLE TO FIND THE GIT HASH.";
+            } else {
+                gitHashStr = Resources.toString(input, Charset.defaultCharset());
+            }
+        } catch (Exception e) {
+            GreenLogger.log("Exception occurred: " + e.toString());
+            gitHashStr = "NO VALID GIT HASH FOUND";
+        }
+
+        GreenLogger.log("Git Hash: " + gitHashStr);
+
+        return gitHashStr;
     }
 
     public IGreenMotor getMotor(
