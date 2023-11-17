@@ -73,7 +73,6 @@ public class Util {
             var files = stream
                 .filter(file -> !Files.isDirectory(file)) //No folders
                 .filter(file -> file.toString().endsWith(".wpilog") ) //Only .wpiLog
-                .filter(file -> !((file.toString().contains("P") || file.toString().contains("Q") || file.toString().contains("E")))) //No match logs
                 .filter(file -> file.toString().chars().filter(ch -> ch == '_').count() == 2 )
                 .filter(file -> {
                     try {
