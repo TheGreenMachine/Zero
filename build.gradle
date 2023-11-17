@@ -16,11 +16,9 @@ def getGitHash() {
 }
 
 def getGitBranchName() {
-    def value = ext.githash="git log --pretty=format\"%d\"".execute().text.trim()
+    def value = ext.githash="git rev-parse --abbrev-ref HEAD".execute().text.trim()
 
-    def branchName = value.split("->")[1].split(",")[0]
-
-    return branchName
+    return value
 }
 
 def writeGitHashToFile() {
