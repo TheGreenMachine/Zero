@@ -12,7 +12,7 @@ targetCompatibility = JavaVersion.VERSION_17
 def ROBOT_MAIN_CLASS = "com.team1816.season.Main"
 
 def getGitHash() {
-    return ext.githash='git log --pretty=format:\"Author of commit: %cn,[] Date of Commit: %cs,[] Git commit subject: %s,[] Hash: %H\" -1'.execute().text.trim()
+    return ext.githash='git log --pretty=format:\" %cs, Hash: %h\" -1'.execute().text.trim()
 }
 
 def getGitBranchName() {
@@ -35,7 +35,7 @@ def writeGitHashToFile() {
 
     delete "$directory/$fileName"
 
-    file("$directory/$fileName") << "Branch:" << getGitBranchName() << "    \n"
+    file("$directory/$fileName") << getGitBranchName() << "    \n"
 
     for (String line : gitHashStrLines) {
         file("$directory/$fileName") << line.trim() << "    \n"

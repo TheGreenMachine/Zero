@@ -175,6 +175,19 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "0,3": {
+            "size": [
+              4,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table://SmartDashboard/Git Hash",
+              "_title": "SmartDashboard/Git Hash",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
