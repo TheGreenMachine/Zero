@@ -378,5 +378,6 @@ public class Collector extends Subsystem {
         FLOOR,
         SHELF,
         SCORE;
+        
     }
 }

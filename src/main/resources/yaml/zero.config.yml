@@ -154,7 +154,7 @@ subsystems:
         constants:
             maxVelTicks100ms: 10.83
             ## Demands ##
-            cubeIntakePower: 0.70 # percent output voltage
+            cubeIntakePower: 0.55 # percent output voltage; was 0.7
             cubeOuttakePower: -0.45 # percent output voltage
             coneIntakePower: -1 #was -0.50 - 1.375
             coneOuttakePower: 0.65
