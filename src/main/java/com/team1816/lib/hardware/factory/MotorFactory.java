@@ -165,12 +165,11 @@ public class MotorFactory {
         int id,
         String name,
         SubsystemConfig subsystem,
-        Map<String, PIDSlotConfiguration> pidConfigList,
-        FeedbackDeviceType deviceType
+        Map<String, PIDSlotConfiguration> pidConfigList
     ) {
 
         IGreenMotor spark = new LazySparkMax(id, name);
-        configMotor(spark,name,subsystem,pidConfigList,deviceType);
+        configMotor(spark,name,subsystem,pidConfigList, -1);
         return spark;
     }
 
@@ -179,10 +178,9 @@ public class MotorFactory {
         String name,
         SubsystemConfig subsystem,
         Map<String, PIDSlotConfiguration> pidConfigList,
-        FeedbackDeviceType deviceType,
         IGreenMotor leader
     ) {
-        IGreenMotor followerSpark = createSpark(id,name,subsystem,pidConfigList,deviceType);
+        IGreenMotor followerSpark = createSpark(id,name,subsystem,pidConfigList);
         followerSpark.follow(leader);
         followerSpark.setInverted(leader.getInverted());
         return followerSpark;
@@ -204,27 +202,24 @@ public class MotorFactory {
         Map<String, PIDSlotConfiguration> pidConfigList,
         int remoteSensorId
     ) {
-        FeedbackDeviceType deviceType = FeedbackDeviceType.NO_SENSOR;
-        if (remoteSensorId == 0) {
-            deviceType = FeedbackDeviceType.REMOTE_SENSOR_0;
-        } else if (remoteSensorId == 1) {
-            deviceType = FeedbackDeviceType.REMOTE_SENSOR_1;
-        }
-        configMotor(motor, name, subsystem, pidConfigList, deviceType);
-    }
-
-    private static void configMotor(
-        IGreenMotor motor,
-        String name,
-        SubsystemConfig subsystem,
-        Map<String, PIDSlotConfiguration> pidConfigList,
-        FeedbackDeviceType feedbackDeviceType
-    ) {
         MotorConfiguration motorConfiguration = subsystem.motors.get(name);
         boolean isTalon = !(motor instanceof LazySparkMax || motor instanceof GhostMotor); // Talon also refers to VictorSPX, isCTRE just looks worse :)
 
-        // Configuring feedback sensor
-        motor.selectFeedbackSensor(feedbackDeviceType);
+        // Configuring feedback sensor - separate from other motor-specific configs because other configs need sensors to exist first
+        if (isTalon) {
+            if (remoteSensorId >= 0) {
+                motor.selectFeedbackSensor(FeedbackDeviceType.REMOTE_SENSOR_0);
+                ((BaseMotorController)motor).configRemoteFeedbackFilter(remoteSensorId, RemoteSensorSource.CANCoder, 0);
+            } else {
+                motor.selectFeedbackSensor(
+                    motor.get_MotorType() == IGreenMotor.MotorType.TalonFX ?
+                        FeedbackDeviceType.INTEGRATED_SENSOR :
+                        FeedbackDeviceType.RELATIVE_MAG_ENCODER
+                );
+            }
+        } else {
+            motor.selectFeedbackSensor(FeedbackDeviceType.HALL_SENSOR); // Only using hall sensors on sparks at the moment
+        }
 
         // for newly attached motors only
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
@@ -307,8 +302,6 @@ public class MotorFactory {
         // CTRE-Exclusive configurations
         if (isTalon) {
             //Casting might not work. Make sure to check.
-            int remoteSensorId = feedbackDeviceType == FeedbackDeviceType.REMOTE_SENSOR_0 ? 0 : 1;
-            ((BaseMotorController)motor).configRemoteFeedbackFilter(remoteSensorId, RemoteSensorSource.CANCoder, 0);
             ((BaseMotorController)motor).configClearPositionOnLimitF(false, kTimeoutMs);
             ((BaseMotorController)motor).configClearPositionOnLimitR(false, kTimeoutMs);
 

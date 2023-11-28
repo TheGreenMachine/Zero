@@ -110,8 +110,7 @@ public class RobotFactory {
                                 subsystem.motors.get(name).id,
                                 name,
                                 subsystem,
-                                pidConfigs,
-                                FeedbackDeviceType.HALL_SENSOR
+                                pidConfigs
                             );
                     }
                     case VictorSPX -> {
@@ -187,7 +186,6 @@ public class RobotFactory {
                             name,
                             subsystem,
                             subsystem.pidConfig,
-                            FeedbackDeviceType.HALL_SENSOR,
                             main
                         );
                     }
