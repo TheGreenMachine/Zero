@@ -266,62 +266,50 @@ public class Robot extends TimedRobot {
             );
 
             // intakeCone
-            inputHandler.listenDriverButton(
+            inputHandler.listenDriverButtonPressAndRelease(
                     Button.RIGHT_BUMPER,
-                    Button.State.PRESSED,
-                    () -> {
-                        if (
-                            elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
-                        ) { // collects from shelf
-                            collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.SHELF);
-                        } else { // collects from floor
-                            collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR);
+                    (pressed) -> {
+                        if (pressed) {
+                            if (
+                                elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
+                            ) { // collects from shelf
+                                collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.SHELF);
+                            } else { // collects from floor
+                                collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.FLOOR);
+                            }
+
+                            ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK); // indicates on LEDs//
+                        } else {
+                            collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
+                            ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.SOLID);
                         }
-
-                        ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.BLINK); // indicates on LEDs
-                    }
-            );
-
-            //intakeCone stop
-            inputHandler.listenDriverButton(
-                    Button.RIGHT_BUMPER,
-                    Button.State.RELEASED,
-                    () -> {
-                        collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
-                        ledManager.indicateStatus(LedManager.RobotStatus.CONE, LedManager.ControlState.SOLID);
                     }
             );
 
             //intakeCube
-            inputHandler.listenDriverButton(
+            inputHandler.listenDriverButtonPressAndRelease(
                     Button.LEFT_BUMPER,
-                    Button.State.PRESSED,
-                    () -> {
-                        if (
-                            elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
-                        ) { // collects from shelf
-                            collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.SHELF);
-                        } else { // collects from floor
-                            collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.FLOOR);
+                    (pressed) -> {
+                        if (pressed) {
+                            if (
+                                elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
+                            ) { // collects from shelf
+                                collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.SHELF);
+                            } else { // collects from floor
+                                collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.FLOOR);
+                            }
+                            ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK); // indicates on LEDs
+                        } else {
+                            collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
+                            ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.SOLID);
                         }
-                        ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.BLINK); // indicates on LEDs
-                    }
-            );
-
-            //intakeCube stop
-            inputHandler.listenDriverButton(
-                    Button.LEFT_BUMPER,
-                    Button.State.RELEASED,
-                    () -> {
-                        collector.setDesiredState(Collector.ROLLER_STATE.STOP, Collector.PIVOT_STATE.STOW);
-                        ledManager.indicateStatus(LedManager.RobotStatus.CUBE, LedManager.ControlState.SOLID);
                     }
             );
 
             //toggleArmScoreCollect
             inputHandler.listenDriverButton(
                     Button.X,
-                    Button.State.HELD,
+                    Button.State.HELD, // TODO this one might be PRESSED
                     () -> {
                         if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
                             && robotState.actualElevatorExtensionState != Elevator.EXTENSION_STATE.MIN) {
@@ -338,7 +326,7 @@ public class Robot extends TimedRobot {
             //shelfPos
             inputHandler.listenDriverButton(
                     Button.Y,
-                    Button.State.PRESSED,
+                    Button.State.PRESSED, // TODO this one might be HELD
                     () ->
                         elevator.setDesiredState(
                                 Elevator.ANGLE_STATE.SHELF_COLLECT,
