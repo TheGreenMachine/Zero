@@ -8,6 +8,11 @@
     },
     "operator": {
       "$ref": "controllerconfig.schema.json"
+    },
+    "buttonboard": {
+      "type": "object",
+      "$ref": "string.map.schema.json",
+      "additionalProperties": false
     }
   }
 }

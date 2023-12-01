@@ -6,10 +6,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.function.Consumer;
 
 /**
- * A single object that facilities the assignment of actions to
+ * A single object that facilities the assignment of actions to a
  * specific button, axis, and dpad events.
  *
  * @see ControllerBinding
@@ -25,6 +26,7 @@ public class InputHandler {
     protected class Controller {
         public Joystick joystick;
         public ControllerBinding binding;
+        public ControllerMappingInfo mappingInfo;
         public final EnumMap<Button, ButtonEvent> buttonEventMapping = new EnumMap<>(Button.class);
         public final EnumMap<Axis, AxisEvent> axisEventMapping = new EnumMap<>(Axis.class);
         public final EnumMap<Dpad, DpadEvent> dpadEventMapping = new EnumMap<>(Dpad.class);
@@ -61,7 +63,144 @@ public class InputHandler {
         operator.joystick = new Joystick(OPERATOR_PORT);
         buttonBoard.joystick = new Joystick(BUTTON_BOARD_PORT);
 
+        driver.mappingInfo = bridge.getDriverControllerInfo();
+        operator.mappingInfo = bridge.getOperatorControllerInfo();
+        buttonBoard.mappingInfo = bridge.getButtonBoardControllerInfo();
+
         init();
+    }
+
+    /**
+     * This procedure listens to any Button, Trigger, or Dpad press.
+     *
+     * @param mappingName
+     * @param state
+     * @param action
+     */
+    public void listenActionButton(String mappingName, ActionState state, Runnable action) {
+        // Checking if there is a button bound to the name.
+        {
+            Button button = driver.mappingInfo.buttons.get(mappingName);
+
+            if (button != null) {
+                listenDriverButton(button, state, action);
+            }
+
+            button = operator.mappingInfo.buttons.get(mappingName);
+
+            if (button != null) {
+                listenOperatorButton(button, state, action);
+            }
+
+            button = buttonBoard.mappingInfo.buttons.get(mappingName);
+
+            if (button != null) {
+                listenButtonBoardButton(button, state, action);
+            }
+        }
+
+        // Checking if there is a trigger bound to the name.
+        {
+            Trigger trigger = driver.mappingInfo.triggers.get(mappingName);
+
+            if (trigger != null) {
+                listenDriverTrigger(trigger, state, action);
+            }
+
+            trigger = operator.mappingInfo.triggers.get(mappingName);
+
+            if (trigger != null) {
+                listenOperatorTrigger(trigger, state, action);
+            }
+        }
+
+        // Checking if there is a dpad bound to the name.
+        {
+            Dpad dpad = driver.mappingInfo.dpad.get(mappingName);
+
+            if (dpad != null) {
+                listenDriverDpad(dpad, state, action);
+            }
+
+            dpad = driver.mappingInfo.dpad.get(mappingName);
+
+            if (dpad != null) {
+                listenOperatorDpad(dpad, state, action);
+            }
+        }
+    }
+
+    /**
+     * This procedure listens to any Axis event
+     *
+     * @param mappingName
+     * @param action
+     */
+    public void listenActionAxis(String mappingName, Consumer<Double> action) {
+        Axis axis = driver.mappingInfo.joysticks.get(mappingName);
+
+        if (axis != null) {
+            listenDriverAxis(axis, action);
+        }
+
+        axis = operator.mappingInfo.joysticks.get(mappingName);
+
+        if (axis != null) {
+            listenOperatorAxis(axis, action);
+        }
+    }
+
+    public void listenActionPressAndRelease(String mappingName, Consumer<Boolean> action) {
+        // Checking if there is a button bound to the name.
+        {
+            Button button = driver.mappingInfo.buttons.get(mappingName);
+
+            if (button != null) {
+                listenDriverButtonPressAndRelease(button, action);
+            }
+
+            button = operator.mappingInfo.buttons.get(mappingName);
+
+            if (button != null) {
+                listenOperatorButtonPressAndRelease(button, action);
+            }
+
+            button = buttonBoard.mappingInfo.buttons.get(mappingName);
+
+            if (button != null) {
+                listenButtonBoardButtonPressAndRelease(button, action);
+            }
+        }
+
+        // Checking if there is a trigger bound to the name.
+        {
+            Trigger trigger = driver.mappingInfo.triggers.get(mappingName);
+
+            if (trigger != null) {
+                listenDriverTriggerPressAndRelease(trigger, action);
+            }
+
+            trigger = operator.mappingInfo.triggers.get(mappingName);
+
+            if (trigger != null) {
+                listenOperatorTriggerPressAndRelease(trigger, action);
+            }
+        }
+
+        // Checking if there is a dpad bound to the name.
+        {
+            Dpad dpad = driver.mappingInfo.dpad.get(mappingName);
+
+            if (dpad != null) {
+                listenDriverDpadPressAndRelease(dpad, action);
+            }
+
+            dpad = driver.mappingInfo.dpad.get(mappingName);
+
+            if (dpad != null) {
+                listenOperatorDpadPressAndRelease(dpad, action);
+            }
+        }
     }
 
     /** Helper function to get a controller button as a boolean */
@@ -81,7 +220,7 @@ public class InputHandler {
         return getControllerButtonAsBool(operator, button);
     }
 
-    public boolean getButtonBoardAsBool(Button button) {
+    public boolean getButtonBoardButtonAsBool(Button button) {
         return getControllerButtonAsBool(buttonBoard, button);
     }
 
@@ -140,7 +279,7 @@ public class InputHandler {
     private void listenButton(
             Controller controller,
             Button button,
-            Button.State state,
+            ActionState state,
             Runnable action
     ) {
        ButtonEvent event = controller.buttonEventMapping.get(button);
@@ -157,15 +296,15 @@ public class InputHandler {
        }
     }
 
-    public void listenDriverButton(Button button, Button.State state, Runnable action) {
+    public void listenDriverButton(Button button, ActionState state, Runnable action) {
         listenButton(driver, button, state, action);
     }
 
-    public void listenOperatorButton(Button button, Button.State state, Runnable action) {
+    public void listenOperatorButton(Button button, ActionState state, Runnable action) {
         listenButton(operator, button, state, action);
     }
 
-    public void listenButtonBoardButton(Button button, Button.State state, Runnable action) {
+    public void listenButtonBoardButton(Button button, ActionState state, Runnable action) {
         listenButton(buttonBoard, button, state, action);
     }
 
@@ -180,8 +319,8 @@ public class InputHandler {
             Button button,
             Consumer<Boolean> action
     ) {
-        listenButton(controller, button, Button.State.PRESSED, () -> action.accept(true));
-        listenButton(controller, button, Button.State.RELEASED, () -> action.accept(false));
+        listenButton(controller, button, ActionState.PRESSED, () -> action.accept(true));
+        listenButton(controller, button, ActionState.RELEASED, () -> action.accept(false));
     }
 
     public void listenDriverButtonPressAndRelease(Button button, Consumer<Boolean> action) {
@@ -224,7 +363,7 @@ public class InputHandler {
     private void listenDpad(
             Controller controller,
             Dpad dpad,
-            Dpad.State state,
+            ActionState state,
             Runnable action
     ) {
         DpadEvent event = controller.dpadEventMapping.get(dpad);
@@ -241,11 +380,11 @@ public class InputHandler {
         }
     }
 
-    public void listenDriverDpad(Dpad dpad, Dpad.State state, Runnable action) {
+    public void listenDriverDpad(Dpad dpad, ActionState state, Runnable action) {
         listenDpad(driver, dpad, state, action);
     }
 
-    public void listenOperatorDpad(Dpad dpad, Dpad.State state, Runnable action) {
+    public void listenOperatorDpad(Dpad dpad, ActionState state, Runnable action) {
         listenDpad(operator, dpad, state, action);
     }
 
@@ -259,8 +398,8 @@ public class InputHandler {
             Dpad dpad,
             Consumer<Boolean> action
     ) {
-        listenDpad(controller, dpad, Dpad.State.PRESSED, () -> action.accept(true));
-        listenDpad(controller, dpad, Dpad.State.RELEASED, () -> action.accept(false));
+        listenDpad(controller, dpad, ActionState.PRESSED, () -> action.accept(true));
+        listenDpad(controller, dpad, ActionState.RELEASED, () -> action.accept(false));
     }
 
     public void listenDriverDpadPressAndRelease(Dpad dpad, Consumer<Boolean> action) {
@@ -275,7 +414,7 @@ public class InputHandler {
     private void listenTrigger(
             Controller controller,
             Trigger trigger,
-            Trigger.State state,
+            ActionState state,
             Runnable action
     ) {
         TriggerEvent event = controller.triggerEventMapping.get(trigger);
@@ -292,11 +431,11 @@ public class InputHandler {
         }
     }
 
-    public void listenDriverTrigger(Trigger trigger, Trigger.State state, Runnable action) {
+    public void listenDriverTrigger(Trigger trigger, ActionState state, Runnable action) {
         listenTrigger(driver, trigger, state, action);
     }
 
-    public void listenOperatorTrigger(Trigger trigger, Trigger.State state, Runnable action) {
+    public void listenOperatorTrigger(Trigger trigger, ActionState state, Runnable action) {
         listenTrigger(operator, trigger, state, action);
     }
 
@@ -310,8 +449,8 @@ public class InputHandler {
             Trigger trigger,
             Consumer<Boolean> action
     ) {
-        listenTrigger(controller, trigger, Trigger.State.PRESSED, () -> action.accept(true));
-        listenTrigger(controller, trigger, Trigger.State.RELEASED, () -> action.accept(false));
+        listenTrigger(controller, trigger, ActionState.PRESSED, () -> action.accept(true));
+        listenTrigger(controller, trigger, ActionState.RELEASED, () -> action.accept(false));
     }
 
     public void listenDriverTriggerPressAndRelease(Trigger trigger, Consumer<Boolean> action) {

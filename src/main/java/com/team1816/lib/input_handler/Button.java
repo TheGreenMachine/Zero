@@ -25,10 +25,4 @@ public enum Button {
     UP_RIGHT,
     DOWN_LEFT,
     DOWN_RIGHT;
-
-    public enum State {
-        PRESSED,
-        HELD,
-        RELEASED,
-    }
 }

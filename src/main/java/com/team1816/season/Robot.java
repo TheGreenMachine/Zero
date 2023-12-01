@@ -214,9 +214,9 @@ public class Robot extends TimedRobot {
             /** Driver Commands */
 
             //zeroPose
-            inputHandler.listenDriverButton(
-                    Button.START,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "zeroPose",
+                    ActionState.PRESSED,
                     () ->
                         drive.zeroSensors(
                                 robotState.allianceColor == Color.BLUE ?
@@ -226,9 +226,9 @@ public class Robot extends TimedRobot {
             );
 
             //autoTargetAlign
-            inputHandler.listenDriverButton(
-                    Button.A,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "autoTargetAlign",
+                    ActionState.PRESSED,
                     () -> {
                         if (robotState.allianceColor == Color.BLUE) {
                             robotState.target = DrivetrainTargets.blueTargets.get(grid * 3 + node);
@@ -240,20 +240,20 @@ public class Robot extends TimedRobot {
             );
 
             //brakeMode
-            inputHandler.listenOperatorButtonPressAndRelease(
-                    Button.B,
+            inputHandler.listenActionPressAndRelease(
+                    "brakeMode",
                     drive::setBraking
             );
 
             //slowMode
-            inputHandler.listenDriverTriggerPressAndRelease(
-                    Trigger.RIGHT,
+            inputHandler.listenActionPressAndRelease(
+                    "slowMode",
                     drive::setSlowMode
             );
 
             //autoBalance
-            inputHandler.listenDriverTriggerPressAndRelease(
-                    Trigger.LEFT,
+            inputHandler.listenActionPressAndRelease(
+                    "autoBalance",
                     (pressed) -> {
                         drive.setAutoBalance(pressed);
 
@@ -266,8 +266,8 @@ public class Robot extends TimedRobot {
             );
 
             // intakeCone
-            inputHandler.listenDriverButtonPressAndRelease(
-                    Button.RIGHT_BUMPER,
+            inputHandler.listenActionPressAndRelease(
+                    "intakeCone",
                     (pressed) -> {
                         if (pressed) {
                             if (
@@ -287,8 +287,8 @@ public class Robot extends TimedRobot {
             );
 
             //intakeCube
-            inputHandler.listenDriverButtonPressAndRelease(
-                    Button.LEFT_BUMPER,
+            inputHandler.listenActionPressAndRelease(
+                    "intakeCube",
                     (pressed) -> {
                         if (pressed) {
                             if (
@@ -307,9 +307,9 @@ public class Robot extends TimedRobot {
             );
 
             //toggleArmScoreCollect
-            inputHandler.listenDriverButton(
-                    Button.X,
-                    Button.State.HELD, // TODO this one might be PRESSED
+            inputHandler.listenActionButton(
+                    "toggleArmScoreCollect",
+                    ActionState.HELD, // TODO this one might be PRESSED
                     () -> {
                         if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
                             && robotState.actualElevatorExtensionState != Elevator.EXTENSION_STATE.MIN) {
@@ -324,9 +324,9 @@ public class Robot extends TimedRobot {
             );
 
             //shelfPos
-            inputHandler.listenDriverButton(
-                    Button.Y,
-                    Button.State.PRESSED, // TODO this one might be HELD
+            inputHandler.listenActionButton(
+                    "shelfPos",
+                    ActionState.PRESSED, // TODO this one might be HELD
                     () ->
                         elevator.setDesiredState(
                                 Elevator.ANGLE_STATE.SHELF_COLLECT,
@@ -335,8 +335,8 @@ public class Robot extends TimedRobot {
             );
 
             //snapToHumanPlayer
-            inputHandler.listenDriverDpadPressAndRelease(
-                    Dpad.UP,
+            inputHandler.listenActionPressAndRelease(
+                    "snapToHumanPlayer",
                     (pressed) -> {
                         snappingToHumanPlayer = pressed;
                         snappingToDriver = false;
@@ -344,8 +344,8 @@ public class Robot extends TimedRobot {
             );
 
             // snapToDriver
-            inputHandler.listenDriverDpadPressAndRelease(
-                    Dpad.DOWN,
+            inputHandler.listenActionPressAndRelease(
+                    "snapToDriver",
                     (pressed) -> {
                         snappingToDriver = pressed;
                         snappingToHumanPlayer = false;
@@ -355,15 +355,15 @@ public class Robot extends TimedRobot {
             /** Operator Commands */
 
             //updatePoseWithCamera
-            inputHandler.listenOperatorButton(
-                    Button.LEFT_BUMPER,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "updatePoseWithCamera",
+                    ActionState.PRESSED,
                     orchestrator::updatePoseWithCamera
             );
 
             //outtake
-            inputHandler.listenOperatorButtonPressAndRelease(
-                    Button.RIGHT_BUMPER,
+            inputHandler.listenActionPressAndRelease(
+                    "outtake",
                     (pressed) -> {
                         collector.outtakeGamePiece(pressed);
 
@@ -380,9 +380,9 @@ public class Robot extends TimedRobot {
             );
 
             //extendMin
-            inputHandler.listenOperatorButton(
-                    Button.A,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "extendMin",
+                    ActionState.PRESSED,
                     () -> {
                         GreenLogger.log("extend min");
                         orchestrator.alignMin();
@@ -390,9 +390,9 @@ public class Robot extends TimedRobot {
             );
 
             //extendMid
-            inputHandler.listenOperatorButton(
-                    Button.X,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "extendMid",
+                    ActionState.PRESSED,
                     () -> {
                         GreenLogger.log("extend mid");
                         orchestrator.alignMid();
@@ -400,9 +400,9 @@ public class Robot extends TimedRobot {
             );
 
             //extendMax
-            inputHandler.listenOperatorButton(
-                    Button.Y,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "extendMax",
+                    ActionState.PRESSED,
                     () -> {
                         GreenLogger.log("extend max");
                         orchestrator.alignMax();
@@ -410,9 +410,9 @@ public class Robot extends TimedRobot {
             );
 
             //autoScore
-            inputHandler.listenOperatorButton(
-                    Button.B,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "autoScore",
+                    ActionState.PRESSED,
                     () -> {
                         GreenLogger.log("auto score");
                         orchestrator.autoScore();
@@ -420,9 +420,9 @@ public class Robot extends TimedRobot {
             );
 
             //toggleCollectorPivot
-            inputHandler.listenOperatorButton(
-                    Button.START,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "toggleCollectorPivot",
+                    ActionState.PRESSED,
                     () -> {
                         if (robotState.actualElevatorAngleState == Elevator.ANGLE_STATE.SCORE) {
                             if (collector.getDesiredPivotState() == Collector.PIVOT_STATE.SCORE) {
@@ -438,9 +438,9 @@ public class Robot extends TimedRobot {
             /** Button Board Commands */
 
             //grid1
-            inputHandler.listenButtonBoardButton(
-                    Button.UP_LEFT,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "grid1",
+                    ActionState.PRESSED,
                     () -> {
                         grid = robotState.allianceColor == Color.RED ? 0 : 2;
                         GreenLogger.log("Grid changed to FEEDER");
@@ -448,9 +448,9 @@ public class Robot extends TimedRobot {
             );
 
             //grid2
-            inputHandler.listenButtonBoardButton(
-                    Button.UP,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "grid2",
+                    ActionState.PRESSED,
                     () -> {
                         grid = 1;
                         GreenLogger.log("Grid changed to BALANCE");
@@ -458,9 +458,9 @@ public class Robot extends TimedRobot {
             );
 
             //grid3
-            inputHandler.listenButtonBoardButton(
-                    Button.UP_RIGHT,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "grid3",
+                    ActionState.PRESSED,
                     () -> {
                         grid = robotState.allianceColor == Color.RED ? 2 : 0;
                         GreenLogger.log("Grid changed to WALL");
@@ -468,9 +468,9 @@ public class Robot extends TimedRobot {
             );
 
             //node1
-            inputHandler.listenButtonBoardButton(
-                    Button.LEFT,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "node1",
+                    ActionState.PRESSED,
                     () -> {
                         node = robotState.allianceColor == Color.RED ? 0 : 2;
                         GreenLogger.log("Node changed to LEFT");
@@ -478,9 +478,9 @@ public class Robot extends TimedRobot {
             );
 
             //node2
-            inputHandler.listenButtonBoardButton(
-                    Button.CENTER,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "node2",
+                    ActionState.PRESSED,
                     () -> {
                         node = 1;
                         GreenLogger.log("Node changed to CENTER");
@@ -488,9 +488,9 @@ public class Robot extends TimedRobot {
             );
 
             //node3
-            inputHandler.listenButtonBoardButton(
-                    Button.RIGHT,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "node3",
+                    ActionState.PRESSED,
                     () -> {
                         node = robotState.allianceColor == Color.RED ? 2 : 0;
                         GreenLogger.log("Node changed to RIGHT");
@@ -498,9 +498,9 @@ public class Robot extends TimedRobot {
             );
 
             //level1
-            inputHandler.listenButtonBoardButton(
-                    Button.DOWN_LEFT,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "level1",
+                    ActionState.PRESSED,
                     () -> {
                         level = Elevator.EXTENSION_STATE.MIN;
                         GreenLogger.log("Score level changed to Low");
@@ -508,9 +508,9 @@ public class Robot extends TimedRobot {
             );
 
             //level2
-            inputHandler.listenButtonBoardButton(
-                    Button.DOWN,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "level2",
+                    ActionState.PRESSED,
                     () -> {
                         level = Elevator.EXTENSION_STATE.MID;
                         GreenLogger.log("Score level changed to Mid");
@@ -518,9 +518,9 @@ public class Robot extends TimedRobot {
             );
 
             //level3
-            inputHandler.listenButtonBoardButton(
-                    Button.DOWN_RIGHT,
-                    Button.State.PRESSED,
+            inputHandler.listenActionButton(
+                    "level3",
+                    ActionState.PRESSED,
                     () -> {
                         level = Elevator.EXTENSION_STATE.MAX;
                         GreenLogger.log("Score level changed to Max");

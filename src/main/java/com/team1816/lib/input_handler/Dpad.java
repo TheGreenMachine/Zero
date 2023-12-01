@@ -10,12 +10,6 @@ public enum Dpad {
     LEFT(270),
     CENTER(-1);
 
-    public enum State {
-        PRESSED,
-        HELD,
-        RELEASED,
-    }
-
     public int value;
 
     Dpad(int value) {
