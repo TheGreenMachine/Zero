@@ -13,7 +13,7 @@ import java.util.HashMap;
  * @see InputHandlerBridge
  * @see InputHandler
  */
-public class ControllerMappingInfo {
+class ControllerMappingInfo {
     public HashMap<String, Axis> joysticks;
     public HashMap<String, Button> buttons;
     public HashMap<String, Trigger> triggers;
