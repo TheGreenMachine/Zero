@@ -185,6 +185,11 @@ public class GhostMotor implements IGreenMotor {
     }
 
     @Override
+    public boolean isLimitSwitchClosed(LimitSwitchDirection direction) {
+        return true;
+    }
+
+    @Override
     public void neutralOutput() {
 
     }

@@ -132,6 +132,13 @@ public class LazyVictorSPX extends VictorSPX implements IGreenMotor {
     }
 
     @Override
+    public boolean isLimitSwitchClosed(LimitSwitchDirection direction) {
+        GreenLogger.log("Limit switch status checking unsupported for VictorSPX");
+        return false;
+    }
+
+
+    @Override
     public void configOpenLoopRampRate(double secondsNeutralToFull) {
         super.configOpenloopRamp(secondsNeutralToFull);
     }

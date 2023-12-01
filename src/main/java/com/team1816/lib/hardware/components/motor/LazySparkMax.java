@@ -123,6 +123,12 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
     }
 
     @Override
+    public boolean isLimitSwitchClosed(LimitSwitchDirection direction) {
+        return direction == LimitSwitchDirection.FORWARD ? forwardLimitSwitch.isPressed() : reverseLimitSwitch.isPressed();
+    }
+
+
+    @Override
     public void neutralOutput() {
         super.stopMotor();
     }
@@ -134,7 +140,7 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
 
     @Override
     public void setSensorPhase(boolean isInverted) {
-        GreenLogger.log("Cannot invert sensor phase of a Spark in brushless mode!");
+        GreenLogger.log("Cannot invert sensor phase of a Spark in brushless mode");
         //If we ever have a spark controlling a brushed motor, the next line can be uncommented.
             //encoder.setInverted(isInverted); // This is NOT the same as a call to super.getInverted().
     }

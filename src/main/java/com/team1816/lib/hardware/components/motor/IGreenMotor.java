@@ -105,6 +105,8 @@ public interface IGreenMotor {
 
     void enableLimitSwitches(boolean isEnabled);
 
+    boolean isLimitSwitchClosed(LimitSwitchDirection direction);
+
 
     // Ramp rates
     void configOpenLoopRampRate(double secondsNeutralToFull);
@@ -256,6 +258,11 @@ public interface IGreenMotor {
         VictorSPX, //no idea what this actually controls, if we ever use these again the world is probably ending
         SparkMax, //neo 550s
         GHOST //simulation
+    }
+
+    enum LimitSwitchDirection {
+        FORWARD,
+        REVERSE
     }
 
 }

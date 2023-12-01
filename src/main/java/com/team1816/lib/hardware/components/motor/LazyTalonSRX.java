@@ -134,6 +134,11 @@ public class LazyTalonSRX extends TalonSRX implements IGreenMotor {
     }
 
     @Override
+    public boolean isLimitSwitchClosed(LimitSwitchDirection direction) {
+        return direction == LimitSwitchDirection.FORWARD ? (super.isFwdLimitSwitchClosed() == 1) : (super.isRevLimitSwitchClosed() == 1);
+    }
+
+    @Override
     public void configOpenLoopRampRate(double secondsNeutralToFull) {
         super.configOpenloopRamp(secondsNeutralToFull);
     }
