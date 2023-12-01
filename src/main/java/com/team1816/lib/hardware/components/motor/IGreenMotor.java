@@ -251,11 +251,11 @@ public interface IGreenMotor {
     }
 
     enum MotorType {
-        TalonFX,
-        TalonSRX,
-        VictorSPX,
-        SparkMax,
-        GHOST
+        TalonFX, //Falcons and Krakens
+        TalonSRX, //cims, bags, etc
+        VictorSPX, //no idea what this actually controls, if we ever use these again the world is probably ending
+        SparkMax, //neo 550s
+        GHOST //simulation
     }
 
 }
