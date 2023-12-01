@@ -122,7 +122,7 @@ public class InputHandler {
                 listenDriverDpad(dpad, state, action);
             }
 
-            dpad = driver.mappingInfo.dpad.get(mappingName);
+            dpad = operator.mappingInfo.dpad.get(mappingName);
 
             if (dpad != null) {
                 listenOperatorDpad(dpad, state, action);
@@ -195,12 +195,101 @@ public class InputHandler {
                 listenDriverDpadPressAndRelease(dpad, action);
             }
 
-            dpad = driver.mappingInfo.dpad.get(mappingName);
+            dpad = operator.mappingInfo.dpad.get(mappingName);
 
             if (dpad != null) {
                 listenOperatorDpadPressAndRelease(dpad, action);
             }
         }
+    }
+
+    /**
+     * Goes through all the possible action names that are bound to
+     * a specific button, trigger, axis, or dpad, and returns a double
+     * precision floating point value.
+     *
+     * @param mappingName
+     * @return
+     */
+    public Double getActionAsDouble(String mappingName) {
+        // Checking if there is a button bound to the name.
+        {
+            Button button = driver.mappingInfo.buttons.get(mappingName);
+
+            if (button != null) {
+                return getDriverButtonAsBool(button) ? 1.0 : 0.0;
+            }
+
+            button = operator.mappingInfo.buttons.get(mappingName);
+
+            if (button != null) {
+                return getOperatorButtonAsBool(button) ? 1.0 : 0.0;
+            }
+
+            button = buttonBoard.mappingInfo.buttons.get(mappingName);
+
+            if (button != null) {
+                return getButtonBoardButtonAsBool(button) ? 1.0 : 0.0;
+            }
+        }
+
+        // Checking if there is a trigger bound to the name.
+        {
+            Trigger trigger = driver.mappingInfo.triggers.get(mappingName);
+
+            if (trigger != null) {
+                return getDriverTriggerAsBool(trigger) ? 1.0 : 0.0;
+            }
+
+            trigger = operator.mappingInfo.triggers.get(mappingName);
+
+            if (trigger != null) {
+                return getOperatorTriggerAsBool(trigger) ? 1.0 : 0.0;
+            }
+        }
+
+        // Checking if there is a dpad bound to the name.
+        {
+            Dpad dpad = driver.mappingInfo.dpad.get(mappingName);
+
+            if (dpad != null) {
+                return getDriverDpadAsBool(dpad) ? 1.0 : 0.0;
+            }
+
+            dpad = operator.mappingInfo.dpad.get(mappingName);
+
+            if (dpad != null) {
+                return getOperatorDpadAsBool(dpad) ? 1.0 : 0.0;
+            }
+        }
+
+        // Checking if there is an axis bound to the name.
+        {
+            Axis axis = driver.mappingInfo.joysticks.get(mappingName);
+
+            if (axis != null) {
+                return getDriverAxisAsDouble(axis);
+            }
+
+            axis = operator.mappingInfo.joysticks.get(mappingName);
+
+            if (axis != null) {
+                return getOperatorAxisAsDouble(axis);
+            }
+        }
+
+        return 0.0;
+    }
+
+    /**
+     * Goes through all the possible action names that are bound to
+     * a specific button, trigger, axis, or dpad, and returns a boolean.
+     *
+     * @param mappingName
+     * @return
+     */
+    public Boolean getActionAsBool(String mappingName) {
+        return getActionAsDouble(mappingName) > Trigger.kAxisThreshold;
     }
 
     /** Helper function to get a controller button as a boolean */
@@ -275,6 +364,19 @@ public class InputHandler {
         return getControllerTriggerAsBool(operator, trigger);
     }
 
+    /** Helper function to get a dpad button as boolean */
+    private boolean getControllerDpadAsBool(Controller controller, Dpad dpad) {
+        return controller.joystick.getPOV() == dpad.value;
+    }
+
+    public boolean getDriverDpadAsBool(Dpad dpad) {
+        return getControllerDpadAsBool(driver, dpad);
+    }
+
+    public boolean getOperatorDpadAsBool(Dpad dpad) {
+        return getControllerDpadAsBool(operator, dpad);
+    }
+
     /** Helper function for listening to a specific button. */
     private void listenButton(
             Controller controller,
@@ -282,18 +384,18 @@ public class InputHandler {
             ActionState state,
             Runnable action
     ) {
-       ButtonEvent event = controller.buttonEventMapping.get(button);
+        ButtonEvent event = controller.buttonEventMapping.get(button);
 
-       if (event == null) {
-           GreenLogger.log("INPUT HANDLER: Button `" + button.toString() + "` is not mapped!");
-           return;
-       }
+        if (event == null) {
+            GreenLogger.log("INPUT HANDLER: Button `" + button.toString() + "` is not mapped!");
+            return;
+        }
 
-       switch (state) {
-           case HELD -> event.addHoldAction(action);
-           case PRESSED -> event.addPressAction(action);
-           case RELEASED -> event.addReleaseAction(action);
-       }
+        switch (state) {
+            case HELD -> event.addHoldAction(action);
+            case PRESSED -> event.addPressAction(action);
+            case RELEASED -> event.addReleaseAction(action);
+        }
     }
 
     public void listenDriverButton(Button button, ActionState state, Runnable action) {
@@ -472,9 +574,9 @@ public class InputHandler {
 
             // Mapping a specific axis to an event via an id from the binding.
             controller.binding.axisMap.forEach((axis, id) -> {
-               AxisEvent event = new AxisEvent(id);
+                AxisEvent event = new AxisEvent(id);
 
-               controller.axisEventMapping.put(axis, event);
+                controller.axisEventMapping.put(axis, event);
             });
 
             // Mapping a specific trigger to an event via an id from the binding.
