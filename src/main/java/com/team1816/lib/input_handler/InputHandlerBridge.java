@@ -18,6 +18,9 @@ public class InputHandlerBridge {
     private ControllerMappingInfo operatorInfo;
     private ControllerMappingInfo buttonBoardInfo;
 
+    private boolean driverRumble;
+    private boolean operatorRumble;
+
     public ControllerBinding getDriverControllerBinding() {
         return driverBinding;
     }
@@ -36,6 +39,14 @@ public class InputHandlerBridge {
 
     public ControllerMappingInfo getButtonBoardControllerInfo() {
         return buttonBoardInfo;
+    }
+
+    public boolean isDriverRumbleEnabled() {
+        return driverRumble;
+    }
+
+    public boolean isOperatorRumbleEnabled() {
+        return operatorRumble;
     }
 
     private ControllerBinding stringToControllerBinding(String nameType) {
@@ -144,7 +155,7 @@ public class InputHandlerBridge {
                 }
 
                 if (config.driver.rumble != null) {
-                    // TODO: do something here in the future.
+                    driverRumble = config.driver.rumble;
                 }
             }
 
@@ -214,7 +225,7 @@ public class InputHandlerBridge {
                 }
 
                 if (config.operator.rumble != null) {
-                    // TODO: do something here in the future.
+                    operatorRumble = config.operator.rumble;
                 }
             }
 

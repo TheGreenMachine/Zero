@@ -1,12 +1,12 @@
 package com.team1816.lib.input_handler;
 
 import com.team1816.lib.util.logUtil.GreenLogger;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.function.Consumer;
 
 /**
@@ -31,6 +31,12 @@ public class InputHandler {
         public final EnumMap<Axis, AxisEvent> axisEventMapping = new EnumMap<>(Axis.class);
         public final EnumMap<Dpad, DpadEvent> dpadEventMapping = new EnumMap<>(Dpad.class);
         public final EnumMap<Trigger, TriggerEvent> triggerEventMapping = new EnumMap<>(Trigger.class);
+
+        public enum ROLE {
+            DRIVER,
+            OPERATOR,
+            BUTTONBOARD
+        }
     }
 
     private Controller driver;
@@ -563,6 +569,30 @@ public class InputHandler {
         listenTriggerPressAndRelease(operator, trigger, action);
     }
 
+    public void setUniformRumble(Controller.ROLE controllerRole, double demand) {
+        if (controllerRole == Controller.ROLE.DRIVER) {
+            driver.joystick.setRumble(GenericHID.RumbleType.kBothRumble, demand);
+        } else if (controllerRole == Controller.ROLE.OPERATOR) {
+            operator.joystick.setRumble(GenericHID.RumbleType.kBothRumble, demand);
+        }
+    }
+
+    public void setLeftRumble(Controller.ROLE controllerRole, double demand) {
+        if (controllerRole == Controller.ROLE.DRIVER) {
+            driver.joystick.setRumble(GenericHID.RumbleType.kLeftRumble, demand);
+        } else if (controllerRole == Controller.ROLE.OPERATOR) {
+            operator.joystick.setRumble(GenericHID.RumbleType.kLeftRumble, demand);
+        }
+    }
+
+    public void setRightRumble(Controller.ROLE controllerRole, double demand) {
+        if (controllerRole == Controller.ROLE.DRIVER) {
+            driver.joystick.setRumble(GenericHID.RumbleType.kRightRumble, demand);
+        } else if (controllerRole == Controller.ROLE.OPERATOR) {
+            operator.joystick.setRumble(GenericHID.RumbleType.kRightRumble, demand);
+        }
+    }
+
     public void init() {
         for (Controller controller : controllers) {
             // Mapping a specific button to an event via an id from the binding.
@@ -619,4 +649,5 @@ public class InputHandler {
             });
         }
     }
+
 }
