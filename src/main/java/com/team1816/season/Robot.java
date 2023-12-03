@@ -5,6 +5,8 @@ import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.input_handler.*;
+import com.team1816.lib.input_handler.controlOptions.ActionState;
+import com.team1816.lib.input_handler.controlOptions.Axis;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;

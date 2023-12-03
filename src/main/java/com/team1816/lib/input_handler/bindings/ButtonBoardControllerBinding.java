@@ -1,4 +1,6 @@
-package com.team1816.lib.input_handler;
+package com.team1816.lib.input_handler.bindings;
+
+import com.team1816.lib.input_handler.controlOptions.Button;
 
 public class ButtonBoardControllerBinding extends ControllerBinding {
     public ButtonBoardControllerBinding() {

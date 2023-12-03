@@ -1,4 +1,7 @@
-package com.team1816.lib.input_handler;
+package com.team1816.lib.input_handler.bindings;
+
+import com.team1816.lib.input_handler.controlOptions.Axis;
+import com.team1816.lib.input_handler.controlOptions.Button;
 
 public class WasdControllerBinding extends ControllerBinding {
     public WasdControllerBinding() {

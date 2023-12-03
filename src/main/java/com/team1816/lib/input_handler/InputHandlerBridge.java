@@ -3,10 +3,16 @@ package com.team1816.lib.input_handler;
 import com.google.inject.Inject;
 import com.team1816.lib.Injector;
 import com.team1816.lib.hardware.factory.RobotFactory;
+import com.team1816.lib.input_handler.bindings.ButtonBoardControllerBinding;
+import com.team1816.lib.input_handler.bindings.ControllerBinding;
+import com.team1816.lib.input_handler.bindings.WasdControllerBinding;
+import com.team1816.lib.input_handler.bindings.XboxControllerBinding;
+import com.team1816.lib.input_handler.controlOptions.Axis;
+import com.team1816.lib.input_handler.controlOptions.Button;
+import com.team1816.lib.input_handler.controlOptions.Dpad;
+import com.team1816.lib.input_handler.controlOptions.Trigger;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import edu.wpi.first.wpilibj.DriverStation;
-
-import java.util.HashMap;
 
 public class InputHandlerBridge {
     private InputHandlerConfig config;

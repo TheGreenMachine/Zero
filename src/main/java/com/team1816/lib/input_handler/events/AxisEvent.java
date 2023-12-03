@@ -1,4 +1,6 @@
-package com.team1816.lib.input_handler;
+package com.team1816.lib.input_handler.events;
+
+import com.team1816.lib.input_handler.controlOptions.Axis;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;

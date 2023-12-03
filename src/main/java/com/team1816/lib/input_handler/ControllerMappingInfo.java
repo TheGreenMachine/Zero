@@ -1,5 +1,10 @@
 package com.team1816.lib.input_handler;
 
+import com.team1816.lib.input_handler.controlOptions.Axis;
+import com.team1816.lib.input_handler.controlOptions.Button;
+import com.team1816.lib.input_handler.controlOptions.Dpad;
+import com.team1816.lib.input_handler.controlOptions.Trigger;
+
 import java.util.HashMap;
 
 /**
@@ -19,7 +24,7 @@ class ControllerMappingInfo {
     public HashMap<String, Trigger> triggers;
     public HashMap<String, Dpad> dpad;
 
-    public ControllerMappingInfo() {
+    protected ControllerMappingInfo() {
         joysticks = new HashMap<>();
         buttons = new HashMap<>();
         triggers = new HashMap<>();

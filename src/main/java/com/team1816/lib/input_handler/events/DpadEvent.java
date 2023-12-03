@@ -1,17 +1,17 @@
-package com.team1816.lib.input_handler;
+package com.team1816.lib.input_handler.events;
 
+import com.team1816.lib.input_handler.controlOptions.Dpad;
 import com.team1816.lib.util.team254.LatchedBoolean;
 
 import java.util.ArrayList;
 
 /**
- * An event that holds actions to run when the button's state changes.
+ * An event that holds actions to run when the Dpad's state changes.
  *
- * @see Button
- * @see Button.State
+ * @see Dpad
+ * @see Dpad.State
  */
-public class ButtonEvent {
-    private final Integer id;
+public class DpadEvent {
     private final ArrayList<Runnable> pressActions = new ArrayList<>();
     private final ArrayList<Runnable> holdActions = new ArrayList<>();
     private final ArrayList<Runnable> releaseActions = new ArrayList<>();
@@ -19,16 +19,10 @@ public class ButtonEvent {
     private final LatchedBoolean pressedState = new LatchedBoolean();
     private final LatchedBoolean releasedState = new LatchedBoolean();
 
-    public ButtonEvent(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
+    public DpadEvent() {}
 
     /**
-     * Adds an action to be performed once when a button is pressed
+     * Adds an action to be performed once when a dpad axis is pressed
      *
      * @param action
      */
@@ -37,7 +31,7 @@ public class ButtonEvent {
     }
 
     /**
-     * Adds an action to be performed while a button is held
+     * Adds an action to be performed while a dpad axis is pressed
      *
      * @param action
      */
@@ -46,7 +40,7 @@ public class ButtonEvent {
     }
 
     /**
-     * Adds an action to be performed once when a button is released
+     * Adds an action to be performed once when a dpad axis is released
      *
      * @param action
      */

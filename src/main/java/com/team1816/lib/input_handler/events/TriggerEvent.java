@@ -1,5 +1,6 @@
-package com.team1816.lib.input_handler;
+package com.team1816.lib.input_handler.events;
 
+import com.team1816.lib.input_handler.controlOptions.Trigger;
 import com.team1816.lib.util.team254.LatchedBoolean;
 
 import java.util.ArrayList;

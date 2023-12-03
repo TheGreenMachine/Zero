@@ -1,4 +1,8 @@
-package com.team1816.lib.input_handler;
+package com.team1816.lib.input_handler.bindings;
+
+import com.team1816.lib.input_handler.controlOptions.Axis;
+import com.team1816.lib.input_handler.controlOptions.Button;
+import com.team1816.lib.input_handler.controlOptions.Trigger;
 
 public class XboxControllerBinding extends ControllerBinding {
     public XboxControllerBinding() {

@@ -1,4 +1,4 @@
-package com.team1816.lib.input_handler;
+package com.team1816.lib.input_handler.controlOptions;
 
 /**
  * Dpad values
