@@ -49,6 +49,8 @@ public class InputHandler {
 
     private Controller[] controllers = new Controller[3];
 
+    private boolean driverRumbleEnabled, operatorRumbleEnabled;
+
     @Inject
     public InputHandler(InputHandlerBridge bridge) {
         driver = new Controller();
@@ -72,6 +74,9 @@ public class InputHandler {
         driver.mappingInfo = bridge.getDriverControllerInfo();
         operator.mappingInfo = bridge.getOperatorControllerInfo();
         buttonBoard.mappingInfo = bridge.getButtonBoardControllerInfo();
+
+        driverRumbleEnabled = bridge.isDriverRumbleEnabled();
+        operatorRumbleEnabled = bridge.isOperatorRumbleEnabled();
 
         init();
     }
@@ -570,25 +575,25 @@ public class InputHandler {
     }
 
     public void setUniformRumble(Controller.ROLE controllerRole, double demand) {
-        if (controllerRole == Controller.ROLE.DRIVER) {
+        if (controllerRole == Controller.ROLE.DRIVER && driverRumbleEnabled) {
             driver.joystick.setRumble(GenericHID.RumbleType.kBothRumble, demand);
-        } else if (controllerRole == Controller.ROLE.OPERATOR) {
+        } else if (controllerRole == Controller.ROLE.OPERATOR && operatorRumbleEnabled) {
             operator.joystick.setRumble(GenericHID.RumbleType.kBothRumble, demand);
         }
     }
 
     public void setLeftRumble(Controller.ROLE controllerRole, double demand) {
-        if (controllerRole == Controller.ROLE.DRIVER) {
+        if (controllerRole == Controller.ROLE.DRIVER && driverRumbleEnabled) {
             driver.joystick.setRumble(GenericHID.RumbleType.kLeftRumble, demand);
-        } else if (controllerRole == Controller.ROLE.OPERATOR) {
+        } else if (controllerRole == Controller.ROLE.OPERATOR && operatorRumbleEnabled) {
             operator.joystick.setRumble(GenericHID.RumbleType.kLeftRumble, demand);
         }
     }
 
     public void setRightRumble(Controller.ROLE controllerRole, double demand) {
-        if (controllerRole == Controller.ROLE.DRIVER) {
+        if (controllerRole == Controller.ROLE.DRIVER && driverRumbleEnabled) {
             driver.joystick.setRumble(GenericHID.RumbleType.kRightRumble, demand);
-        } else if (controllerRole == Controller.ROLE.OPERATOR) {
+        } else if (controllerRole == Controller.ROLE.OPERATOR && operatorRumbleEnabled) {
             operator.joystick.setRumble(GenericHID.RumbleType.kRightRumble, demand);
         }
     }

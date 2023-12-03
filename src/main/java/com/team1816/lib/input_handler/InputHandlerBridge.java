@@ -18,8 +18,8 @@ public class InputHandlerBridge {
     private ControllerMappingInfo operatorInfo;
     private ControllerMappingInfo buttonBoardInfo;
 
-    private boolean driverRumble;
-    private boolean operatorRumble;
+    private boolean driverRumble = false;
+    private boolean operatorRumble = false;
 
     public ControllerBinding getDriverControllerBinding() {
         return driverBinding;
