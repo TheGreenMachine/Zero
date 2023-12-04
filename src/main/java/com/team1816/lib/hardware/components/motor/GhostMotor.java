@@ -408,11 +408,6 @@ public class GhostMotor implements IGreenMotor {
     }
 
     @Override
-    public double getFeedForward(int closedLoopSlotID, int pidSlotID) {
-        return 0;
-    }
-
-    @Override
     public void selectPIDSlot(int pidSlotID, int closedLoopSlotID) {
 
     }

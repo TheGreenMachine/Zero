@@ -354,11 +354,6 @@ public class LazySparkMax extends CANSparkMax implements IGreenMotor {
     }
 
     @Override
-    public double getFeedForward(int closedLoopSlotID, int PIDSlotID) {
-        return pidController.getFF(PIDSlotID);
-    }
-
-    @Override
     public void selectPIDSlot(int pidSlotID, int closedLoopSlotID) {
         currentPIDSlot = pidSlotID;
     }

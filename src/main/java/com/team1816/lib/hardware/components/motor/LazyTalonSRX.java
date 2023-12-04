@@ -311,11 +311,6 @@ public class LazyTalonSRX extends TalonSRX implements IGreenMotor {
     }
 
     @Override
-    public double getFeedForward(int closedLoopSlotID, int PIDSlotID) {
-        return super.getActiveTrajectoryArbFeedFwd(closedLoopSlotID);
-    }
-
-    @Override
     public void selectPIDSlot(int pidSlotID, int closedLoopSlotID) {
         super.selectProfileSlot(pidSlotID, closedLoopSlotID);
     }

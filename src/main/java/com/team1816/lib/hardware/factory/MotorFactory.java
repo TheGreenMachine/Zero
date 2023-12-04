@@ -345,11 +345,4 @@ public class MotorFactory {
         }
         return slotConfig;
     }
-
-    public enum MotorType {
-        TalonSRX,
-        Falcon,
-        SparkMax,
-        Ghost,
-    }
 }
