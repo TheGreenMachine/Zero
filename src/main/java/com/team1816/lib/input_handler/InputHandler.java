@@ -88,6 +88,7 @@ public class InputHandler {
         init();
     }
 
+    //TODO Make any class-exclusive methods private. We should only have a few exposed methods so people don't get confused.
     /**
      * This procedure listens to any Button, Trigger, or Dpad press.
      *
@@ -97,11 +98,12 @@ public class InputHandler {
      */
     public void listenActionButton(String mappingName, ActionState state, Runnable action) {
         // Checking if there is a button bound to the name.
+        //TODO I don't really think that the curly braces are necessary. Code organization could probably be done better with comments or javadocs
         {
             Button button = driver.mappingInfo.buttons.get(mappingName);
 
             if (button != null) {
-                listenDriverButton(button, state, action);
+                listenDriverButton(button, state, action); // TODO if you're going to keep the control-exclusive listen methods, make them private as to not confuse people when writing controls
             }
 
             button = operator.mappingInfo.buttons.get(mappingName);
@@ -253,6 +255,7 @@ public class InputHandler {
 
         // Checking if there is a trigger bound to the name.
         {
+            //TODO Triggers are axes! They can natively return as a double
             Trigger trigger = driver.mappingInfo.triggers.get(mappingName);
 
             if (trigger != null) {
@@ -268,6 +271,7 @@ public class InputHandler {
 
         // Checking if there is a dpad bound to the name.
         {
+            //TODO Link dpad to the values in the Dpad enum
             Dpad dpad = driver.mappingInfo.dpad.get(mappingName);
 
             if (dpad != null) {
