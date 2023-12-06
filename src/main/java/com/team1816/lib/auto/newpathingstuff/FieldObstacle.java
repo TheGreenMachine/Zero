@@ -18,17 +18,17 @@ public abstract class FieldObstacle {
      */
     //List of coordinates in order of how the polygon(or really obstacle) is connected
     private final List<Translation2d> vertices;
-    //TODO make this a yaml
+    //TODO make this a yaml and final
     //btw this a mathematical thing, assuming a rectangular positioning of wheels, the center will be the midpoint of a rectangle formed by the contact point of the wheels, x is width, y is length
     private Translation2d robotCenter;
-    //TODO make this a yaml
+    //TODO make this a yaml and final
     private double robotWidth;
-    //TODO make this a yaml
+    //TODO make this a yaml and final
     private double robotLength;
-    //TODO make this a yaml
+    //TODO make this a yaml and final
     //This one isn't an exact measurement, it is still in meters but is a buffer value added to the length and width of the robot to avoid close collisions with obstacles
     private double robotSizeLeeway;
-    //TODO make this a yaml
+    //TODO make this a yaml and final
     private double timeInSecondsIncrement;
     private final double robotHalfWidthLeft = robotCenter.getX() + robotSizeLeeway;
     private final double robotHalfWidthRight = robotWidth - robotCenter.getX() + robotSizeLeeway;

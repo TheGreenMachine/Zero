@@ -7,9 +7,9 @@ import java.util.ArrayList;
  * Class specifying all details about the game field, in FieldObstacle
  */
 public class FieldButFieldObstaclesConfig {
-    //TODO prob make this a yaml
+    //TODO prob make this a yaml and final
     private static double fieldInsideWidth;
-    //TODO prob also make this a yaml
+    //TODO prob also make this a yaml and final
     private static double fieldInsideLength;
     private static final List<FieldObstacle> FieldObstacles = new ArrayList<FieldObstacle>(List.of(
         //TODO add the list of game elements here
