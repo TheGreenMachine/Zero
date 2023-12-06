@@ -15,15 +15,15 @@ public class FieldButFieldObstaclesConfig {
         //TODO add the list of game elements here
     ));
 
-    public double getFieldInsideWidth() {
+    public static double getFieldInsideWidth() {
         return fieldInsideWidth;
     }
 
-    public double getFieldInsideLength() {
+    public static double getFieldInsideLength() {
         return fieldInsideLength;
     }
 
-    public List<FieldObstacle> getFieldObstacles() {
+    public static List<FieldObstacle> getFieldObstacles() {
         return FieldObstacles;
     }
 }

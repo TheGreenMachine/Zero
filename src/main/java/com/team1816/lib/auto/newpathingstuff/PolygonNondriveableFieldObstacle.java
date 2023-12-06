@@ -7,9 +7,9 @@ import java.util.List;
 /**
  * Wrapper class(probably, idk what that means really) for the abstract FieldObstacle class
  */
-public class NondriveableFieldObstacle extends FieldObstacle{
+public class PolygonNondriveableFieldObstacle extends FieldObstacle{
 
-    public NondriveableFieldObstacle(List<Translation2d> vertices) {
+    public PolygonNondriveableFieldObstacle(List<Translation2d> vertices) {
         super(vertices);
     }
 }
