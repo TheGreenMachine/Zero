@@ -38,12 +38,18 @@ public class InputHandler {
         public final EnumMap<Axis, AxisEvent> axisEventMapping = new EnumMap<>(Axis.class);
         public final EnumMap<Dpad, DpadEvent> dpadEventMapping = new EnumMap<>(Dpad.class);
         public final EnumMap<Trigger, TriggerEvent> triggerEventMapping = new EnumMap<>(Trigger.class);
+    }
 
-        public enum ROLE {
-            DRIVER,
-            OPERATOR,
-            BUTTONBOARD
-        }
+    public enum RumbleDirection {
+        UNIFORM,
+        LEFT,
+        RIGHT,
+    }
+
+    public enum ControllerRole {
+        DRIVER,
+        OPERATOR,
+        BUTTONBOARD,
     }
 
     private Controller driver;
@@ -88,7 +94,6 @@ public class InputHandler {
         init();
     }
 
-    //TODO Make any class-exclusive methods private. We should only have a few exposed methods so people don't get confused.
     /**
      * This procedure listens to any Button, Trigger, or Dpad press.
      *
@@ -97,55 +102,23 @@ public class InputHandler {
      * @param action
      */
     public void listenActionButton(String mappingName, ActionState state, Runnable action) {
-        // Checking if there is a button bound to the name.
-        //TODO I don't really think that the curly braces are necessary. Code organization could probably be done better with comments or javadocs
-        {
-            Button button = driver.mappingInfo.buttons.get(mappingName);
+        for (Controller controller : controllers) {
+            Button button = controller.mappingInfo.buttons.get(mappingName);
 
             if (button != null) {
-                listenDriverButton(button, state, action); // TODO if you're going to keep the control-exclusive listen methods, make them private as to not confuse people when writing controls
+                listenButton(controller, button, state, action);
             }
 
-            button = operator.mappingInfo.buttons.get(mappingName);
-
-            if (button != null) {
-                listenOperatorButton(button, state, action);
-            }
-
-            button = buttonBoard.mappingInfo.buttons.get(mappingName);
-
-            if (button != null) {
-                listenButtonBoardButton(button, state, action);
-            }
-        }
-
-        // Checking if there is a trigger bound to the name.
-        {
-            Trigger trigger = driver.mappingInfo.triggers.get(mappingName);
+            Trigger trigger = controller.mappingInfo.triggers.get(mappingName);
 
             if (trigger != null) {
-                listenDriverTrigger(trigger, state, action);
+                listenTrigger(controller, trigger, state, action);
             }
 
-            trigger = operator.mappingInfo.triggers.get(mappingName);
-
-            if (trigger != null) {
-                listenOperatorTrigger(trigger, state, action);
-            }
-        }
-
-        // Checking if there is a dpad bound to the name.
-        {
-            Dpad dpad = driver.mappingInfo.dpad.get(mappingName);
+            Dpad dpad = controller.mappingInfo.dpad.get(mappingName);
 
             if (dpad != null) {
-                listenDriverDpad(dpad, state, action);
-            }
-
-            dpad = operator.mappingInfo.dpad.get(mappingName);
-
-            if (dpad != null) {
-                listenOperatorDpad(dpad, state, action);
+                listenDpad(controller, dpad, state, action);
             }
         }
     }
@@ -157,68 +130,33 @@ public class InputHandler {
      * @param action
      */
     public void listenActionAxis(String mappingName, Consumer<Double> action) {
-        Axis axis = driver.mappingInfo.joysticks.get(mappingName);
+        for (Controller controller : controllers) {
+           Axis axis = controller.mappingInfo.joysticks.get(mappingName);
 
-        if (axis != null) {
-            listenDriverAxis(axis, action);
-        }
-
-        axis = operator.mappingInfo.joysticks.get(mappingName);
-
-        if (axis != null) {
-            listenOperatorAxis(axis, action);
+           if (axis != null) {
+               listenAxis(controller, axis, action);
+           }
         }
     }
 
     public void listenActionPressAndRelease(String mappingName, Consumer<Boolean> action) {
-        // Checking if there is a button bound to the name.
-        {
-            Button button = driver.mappingInfo.buttons.get(mappingName);
+        for (Controller controller : controllers) {
+            Button button = controller.mappingInfo.buttons.get(mappingName);
 
             if (button != null) {
-                listenDriverButtonPressAndRelease(button, action);
+                listenButtonPressAndRelease(controller, button, action);
             }
 
-            button = operator.mappingInfo.buttons.get(mappingName);
-
-            if (button != null) {
-                listenOperatorButtonPressAndRelease(button, action);
-            }
-
-            button = buttonBoard.mappingInfo.buttons.get(mappingName);
-
-            if (button != null) {
-                listenButtonBoardButtonPressAndRelease(button, action);
-            }
-        }
-
-        // Checking if there is a trigger bound to the name.
-        {
-            Trigger trigger = driver.mappingInfo.triggers.get(mappingName);
+            Trigger trigger = controller.mappingInfo.triggers.get(mappingName);
 
             if (trigger != null) {
-                listenDriverTriggerPressAndRelease(trigger, action);
+                listenTriggerPressAndRelease(controller, trigger, action);
             }
 
-            trigger = operator.mappingInfo.triggers.get(mappingName);
-
-            if (trigger != null) {
-                listenOperatorTriggerPressAndRelease(trigger, action);
-            }
-        }
-
-        // Checking if there is a dpad bound to the name.
-        {
-            Dpad dpad = driver.mappingInfo.dpad.get(mappingName);
+            Dpad dpad = controller.mappingInfo.dpad.get(mappingName);
 
             if (dpad != null) {
-                listenDriverDpadPressAndRelease(dpad, action);
-            }
-
-            dpad = operator.mappingInfo.dpad.get(mappingName);
-
-            if (dpad != null) {
-                listenOperatorDpadPressAndRelease(dpad, action);
+                listenDpadPressAndRelease(controller, dpad, action);
             }
         }
     }
@@ -232,71 +170,29 @@ public class InputHandler {
      * @return
      */
     public Double getActionAsDouble(String mappingName) {
-        // Checking if there is a button bound to the name.
-        {
-            Button button = driver.mappingInfo.buttons.get(mappingName);
+        for (Controller controller : controllers) {
+            Button button = controller.mappingInfo.buttons.get(mappingName);
 
             if (button != null) {
-                return getDriverButtonAsBool(button) ? 1.0 : 0.0;
+                return getControllerButtonAsBool(controller, button) ? 1.0 : 0.0;
             }
 
-            button = operator.mappingInfo.buttons.get(mappingName);
-
-            if (button != null) {
-                return getOperatorButtonAsBool(button) ? 1.0 : 0.0;
-            }
-
-            button = buttonBoard.mappingInfo.buttons.get(mappingName);
-
-            if (button != null) {
-                return getButtonBoardButtonAsBool(button) ? 1.0 : 0.0;
-            }
-        }
-
-        // Checking if there is a trigger bound to the name.
-        {
-            //TODO Triggers are axes! They can natively return as a double
-            Trigger trigger = driver.mappingInfo.triggers.get(mappingName);
+            Trigger trigger = controller.mappingInfo.triggers.get(mappingName);
 
             if (trigger != null) {
-                return getDriverTriggerAsBool(trigger) ? 1.0 : 0.0;
+                return getControllerTriggerAsDouble(controller, trigger);
             }
 
-            trigger = operator.mappingInfo.triggers.get(mappingName);
-
-            if (trigger != null) {
-                return getOperatorTriggerAsBool(trigger) ? 1.0 : 0.0;
-            }
-        }
-
-        // Checking if there is a dpad bound to the name.
-        {
-            //TODO Link dpad to the values in the Dpad enum
-            Dpad dpad = driver.mappingInfo.dpad.get(mappingName);
-
-            if (dpad != null) {
-                return getDriverDpadAsBool(dpad) ? 1.0 : 0.0;
-            }
-
-            dpad = operator.mappingInfo.dpad.get(mappingName);
-
-            if (dpad != null) {
-                return getOperatorDpadAsBool(dpad) ? 1.0 : 0.0;
-            }
-        }
-
-        // Checking if there is an axis bound to the name.
-        {
-            Axis axis = driver.mappingInfo.joysticks.get(mappingName);
+            Axis axis = controller.mappingInfo.joysticks.get(mappingName);
 
             if (axis != null) {
-                return getDriverAxisAsDouble(axis);
+                return getControllerAxisAsDouble(controller, axis);
             }
 
-            axis = operator.mappingInfo.joysticks.get(mappingName);
+            Dpad dpad = controller.mappingInfo.dpad.get(mappingName);
 
-            if (axis != null) {
-                return getOperatorAxisAsDouble(axis);
+            if (dpad != null) {
+                return getControllerDpadAsBool(controller, dpad) ? 1.0 : 0.0;
             }
         }
 
@@ -323,18 +219,6 @@ public class InputHandler {
         return controller.joystick.getRawButton(id);
     }
 
-    public boolean getDriverButtonAsBool(Button button) {
-        return getControllerButtonAsBool(driver, button);
-    }
-
-    public boolean getOperatorButtonAsBool(Button button) {
-        return getControllerButtonAsBool(operator, button);
-    }
-
-    public boolean getButtonBoardButtonAsBool(Button button) {
-        return getControllerButtonAsBool(buttonBoard, button);
-    }
-
     /** Helper function to get a controller axis as a double */
     private double getControllerAxisAsDouble(Controller controller, Axis axis) {
         Integer id = controller.binding.axisMap.get(axis);
@@ -342,14 +226,6 @@ public class InputHandler {
         if (id == null) return 0.0;
 
         return controller.joystick.getRawAxis(id);
-    }
-
-    public double getDriverAxisAsDouble(Axis axis) {
-        return getControllerAxisAsDouble(driver, axis);
-    }
-
-    public double getOperatorAxisAsDouble(Axis axis) {
-        return getControllerAxisAsDouble(operator, axis);
     }
 
     /** Helper function to get a controller trigger (axis) as a double */
@@ -361,14 +237,6 @@ public class InputHandler {
         return controller.joystick.getRawAxis(id);
     }
 
-    public double getDriverTriggerAsDouble(Trigger trigger) {
-        return getControllerTriggerAsDouble(driver, trigger);
-    }
-
-    public double getOperatorTriggerAsDouble(Trigger trigger) {
-        return getControllerTriggerAsDouble(operator, trigger);
-    }
-
     /** Helper function to get a controller trigger (axis) as d boolean */
     private boolean getControllerTriggerAsBool(Controller controller, Trigger trigger) {
         Integer id = controller.binding.triggerMap.get(trigger);
@@ -378,25 +246,9 @@ public class InputHandler {
         return controller.joystick.getRawAxis(id) > Trigger.kAxisThreshold;
     }
 
-    public boolean getDriverTriggerAsBool(Trigger trigger) {
-        return getControllerTriggerAsBool(driver, trigger);
-    }
-
-    public boolean getOperatorTriggerAsBool(Trigger trigger) {
-        return getControllerTriggerAsBool(operator, trigger);
-    }
-
     /** Helper function to get a dpad button as boolean */
     private boolean getControllerDpadAsBool(Controller controller, Dpad dpad) {
         return controller.joystick.getPOV() == dpad.value;
-    }
-
-    public boolean getDriverDpadAsBool(Dpad dpad) {
-        return getControllerDpadAsBool(driver, dpad);
-    }
-
-    public boolean getOperatorDpadAsBool(Dpad dpad) {
-        return getControllerDpadAsBool(operator, dpad);
     }
 
     /** Helper function for listening to a specific button. */
@@ -420,18 +272,6 @@ public class InputHandler {
         }
     }
 
-    public void listenDriverButton(Button button, ActionState state, Runnable action) {
-        listenButton(driver, button, state, action);
-    }
-
-    public void listenOperatorButton(Button button, ActionState state, Runnable action) {
-        listenButton(operator, button, state, action);
-    }
-
-    public void listenButtonBoardButton(Button button, ActionState state, Runnable action) {
-        listenButton(buttonBoard, button, state, action);
-    }
-
     /**
      * A helper function to bind a button to a press and release action.
      *
@@ -445,18 +285,6 @@ public class InputHandler {
     ) {
         listenButton(controller, button, ActionState.PRESSED, () -> action.accept(true));
         listenButton(controller, button, ActionState.RELEASED, () -> action.accept(false));
-    }
-
-    public void listenDriverButtonPressAndRelease(Button button, Consumer<Boolean> action) {
-        listenButtonPressAndRelease(driver, button, action);
-    }
-
-    public void listenOperatorButtonPressAndRelease(Button button, Consumer<Boolean> action) {
-        listenButtonPressAndRelease(operator, button, action);
-    }
-
-    public void listenButtonBoardButtonPressAndRelease(Button button, Consumer<Boolean> action) {
-        listenButtonPressAndRelease(buttonBoard, button, action);
     }
 
     /** Helper function for listening to a specific axis. */
@@ -473,14 +301,6 @@ public class InputHandler {
         }
 
         event.addAction(action);
-    }
-
-    public void listenDriverAxis(Axis axis, Consumer<Double> action) {
-        listenAxis(driver, axis, action);
-    }
-
-    public void listenOperatorAxis(Axis axis, Consumer<Double> action) {
-        listenAxis(operator, axis, action);
     }
 
     /** Helper function for listening to a specific dpad button */
@@ -504,14 +324,6 @@ public class InputHandler {
         }
     }
 
-    public void listenDriverDpad(Dpad dpad, ActionState state, Runnable action) {
-        listenDpad(driver, dpad, state, action);
-    }
-
-    public void listenOperatorDpad(Dpad dpad, ActionState state, Runnable action) {
-        listenDpad(operator, dpad, state, action);
-    }
-
     /**
      * A helper function to bind a direction on the dpad to a press and release action.
      *
@@ -524,14 +336,6 @@ public class InputHandler {
     ) {
         listenDpad(controller, dpad, ActionState.PRESSED, () -> action.accept(true));
         listenDpad(controller, dpad, ActionState.RELEASED, () -> action.accept(false));
-    }
-
-    public void listenDriverDpadPressAndRelease(Dpad dpad, Consumer<Boolean> action) {
-        listenDpadPressAndRelease(driver, dpad, action);
-    }
-
-    public void listenOperatorDpadPressAndRelease(Dpad dpad, Consumer<Boolean> action) {
-        listenDpadPressAndRelease(operator, dpad, action);
     }
 
     /** Helper function for listening to a specific trigger */
@@ -555,14 +359,6 @@ public class InputHandler {
         }
     }
 
-    public void listenDriverTrigger(Trigger trigger, ActionState state, Runnable action) {
-        listenTrigger(driver, trigger, state, action);
-    }
-
-    public void listenOperatorTrigger(Trigger trigger, ActionState state, Runnable action) {
-        listenTrigger(operator, trigger, state, action);
-    }
-
     /**
      * A helper function to bind a trigger to a press and release action.
      *
@@ -577,35 +373,21 @@ public class InputHandler {
         listenTrigger(controller, trigger, ActionState.RELEASED, () -> action.accept(false));
     }
 
-    public void listenDriverTriggerPressAndRelease(Trigger trigger, Consumer<Boolean> action) {
-        listenTriggerPressAndRelease(driver, trigger, action);
-    }
+    public void setRumble(ControllerRole role, RumbleDirection direction, double demand) {
+        GenericHID.RumbleType rumbleType = switch (direction) {
+            case UNIFORM -> GenericHID.RumbleType.kBothRumble;
+            case LEFT -> GenericHID.RumbleType.kLeftRumble;
+            case RIGHT -> GenericHID.RumbleType.kRightRumble;
+        };
 
-    public void listenOperatorTriggerPressAndRelease(Trigger trigger, Consumer<Boolean> action) {
-        listenTriggerPressAndRelease(operator, trigger, action);
-    }
+        switch (role) {
+            case DRIVER:
+                driver.joystick.setRumble(rumbleType, demand);
+                break;
 
-    public void setUniformRumble(Controller.ROLE controllerRole, double demand) {
-        if (controllerRole == Controller.ROLE.DRIVER && driverRumbleEnabled) {
-            driver.joystick.setRumble(GenericHID.RumbleType.kBothRumble, demand);
-        } else if (controllerRole == Controller.ROLE.OPERATOR && operatorRumbleEnabled) {
-            operator.joystick.setRumble(GenericHID.RumbleType.kBothRumble, demand);
-        }
-    }
-
-    public void setLeftRumble(Controller.ROLE controllerRole, double demand) {
-        if (controllerRole == Controller.ROLE.DRIVER && driverRumbleEnabled) {
-            driver.joystick.setRumble(GenericHID.RumbleType.kLeftRumble, demand);
-        } else if (controllerRole == Controller.ROLE.OPERATOR && operatorRumbleEnabled) {
-            operator.joystick.setRumble(GenericHID.RumbleType.kLeftRumble, demand);
-        }
-    }
-
-    public void setRightRumble(Controller.ROLE controllerRole, double demand) {
-        if (controllerRole == Controller.ROLE.DRIVER && driverRumbleEnabled) {
-            driver.joystick.setRumble(GenericHID.RumbleType.kRightRumble, demand);
-        } else if (controllerRole == Controller.ROLE.OPERATOR && operatorRumbleEnabled) {
-            operator.joystick.setRumble(GenericHID.RumbleType.kRightRumble, demand);
+            case OPERATOR:
+                operator.joystick.setRumble(rumbleType, demand);
+                break;
         }
     }
 

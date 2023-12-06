@@ -220,11 +220,11 @@ public class Robot extends TimedRobot {
                     "zeroPose",
                     ActionState.PRESSED,
                     () ->
-                        drive.zeroSensors(
-                                robotState.allianceColor == Color.BLUE ?
-                                Constants.kDefaultZeroingPose :
-                                Constants.kFlippedZeroingPose
-                        )
+                            drive.zeroSensors(
+                                    robotState.allianceColor == Color.BLUE ?
+                                            Constants.kDefaultZeroingPose :
+                                            Constants.kFlippedZeroingPose
+                            )
             );
 
             //autoTargetAlign
@@ -273,7 +273,7 @@ public class Robot extends TimedRobot {
                     (pressed) -> {
                         if (pressed) {
                             if (
-                                elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
+                                    elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
                             ) { // collects from shelf
                                 collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CONE, Collector.PIVOT_STATE.SHELF);
                             } else { // collects from floor
@@ -294,7 +294,7 @@ public class Robot extends TimedRobot {
                     (pressed) -> {
                         if (pressed) {
                             if (
-                                elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
+                                    elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
                             ) { // collects from shelf
                                 collector.setDesiredState(Collector.ROLLER_STATE.INTAKE_CUBE, Collector.PIVOT_STATE.SHELF);
                             } else { // collects from floor
@@ -314,7 +314,7 @@ public class Robot extends TimedRobot {
                     ActionState.HELD, // TODO this one might be PRESSED
                     () -> {
                         if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
-                            && robotState.actualElevatorExtensionState != Elevator.EXTENSION_STATE.MIN) {
+                                && robotState.actualElevatorExtensionState != Elevator.EXTENSION_STATE.MIN) {
                             elevator.setDesiredState(Elevator.ANGLE_STATE.COLLECT, Elevator.EXTENSION_STATE.MIN);
                         } else if (elevator.getDesiredAngleState() != Elevator.ANGLE_STATE.STOW) {
                             elevator.setDesiredState(Elevator.ANGLE_STATE.STOW, Elevator.EXTENSION_STATE.MIN);
@@ -330,10 +330,10 @@ public class Robot extends TimedRobot {
                     "shelfPos",
                     ActionState.PRESSED, // TODO this one might be HELD
                     () ->
-                        elevator.setDesiredState(
-                                Elevator.ANGLE_STATE.SHELF_COLLECT,
-                                Elevator.EXTENSION_STATE.SHELF_COLLECT
-                        )
+                            elevator.setDesiredState(
+                                    Elevator.ANGLE_STATE.SHELF_COLLECT,
+                                    Elevator.EXTENSION_STATE.SHELF_COLLECT
+                            )
             );
 
             //snapToHumanPlayer
@@ -724,10 +724,10 @@ public class Robot extends TimedRobot {
             if (autoModeManager.update()) {
                 drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
                 robotState.field
-                    .getObject("Trajectory")
-                    .setTrajectory(
-                        autoModeManager.getSelectedAuto().getCurrentTrajectory()
-                    );
+                        .getObject("Trajectory")
+                        .setTrajectory(
+                                autoModeManager.getSelectedAuto().getCurrentTrajectory()
+                        );
             }
 
             if (drive.isDemoMode()) { // Demo-mode
@@ -746,8 +746,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         robotState.field
-            .getObject("Trajectory")
-            .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
+                .getObject("Trajectory")
+                .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
     }
 
     /**
@@ -769,8 +769,8 @@ public class Robot extends TimedRobot {
     public void manualControl() {
         inputHandler.update();
 
-        double strafe = inputHandler.getDriverAxisAsDouble(Axis.LEFT_HORIZONTAL);
-        double throttle = inputHandler.getDriverAxisAsDouble(Axis.LEFT_VERTICAL);
+        double strafe = inputHandler.getActionAsDouble("strafe");
+        double throttle = inputHandler.getActionAsDouble("throttle");
 
         if (drive.isAutoBalancing()) {
             ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -780,7 +780,7 @@ public class Robot extends TimedRobot {
                     robotState.driverRelativeFieldToVehicle.getRotation());
             drive.autoBalance(fieldRelativeChassisSpeed);
         } else {
-            double rotation = inputHandler.getDriverAxisAsDouble(Axis.RIGHT_HORIZONTAL);
+            double rotation = inputHandler.getActionAsDouble("rotation");
             if (snappingToDriver || snappingToHumanPlayer) {
                 double rotVal = MathUtil.inputModulus(
                         robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
