@@ -13,10 +13,10 @@ import java.util.List;
  * An abstract class blueprint for creating FIRST competition field obstacles, accounting for special cases of driveability, and with intersection methods accounting for the size of the robot
  */
 public abstract class FieldObstacle {
-    //Properties
     /**
-     * List of coordinates in order of how the polygon(or really obstacle) is connected
+     * Properties
      */
+    //List of coordinates in order of how the polygon(or really obstacle) is connected
     private List<Translation2d> vertices;
     //TODO make this a yaml
     //btw this a mathematical thing, assuming a rectangular positioning of wheels, the center will be the midpoint of a rectangle formed by the contact point of the wheels, x is width, y is length
@@ -44,7 +44,8 @@ public abstract class FieldObstacle {
      * @return boolean
      */
     public boolean contains(Translation2d point){
-
+       //TODO Do this idk
+       return false;
     }
 
     /**
