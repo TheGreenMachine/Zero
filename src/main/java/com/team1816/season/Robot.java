@@ -105,7 +105,7 @@ public class Robot extends TimedRobot {
      * Properties
      */
     private boolean faulted;
-    private int grid = 0;
+    private int grid = 2;
     private int node = 0;
     private Elevator.EXTENSION_STATE level = Elevator.EXTENSION_STATE.MIN;
 
