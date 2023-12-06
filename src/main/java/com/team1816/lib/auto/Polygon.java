@@ -69,7 +69,7 @@ public class Polygon {
         }
 
         for (int i = 0; i < vertices.size(); i++) {
-            if ((p1 == vertices.get(i) && p2 == vertices.get((i + 1) % vertices.size())) || (p2 == vertices.get(i) && p1 == vertices.get((i + 1) % vertices.size()))) {
+            if (((p1 == vertices.get(i) && p2 == vertices.get((i + 1) % vertices.size())) || (p2 == vertices.get(i) && p1 == vertices.get((i + 1) % vertices.size())))) {
                 return false;
             }
         }
