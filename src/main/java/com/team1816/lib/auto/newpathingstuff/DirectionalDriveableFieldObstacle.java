@@ -64,7 +64,7 @@ public class DirectionalDriveableFieldObstacle extends FieldObstacle{
             //skips line if it is driveable, effectively making the loop only evaluate nondriveable(colliding) sides of the obstacle
             if (driveable.get(i)) continue;
 
-            if (super.intersectsPathBoundingBox(centerOfRobotOrigin, centerOfRobotTo, vertices.get(i), vertices.get(i+1)))
+            if (super.intersectsPathBoundingBox(vertices.get(i), vertices.get(i+1), centerOfRobotOrigin, centerOfRobotTo))
                 return true;
         }
 
@@ -72,7 +72,7 @@ public class DirectionalDriveableFieldObstacle extends FieldObstacle{
         literally just checks the line that wasn't checked in the loop (the one connecting the first and last point in the vertices List)
         skips the line if it is driveable
          */
-        if (!driveable.get(driveable.size()-1) && super.intersectsPathBoundingBox(centerOfRobotOrigin, centerOfRobotTo, vertices.get(0), vertices.get(vertices.size()-1)))
+        if (!driveable.get(driveable.size()-1) && super.intersectsPathBoundingBox(vertices.get(0), vertices.get(vertices.size()-1), centerOfRobotOrigin, centerOfRobotTo))
             return true;
 
         //theoretically should only reach here if path doesn't collide with any nondriveable sides of the obstacle

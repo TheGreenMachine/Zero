@@ -87,13 +87,13 @@ public abstract class FieldObstacle {
 
     /**
      * Literally just does normal intersection calculations, but now basically with a thicker line(the size of the robot)
-      * @param startPoint
-     * @param endPoint
+      * @param obstacleSideBegin
+     * @param obstacleSideEnd
      * @param centerOfRobotOrigin
      * @param centerOfRobotTo
      * @return
      */
-    public boolean intersectsPathBoundingBox(Translation2d startPoint, Translation2d endPoint, Translation2d centerOfRobotOrigin, Translation2d centerOfRobotTo){
+    public boolean intersectsPathBoundingBox(Translation2d obstacleSideBegin, Translation2d obstacleSideEnd, Translation2d centerOfRobotOrigin, Translation2d centerOfRobotTo){
         //Calculates the distance from centerOfRobotOrigin to centerOfRobotTo
         double pathLength = Math.sqrt(Math.pow(centerOfRobotOrigin.getX()-centerOfRobotTo.getX(), 2)+Math.pow(centerOfRobotOrigin.getY()-centerOfRobotTo.getY(), 2));
 
@@ -112,17 +112,24 @@ public abstract class FieldObstacle {
         //Calculating the angle of the bounding box in radians
         double boundingBoxAngle = Math.acos((centerOfRobotTo.getX()-centerOfRobotOrigin.getX())/Math.sqrt(Math.pow(centerOfRobotTo.getY()-centerOfRobotOrigin.getY(), 2)+Math.pow(centerOfRobotTo.getX()-centerOfRobotOrigin.getX(), 2)));
         //Since arccos's output radians is only 0-pi, and not 0-2pi, this makes it negative to account for the other half
-        int coordinateCoefficient = 1;
+        int coordinateCoefficient;
         if(centerOfRobotTo.getY()<centerOfRobotOrigin.getY())
             coordinateCoefficient = -1;
+        else {
+            coordinateCoefficient = 1;
+        }
 
         //Rotates the vertices back to the original path's rotation
-        for(int i = 0; i<boundingBoxVertices.size(); i++){
-            boundingBoxVertices.set(i, new Translation2d(
-                    coordinateCoefficient * (Math.sin(boundingBoxAngle)*boundingBoxVertices.get(i).getX()-Math.cos(boundingBoxAngle)*boundingBoxVertices.get(i).getY()),
-                    coordinateCoefficient * (Math.cos(boundingBoxAngle)*boundingBoxVertices.get(i).getX()+Math.sin(boundingBoxAngle)*boundingBoxVertices.get(i).getY()))
-            );
-        }
+        boundingBoxVertices.replaceAll(translation2d -> new Translation2d(
+                coordinateCoefficient * (Math.sin(boundingBoxAngle)*translation2d.getX()-Math.cos(boundingBoxAngle)*translation2d.getY()),
+                coordinateCoefficient * (Math.cos(boundingBoxAngle)*translation2d.getX()+Math.sin(boundingBoxAngle)*translation2d.getY()))
+        );
+
+        //Moves the vertices back to the original location (undid the movement to the origin)
+        boundingBoxVertices.replaceAll(translation2d -> new Translation2d(
+                translation2d.getX() + (centerOfRobotOrigin.getX() + centerOfRobotTo.getX()) / 2,
+                translation2d.getY() + (centerOfRobotOrigin.getY() + centerOfRobotTo.getY()) / 2
+        ));
 
         /*
         checks the inputted line four times against every side of the polygon except the "last" one (the one connecting the first and last point in the vertices List)
@@ -130,8 +137,8 @@ public abstract class FieldObstacle {
          */
         for(int i = 0; i<boundingBoxVertices.size()-1; i++) {
             if (Line2D.linesIntersect(
-                    startPoint.getX(), startPoint.getY(),
-                    endPoint.getX(), endPoint.getY(),
+                    obstacleSideBegin.getX(), obstacleSideBegin.getY(),
+                    obstacleSideEnd.getX(), obstacleSideEnd.getY(),
                     boundingBoxVertices.get(i).getX(), boundingBoxVertices.get(i).getY(),
                     boundingBoxVertices.get(i+1).getX(), boundingBoxVertices.get(i+1).getY())
             ) return true;
@@ -139,8 +146,8 @@ public abstract class FieldObstacle {
 
         //literally just checks the line that wasn't checked in the loop (the one connecting the first and last point in the vertices List)
         if (Line2D.linesIntersect(
-                startPoint.getX(), startPoint.getY(),
-                endPoint.getX(), endPoint.getY(),
+                obstacleSideBegin.getX(), obstacleSideBegin.getY(),
+                obstacleSideEnd.getX(), obstacleSideEnd.getY(),
                 boundingBoxVertices.get(boundingBoxVertices.size()-1).getX(), boundingBoxVertices.get(boundingBoxVertices.size()-1).getY(),
                 boundingBoxVertices.get(0).getX(), boundingBoxVertices.get(0).getY())
         ) return true;
