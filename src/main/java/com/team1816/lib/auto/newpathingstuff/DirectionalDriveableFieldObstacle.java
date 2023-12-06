@@ -13,7 +13,7 @@ public class DirectionalDriveableFieldObstacle extends FieldObstacle{
     /**
      * a list specifying which sides can be driven to, driveable index 0 maps to the line connecting vertices index 0 to vertices index 1, the last driveable boolean maps to the line connecting vertices index 0 to the last Translation2d object in vertices
      */
-    private List<Boolean> driveable;
+    private final List<Boolean> driveable;
 
     /**
      * Constructor for creating game obstacles that can only be driven through on specific sides (ie, the charge station from ChargedUp!)

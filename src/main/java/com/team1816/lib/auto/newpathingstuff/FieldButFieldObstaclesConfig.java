@@ -8,10 +8,10 @@ import java.util.ArrayList;
  */
 public class FieldButFieldObstaclesConfig {
     //TODO prob make this a yaml
-    private double fieldInsideWidth;
+    private static double fieldInsideWidth;
     //TODO prob also make this a yaml
-    private double fieldInsideLength;
-    private List<FieldObstacle> FieldObstacles = new ArrayList<FieldObstacle>(List.of(
+    private static double fieldInsideLength;
+    private static final List<FieldObstacle> FieldObstacles = new ArrayList<FieldObstacle>(List.of(
         //TODO add the list of game elements here
     ));
 

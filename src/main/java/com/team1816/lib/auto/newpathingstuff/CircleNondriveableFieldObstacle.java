@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CircleNondriveableFieldObstacle extends FieldObstacle{
-    double radius;
+    final double radius;
     public CircleNondriveableFieldObstacle(Translation2d center, double radius) {
         super(new ArrayList<Translation2d>(List.of(center)));
         this.radius = radius;

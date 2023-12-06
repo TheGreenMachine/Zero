@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 
 import java.awt.geom.Line2D;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ public abstract class FieldObstacle {
      * Properties
      */
     //List of coordinates in order of how the polygon(or really obstacle) is connected
-    private List<Translation2d> vertices;
+    private final List<Translation2d> vertices;
     //TODO make this a yaml
     //btw this a mathematical thing, assuming a rectangular positioning of wheels, the center will be the midpoint of a rectangle formed by the contact point of the wheels, x is width, y is length
     private Translation2d robotCenter;
@@ -31,10 +30,10 @@ public abstract class FieldObstacle {
     private double robotSizeLeeway;
     //TODO make this a yaml
     private double timeInSecondsIncrement;
-    private double robotHalfWidthLeft = robotCenter.getX() + robotSizeLeeway;
-    private double robotHalfWidthRight = robotWidth - robotCenter.getX() + robotSizeLeeway;
-    private double robotHalfLengthBottom = robotCenter.getY() + robotSizeLeeway;
-    private double robotHalfLengthTop = robotLength - robotCenter.getY() + robotSizeLeeway;
+    private final double robotHalfWidthLeft = robotCenter.getX() + robotSizeLeeway;
+    private final double robotHalfWidthRight = robotWidth - robotCenter.getX() + robotSizeLeeway;
+    private final double robotHalfLengthBottom = robotCenter.getY() + robotSizeLeeway;
+    private final double robotHalfLengthTop = robotLength - robotCenter.getY() + robotSizeLeeway;
 
 
     public FieldObstacle(List<Translation2d> vertices){
