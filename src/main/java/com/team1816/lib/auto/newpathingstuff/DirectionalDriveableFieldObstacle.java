@@ -1,6 +1,7 @@
 package com.team1816.lib.auto.newpathingstuff;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
 
 import java.awt.geom.Line2D;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.List;
  * Class for creating game obstacles that can only be driven through on specific sides (ie, the charge station from ChargedUp!)
  */
 public class DirectionalDriveableFieldObstacle extends FieldObstacle{
-
     /**
      * a list specifying which sides can be driven to, driveable index 0 maps to the line connecting vertices index 0 to vertices index 1, the last driveable boolean maps to the line connecting vertices index 0 to the last Translation2d object in vertices
      */
@@ -30,6 +30,25 @@ public class DirectionalDriveableFieldObstacle extends FieldObstacle{
     }
 
     /**
+     * Method for checking if the trajectory of the robot will collide with this game object, taking into account the physical size of the robot
+     * Overrides parent method bc it utilizes an overrided method from the parent class, otherwise would run wrong method(the non-overrided one)
+     * Literally almost an exact copy of parent method otherwise
+     * @param trajectory length of robot
+     * @return boolean
+     */
+    @Override
+    public boolean intersects(Trajectory trajectory){
+        double timeInSecondsIncrement = super.getTimeInSecondsIncrement();
+        //literally just samples the robot's path per increment in seconds to approximate the trajectory, and then runs the intersects code on it
+        for(double i = 0; i<trajectory.getTotalTimeSeconds()-timeInSecondsIncrement; i+=timeInSecondsIncrement){
+            if (intersects(trajectory.sample(i).poseMeters.getTranslation(), trajectory.sample(i+timeInSecondsIncrement).poseMeters.getTranslation()))
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Edited version of FieldObjects's "intersects" method, now considering only the nondriveable sides of the game object
      * @param centerOfRobotOrigin
      * @param centerOfRobotTo
@@ -46,7 +65,7 @@ public class DirectionalDriveableFieldObstacle extends FieldObstacle{
             if (driveable.get(i)) continue;
 
             if (super.intersectsPathBoundingBox(centerOfRobotOrigin, centerOfRobotTo, vertices.get(i), vertices.get(i+1)))
-            return true;
+                return true;
         }
 
         /*

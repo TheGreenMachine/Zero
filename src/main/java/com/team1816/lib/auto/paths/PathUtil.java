@@ -4,6 +4,7 @@ import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.spline.PoseWithCurvature;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 
@@ -47,7 +48,7 @@ public class PathUtil {
         }
         /* Configures trajectory constraints */
         TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAccel);
-        var baseTrajectory = edu.wpi.first.math.trajectory.TrajectoryGenerator.generateTrajectory(
+        Trajectory baseTrajectory = edu.wpi.first.math.trajectory.TrajectoryGenerator.generateTrajectory(
             waypointsMeters,
             config
         );

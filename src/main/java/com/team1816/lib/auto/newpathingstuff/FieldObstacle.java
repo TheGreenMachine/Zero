@@ -28,6 +28,8 @@ public abstract class FieldObstacle {
     //TODO make this a yaml
     //This one isn't an exact measurement, it is still in meters but is a buffer value added to the length and width of the robot to avoid close collisions with obstacles
     private double robotSizeLeeway;
+    //TODO make this a yaml
+    private double timeInSecondsIncrement;
     private double robotHalfWidthLeft = robotCenter.getX()+robotSizeLeeway;
     private double robotHalfWidthRight = robotWidth-robotCenter.getX()+robotSizeLeeway;
     private double robotHalfLengthBottom = robotCenter.getY()+robotSizeLeeway;
@@ -39,7 +41,7 @@ public abstract class FieldObstacle {
     }
 
     /**
-     * Checks if the inputted point is contained in the game obstacle polygon's area
+     * Checks if the inputted point is contained in the game obstacle polygon's area (currently only returns false)
      * @param point
      * @return boolean
      */
@@ -49,13 +51,18 @@ public abstract class FieldObstacle {
     }
 
     /**
-     * Method for checking if the trajectory of the robot will collide with this game object (currently only returns true), taking into account the physical size of the robot
+     * Method for checking if the trajectory of the robot will collide with this game object, taking into account the physical size of the robot
      * @param trajectory length of robot
      * @return boolean
      */
     public boolean intersects(Trajectory trajectory){
-        //TODO actually figure out if we use linear interpolation for our pathing or what so that we can program this
-        return true;
+        //literally just samples the robot's path per increment in seconds to approximate the trajectory, and then runs the intersects code on it
+        for(double i = 0; i<trajectory.getTotalTimeSeconds()-timeInSecondsIncrement; i+=timeInSecondsIncrement){
+            if (intersects(trajectory.sample(i).poseMeters.getTranslation(), trajectory.sample(i+timeInSecondsIncrement).poseMeters.getTranslation()))
+                return true;
+        }
+
+        return false;
     }
 
     /**
@@ -147,5 +154,9 @@ public abstract class FieldObstacle {
      */
     public List<Translation2d> getVertices(){
         return vertices;
+    }
+
+    public double getTimeInSecondsIncrement(){
+        return timeInSecondsIncrement;
     }
 }
