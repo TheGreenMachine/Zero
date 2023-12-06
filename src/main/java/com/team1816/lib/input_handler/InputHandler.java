@@ -52,9 +52,9 @@ public class InputHandler {
         BUTTONBOARD,
     }
 
-    private Controller driver;
-    private Controller operator;
-    private Controller buttonBoard;
+    private final Controller driver;
+    private final Controller operator;
+    private final Controller buttonBoard;
 
     public static final int DRIVER_PORT = 0;
     private static final int OPERATOR_PORT = 1;
@@ -62,7 +62,8 @@ public class InputHandler {
 
     private Controller[] controllers = new Controller[3];
 
-    private boolean driverRumbleEnabled, operatorRumbleEnabled;
+    private final boolean driverRumbleEnabled;
+    private final boolean operatorRumbleEnabled;
 
     @Inject
     public InputHandler(InputHandlerBridge bridge) {
@@ -101,24 +102,24 @@ public class InputHandler {
      * @param state
      * @param action
      */
-    public void listenActionButton(String mappingName, ActionState state, Runnable action) {
+    public void listenAction(String mappingName, ActionState state, Runnable action) {
         for (Controller controller : controllers) {
             Button button = controller.mappingInfo.buttons.get(mappingName);
 
             if (button != null) {
-                listenButton(controller, button, state, action);
+                listenControllerButton(controller, button, state, action);
             }
 
             Trigger trigger = controller.mappingInfo.triggers.get(mappingName);
 
             if (trigger != null) {
-                listenTrigger(controller, trigger, state, action);
+                listenControllerTrigger(controller, trigger, state, action);
             }
 
             Dpad dpad = controller.mappingInfo.dpad.get(mappingName);
 
             if (dpad != null) {
-                listenDpad(controller, dpad, state, action);
+                listenControllerDpad(controller, dpad, state, action);
             }
         }
     }
@@ -129,12 +130,12 @@ public class InputHandler {
      * @param mappingName
      * @param action
      */
-    public void listenActionAxis(String mappingName, Consumer<Double> action) {
+    public void listenAction(String mappingName, Consumer<Double> action) {
         for (Controller controller : controllers) {
            Axis axis = controller.mappingInfo.joysticks.get(mappingName);
 
            if (axis != null) {
-               listenAxis(controller, axis, action);
+               listenControllerAxis(controller, axis, action);
            }
         }
     }
@@ -144,19 +145,19 @@ public class InputHandler {
             Button button = controller.mappingInfo.buttons.get(mappingName);
 
             if (button != null) {
-                listenButtonPressAndRelease(controller, button, action);
+                listenControllerButtonPressAndRelease(controller, button, action);
             }
 
             Trigger trigger = controller.mappingInfo.triggers.get(mappingName);
 
             if (trigger != null) {
-                listenTriggerPressAndRelease(controller, trigger, action);
+                listenControllerTriggerPressAndRelease(controller, trigger, action);
             }
 
             Dpad dpad = controller.mappingInfo.dpad.get(mappingName);
 
             if (dpad != null) {
-                listenDpadPressAndRelease(controller, dpad, action);
+                listenControllerDpadPressAndRelease(controller, dpad, action);
             }
         }
     }
@@ -252,7 +253,7 @@ public class InputHandler {
     }
 
     /** Helper function for listening to a specific button. */
-    private void listenButton(
+    private void listenControllerButton(
             Controller controller,
             Button button,
             ActionState state,
@@ -278,17 +279,17 @@ public class InputHandler {
      * This function will pass in 'true' to the action when the button is
      * initially pressed and 'false' when the button is released.
      */
-    private void listenButtonPressAndRelease(
+    private void listenControllerButtonPressAndRelease(
             Controller controller,
             Button button,
             Consumer<Boolean> action
     ) {
-        listenButton(controller, button, ActionState.PRESSED, () -> action.accept(true));
-        listenButton(controller, button, ActionState.RELEASED, () -> action.accept(false));
+        listenControllerButton(controller, button, ActionState.PRESSED, () -> action.accept(true));
+        listenControllerButton(controller, button, ActionState.RELEASED, () -> action.accept(false));
     }
 
     /** Helper function for listening to a specific axis. */
-    private void listenAxis(
+    private void listenControllerAxis(
             Controller controller,
             Axis axis,
             Consumer<Double> action
@@ -304,7 +305,7 @@ public class InputHandler {
     }
 
     /** Helper function for listening to a specific dpad button */
-    private void listenDpad(
+    private void listenControllerDpad(
             Controller controller,
             Dpad dpad,
             ActionState state,
@@ -327,19 +328,19 @@ public class InputHandler {
     /**
      * A helper function to bind a direction on the dpad to a press and release action.
      *
-     * @see #listenButtonPressAndRelease
+     * @see #listenControllerButtonPressAndRelease
      */
-    private void listenDpadPressAndRelease(
+    private void listenControllerDpadPressAndRelease(
             Controller controller,
             Dpad dpad,
             Consumer<Boolean> action
     ) {
-        listenDpad(controller, dpad, ActionState.PRESSED, () -> action.accept(true));
-        listenDpad(controller, dpad, ActionState.RELEASED, () -> action.accept(false));
+        listenControllerDpad(controller, dpad, ActionState.PRESSED, () -> action.accept(true));
+        listenControllerDpad(controller, dpad, ActionState.RELEASED, () -> action.accept(false));
     }
 
     /** Helper function for listening to a specific trigger */
-    private void listenTrigger(
+    private void listenControllerTrigger(
             Controller controller,
             Trigger trigger,
             ActionState state,
@@ -362,15 +363,15 @@ public class InputHandler {
     /**
      * A helper function to bind a trigger to a press and release action.
      *
-     * @see #listenButtonPressAndRelease
+     * @see #listenControllerButtonPressAndRelease
      */
-    private void listenTriggerPressAndRelease(
+    private void listenControllerTriggerPressAndRelease(
             Controller controller,
             Trigger trigger,
             Consumer<Boolean> action
     ) {
-        listenTrigger(controller, trigger, ActionState.PRESSED, () -> action.accept(true));
-        listenTrigger(controller, trigger, ActionState.RELEASED, () -> action.accept(false));
+        listenControllerTrigger(controller, trigger, ActionState.PRESSED, () -> action.accept(true));
+        listenControllerTrigger(controller, trigger, ActionState.RELEASED, () -> action.accept(false));
     }
 
     public void setRumble(ControllerRole role, RumbleDirection direction, double demand) {
@@ -382,11 +383,15 @@ public class InputHandler {
 
         switch (role) {
             case DRIVER:
-                driver.joystick.setRumble(rumbleType, demand);
+                if (driverRumbleEnabled) {
+                    driver.joystick.setRumble(rumbleType, demand);
+                }
                 break;
 
             case OPERATOR:
-                operator.joystick.setRumble(rumbleType, demand);
+                if (operatorRumbleEnabled) {
+                    operator.joystick.setRumble(rumbleType, demand);
+                }
                 break;
         }
     }

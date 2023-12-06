@@ -6,7 +6,6 @@ import com.team1816.lib.auto.Color;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.input_handler.*;
 import com.team1816.lib.input_handler.controlOptions.ActionState;
-import com.team1816.lib.input_handler.controlOptions.Axis;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
@@ -216,7 +215,7 @@ public class Robot extends TimedRobot {
             /** Driver Commands */
 
             //zeroPose
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "zeroPose",
                     ActionState.PRESSED,
                     () ->
@@ -228,7 +227,7 @@ public class Robot extends TimedRobot {
             );
 
             //autoTargetAlign
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "autoTargetAlign",
                     ActionState.PRESSED,
                     () -> {
@@ -309,7 +308,7 @@ public class Robot extends TimedRobot {
             );
 
             //toggleArmScoreCollect
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "toggleArmScoreCollect",
                     ActionState.HELD, // TODO this one might be PRESSED
                     () -> {
@@ -326,7 +325,7 @@ public class Robot extends TimedRobot {
             );
 
             //shelfPos
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "shelfPos",
                     ActionState.PRESSED, // TODO this one might be HELD
                     () ->
@@ -357,7 +356,7 @@ public class Robot extends TimedRobot {
             /** Operator Commands */
 
             //updatePoseWithCamera
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "updatePoseWithCamera",
                     ActionState.PRESSED,
                     orchestrator::updatePoseWithCamera
@@ -382,7 +381,7 @@ public class Robot extends TimedRobot {
             );
 
             //extendMin
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "extendMin",
                     ActionState.PRESSED,
                     () -> {
@@ -392,7 +391,7 @@ public class Robot extends TimedRobot {
             );
 
             //extendMid
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "extendMid",
                     ActionState.PRESSED,
                     () -> {
@@ -402,7 +401,7 @@ public class Robot extends TimedRobot {
             );
 
             //extendMax
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "extendMax",
                     ActionState.PRESSED,
                     () -> {
@@ -412,7 +411,7 @@ public class Robot extends TimedRobot {
             );
 
             //autoScore
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "autoScore",
                     ActionState.PRESSED,
                     () -> {
@@ -422,7 +421,7 @@ public class Robot extends TimedRobot {
             );
 
             //toggleCollectorPivot
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "toggleCollectorPivot",
                     ActionState.PRESSED,
                     () -> {
@@ -440,7 +439,7 @@ public class Robot extends TimedRobot {
             /** Button Board Commands */
 
             //grid1
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "grid1",
                     ActionState.PRESSED,
                     () -> {
@@ -450,7 +449,7 @@ public class Robot extends TimedRobot {
             );
 
             //grid2
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "grid2",
                     ActionState.PRESSED,
                     () -> {
@@ -460,7 +459,7 @@ public class Robot extends TimedRobot {
             );
 
             //grid3
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "grid3",
                     ActionState.PRESSED,
                     () -> {
@@ -470,7 +469,7 @@ public class Robot extends TimedRobot {
             );
 
             //node1
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "node1",
                     ActionState.PRESSED,
                     () -> {
@@ -480,7 +479,7 @@ public class Robot extends TimedRobot {
             );
 
             //node2
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "node2",
                     ActionState.PRESSED,
                     () -> {
@@ -490,7 +489,7 @@ public class Robot extends TimedRobot {
             );
 
             //node3
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "node3",
                     ActionState.PRESSED,
                     () -> {
@@ -500,7 +499,7 @@ public class Robot extends TimedRobot {
             );
 
             //level1
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "level1",
                     ActionState.PRESSED,
                     () -> {
@@ -510,7 +509,7 @@ public class Robot extends TimedRobot {
             );
 
             //level2
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "level2",
                     ActionState.PRESSED,
                     () -> {
@@ -520,7 +519,7 @@ public class Robot extends TimedRobot {
             );
 
             //level3
-            inputHandler.listenActionButton(
+            inputHandler.listenAction(
                     "level3",
                     ActionState.PRESSED,
                     () -> {
