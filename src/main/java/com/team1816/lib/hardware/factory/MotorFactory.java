@@ -205,22 +205,6 @@ public class MotorFactory {
         MotorConfiguration motorConfiguration = subsystem.motors.get(name);
         boolean isTalon = !(motor instanceof LazySparkMax || motor instanceof GhostMotor); // Talon also refers to VictorSPX, isCTRE just looks worse :)
 
-        // Configuring feedback sensor - separate from other motor-specific configs because other configs need sensors to exist first
-        if (isTalon) {
-            if (remoteSensorId >= 0) {
-                motor.selectFeedbackSensor(FeedbackDeviceType.REMOTE_SENSOR_0);
-                ((BaseMotorController)motor).configRemoteFeedbackFilter(remoteSensorId, RemoteSensorSource.CANCoder, 0);
-            } else {
-                motor.selectFeedbackSensor(
-                    motor.get_MotorType() == IGreenMotor.MotorType.TalonFX ?
-                        FeedbackDeviceType.INTEGRATED_SENSOR :
-                        FeedbackDeviceType.RELATIVE_MAG_ENCODER
-                );
-            }
-        } else {
-            motor.selectFeedbackSensor(FeedbackDeviceType.HALL_SENSOR); // Only using hall sensors on sparks at the moment
-        }
-
         // for newly attached motors only
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
             GreenLogger.log("Resetting motor factory defaults");
@@ -301,7 +285,17 @@ public class MotorFactory {
 
         // CTRE-Exclusive configurations
         if (isTalon) {
-            //Casting might not work. Make sure to check.
+            if (remoteSensorId >= 0) {
+                motor.selectFeedbackSensor(FeedbackDeviceType.REMOTE_SENSOR_0);
+                ((BaseMotorController)motor).configRemoteFeedbackFilter(remoteSensorId, RemoteSensorSource.CANCoder, 0);
+            } else {
+                motor.selectFeedbackSensor(
+                        motor.get_MotorType() == IGreenMotor.MotorType.TalonFX ?
+                                FeedbackDeviceType.INTEGRATED_SENSOR :
+                                FeedbackDeviceType.RELATIVE_MAG_ENCODER
+                );
+            }
+
             ((BaseMotorController)motor).configClearPositionOnLimitF(false, kTimeoutMs);
             ((BaseMotorController)motor).configClearPositionOnLimitR(false, kTimeoutMs);
 
@@ -312,8 +306,11 @@ public class MotorFactory {
                         "       Inverting sensor phase of " + name + " with ID " + id
                 );
             }
+
             motor.setSensorPhase(invertSensorPhase);
 
+        } else {
+            motor.selectFeedbackSensor(FeedbackDeviceType.HALL_SENSOR); // Only using hall sensors on sparks at the moment
         }
 
     }
