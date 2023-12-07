@@ -142,6 +142,22 @@ public class Constants {
     );
 
     /**
+     * Field Obstacles (all in meters)
+     */
+    //TODO set this
+    //btw this a mathematical thing, assuming a rectangular positioning of wheels, the center will be the midpoint of a rectangle formed by the contact point of the wheels, x is width, y is length
+    public static final Translation2d robotCenter = new Translation2d(0.381,0.381);
+    //TODO set this
+    public static final double robotWidth = 0.762;
+    //TODO set this
+    public static final double robotLength = 0.762;
+    //TODO set this
+    //This one isn't an exact measurement, it is still in meters but is a buffer value added to the length and width of the robot to avoid close collisions with obstacles
+    public static final double robotSizeLeeway = 0.01;
+    //TODO set this
+    public static final double timeInSecondsIncrement = 0.2;
+
+    /**
      * Simulation
      */
     public static final ShuffleboardTab kSimWindow = Shuffleboard.getTab("Simulation");

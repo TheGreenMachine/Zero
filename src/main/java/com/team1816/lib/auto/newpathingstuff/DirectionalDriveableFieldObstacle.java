@@ -3,7 +3,6 @@ package com.team1816.lib.auto.newpathingstuff;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 
-import java.awt.geom.Line2D;
 import java.util.List;
 
 /**

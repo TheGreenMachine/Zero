@@ -2,6 +2,7 @@ package com.team1816.lib.auto.newpathingstuff;
 
 
 
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 /**
  * An abstract class blueprint for creating FIRST competition field obstacles, accounting for special cases of driveability, and with intersection methods accounting for the size of the robot
+ * All calculations assume a polygon object defined by only its vertices
  */
 public abstract class FieldObstacle {
     /**
@@ -18,18 +20,11 @@ public abstract class FieldObstacle {
      */
     //List of coordinates in order of how the polygon(or really obstacle) is connected
     private final List<Translation2d> vertices;
-    //TODO make this a yaml and final
-    //btw this a mathematical thing, assuming a rectangular positioning of wheels, the center will be the midpoint of a rectangle formed by the contact point of the wheels, x is width, y is length
-    private Translation2d robotCenter;
-    //TODO make this a yaml and final
-    private double robotWidth;
-    //TODO make this a yaml and final
-    private double robotLength;
-    //TODO make this a yaml and final
-    //This one isn't an exact measurement, it is still in meters but is a buffer value added to the length and width of the robot to avoid close collisions with obstacles
-    private double robotSizeLeeway;
-    //TODO make this a yaml and final
-    private double timeInSecondsIncrement;
+    private final Translation2d robotCenter = Constants.robotCenter;
+    private final double robotWidth = Constants.robotWidth;
+    private final double robotLength = Constants.robotLength;
+    private final double robotSizeLeeway = Constants.robotSizeLeeway;
+    private final double timeInSecondsIncrement = Constants.timeInSecondsIncrement;
     private final double robotHalfWidthLeft = robotCenter.getX() + robotSizeLeeway;
     private final double robotHalfWidthRight = robotWidth - robotCenter.getX() + robotSizeLeeway;
     private final double robotHalfLengthBottom = robotCenter.getY() + robotSizeLeeway;
