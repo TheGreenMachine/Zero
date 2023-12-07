@@ -31,12 +31,14 @@ def writeGitHashToFile() {
 
     def gitHashStrLines = gitHashStr.split(",\\[]");
 
-    delete "$directory/$fileName"
+    if (file("$directory").exists()) {
+        delete "$directory/$fileName"
 
-    file("$directory/$fileName") << getGitBranchName() << "    \n"
+        file("$directory/$fileName") << getGitBranchName() << "    \n"
 
-    for (String line : gitHashStrLines) {
-        file("$directory/$fileName") << line.trim() << "    \n"
+        for (String line : gitHashStrLines) {
+            file("$directory/$fileName") << line.trim() << "    \n"
+        }
     }
 }
 
