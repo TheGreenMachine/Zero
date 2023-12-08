@@ -122,7 +122,7 @@ public class RobotFactory {
                                 subsystem,
                                 pidConfigs,
                                 remoteSensorId,
-                                config.infrastructure.canivoreBusName
+                                config.infrastructure.canBusName
                             );
                     }
                     case TalonSRX -> {
@@ -134,7 +134,7 @@ public class RobotFactory {
                                 subsystem,
                                 pidConfigs,
                                 remoteSensorId,
-                                config.infrastructure.canivoreBusName
+                                config.infrastructure.canBusName
                             );
                     }
                     case SparkMax -> {
@@ -199,7 +199,7 @@ public class RobotFactory {
                                 main,
                                 subsystem,
                                 subsystem.pidConfig,
-                                config.infrastructure.canivoreBusName
+                                config.infrastructure.canBusName
                             );
                     }
                     case TalonSRX -> {
@@ -211,7 +211,7 @@ public class RobotFactory {
                                 main,
                                 subsystem,
                                 subsystem.pidConfig,
-                                config.infrastructure.canivoreBusName
+                                config.infrastructure.canBusName
                             );
                     }
                     case SparkMax -> {

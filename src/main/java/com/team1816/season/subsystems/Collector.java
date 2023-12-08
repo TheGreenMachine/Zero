@@ -108,9 +108,6 @@ public class Collector extends Subsystem {
         pivotFloorPosition = (factory.getConstant(NAME, "floorAngle", 0) + zeroOffset) * collectorRevolutionsPerDegree;
 
         intakeMotor.configOpenLoopRampRate(0.25, Constants.kCANTimeoutMs);
-        // PID Setting this way is temporary and only for mini-minne. Remove afterwards.
-        intakeMotor.config_kP(0, factory.getPidSlotConfig(NAME, "slot0").kP, Constants.kCANTimeoutMs);
-        pivotMotor.config_kP(0, factory.getPidSlotConfig(NAME, "slot1").kP, Constants.kCANTimeoutMs);
 
         pivotMotor.selectPIDSlot(1,0);
 
