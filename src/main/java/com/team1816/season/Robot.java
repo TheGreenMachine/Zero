@@ -11,6 +11,7 @@ import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.vision.Camera;
+import com.team1816.lib.util.Util;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.configuration.Constants;
@@ -24,11 +25,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 public class Robot extends TimedRobot {
 
@@ -173,6 +177,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         try {
             /** Register All Subsystems */
+            DriverStation.silenceJoystickConnectionWarning(true);
             // Remember to register our elevator and collector subsystems below!! The subsystem manager deals with calling
             // read/writetohardware on a loop, but it can only call read/write if it recognizes said subsystem. To recognize
             // your subsystem, just add it alongside the drive, ledManager, and camera parameters :)
@@ -195,18 +200,20 @@ public class Robot extends TimedRobot {
                         logFileDir = System.getProperty("user.dir") + "/";
                     }
                 }
-                var filePath = logFileDir + robotName + "_" + logFile + ".bag";
-                DataLogManager.start();
-                DriverStation.startDataLog(DataLogManager.getLog(), true);
+                // start logging
+                DataLogManager.start(logFileDir, "", Constants.kLooperDt);
+                if (RobotBase.isReal()) {
+                    Util.cleanLogFiles();
+                }
+                DriverStation.startDataLog(DataLogManager.getLog(), false);
             }
 
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
-
-            // zeroing ypr - (-90) b/c our pigeon is mounted with the "y" axis facing forward
+            // zeroing ypr - (-90) pigeon is mounted with the "y" axis facing forward
             infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
             subsystemManager.zeroSensors();
-            faulted = true; // elevator not zeroed on bootup - letting ppl know
+            faulted = true; // robot faulted: elevator not zeroed on start-up
 
             /** Register inputHandler */
             inputHandler = Injector.get(InputHandler.class);
@@ -310,7 +317,7 @@ public class Robot extends TimedRobot {
             //toggleArmScoreCollect
             inputHandler.listenAction(
                     "toggleArmScoreCollect",
-                    ActionState.HELD, // TODO this one might be PRESSED
+                    ActionState.PRESSED,
                     () -> {
                         if (elevator.getDesiredAngleState() == Elevator.ANGLE_STATE.SHELF_COLLECT
                                 && robotState.actualElevatorExtensionState != Elevator.EXTENSION_STATE.MIN) {
@@ -659,6 +666,8 @@ public class Robot extends TimedRobot {
             subsystemManager.outputToSmartDashboard(); // update shuffleboard for subsystem values
             robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
+
+            SmartDashboard.putString("Git Hash", Constants.kGitHash);
         } catch (Throwable t) {
             faulted = true;
             GreenLogger.log(t.getMessage());
@@ -754,6 +763,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
+
         try {
             manualControl();
         } catch (Throwable t) {

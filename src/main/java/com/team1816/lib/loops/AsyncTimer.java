@@ -15,6 +15,7 @@ public class AsyncTimer {
     private double startTime;
     private double duration;
     private Runnable startAction;
+    private Runnable throughAction;
     private Runnable endAction;
     private boolean hasStarted;
     private boolean completed;
@@ -33,10 +34,34 @@ public class AsyncTimer {
     ) {
         this.duration = duration;
         this.startAction = startAction;
+        this.throughAction = null;
         this.endAction = endAction;
         this.hasStarted = false;
         this.completed = false;
     }
+
+    /**
+     * Instantiates an AsyncTimer with an action to perform every update
+     *
+     * @param duration    duration to time / wait
+     * @param startAction starting trigger
+     * @param throughAction action to run every update
+     * @param endAction   end response
+     */
+    public AsyncTimer(
+        double duration,
+        @Nullable Runnable startAction,
+        Runnable throughAction,
+        Runnable endAction
+    ) {
+        this.duration = duration;
+        this.startAction = startAction;
+        this.throughAction = throughAction;
+        this.endAction = endAction;
+        this.hasStarted = false;
+        this.completed = false;
+    }
+
 
     /**
      * Alternatively instantiates an AsyncTimer with only an ending action
@@ -65,6 +90,10 @@ public class AsyncTimer {
                 completed = true;
                 if (endAction != null) {
                     endAction.run();
+                }
+            } else {
+                if (throughAction != null) {
+                   throughAction.run();
                 }
             }
         }

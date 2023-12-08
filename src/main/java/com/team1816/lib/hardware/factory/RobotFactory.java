@@ -3,6 +3,7 @@ package com.team1816.lib.hardware.factory;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
+import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.*;
 import com.team1816.lib.hardware.components.gyro.GhostPigeonIMU;
@@ -27,8 +28,12 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
 
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Scanner;
 
 /**
  * This class employs the MotorFactory and SensorFactory with yaml integrations and is the initial entry point to
@@ -65,6 +70,34 @@ public class RobotFactory {
         }
     }
 
+    /**
+     * This method reads a resource file called 'git_hash.txt'.
+     *
+     * The resource contains the git hash for the current version of the repository
+     * you're on.
+     *
+     * @return a string representation of the current git hash
+     */
+    public static String getGitHash() {
+        String gitHashStr;
+        try {
+            URL input = Resources.getResource("git_hash");
+
+            if (input == null) {
+                gitHashStr = "UNABLE TO FIND THE GIT HASH.";
+            } else {
+                gitHashStr = Resources.toString(input, Charset.defaultCharset());
+            }
+        } catch (Exception e) {
+            GreenLogger.log("Exception occurred: " + e.toString());
+            gitHashStr = "NO VALID GIT HASH FOUND";
+        }
+
+        GreenLogger.log("Git Hash: " + gitHashStr);
+
+        return gitHashStr;
+    }
+
     public IGreenMotor getMotor(
         String subsystemName,
         String name,
@@ -85,7 +118,7 @@ public class RobotFactory {
                         subsystem,
                         pidConfigs,
                         remoteSensorId,
-                        config.infrastructure.canivoreBusName
+                        config.infrastructure.canBusName
                     );
             } else if (isHardwareValid(subsystem.falcons, name)) {
                 motor =
@@ -96,7 +129,7 @@ public class RobotFactory {
                         subsystem,
                         pidConfigs,
                         remoteSensorId,
-                        config.infrastructure.canivoreBusName
+                        config.infrastructure.canBusName
                     );
             } else if (isHardwareValid(subsystem.sparkmaxes, name)) {
                 motor =
@@ -154,7 +187,7 @@ public class RobotFactory {
                         main,
                         subsystem,
                         subsystem.pidConfig,
-                        config.infrastructure.canivoreBusName
+                        config.infrastructure.canBusName
                     );
             } else if (isHardwareValid(subsystem.falcons, name)) {
                 followerMotor =
@@ -165,7 +198,7 @@ public class RobotFactory {
                         main,
                         subsystem,
                         subsystem.pidConfig,
-                        config.infrastructure.canivoreBusName
+                        config.infrastructure.canBusName
                     );
             } else if (isHardwareValid(subsystem.sparkmaxes, name)) {
                 followerMotor =
@@ -242,6 +275,7 @@ public class RobotFactory {
             canCoder =
                 MotorFactory.createCanCoder(
                     subsystem.canCoders.get(module.canCoder),
+                    config.infrastructure.canBusName,
                     subsystem.canCoders.get(subsystem.invertCanCoder) != null &&
                         subsystem.invertCanCoder.contains(module.canCoder)
                 );
@@ -304,7 +338,7 @@ public class RobotFactory {
                 ledManager =
                     new CANdleImpl(
                         subsystem.candle,
-                        config.infrastructure.canivoreBusName
+                        config.infrastructure.canBusName
                     );
             }
             if (ledManager != null) {
@@ -481,7 +515,7 @@ public class RobotFactory {
             pigeon = new GhostPigeonIMU(id);
         } else if (config.infrastructure.isPigeon2) {
             GreenLogger.log("Using Pigeon 2 for id: " + id);
-            pigeon = new Pigeon2Impl(id, config.infrastructure.canivoreBusName);
+            pigeon = new Pigeon2Impl(id, config.infrastructure.canBusName);
         } else {
             GreenLogger.log("Using old Pigeon for id: " + id);
             pigeon = new PigeonIMUImpl(id);
