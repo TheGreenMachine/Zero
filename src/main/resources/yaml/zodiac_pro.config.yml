@@ -186,7 +186,7 @@ subsystems:
             maxDeltaX: 1200
             allowableDistanceError: 50
 infrastructure:
-    canivoreBusName: rio
+    canBusName: rio
     # power distribution
     pdId: 0
     pdIsRev: false
@@ -197,7 +197,7 @@ infrastructure:
     # pigeon
     pigeonId: 9
     isPigeon2: false
-controlboard: example # demo
+inputHandler: example # demo
 constants:
     # drivetrain misc
     maxAllowablePoseError: 0.1

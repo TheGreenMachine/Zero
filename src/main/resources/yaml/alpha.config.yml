@@ -52,7 +52,7 @@ subsystems:
                 motorType: TalonSRX
                 motorName: turretMotor
                 id: 3
-                invertMotor: false
+                invertMotor: true
         pidConfig:
             slot0:
                 kP: 2
@@ -84,7 +84,7 @@ subsystems:
     camera:
         implemented: true
 infrastructure:
-    canivoreBusName: rio
+    canBusName: rio
     # power distribution
     pdId: 0
     pdIsRev: false
@@ -102,7 +102,7 @@ infrastructure:
         RLProximitySensor: 2
         RRProximitySensor: 3
     proximityThreshold: 26 # cm
-controlboard: example
+inputHandler: example
 constants:
     ## Drivetrain Dimensions and Parameters ##
     maxAllowablePoseError: 0.1

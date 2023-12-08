@@ -245,6 +245,26 @@ public class MotorFactory {
                 }
             );
         }
+        motor.selectProfileSlot(0, 0);
+
+        // binding remote sensors to respective motors
+        if (remoteSensorId >= 0) {
+            motorConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
+            motorConfig.remoteFilter0.remoteSensorDeviceID = remoteSensorId;
+            motorConfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
+        } else {
+            motorConfig.primaryPID.selectedFeedbackSensor =
+                (motor instanceof TalonFX)
+                    ? FeedbackDevice.IntegratedSensor
+                    : FeedbackDevice.CTRE_MagEncoder_Relative;
+        }
+
+        // for newly attached motors only
+        if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
+            GreenLogger.log("Resetting motor factory defaults");
+            motor.configFactoryDefault(kTimeoutMs);
+            motorConfig.forwardSoftLimitThreshold = FORWARD_SOFT_LIMIT;
+            motorConfig.forwardSoftLimitEnable = ENABLE_SOFT_LIMIT;
 
         // Setting to PID slot 0 and primary closed loop
         motor.selectPIDSlot(0,0);

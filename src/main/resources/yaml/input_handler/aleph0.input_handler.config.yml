@@ -1,0 +1,36 @@
+driver:
+    controllerType: Xbox
+    rumble: false
+    joysticks:
+        left:
+            horizontal: strafe
+            vertical: throttle
+        right:
+            horizontal: rotation
+    buttonpad:
+        x: toggleArmScoreCollect # remapped to back left button
+        y: shelfPos # remapped to back right button
+        b: autoBalance
+    axes:
+        rightTrigger: slowMode
+    buttons:
+        leftBumper: intakeCube
+        rightBumper: intakeCone
+        start: zeroPose
+    dpad:
+        up: snapToHumanPlayer
+        down: snapToDriver
+        left: brakeMode
+operator:
+    controllerType: Xbox
+    rumble: false
+    buttons:
+        leftBumper: updatePoseWithCamera
+        rightBumper: outtake
+        start: toggleCollectorPivot
+    buttonpad:
+        y: extendMax
+        x: extendMid
+        a: extendMin
+        b: autoScore
+demoMode: false

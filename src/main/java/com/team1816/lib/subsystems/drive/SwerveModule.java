@@ -332,6 +332,7 @@ public class SwerveModule implements ISwerveModule {
 
         boolean checkAzimuth = true;
         double setPoint = mModuleConfig.azimuthEncoderHomeOffset;
+        //TODO azimuth open loop self test
         Timer.delay(1);
         for (int i = 0; i < 4; i++) {
             azimuthMotor.set(GreenControlMode.POSITION_CONTROL, setPoint);

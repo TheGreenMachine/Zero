@@ -101,7 +101,7 @@ subsystems:
             autoBalanceDivider: 30
             autoBalanceThreshold: 1.5
 infrastructure:
-    canivoreBusName: rio
+    canBusName: rio
     # power distribution
     pdId: 9
     pdIsRev: false
@@ -112,7 +112,7 @@ infrastructure:
     # pigeon
     pigeonId: 32
     isPigeon2: true
-controlboard: example
+inputHandler: example
 constants:
     # drivetrain misc
     maxAllowablePoseError: 0.1

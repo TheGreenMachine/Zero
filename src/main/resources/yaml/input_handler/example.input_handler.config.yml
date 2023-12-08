@@ -1,0 +1,20 @@
+driver:
+    controllerType: Xbox
+    rumble: false
+    joysticks:
+        left:
+            horizontal: strafe
+            vertical: throttle
+        right:
+            horizontal: rotation
+    axes:
+        leftTrigger: brakeMode
+        rightTrigger: slowMode
+    buttons:
+        start: zeroPose
+operator:
+    controllerType: Xbox
+    rumble: false
+    buttons:
+        leftBumper: updatePoseWithCamera
+demoMode: false
