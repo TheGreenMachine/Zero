@@ -12,7 +12,6 @@ import com.team1816.lib.hardware.components.motor.configurations.FeedbackDeviceT
 import com.team1816.lib.util.logUtil.GreenLogger;
 import edu.wpi.first.wpilibj.RobotBase;
 
-import javax.inject.Singleton;
 import java.util.Map;
 
 import static com.team1816.lib.subsystems.Subsystem.factory;
@@ -21,7 +20,6 @@ import static com.team1816.lib.subsystems.Subsystem.factory;
  * A class to create and configure Falcon (TalonFX), TalonSRX, VictorSPX, SparkMax and GhostMotor objects.
  * Based on FRC Team 254 The Cheesy Poof's 2018 TalonSRXFactory
  */
-@Singleton
 public class MotorFactory {
 
     private static final int kTimeoutMs = RobotBase.isSimulation() ? 0 : 100;
