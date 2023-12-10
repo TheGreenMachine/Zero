@@ -55,5 +55,6 @@ public class Bresenham {
                 pixels.add(new Pixel(x, y, 0, false));
             }
         }
+        return pixels;
     }
 }
