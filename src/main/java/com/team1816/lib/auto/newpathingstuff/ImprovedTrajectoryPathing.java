@@ -236,10 +236,14 @@ public class ImprovedTrajectoryPathing {
 
 
         for(Pixel pixel : Bresenham.draw_line(midpointX, midpointY, maxIntercept.getX(), maxIntercept.getY())){
+            Pixel oppositePixel = new Pixel(midpointX-pixel.getX()+midpointX, midpointY-pixel.getY()+midpointY, 0, false);
             if(!fieldPixelMap.checkPixel(pixel))
                 return new Translation2d(pixel.getX(), pixel.getY());
+            else if(!fieldPixelMap.checkPixel(oppositePixel)))
+                return new Translation2d(oppositePixel.getX(), oppositePixel.getY());
         }
 
+        //TODO log error path blocked
         return null;
     }
 }

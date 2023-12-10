@@ -43,7 +43,7 @@ public class FieldPixelMap {
 
     public boolean checkPixel(@NotNull Pixel pixel){
         if(pixel.getX()<0 || pixel.getX()>fieldPixelMap.length-1 || pixel.getY()<0 || pixel.getY()>fieldPixelMap[0].length-1)
-            return false;
+            return true;
         return fieldPixelMap[pixel.getX()][pixel.getY()];
     }
 }
