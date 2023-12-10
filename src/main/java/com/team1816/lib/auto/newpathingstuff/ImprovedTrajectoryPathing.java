@@ -191,7 +191,10 @@ public class ImprovedTrajectoryPathing {
 
     public static Translation2d calcNewWaypoint(Pixel startCollision, Pixel endCollision) {
         //TODO make this
-        Translation2d midpoint = new Translation2d((startCollision.getX()+endCollision.getX())/2, (startCollision.getY()+endCollision.getY())/2);
+
+        int midpointX = (startCollision.getX()+endCollision.getX())/2;
+        int midpointY = (startCollision.getY()+endCollision.getY())/2;
+        Translation2d midpoint = new Translation2d((double)midpointX, (double)midpointY);
 
         double slopeY = endCollision.getY()-startCollision.getY();
         double slopeX = endCollision.getX()-startCollision.getX();
@@ -206,7 +209,7 @@ public class ImprovedTrajectoryPathing {
         yInterceptFieldRight = slope*(Constants.xPixels-1)+yInterceptAxis;
         xInterceptFieldTop = (Constants.yPixels-1-yInterceptAxis)/slope;
 
-        Pixel maxIntercept;
+        Pixel maxIntercept = new Pixel(midpointX, midpointY, 0, false);
         double maxInterceptDistance = -1;
 
         if(yInterceptAxis<0 || yInterceptAxis>Constants.yPixels-1)
@@ -230,7 +233,9 @@ public class ImprovedTrajectoryPathing {
                 maxIntercept = new Pixel((int)xInterceptFieldTop,Constants.yPixels,0,false);
             }
 
-        for(Pixel pixel : Bresenham.draw_line((int)midpoint.getX(), (int)midpoint.getY(), maxIntercept.getX(), maxIntercept.getY())){
+
+
+        for(Pixel pixel : Bresenham.draw_line(midpointX, midpointY, maxIntercept.getX(), maxIntercept.getY())){
             if(!fieldPixelMap.checkPixel(pixel))
                 return new Translation2d(pixel.getX(), pixel.getY());
         }
