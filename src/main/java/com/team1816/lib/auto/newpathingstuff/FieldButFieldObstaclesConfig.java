@@ -1,5 +1,7 @@
 package com.team1816.lib.auto.newpathingstuff;
 
+import com.team1816.lib.auto.newpathingstuff.fieldobstaclestuff.FieldObstacle;
+
 import java.util.List;
 import java.util.ArrayList;
 

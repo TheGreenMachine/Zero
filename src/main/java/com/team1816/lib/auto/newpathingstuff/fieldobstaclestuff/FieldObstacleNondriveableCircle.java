@@ -1,4 +1,4 @@
-package com.team1816.lib.auto.newpathingstuff;
+package com.team1816.lib.auto.newpathingstuff.fieldobstaclestuff;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -6,9 +6,9 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CircleNondriveableFieldObstacle extends FieldObstacle{
+public class FieldObstacleNondriveableCircle extends FieldObstacle {
     final double radius;
-    public CircleNondriveableFieldObstacle(Translation2d center, double radius) {
+    public FieldObstacleNondriveableCircle(Translation2d center, double radius) {
         super(new ArrayList<Translation2d>(List.of(center)));
         this.radius = radius;
     }

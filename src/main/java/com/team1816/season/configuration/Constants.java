@@ -158,6 +158,16 @@ public class Constants {
     public static final double timeInSecondsIncrement = 0.2;
 
     /**
+     * FieldPixelMap
+     */
+    //TODO set this
+    public static final int pixelsInMeter = 100;
+    //TODO set this
+    public static final int xPixels = 1654;
+    //TODO set this
+    public static final int yPixels = 802;
+
+    /**
      * Simulation
      */
     public static final ShuffleboardTab kSimWindow = Shuffleboard.getTab("Simulation");

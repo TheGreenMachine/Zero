@@ -1,4 +1,4 @@
-package com.team1816.lib.auto.newpathingstuff;
+package com.team1816.lib.auto.newpathingstuff.fieldobstaclestuff;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Class for creating game obstacles that can only be driven through on specific sides (ie, the charge station from ChargedUp!)
  */
-public class DirectionalDriveableFieldObstacle extends FieldObstacle{
+public class FieldObstacleDriveableDirectional extends FieldObstacle {
     /**
      * a list specifying which sides can be driven to, driveable index 0 maps to the line connecting vertices index 0 to vertices index 1, the last driveable boolean maps to the line connecting vertices index 0 to the last Translation2d object in vertices
      */
@@ -19,7 +19,7 @@ public class DirectionalDriveableFieldObstacle extends FieldObstacle{
      * @param vertices
      * @param driveable (a list specifying which sides can be driven to, driveable index 0 maps to the line connecting vertices index 0 to vertices index 1, the last driveable boolean maps to the line connecting vertices index 0 to the last Translation2d object in vertices)
      */
-    public DirectionalDriveableFieldObstacle(List<Translation2d> vertices, List<Boolean> driveable) {
+    public FieldObstacleDriveableDirectional(List<Translation2d> vertices, List<Boolean> driveable) {
         super(vertices);
         this.driveable = driveable;
 
