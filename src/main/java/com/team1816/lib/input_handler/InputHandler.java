@@ -10,9 +10,9 @@ import com.team1816.lib.input_handler.events.TriggerEvent;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.EnumMap;
 import java.util.function.Consumer;
 
