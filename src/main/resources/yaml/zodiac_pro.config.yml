@@ -1,15 +1,37 @@
 subsystems:
     drivetrain:
         implemented: true
-        falcons:
-            leftMain: 17
-            leftFollower: -1
-            leftFollowerTwo: -1
-            rightMain: 14
-            rightFollower: -1
-            rightFollowerTwo: -1
-        invertMotor:
-            - leftMain
+        motors:
+            leftMain:
+                motorType: TalonFX
+                motorName: leftMain
+                id: 17
+                invertMotor: true
+            leftFollower:
+                motorType: TalonFX
+                motorName: leftFollower
+                id: -1
+                invertMotor: false
+            leftFollowerTwo:
+                motorType: TalonFX
+                motorName: leftFollowerTwo
+                id: -1
+                invertMotor: false
+            rightMain:
+                motorType: TalonFX
+                motorName: rightMain
+                id: 14
+                invertMotor: false
+            rightFollower:
+                motorType: TalonFX
+                motorName: rightFollower
+                id: -1
+                invertMotor: false
+            rightFollowerTwo:
+                motorType: TalonFX
+                motorName: rightFollowerTwo
+                id: -1
+                invertMotor: false
         pidConfig:
             slot0:
                 kP: 0.1 # 0.18
@@ -49,10 +71,12 @@ subsystems:
                 kD: 40.5
                 kF: 0 # Should be 0 for position control
                 allowableError: 40
-        talons:
-            turretMotor: 13
-        invertMotor:
-            - turretMotor
+        motors:
+            turretMotor:
+                motorType: TalonFX
+                motorName: turretMotor
+                id: 13
+                invertMotor: true
         invertSensorPhase:
             - turretMotor
         constants:
@@ -64,9 +88,17 @@ subsystems:
             turretPPR: 4096
     shooter:
         implemented: true
-        falcons:
-            shooterMain: 2
-            shooterFollower: -1
+        motors:
+            shooterMain:
+                motorType: TalonFX
+                motorName: shooterMain
+                id: 2
+                invertMotor: false
+            shooterFollower:
+                motorType: TalonFX
+                motorName: shooterFollower
+                id: -1
+                invertMotor: false
         solenoids:
             hood: -1
         pidConfig:
@@ -87,8 +119,12 @@ subsystems:
             coast: 0
     elevator:
         implemented: true
-        talons:
-            elevator: 5
+        motors:
+            elevator:
+                motorType: TalonSRX
+                motorName: elevator
+                id: 5
+                invertMotor: true
         pidConfig:
             slot0:
                 kP: 0.060
@@ -96,8 +132,6 @@ subsystems:
                 kD: 2
                 kF: 0.05
                 allowableError: 3000
-        invertMotor:
-            - elevator
         constants:
             isVelocity: 0
             maxVelTicks100ms: 20000
@@ -107,12 +141,14 @@ subsystems:
             intakePow: 0
     spindexer:
         implemented: true
-        talons:
-            spindexer: 4
+        motors:
+            spindexer:
+                motorType: TalonSRX
+                motorName: spindexer
+                id: 4
+                invertMotor: true
         solenoids:
             feederFlap: -1
-        invertMotor:
-            - spindexer
         constants:
             collectPow: 0.5
             indexPow: -0.5
@@ -121,10 +157,12 @@ subsystems:
             firePow: 0.85
     collector:
         implemented: true
-        talons:
-            intake: 11 # maxVelTicks100ms 10617
-        invertMotor:
-            - intake
+        motors:
+            intake: # maxVelTicks100ms 10617
+                motorType: TalonSRX
+                motorName: intake
+                id: 11
+                invertMotor: true
         solenoids:
             arm: 0
         pidConfig:
@@ -148,7 +186,7 @@ subsystems:
             maxDeltaX: 1200
             allowableDistanceError: 50
 infrastructure:
-    canivoreBusName: rio
+    canBusName: rio
     # power distribution
     pdId: 0
     pdIsRev: false
@@ -159,7 +197,7 @@ infrastructure:
     # pigeon
     pigeonId: 9
     isPigeon2: false
-controlboard: example # demo
+inputHandler: example # demo
 constants:
     # drivetrain misc
     maxAllowablePoseError: 0.1

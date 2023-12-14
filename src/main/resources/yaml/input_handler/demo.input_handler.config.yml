@@ -1,4 +1,5 @@
 driver:
+    controllerType: Xbox
     rumble: false
     joysticks:
         left:
@@ -17,6 +18,7 @@ driver:
         rightBumper: toggleCollectorReverse
         start: zeroPose
 operator:
+    controllerType: Xbox
     rumble: false
     joysticks:
         left:

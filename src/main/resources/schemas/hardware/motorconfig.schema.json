@@ -1,0 +1,28 @@
+{
+    "type": "object",
+    "title": "Motor Configuration",
+    "properties": {
+        "motorType": {
+            "type" : "object",
+            "existingJavaType" : "com.team1816.lib.hardware.components.motor.IGreenMotor.MotorType"
+        },
+        "motorName": {
+            "type" : "string"
+        },
+        "id": {
+            "type" : "integer"
+        },
+        "currentLimit": {
+            "type": "number"
+        },
+        "currentLimitThreshold" : {
+            "type" : "number"
+        },
+        "currentLimitTriggerTime" : {
+            "type" : "number"
+        },
+        "invertMotor" : {
+            "type": "boolean"
+        }
+    }
+}

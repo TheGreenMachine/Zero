@@ -7,6 +7,7 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.IMotorSensor;
+import com.team1816.lib.hardware.components.motor.configurations.GreenControlMode;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
@@ -118,19 +119,17 @@ public class Turret extends Subsystem implements PidProvider {
         // Position Control
         double peakOutput = 0.75;
         pidConfig = factory.getPidSlotConfig(NAME);
-        turretMotor.configPeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
-        turretMotor.configNominalOutputForward(0, Constants.kCANTimeoutMs);
-        turretMotor.configNominalOutputReverse(0, Constants.kCANTimeoutMs);
-        turretMotor.configPeakOutputReverse(-peakOutput, Constants.kCANTimeoutMs);
+        turretMotor.config_PeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
+        turretMotor.config_PeakOutputReverse(-peakOutput, Constants.kCANTimeoutMs);
 
         // Soft Limits
         turretMotor.setNeutralMode(NeutralMode.Brake);
-        turretMotor.configForwardSoftLimitEnable(true, Constants.kCANTimeoutMs);
-        turretMotor.configReverseSoftLimitEnable(true, Constants.kCANTimeoutMs);
-        turretMotor.configForwardSoftLimitThreshold(kFwdLimit, Constants.kCANTimeoutMs); // Forward = MAX
-        turretMotor.configReverseSoftLimitThreshold(kRevLimit, Constants.kCANTimeoutMs); // Reverse = MIN
-        turretMotor.overrideLimitSwitchesEnable(true);
-        turretMotor.overrideSoftLimitsEnable(true);
+        turretMotor.enableForwardSoftLimit(true, Constants.kCANTimeoutMs);
+        turretMotor.enableReverseSoftLimit(true, Constants.kCANTimeoutMs);
+        turretMotor.configForwardSoftLimit(kFwdLimit, Constants.kCANTimeoutMs); // Forward = MAX
+        turretMotor.configReverseSoftLimit(kRevLimit, Constants.kCANTimeoutMs); // Reverse = MIN
+        turretMotor.enableLimitSwitches(true);
+        turretMotor.enableSoftLimits(true);
 
         if (Constants.kLoggingRobot) {
             desStatesLogger = new DoubleLogEntry(DataLogManager.getLog(), "Turret/DesiredPosition");
@@ -177,7 +176,7 @@ public class Turret extends Subsystem implements PidProvider {
             GreenLogger.log("zeroing turret at " + sensorVal);
         } else {
             if (resetEncPos) {
-                turretMotor.setSelectedSensorPosition(
+                turretMotor.setSensorPosition(
                     0,
                     kPrimaryCloseLoop,
                     Constants.kCANTimeoutMs
@@ -299,7 +298,7 @@ public class Turret extends Subsystem implements PidProvider {
     public double getActualPosTicks() {
         return (
             (
-                turretMotor.getSelectedSensorPosition(kPrimaryCloseLoop) -
+                turretMotor.getSensorPosition(kPrimaryCloseLoop) -
                     kAbsTicksSouthOffset
             )
         );
@@ -343,7 +342,7 @@ public class Turret extends Subsystem implements PidProvider {
             (followingPos >= kFwdWrapAroundPos || followingPos <= kRevWrapAroundPos);
         outputToSmartDashboard();
 
-        double sensorVel = turretMotor.getSelectedSensorVelocity(0) / 10d;
+        double sensorVel = turretMotor.getSensorVelocity(0) / 10d;
         turretRotationalAcceleration =
             Units.degreesToRadians(
                 convertTurretTicksToDegrees(sensorVel - turretVelocity) /
@@ -570,7 +569,7 @@ public class Turret extends Subsystem implements PidProvider {
             }
             int rawPos = (pos + kAbsTicksSouthOffset);
 
-            turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.Position, rawPos);
+            turretMotor.set(GreenControlMode.POSITION_CONTROL, rawPos);
         }
     }
 
@@ -580,7 +579,7 @@ public class Turret extends Subsystem implements PidProvider {
     private void manualControl() {
         if (outputsChanged) {
             turretMotor.set(
-                com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput,
+                GreenControlMode.PERCENT_OUTPUT,
                 turretSpeed
             );
             outputsChanged = false;
@@ -614,19 +613,19 @@ public class Turret extends Subsystem implements PidProvider {
     @Override
     public boolean testSubsystem() {
         boolean passed;
-        turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput, .2);
+        turretMotor.set(GreenControlMode.PERCENT_OUTPUT, .2);
         Timer.delay(2);
         var ticks = getActualPosTicks();
         var diff = Math.abs(ticks - kFwdLimit);
         GreenLogger.log(" + TICKS: " + ticks + "  ERROR: " + diff);
         passed = diff <= 50;
-        turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput, -.2);
+        turretMotor.set(GreenControlMode.PERCENT_OUTPUT, -.2);
         Timer.delay(2);
         ticks = getActualPosTicks();
         diff = Math.abs(ticks - kRevLimit);
         GreenLogger.log(" - TICKS: " + ticks + "  ERROR: " + diff);
         passed = passed & diff <= 50;
-        turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput, 0);
+        turretMotor.set(GreenControlMode.PERCENT_OUTPUT, 0);
         return passed;
     }
 

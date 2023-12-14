@@ -1,4 +1,4 @@
-package com.team1816.lib.controlboard;
+package com.team1816.lib.input_handler;
 
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -10,30 +10,29 @@ import org.yaml.snakeyaml.representer.Representer;
 import java.io.InputStream;
 
 /**
- * The yaml parsing integration for a control board.
+ * The yaml parsing integration for an input handler
  *
- * @see ControlBoardBridge
+ * @see InputHandlerBridge
  */
-public class ControlBoardYamlConfig {
-
+public class InputHandlerConfigYaml {
     private static final Yaml FORMATTER = new Yaml();
 
     static {
         FORMATTER.setBeanAccess(BeanAccess.FIELD);
     }
 
-    public static ControlBoardConfig loadFrom(InputStream input) {
+    public static InputHandlerConfig loadFrom(InputStream input) {
         return loadInternal(input);
     }
 
-    static ControlBoardConfig loadInternal(InputStream input) {
+    static InputHandlerConfig loadInternal(InputStream input) {
         return loadRaw(input);
     }
 
-    static ControlBoardConfig loadRaw(InputStream input) {
-        Representer representer = new Representer(new DumperOptions()); //TODO mess w/ dumperoptions?
+    static InputHandlerConfig loadRaw(InputStream input) {
+        Representer representer = new Representer(new DumperOptions());
         representer.getPropertyUtils().setSkipMissingProperties(true);
-        Yaml yaml = new Yaml(new Constructor(ControlBoardConfig.class, new LoaderOptions()), representer); //TODO ensure this works or fix
+        Yaml yaml = new Yaml(new Constructor(InputHandlerConfig.class, new LoaderOptions()), representer);
         yaml.setBeanAccess(BeanAccess.FIELD);
 
         return yaml.load(input);

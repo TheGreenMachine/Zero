@@ -2,19 +2,33 @@ subsystems:
     # Drivetrain
     drivetrain:
         implemented: true
-        talons:
-            leftMain: 15
-            leftFollower: -1
-            rightMain: 13
-            rightFollower: -1
+        motors:
+            leftMain:
+                motorType: TalonSRX
+                motorName: leftMain
+                id: 15
+                invertMotor: true
+            leftFollower:
+                motorType: TalonSRX
+                motorName: leftFollower
+                id: -1
+                invertMotor: false
+            rightMain:
+                motorType: TalonSRX
+                motorName: rightMain
+                id: 13
+                invertMotor: false
+            rightFollower:
+                motorType: TalonSRX
+                motorName: rightFollower
+                id: -1
+                invertMotor: false
         pidConfig:
             slot0:
                 kP: 1.6 #/ 0.18
                 kI: 0.001 # 0.018
                 kD: 15 # 3.6
                 kF: 0.538
-        invertMotor:
-            - leftMain
         constants:
             maxVelTicks100ms: 12255.7
             openLoopRampRate: 0.4
@@ -33,10 +47,12 @@ subsystems:
     # Turret
     turret:
         implemented: false
-        talons:
-            turretMotor: 3
-        invertMotor:
-            - turretMotor
+        motors:
+            turretMotor:
+                motorType: TalonSRX
+                motorName: turretMotor
+                id: 3
+                invertMotor: true
         pidConfig:
             slot0:
                 kP: 2
@@ -68,7 +84,7 @@ subsystems:
     camera:
         implemented: true
 infrastructure:
-    canivoreBusName: rio
+    canBusName: rio
     # power distribution
     pdId: 0
     pdIsRev: false
@@ -86,7 +102,7 @@ infrastructure:
         RLProximitySensor: 2
         RRProximitySensor: 3
     proximityThreshold: 26 # cm
-controlboard: example
+inputHandler: example
 constants:
     ## Drivetrain Dimensions and Parameters ##
     maxAllowablePoseError: 0.1

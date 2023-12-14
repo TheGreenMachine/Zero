@@ -14,7 +14,7 @@
         "constants": {
             "$ref": "double.map.schema.json"
         },
-        "controlboard": {
+        "inputHandler": {
             "type": "string"
         }
     },

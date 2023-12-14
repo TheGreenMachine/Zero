@@ -144,7 +144,7 @@
     <remote-repository>
       <option name="id" value="WPILocal" />
       <option name="name" value="WPILocal" />
-      <option name="url" value="file:/$PROJECT_DIR$/../../../../../Public/wpilib/2023/maven/" />
+      <option name="url" value="file:/$PROJECT_DIR$/../../Public/wpilib/2023/maven/" />
     </remote-repository>
   </component>
 </project>

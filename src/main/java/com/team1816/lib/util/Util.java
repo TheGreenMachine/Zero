@@ -1,6 +1,14 @@
 package com.team1816.lib.util;
 
+import edu.wpi.first.wpilibj.DataLogManager;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Contains basic functions that are used often in other utilities such as the EnhancedMotorChecker, Drive Conversions, and CheesyDriveHelper.
@@ -57,6 +65,33 @@ public class Util {
         return sb.toString();
     }
 
+    public static void cleanLogFiles() { // needs to be called after log
+        var logPath = DataLogManager.getLogDir();
+        long day = 1000 * 60 * 60 * 24;
+        long now = System.currentTimeMillis();
+        try (Stream<Path> stream = Files.list(Paths.get(logPath))) {
+            var files = stream
+                .filter(file -> !Files.isDirectory(file)) //No folders
+                .filter(file -> file.toString().endsWith(".wpilog") ) //Only .wpiLog
+                .filter(file -> file.toString().chars().filter(ch -> ch == '_').count() == 2 )
+                .filter(file -> {
+                    try {
+                        return now - Files.getLastModifiedTime(file).toMillis() > day;
+                    } catch (IOException e) {
+                        return false;
+                    }
+                })
+                .collect(Collectors.toSet());
+            for (var file : files) {
+                System.out.println("Deleting: " + file);
+                Files.delete(file);
+            }
+        } catch (IOException e) {
+            System.out.print(e);
+        }
+    }
+
+
     public static boolean epsilonEquals(double a, double b, double epsilon) {
         return (a - epsilon <= b) && (a + epsilon >= b);
     }
@@ -90,5 +125,18 @@ public class Util {
             angle += 360.0;
         }
         return angle;
+    }
+
+    public static int closestTo(Integer[] numbers, int value) {
+        int distance = Math.abs(numbers[0] - value);
+        int idx = 0;
+        for(int c = 1; c < numbers.length; c++){
+            int cdistance = Math.abs(numbers[c] - value);
+            if(cdistance < distance){
+                idx = c;
+                distance = cdistance;
+            }
+        }
+        return numbers[idx];
     }
 }

@@ -1,15 +1,47 @@
 subsystems:
     drivetrain:
         implemented: true
-        falcons:
-            FLDr: 11
-            FRDr: 9
-            RLDr: 18
-            RRDr: 1
-            FLAz: 10
-            FRAz: 8
-            RLAz: 19
-            RRAz: 2
+        motors:
+            FLDr:
+                motorType: TalonFX
+                motorName: FLDr
+                id: 11
+                invertMotor: false
+            FRDr:
+                motorType: TalonFX
+                motorName: FLDr
+                id: 9
+                invertMotor: true
+            RLDr:
+                motorType: TalonFX
+                motorName: FLDr
+                id: 18
+                invertMotor: true
+            RRDr:
+                motorType: TalonFX
+                motorName: FLDr
+                id: 1
+                invertMotor: true
+            FLAz:
+                motorType: TalonFX
+                motorName: FLDr
+                id: 10
+                invertMotor: false
+            FRAz:
+                motorType: TalonFX
+                motorName: FLDr
+                id: 8
+                invertMotor: false
+            RLAz:
+                motorType: TalonFX
+                motorName: FLDr
+                id: 19
+                invertMotor: false
+            RRAz:
+                motorType: TalonFX
+                motorName: FLDr
+                id: 2
+                invertMotor: false
         canCoders:
             FLEnc: 25
             FREnc: 27
@@ -87,10 +119,22 @@ subsystems:
             autoBalanceThreshold: 2.5 # degrees
     elevator:
         implemented: true
-        falcons:
-            angleMotorMain: 6
-            angleMotorFollower: 7
-            extensionMotor: 15
+        motors:
+            angleMotorMain:
+                motorType: TalonFX
+                motorName: angleMotorMain
+                id: 6
+                invertMotor: false
+            angleMotorFollower:
+                motorType: TalonFX
+                motorName: angleMotorFollower
+                id: 7
+                invertMotor: false
+            extensionMotor:
+                motorType: TalonFX
+                motorName: angleMotorMain
+                id: 15
+                invertMotor: false
         pidConfig:
             slot0: # arm motion
                 kP: 0.02
@@ -142,19 +186,30 @@ subsystems:
             shelfCubeExtension: 10 # in - 150000 ticks
     collector:
         implemented: true
-        sparkmaxes:
-            pivotMotor: 13
-            intakeMotor: 14
+        motors:
+            pivotMotor:
+                motorType: SparkMax
+                motorName: pivotMotor
+                id: 13
+                invertMotor: true
+            intakeMotor:
+                motorType: SparkMax
+                motorName: intakeMotor
+                id: 14
+                currentLimit: 30
+                currentLimitThreshold: 0
+                currentLimitTriggerTime: 0
+                invertMotor: false
         pidConfig:
             slot0: # intakeMotor - only really works when locking motor max - min input is +/- 0.3 percent
                 kP: 0.001
             slot1: # pivotMotor
-                kP: 0.025
+                kP: 0.015
                 allowableError: 3 # this is only being used to compare states
         constants:
             maxVelTicks100ms: 10.83
             ## Demands ##
-            cubeIntakePower: 0.70 # percent output voltage
+            cubeIntakePower: 0.55 # percent output voltage; was 0.7
             cubeOuttakePower: -0.45 # percent output voltage
             coneIntakePower: -1 #was -0.50 - 1.375
             coneOuttakePower: 0.65
@@ -167,8 +222,6 @@ subsystems:
             shelfConeAngle: -38 # degrees
             shelfCubeAngle: -48 # degrees
             floorAngle: 26 # degrees
-            ## Limits ##
-            intakeStallAmps: 30
     ledmanager:
         implemented: true
         candle: 23
@@ -183,7 +236,7 @@ subsystems:
         constants:
             useMultiTargetOdometry: 1
 infrastructure:
-    canivoreBusName: highSpeed
+    canBusName: highSpeed
     ## Power Distribution ##
     pdId: 1
     pdIsRev: true
@@ -194,7 +247,7 @@ infrastructure:
     ## Pigeon ##
     pigeonId: 32
     isPigeon2: true
-controlboard: aleph1
+inputHandler: aleph1
 constants:
     zeroingButton: 9 # channel of DIO port
     ## Drivetrain ##
@@ -207,4 +260,4 @@ constants:
     ## General ##
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .025 # seconds
-    resetFactoryDefaults: 0 # whether motors get reset to factory default
+    resetFactoryDefaults: 1 # whether motors get reset to factory default

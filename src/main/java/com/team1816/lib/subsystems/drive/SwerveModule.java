@@ -1,12 +1,12 @@
 package com.team1816.lib.subsystems.drive;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
+import com.team1816.lib.hardware.components.motor.configurations.GreenControlMode;
 import com.team1816.lib.util.driveUtil.DriveConversions;
 import com.team1816.lib.util.driveUtil.SwerveKinematics;
 import com.team1816.lib.util.logUtil.GreenLogger;
@@ -90,18 +90,18 @@ public class SwerveModule implements ISwerveModule {
                 canCoder == null ? -1 : canCoder.getDeviceID()
             );
 
-        driveMotor.configOpenloopRamp(factory.getConstant("drivetrain", "openLoopRampRate", 0), Constants.kCANTimeoutMs);
-        azimuthMotor.configSupplyCurrentLimit(
+        driveMotor.configOpenLoopRampRate(factory.getConstant("drivetrain", "openLoopRampRate", 0), Constants.kCANTimeoutMs);
+        azimuthMotor.configCurrentLimit(
             new SupplyCurrentLimitConfiguration(true, 18, 28, 1),
             Constants.kLongCANTimeoutMs
         );
 
-        azimuthMotor.configPeakOutputForward(.4, Constants.kLongCANTimeoutMs);
-        azimuthMotor.configPeakOutputReverse(-.4, Constants.kLongCANTimeoutMs);
+        azimuthMotor.config_PeakOutputForward(.4, Constants.kLongCANTimeoutMs);
+        azimuthMotor.config_PeakOutputReverse(-.4, Constants.kLongCANTimeoutMs);
 
         azimuthMotor.setNeutralMode(NeutralMode.Brake);
 
-        azimuthMotor.configAllowableClosedloopError(
+        azimuthMotor.configAllowableErrorClosedLoop(
             0,
             mModuleConfig.azimuthPid.allowableError,
             Constants.kLongCANTimeoutMs
@@ -140,12 +140,12 @@ public class SwerveModule implements ISwerveModule {
                 mModuleConfig.azimuthEncoderHomeOffset;
 
         if (!isOpenLoop) {
-            driveMotor.set(ControlMode.Velocity, driveDemandTP100MS);
+            driveMotor.set(GreenControlMode.VELOCITY_CONTROL, driveDemandTP100MS);
         } else {
             driveDemandMPS *= Drive.kMaxVelOpenLoopMeters;
-            driveMotor.set(ControlMode.PercentOutput, desired_state.speedMetersPerSecond); // lying to it - speedMetersPerSecond passed in is actually percent output (1 to -1)
+            driveMotor.set(GreenControlMode.PERCENT_OUTPUT, desired_state.speedMetersPerSecond); // lying to it - speedMetersPerSecond passed in is actually percent output (1 to -1)
         }
-        azimuthMotor.set(ControlMode.Position, azimuthDemandPos);
+        azimuthMotor.set(GreenControlMode.POSITION_CONTROL, azimuthDemandPos);
     }
 
     /**
@@ -156,10 +156,10 @@ public class SwerveModule implements ISwerveModule {
      */
     public void update() {
         driveActualMPS =
-            DriveConversions.ticksToMeters(driveMotor.getSelectedSensorVelocity(0)) * 10;
+            DriveConversions.ticksToMeters(driveMotor.getSensorVelocity(0)) * 10;
         azimuthActualDeg =
             DriveConversions.convertTicksToDegrees(
-                azimuthMotor.getSelectedSensorPosition(0) -
+                azimuthMotor.getSensorPosition(0) -
                     mModuleConfig.azimuthEncoderHomeOffset
             );
 
@@ -170,7 +170,7 @@ public class SwerveModule implements ISwerveModule {
         modulePosition.distanceMeters = drivePosition;
         modulePosition.angle = Rotation2d.fromDegrees(azimuthActualDeg);
 
-        motorTemp = driveMotor.getTemperature(); // Celsius
+        motorTemp = driveMotor.getMotorTemperature(); // Celsius
     }
 
     /**
@@ -240,7 +240,7 @@ public class SwerveModule implements ISwerveModule {
      */
     @Override
     public double getAzimuthError() {
-        return azimuthMotor.getClosedLoopError(0);
+        return azimuthMotor.getClosedLoopError();
     }
 
     /**
@@ -280,7 +280,7 @@ public class SwerveModule implements ISwerveModule {
      */
     @Override
     public double getDriveError() {
-        return driveMotor.getClosedLoopError(0);
+        return driveMotor.getClosedLoopError();
     }
 
     /**
@@ -307,22 +307,22 @@ public class SwerveModule implements ISwerveModule {
     public boolean checkSystem() {
         boolean checkDrive = true;
         double actualmaxVelTicks100ms = factory.getConstant(NAME, "maxVelTicks100ms"); // if this isn't calculated right this test will fail
-        driveMotor.set(ControlMode.PercentOutput, 0.2);
+        driveMotor.set(GreenControlMode.PERCENT_OUTPUT, 0.2);
         Timer.delay(1);
         if (
             Math.abs(
-                driveMotor.getSelectedSensorVelocity(0) - 0.2 * actualmaxVelTicks100ms
+                driveMotor.getSensorVelocity(0) - 0.2 * actualmaxVelTicks100ms
             ) >
                 actualmaxVelTicks100ms /
                     50
         ) {
             checkDrive = false;
         }
-        driveMotor.set(ControlMode.PercentOutput, -0.2);
+        driveMotor.set(GreenControlMode.PERCENT_OUTPUT, -0.2);
         Timer.delay(1);
         if (
             Math.abs(
-                driveMotor.getSelectedSensorVelocity(0) + 0.2 * actualmaxVelTicks100ms
+                driveMotor.getSensorVelocity(0) + 0.2 * actualmaxVelTicks100ms
             ) >
                 actualmaxVelTicks100ms /
                     50
@@ -335,10 +335,10 @@ public class SwerveModule implements ISwerveModule {
         //TODO azimuth open loop self test
         Timer.delay(1);
         for (int i = 0; i < 4; i++) {
-            azimuthMotor.set(ControlMode.Position, setPoint);
+            azimuthMotor.set(GreenControlMode.POSITION_CONTROL, setPoint);
             Timer.delay(1);
             if (
-                Math.abs(azimuthMotor.getSelectedSensorPosition(0) - setPoint) >
+                Math.abs(azimuthMotor.getSensorPosition(0) - setPoint) >
                     allowableError
             ) {
                 checkAzimuth = false;

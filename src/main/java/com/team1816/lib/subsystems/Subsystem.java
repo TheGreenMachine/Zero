@@ -2,6 +2,7 @@ package com.team1816.lib.subsystems;
 
 import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
+import com.team1816.lib.Injector;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.season.Robot;
@@ -28,7 +29,7 @@ public abstract class Subsystem implements Sendable {
      * Properties
      */
     private final String name;
-    public static RobotFactory factory = Robot.getFactory();
+    public static RobotFactory factory = Injector.get(RobotFactory.class);
 
     public static RobotState robotState;
 

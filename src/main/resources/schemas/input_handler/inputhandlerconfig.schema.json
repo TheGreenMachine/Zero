@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "title": "inputHandlerConfig",
+  "additionalProperties": false,
+  "properties": {
+    "driver": {
+      "$ref": "controllerconfig.schema.json"
+    },
+    "operator": {
+      "$ref": "controllerconfig.schema.json"
+    },
+    "buttonboard": {
+      "type": "object",
+      "$ref": "string.map.schema.json",
+      "additionalProperties": false
+    }
+  }
+}

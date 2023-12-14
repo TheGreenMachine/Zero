@@ -3,14 +3,15 @@ package com.team1816.season;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Color;
-import com.team1816.lib.controlboard.ActionManager;
-import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
+import com.team1816.lib.input_handler.*;
+import com.team1816.lib.input_handler.controlOptions.ActionState;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.vision.Camera;
+import com.team1816.lib.util.Util;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.configuration.Constants;
@@ -22,14 +23,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import static com.team1816.lib.controlboard.ControlUtils.createAction;
-import static com.team1816.lib.controlboard.ControlUtils.createHoldAction;
+import java.util.Objects;
 
 public class Robot extends TimedRobot {
 
@@ -42,8 +43,7 @@ public class Robot extends TimedRobot {
     /**
      * Controls
      */
-    private IControlBoard controlBoard;
-    private ActionManager actionManager;
+    private InputHandler inputHandler;
 
     private final Infrastructure infrastructure;
     private final SubsystemLooper subsystemManager;
@@ -120,15 +120,6 @@ public class Robot extends TimedRobot {
         }
     }
 
-    /**
-     * Returns the static factory instance of the Robot
-     *
-     * @return RobotFactory
-     */
-    public static RobotFactory getFactory() {
-        if (factory == null) factory = Injector.get(RobotFactory.class);
-        return factory;
-    }
 
     /**
      * Returns the length of the last loop that the Robot was on
@@ -157,7 +148,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         try {
             /** Register All Subsystems */
-
+            DriverStation.silenceJoystickConnectionWarning(true);
             // Remember to register our subsystems below! The subsystem manager deals with calling
             // readFromHardware and writeToHardware on a loop, but it can only call read/write it if it
             // can recognize the subsystem. To recognize your subsystem, just add it alongside the
@@ -181,34 +172,55 @@ public class Robot extends TimedRobot {
                         logFileDir = System.getProperty("user.dir") + "/";
                     }
                 }
-                var filePath = logFileDir + robotName + "_" + logFile + ".bag";
-                DataLogManager.start();
-                DriverStation.startDataLog(DataLogManager.getLog(), true);
+                // start logging
+                DataLogManager.start(logFileDir, "", Constants.kLooperDt);
+                if (RobotBase.isReal()) {
+                    Util.cleanLogFiles();
+                }
+                DriverStation.startDataLog(DataLogManager.getLog(), false);
             }
 
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
 
-            // zeroing ypr - (-90) b/c our pigeon is mounted with the "y" axis facing forward.
-            // Might change later for different robots.
+            // zeroing ypr - (-90) pigeon is mounted with the "y" axis facing forward
             infrastructure.resetPigeon(Rotation2d.fromDegrees(-90));
             subsystemManager.zeroSensors();
 
             /** [Specific subsystem] not zeroed on boot up - letting ppl know */
             faulted = true;
 
-            /** Register ControlBoard */
-            controlBoard = Injector.get(IControlBoard.class);
+            /** Register inputHandler */
+            inputHandler = Injector.get(InputHandler.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
-            actionManager =
-                new ActionManager(
-                    // Driver Gamepad
-                        // TODO: new Action
-                        // TODO: new HoldAction
-                    // Operator Gamepad
-                    // Button Board Gamepad
-                );
+            /** Driver Commands */
+            inputHandler.listenAction(
+                    "DriverAction",
+                    ActionState.PRESSED,
+                    () -> {
+
+                    }
+            );
+            /** Operator Commands */
+            inputHandler.listenAction(
+                    "OperatorAction",
+                    ActionState.PRESSED,
+                    () -> {
+
+                    }
+            );
+
+            /** Buttonboard Commands */
+
+            inputHandler.listenAction(
+                    "ButtonBoardAction",
+                    ActionState.PRESSED,
+                    () -> {
+
+                    }
+            );
+
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -337,6 +349,8 @@ public class Robot extends TimedRobot {
             subsystemManager.outputToSmartDashboard(); // update shuffleboard for subsystem values
             robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
             autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
+
+            SmartDashboard.putString("Git Hash", Constants.kGitHash);
         } catch (Throwable t) {
             faulted = true;
             GreenLogger.log(t.getMessage());
@@ -371,10 +385,10 @@ public class Robot extends TimedRobot {
             if (autoModeManager.update()) {
                 drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
                 robotState.field
-                    .getObject("Trajectory")
-                    .setTrajectory(
-                        autoModeManager.getSelectedAuto().getCurrentTrajectory()
-                    );
+                        .getObject("Trajectory")
+                        .setTrajectory(
+                                autoModeManager.getSelectedAuto().getCurrentTrajectory()
+                        );
             }
 
             if (drive.isDemoMode()) { // Demo-mode
@@ -393,8 +407,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         robotState.field
-            .getObject("Trajectory")
-            .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
+                .getObject("Trajectory")
+                .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
     }
 
     /**
@@ -414,39 +428,14 @@ public class Robot extends TimedRobot {
      * Sets manual inputs for subsystems like the drivetrain when criteria met
      */
     public void manualControl() {
-        actionManager.update();
+        inputHandler.update();
 
         drive.setTeleopInputs(
-            -controlBoard.getAsDouble("throttle"),
-            -controlBoard.getAsDouble("strafe"),
-            controlBoard.getAsDouble("rotation")
+                    -inputHandler.getActionAsDouble("throttle"),
+                    -inputHandler.getActionAsDouble("strafe"),
+                     inputHandler.getActionAsDouble("rotation")
         );
-
-        // 2023 legacy autobalance code
-//        if (drive.isAutoBalancing()) {
-//            ChassisSpeeds fieldRelativeChassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
-//                0,
-//                -controlBoard.getAsDouble("strafe"),
-//                0,
-//                robotState.driverRelativeFieldToVehicle.getRotation());
-//            drive.autoBalance(fieldRelativeChassisSpeed);
-//        }
-        //2023 legacy snapping code
-//            double rotation;
-//            if (snappingToDriver || snappingToHumanPlayer) {
-//                double rotVal = MathUtil.inputModulus(
-//                    robotState.driverRelativeFieldToVehicle.getRotation().getDegrees(), robotState.allianceColor == Color.BLUE ? -180 : 180, robotState.allianceColor == Color.BLUE ? 180 : -180
-//                );
-//                if (snappingToDriver) {
-//                    if (rotVal == 0)
-//                        rotVal += 0.01d;
-//                    rotation = Math.min(0.5, (180 - Math.abs(rotVal)) / 40) * -Math.signum(rotVal);
-//                } else {
-//                    rotation = Math.min(0.5, Math.abs(rotVal) / 40) * Math.signum(rotVal);
-//                }
-//            }
-
-        }
+    }
 
     /**
      * Actions to perform periodically when the robot is in the test period

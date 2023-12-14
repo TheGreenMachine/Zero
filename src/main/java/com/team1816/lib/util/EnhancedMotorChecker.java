@@ -1,7 +1,10 @@
 package com.team1816.lib.util;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.team1816.lib.Injector;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
+import com.team1816.lib.hardware.components.motor.configurations.GreenControlMode;
+import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.Robot;
@@ -38,14 +41,14 @@ public class EnhancedMotorChecker {
             IGreenMotor motor
         ) {
             var name = subsystem.getSubsystemName();
-            var factory = Robot.getFactory();
+            var factory = Injector.get(RobotFactory.class);
             return new EnhancedMotorChecker.CheckerConfig() {
                 {
                     mCurrentFloor = factory.getConstant(name, "currentFloorCheck");
                     mRPMFloor = factory.getConstant(name, "rpmFloorCheck");
                     mCurrentEpsilon = factory.getConstant(name, "currentEpsilonCheck");
                     mRPMEpsilon = factory.getConstant(name, "rpmEpsilonCheck");
-                    mRPMSupplier = () -> motor.getSelectedSensorVelocity(0);
+                    mRPMSupplier = () -> motor.getSensorVelocity(0);
                 }
             };
         }
@@ -76,16 +79,16 @@ public class EnhancedMotorChecker {
 
         List<Double> currents = new ArrayList<>();
         List<Double> rpms = new ArrayList<>();
-        List<ControlMode> storedControlModes = new ArrayList<>();
+        List<GreenControlMode> storedControlModes = new ArrayList<>();
 
         // Record previous configuration for all motors.
         for (IGreenMotor motor : motorToCheck) {
             if (motor.getDeviceID() < 0) continue;
 
-            storedControlModes.add(motor.getControlMode());
+            storedControlModes.add(motor.get_ControlMode());
 
             // Now set to disabled.
-            motor.set(ControlMode.PercentOutput, 0.0);
+            motor.set(GreenControlMode.PERCENT_OUTPUT, 0.0);
         }
 
         for (IGreenMotor motor : motorToCheck) {
@@ -96,7 +99,7 @@ public class EnhancedMotorChecker {
                 continue;
             }
 
-            motor.set(ControlMode.PercentOutput, checkerConfig.mRunOutputPercentage);
+            motor.set(GreenControlMode.PERCENT_OUTPUT, checkerConfig.mRunOutputPercentage);
             Timer.delay(checkerConfig.mRunTimeSec);
 
             // Now poll the interesting information.
@@ -112,7 +115,7 @@ public class EnhancedMotorChecker {
             }
             System.out.print('\n');
 
-            motor.set(ControlMode.PercentOutput, 0.0);
+            motor.set(GreenControlMode.PERCENT_OUTPUT, 0.0);
 
             // And perform checks.
             if (current < checkerConfig.mCurrentFloor) {

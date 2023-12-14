@@ -9,6 +9,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
+import com.team1816.lib.hardware.components.motor.configurations.GreenControlMode;
 import com.team1816.lib.subsystems.LedManager;
 import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.lib.util.driveUtil.DriveConversions;
@@ -89,27 +90,27 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             0,
             0
         );
-        leftMain.configSupplyCurrentLimit(
+        leftMain.configCurrentLimit(
             currentLimitConfig,
             Constants.kLongCANTimeoutMs
         );
-        leftFollowerA.configSupplyCurrentLimit(
+        leftFollowerA.configCurrentLimit(
             currentLimitConfig,
             Constants.kLongCANTimeoutMs
         );
-        leftFollowerB.configSupplyCurrentLimit(
+        leftFollowerB.configCurrentLimit(
             currentLimitConfig,
             Constants.kLongCANTimeoutMs
         );
-        rightMain.configSupplyCurrentLimit(
+        rightMain.configCurrentLimit(
             currentLimitConfig,
             Constants.kLongCANTimeoutMs
         );
-        rightFollowerA.configSupplyCurrentLimit(
+        rightFollowerA.configCurrentLimit(
             currentLimitConfig,
             Constants.kLongCANTimeoutMs
         );
-        rightFollowerB.configSupplyCurrentLimit(
+        rightFollowerB.configCurrentLimit(
             currentLimitConfig,
             Constants.kLongCANTimeoutMs
         );
@@ -145,16 +146,16 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public synchronized void writeToHardware() {// sets the demands for hardware from the inputs provided
         if (controlState == ControlState.OPEN_LOOP) {
             leftMain.set(
-                ControlMode.PercentOutput,
+                GreenControlMode.PERCENT_OUTPUT,
                 isSlowMode ? (leftPowerDemand * 0.5) : leftPowerDemand
             );
             rightMain.set(
-                ControlMode.PercentOutput,
+                GreenControlMode.PERCENT_OUTPUT,
                 isSlowMode ? (rightPowerDemand * 0.5) : rightPowerDemand
             );
         } else {
-            leftMain.set(ControlMode.Velocity, leftVelDemand);
-            rightMain.set(ControlMode.Velocity, rightVelDemand);
+            leftMain.set(GreenControlMode.VELOCITY_CONTROL, leftVelDemand);
+            rightMain.set(GreenControlMode.VELOCITY_CONTROL, rightVelDemand);
         }
     }
 
@@ -168,15 +169,15 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public synchronized void readFromHardware() {
         // update current motor velocities and distance traveled
-        leftActualVelocity = leftMain.getSelectedSensorVelocity(0);
-        rightActualVelocity = rightMain.getSelectedSensorVelocity(0);
+        leftActualVelocity = leftMain.getSensorVelocity(0);
+        rightActualVelocity = rightMain.getSensorVelocity(0);
         leftActualDistance += ticksToMeters(leftActualVelocity * tickRatioPerLoop);
         rightActualDistance += ticksToMeters(rightActualVelocity * tickRatioPerLoop);
 
         // update error (only if in closed loop where knowing it is useful)
         if (controlState == ControlState.TRAJECTORY_FOLLOWING) {
-            leftErrorClosedLoop = leftMain.getClosedLoopError(0);
-            rightErrorClosedLoop = rightMain.getClosedLoopError(0);
+            leftErrorClosedLoop = leftMain.getClosedLoopError();
+            rightErrorClosedLoop = rightMain.getClosedLoopError();
         }
 
         // update current movement of the whole drivetrain
@@ -243,8 +244,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      * @see this#zeroSensors(Pose2d)
      */
     public synchronized void resetEncoders() {
-        leftMain.setSelectedSensorPosition(0, 0, 0);
-        rightMain.setSelectedSensorPosition(0, 0, 0);
+        leftMain.setSensorPosition(0, 0, 0);
+        rightMain.setSensorPosition(0, 0, 0);
         leftActualDistance = 0;
         rightActualDistance = 0;
     }
@@ -355,11 +356,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      */
     public synchronized void setVelocity(DriveSignal signal) {
         if (controlState == ControlState.OPEN_LOOP) {
-            leftMain.selectProfileSlot(0, 0);
-            rightMain.selectProfileSlot(0, 0);
+            leftMain.selectPIDSlot(0, 0);
+            rightMain.selectPIDSlot(0, 0);
 
-            leftMain.configNeutralDeadband(0.0, 0);
-            rightMain.configNeutralDeadband(0.0, 0);
+            leftMain.config_NeutralDeadband(0.0);
+            rightMain.config_NeutralDeadband(0.0);
         }
 
         leftVelDemand = signal.getLeft();
@@ -427,8 +428,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             isBraking = braking;
 
             if (braking) {
-                leftMain.set(ControlMode.Velocity, 0);
-                rightMain.set(ControlMode.Velocity, 0);
+                leftMain.set(GreenControlMode.VELOCITY_CONTROL, 0);
+                rightMain.set(GreenControlMode.VELOCITY_CONTROL, 0);
             }
             // TODO ensure that changing neutral modes won't backfire while we're using brushless motors
             NeutralMode mode = braking ? NeutralMode.Brake : NeutralMode.Coast;
@@ -492,7 +493,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      */
     @Override
     public double getLeftVelocityTicksActual() {
-        return leftMain.getSelectedSensorVelocity(0);
+        return leftMain.getSensorVelocity(0);
     }
 
     /**
@@ -504,7 +505,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      */
     @Override
     public double getRightVelocityTicksActual() {
-        return rightMain.getSelectedSensorVelocity(0);
+        return rightMain.getSensorVelocity(0);
     }
 
     /**

@@ -3,6 +3,7 @@ package com.team1816.lib.hardware.factory;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
+import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.*;
 import com.team1816.lib.hardware.components.gyro.GhostPigeonIMU;
@@ -14,7 +15,7 @@ import com.team1816.lib.hardware.components.ledManager.CanifierImpl;
 import com.team1816.lib.hardware.components.ledManager.GhostLEDManager;
 import com.team1816.lib.hardware.components.ledManager.ILEDManager;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
-import com.team1816.lib.hardware.components.motor.LazySparkMax;
+import com.team1816.lib.hardware.components.motor.configurations.FeedbackDeviceType;
 import com.team1816.lib.hardware.components.pcm.*;
 import com.team1816.lib.hardware.components.sensor.GhostProximitySensor;
 import com.team1816.lib.hardware.components.sensor.IProximitySensor;
@@ -27,8 +28,12 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
 
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Scanner;
 
 /**
  * This class employs the MotorFactory and SensorFactory with yaml integrations and is the initial entry point to
@@ -65,47 +70,86 @@ public class RobotFactory {
         }
     }
 
+    /**
+     * This method reads a resource file called 'git_hash.txt'.
+     *
+     * The resource contains the git hash for the current version of the repository
+     * you're on.
+     *
+     * @return a string representation of the current git hash
+     */
+    public static String getGitHash() {
+        String gitHashStr;
+        try {
+            URL input = Resources.getResource("git_hash");
+
+            if (input == null) {
+                gitHashStr = "UNABLE TO FIND THE GIT HASH.";
+            } else {
+                gitHashStr = Resources.toString(input, Charset.defaultCharset());
+            }
+        } catch (Exception e) {
+            GreenLogger.log("Exception occurred: " + e.toString());
+            gitHashStr = "NO VALID GIT HASH FOUND";
+        }
+
+        GreenLogger.log("Git Hash: " + gitHashStr);
+
+        return gitHashStr;
+    }
+
     public IGreenMotor getMotor(
         String subsystemName,
         String name,
         Map<String, PIDSlotConfiguration> pidConfigs,
         int remoteSensorId
     ) {
+
         IGreenMotor motor = null;
         var subsystem = getSubsystem(subsystemName);
 
-        // Identifying motor type
+
+        // Identifying motor
         if (subsystem.implemented) {
-            if (isHardwareValid(subsystem.talons, name)) {
-                motor =
-                    MotorFactory.createDefaultTalon(
-                        subsystem.talons.get(name),
-                        name,
-                        false,
-                        subsystem,
-                        pidConfigs,
-                        remoteSensorId,
-                        config.infrastructure.canivoreBusName
-                    );
-            } else if (isHardwareValid(subsystem.falcons, name)) {
-                motor =
-                    MotorFactory.createDefaultTalon(
-                        subsystem.falcons.get(name),
-                        name,
-                        true,
-                        subsystem,
-                        pidConfigs,
-                        remoteSensorId,
-                        config.infrastructure.canivoreBusName
-                    );
-            } else if (isHardwareValid(subsystem.sparkmaxes, name)) {
-                motor =
-                    MotorFactory.createSpark(
-                        subsystem.sparkmaxes.get(name),
-                        name,
-                        subsystem,
-                        pidConfigs
-                    );
+            if (isMotorValid(subsystem.motors, name)) {
+                switch (subsystem.motors.get(name).motorType) {
+                    case TalonFX -> {
+                        motor =
+                            MotorFactory.createDefaultTalon(
+                                subsystem.motors.get(name).id,
+                                name,
+                                true,
+                                subsystem,
+                                pidConfigs,
+                                remoteSensorId,
+                                config.infrastructure.canBusName
+                            );
+                    }
+                    case TalonSRX -> {
+                        motor =
+                            MotorFactory.createDefaultTalon(
+                                subsystem.motors.get(name).id,
+                                name,
+                                false,
+                                subsystem,
+                                pidConfigs,
+                                remoteSensorId,
+                                config.infrastructure.canBusName
+                            );
+                    }
+                    case SparkMax -> {
+                        motor =
+                            MotorFactory.createSpark(
+                                subsystem.motors.get(name).id,
+                                name,
+                                subsystem,
+                                pidConfigs
+                            );
+                    }
+                    case VictorSPX -> {
+                        GreenLogger.log("Victors cannot be main!");
+                    }
+                }
             }
             // Never make the victor a main
         }
@@ -144,49 +188,52 @@ public class RobotFactory {
         IGreenMotor followerMotor = null;
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented && main != null) {
-            if (isHardwareValid(subsystem.talons, name)) {
-                // Talons must be following another Talon, cannot follow a Victor.
-                followerMotor =
-                    MotorFactory.createFollowerTalon(
-                        subsystem.talons.get(name),
-                        name,
-                        false,
-                        main,
-                        subsystem,
-                        subsystem.pidConfig,
-                        config.infrastructure.canivoreBusName
-                    );
-            } else if (isHardwareValid(subsystem.falcons, name)) {
-                followerMotor =
-                    MotorFactory.createFollowerTalon(
-                        subsystem.falcons.get(name),
-                        name,
-                        true,
-                        main,
-                        subsystem,
-                        subsystem.pidConfig,
-                        config.infrastructure.canivoreBusName
-                    );
-            } else if (isHardwareValid(subsystem.sparkmaxes, name)) {
-                followerMotor =
-                    MotorFactory.createSpark(
-                        subsystem.sparkmaxes.get(name),
-                        name,
-                        subsystem
-                    );
-                ((LazySparkMax) followerMotor).follow(
-                    main,
-                    subsystem.invertMotor.contains(name)
-                );
-                followerMotor.setInverted(main.getInverted());
-            } else if (isHardwareValid(subsystem.victors, name)) {
-                // Victors can follow Talons or another Victor.
-                followerMotor =
-                    MotorFactory.createFollowerVictor(
-                        subsystem.victors.get(name),
-                        name,
-                        main
-                    );
+            if (isMotorValid(subsystem.motors, name)) {
+                switch(subsystem.motors.get(name).motorType) {
+                    case TalonFX -> {
+                        followerMotor =
+                            MotorFactory.createFollowerTalon(
+                                subsystem.motors.get(name).id,
+                                name,
+                                true,
+                                main,
+                                subsystem,
+                                subsystem.pidConfig,
+                                config.infrastructure.canBusName
+                            );
+                    }
+                    case TalonSRX -> {
+                        followerMotor =
+                            MotorFactory.createFollowerTalon(
+                                subsystem.motors.get(name).id,
+                                name,
+                                false,
+                                main,
+                                subsystem,
+                                subsystem.pidConfig,
+                                config.infrastructure.canBusName
+                            );
+                    }
+                    case SparkMax -> {
+                        MotorFactory.createFollowerSpark(
+                            subsystem.motors.get(name).id,
+                            name,
+                            subsystem,
+                            subsystem.pidConfig,
+                            main
+                        );
+                    }
+                    case VictorSPX -> {
+                        followerMotor =
+                            MotorFactory.createFollowerVictor(
+                                subsystem.motors.get(name).id,
+                                name,
+                                main,
+                                subsystem,
+                                subsystem.pidConfig
+                            );
+                    }
+                }
             }
         }
         if (followerMotor == null) {
@@ -242,6 +289,7 @@ public class RobotFactory {
             canCoder =
                 MotorFactory.createCanCoder(
                     subsystem.canCoders.get(module.canCoder),
+                    config.infrastructure.canBusName,
                     subsystem.canCoders.get(subsystem.invertCanCoder) != null &&
                         subsystem.invertCanCoder.contains(module.canCoder)
                 );
@@ -304,7 +352,7 @@ public class RobotFactory {
                 ledManager =
                     new CANdleImpl(
                         subsystem.candle,
-                        config.infrastructure.canivoreBusName
+                        config.infrastructure.canBusName
                     );
             }
             if (ledManager != null) {
@@ -344,6 +392,14 @@ public class RobotFactory {
         return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
     }
 
+    private boolean isMotorValid(Map<String, MotorConfiguration> map, String name) {
+        if (map != null) {
+            Integer hardwareId = map.get(name).id;
+            return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
+        }
+        return false;
+    }
+
     public Double getConstant(String name) {
         return getConstant(name, 0);
     }
@@ -375,8 +431,8 @@ public class RobotFactory {
         return getConstants().get(name);
     }
 
-    public String getControlBoard() {
-        return Objects.requireNonNullElse(config.controlboard, "empty");
+    public String getInputHandlerName() {
+        return Objects.requireNonNullElse(config.inputHandler, "empty");
     }
 
     public double getConstant(String subsystemName, String name) {
@@ -481,7 +537,7 @@ public class RobotFactory {
             pigeon = new GhostPigeonIMU(id);
         } else if (config.infrastructure.isPigeon2) {
             GreenLogger.log("Using Pigeon 2 for id: " + id);
-            pigeon = new Pigeon2Impl(id, config.infrastructure.canivoreBusName);
+            pigeon = new Pigeon2Impl(id, config.infrastructure.canBusName);
         } else {
             GreenLogger.log("Using old Pigeon for id: " + id);
             pigeon = new PigeonIMUImpl(id);

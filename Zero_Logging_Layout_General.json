@@ -1,5 +1,5 @@
 {
-  "version": "2.2.3",
+  "version": "3.0.0-beta-4",
   "layout": [
     {
       "type": 5,
@@ -9,12 +9,13 @@
           {
             "type": "Robot",
             "key": "Drivetrain/Pose",
-            "fieldTypeIndex": 0
+            "sourceTypeIndex": 0,
+            "sourceType": 5
           }
         ]
       ],
       "options": {
-        "game": "2023",
+        "game": "2023 Field",
         "unitDistance": "meters",
         "unitRotation": "degrees",
         "origin": "right",
@@ -23,6 +24,7 @@
         "allianceOrigin": "blue",
         "orientation": "blue left, red right"
       },
+      "configHidden": false,
       "title": "Odometry"
     },
     {
@@ -34,7 +36,13 @@
             "type": null,
             "factor": 1
           },
-          "fields": []
+          "fields": [
+            {
+              "key": "Drivetrain/ChassisSpeeds/2",
+              "color": "#2b66a2",
+              "show": true
+            }
+          ]
         },
         "discrete": {
           "fields": []
@@ -62,7 +70,7 @@
           "fields": [
             {
               "key": "Timings/Robot",
-              "color": "#e5b31b",
+              "color": "#2b66a2",
               "show": true
             }
           ]
@@ -71,7 +79,7 @@
           "fields": [
             {
               "key": "DS:autonomous",
-              "color": "#2b66a2",
+              "color": "#e5b31b",
               "show": true
             },
             {
@@ -108,55 +116,13 @@
           },
           "fields": [
             {
-              "key": "Elevator/Angle/actualPosition",
-              "color": "#e5b31b",
-              "show": true
-            },
-            {
-              "key": "Elevator/Angle/desiredPosition",
-              "color": "#2b66a2",
-              "show": true
-            }
-          ]
-        },
-        "discrete": {
-          "fields": []
-        },
-        "right": {
-          "lockedRange": null,
-          "unitConversion": {
-            "type": null,
-            "factor": 1
-          },
-          "fields": [
-            {
-              "key": "Elevator/Angle/currentDraw",
-              "color": "#af2437",
-              "show": true
-            }
-          ]
-        }
-      },
-      "title": "ElevatorAngle"
-    },
-    {
-      "type": 1,
-      "legends": {
-        "left": {
-          "lockedRange": null,
-          "unitConversion": {
-            "type": null,
-            "factor": 1
-          },
-          "fields": [
-            {
               "key": "Elevator/Extension/actualExtensionPosition",
-              "color": "#e5b31b",
+              "color": "#2b66a2",
               "show": true
             },
             {
               "key": "Elevator/Extension/desiredExtensionPosition",
-              "color": "#2b66a2",
+              "color": "#e5b31b",
               "show": true
             }
           ]
@@ -193,12 +159,12 @@
           "fields": [
             {
               "key": "Collector/Pivot/actualPivotPosition",
-              "color": "#e5b31b",
+              "color": "#2b66a2",
               "show": true
             },
             {
               "key": "Collector/Pivot/desiredPivotPosition",
-              "color": "#2b66a2",
+              "color": "#e5b31b",
               "show": true
             }
           ]
@@ -229,7 +195,7 @@
           "fields": [
             {
               "key": "Collector/Roller/actualRollerVelocity",
-              "color": "#e5b31b",
+              "color": "#2b66a2",
               "show": true
             }
           ]
@@ -268,7 +234,7 @@
           "fields": [
             {
               "key": "Camera/SeenPoints",
-              "color": "#e5b31b",
+              "color": "#2b66a2",
               "show": true
             }
           ]
@@ -295,13 +261,55 @@
           },
           "fields": [
             {
-              "key": "Drivetrain/Swerve/Pitch",
+              "key": "Elevator/Angle/actualPosition",
+              "color": "#2b66a2",
+              "show": true
+            },
+            {
+              "key": "Elevator/Angle/desiredPosition",
               "color": "#e5b31b",
+              "show": true
+            }
+          ]
+        },
+        "discrete": {
+          "fields": []
+        },
+        "right": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": [
+            {
+              "key": "Elevator/Angle/currentDraw",
+              "color": "#af2437",
+              "show": true
+            }
+          ]
+        }
+      },
+      "title": "ElevatorAngle"
+    },
+    {
+      "type": 1,
+      "legends": {
+        "left": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": [
+            {
+              "key": "Drivetrain/Swerve/Pitch",
+              "color": "#2b66a2",
               "show": true
             },
             {
               "key": "Drivetrain/Swerve/Roll",
-              "color": "#2b66a2",
+              "color": "#e5b31b",
               "show": true
             }
           ]
@@ -336,6 +344,7 @@
           "None"
         ]
       },
+      "configHidden": false,
       "title": "Joysticks"
     }
   ]

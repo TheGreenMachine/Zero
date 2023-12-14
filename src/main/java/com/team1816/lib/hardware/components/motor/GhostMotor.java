@@ -1,14 +1,7 @@
 package com.team1816.lib.hardware.components.motor;
 
-import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.ParamEnum;
-import com.ctre.phoenix.motion.MotionProfileStatus;
-import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
-import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
+import com.team1816.lib.hardware.components.motor.configurations.*;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import com.team1816.season.Robot;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -17,11 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 import static java.lang.Double.NaN;
 
-/**
- * This class emulates the behaviour of a Motor that is not physically implemented on a robot
- */
-public class GhostMotor implements IGreenMotor, IMotorSensor {
-
+public class GhostMotor implements IGreenMotor {
     protected String name = "";
 
     /**
@@ -36,7 +25,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     /**
      * State
      */
-    private ControlMode controlMode;
+    private GreenControlMode controlMode;
     private final double[] desiredDemand = new double[]{0, 0, 0}; // 0: %out, 1: vel, 2: pos, 3: Motion magic
     private final double[] actualOutput = new double[]{0, 0, 0}; // 0: %out, 1: vel, 2: pos, 3: Motion Magic
     protected double lastPos = 0;
@@ -46,6 +35,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     protected double lastUpdate = 0;
 
+    protected SoftLimitStatus softLimitStatus = SoftLimitStatus.DISABLED;
+
     public GhostMotor(int maxTickVel, int absInitOffset, String motorName) {
         this.absInitOffset = absInitOffset;
         maxVelTicks100ms = maxTickVel;
@@ -53,39 +44,80 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     }
 
     @Override
-    public void set(ControlMode Mode, double demand) {
-        processSet(Mode, demand);
+    public String getName() {
+        return name;
     }
 
     @Override
-    public void set(
-        ControlMode Mode,
-        double demand0,
-        DemandType demand1Type,
-        double demand1
-    ) {
-        processSet(Mode, demand0);
+    public MotorType get_MotorType() {
+        return MotorType.GHOST;
     }
 
-    private void processSet(ControlMode Mode, double demand) {
+    @Override
+    public void selectFeedbackSensor(FeedbackDeviceType deviceType) {
+
+    }
+
+    @Override
+    public void configCurrentLimit(SupplyCurrentLimitConfiguration configuration) {
+
+    }
+
+    @Override
+    public void configCurrentLimit(SupplyCurrentLimitConfiguration configuration, int timeoutMs) {
+
+    }
+
+
+    @Override
+    public void configCurrentLimit(int current) {
+
+    }
+
+    @Override
+    public void setPeriodicStatusFramePeriod(PeriodicStatusFrame statusFrame, int periodms) {
+
+    }
+
+    @Override
+    public int getPeriodicStatusFramePeriod(PeriodicStatusFrame statusFrame) {
+        return 0;
+    }
+
+    @Override
+    public double getOutputCurrent() {
+        return 0;
+    }
+
+    @Override
+    public void setVelocityMeasurementPeriod(int periodms) {
+
+    }
+
+    @Override
+    public void set(GreenControlMode Mode, double demand) {
+        processSet(Mode, demand);
+    }
+
+    private void processSet(GreenControlMode controlModeDemand, double demand) {
         // setting desired demand
-        if (Mode == ControlMode.PercentOutput) {
+        if (controlModeDemand == GreenControlMode.PERCENT_OUTPUT) {
             desiredDemand[0] = demand;
             desiredDemand[1] = NaN;
             desiredDemand[2] = NaN;
-        } else if (Mode == ControlMode.Velocity) {
+        } else if (controlModeDemand == GreenControlMode.VELOCITY_CONTROL) {
             this.desiredDemand[0] = NaN;
             this.desiredDemand[1] = demand;
             this.desiredDemand[2] = NaN;
-        } else if (Mode == ControlMode.Position || Mode == ControlMode.MotionMagic) {
+        } else if (controlModeDemand == GreenControlMode.POSITION_CONTROL || controlModeDemand == GreenControlMode.MOTION_MAGIC) {
             this.desiredDemand[0] = NaN;
             this.desiredDemand[1] = NaN;
             this.desiredDemand[2] = demand;
         } else {
-            GreenLogger.log("no support for this Mode in GhostMotor!");
+            GreenLogger.log("no support for Mode " + controlModeDemand + " in GhostMotor!");
             return;
         }
-        controlMode = Mode;
+        controlMode = controlModeDemand;
     }
 
     private void updateActValues() {
@@ -104,21 +136,21 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
         lastUpdate = timeNow;
 
         // setting actual output
-        if (controlMode == ControlMode.PercentOutput) {
+        if (controlMode == GreenControlMode.PERCENT_OUTPUT) {
             actualOutput[0] = desiredDemand[0];
             actualOutput[1] = desiredDemand[0] * maxVelTicks100ms;
             actualOutput[2] = lastPos + (actualOutput[1] / 100 * dtBetweenCallsMS);
-        } else if (controlMode == ControlMode.Velocity) {
+        } else if (controlMode == GreenControlMode.VELOCITY_CONTROL) {
             actualOutput[0] = desiredDemand[1] / maxVelTicks100ms;
             actualOutput[1] = desiredDemand[1];
             actualOutput[2] = lastPos + (actualOutput[1] / 100 * dtBetweenCallsMS);
-        } else if (controlMode == ControlMode.Position) {
+        } else if (controlMode == GreenControlMode.POSITION_CONTROL) {
             double desaturatedVel = Math.signum(desiredDemand[2] - lastPos) * Math.min(maxVelTicks100ms, Math.abs(desiredDemand[2] - lastPos) / dtBetweenCallsMS * 100);
 
             actualOutput[0] = desaturatedVel / maxVelTicks100ms;
             actualOutput[1] = desaturatedVel;
             actualOutput[2] = lastPos + (actualOutput[1] / 100 * dtBetweenCallsMS);
-        } else if (controlMode == ControlMode.MotionMagic) {
+        } else if (controlMode == GreenControlMode.MOTION_MAGIC) {
             // not accounting for accel rn - just using motionMagicCruiseVel
             double accelAccountedVel = Math.min(motionMagicCruiseVel, Math.abs(actualOutput[1]) + (motionMagicAccel / 100 * dtBetweenCallsMS));
             double desaturatedVel = Math.signum(desiredDemand[2] - lastPos) * Math.min(accelAccountedVel, Math.abs(desiredDemand[2] - lastPos) / dtBetweenCallsMS * 100);
@@ -143,23 +175,38 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     }
 
     @Override
+    public void configForwardLimitSwitch(boolean normallyOpen) {
+
+    }
+
+    @Override
+    public void configReverseLimitSwitch(boolean normallyOpen) {
+
+    }
+
+    @Override
+    public boolean isLimitSwitchClosed(LimitSwitchDirection direction) {
+        return true;
+    }
+
+    @Override
     public void neutralOutput() {
+
     }
 
     @Override
     public void setNeutralMode(NeutralMode neutralMode) {
+
     }
 
     @Override
-    public void setSensorPhase(boolean PhaseSensor) {
+    public void setSensorPhase(boolean isInverted) {
+
     }
 
     @Override
-    public void setInverted(boolean invert) {
-    }
+    public void setInverted(boolean isInverted) {
 
-    @Override
-    public void setInverted(InvertType invertType) {
     }
 
     @Override
@@ -168,58 +215,60 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     }
 
     @Override
-    public ErrorCode configOpenloopRamp(double secondsFromNeutralToFull, int timeoutMs) {
-        return ErrorCode.OK;
+    public void configOpenLoopRampRate(double secondsNeutralToFull) {
+
     }
 
     @Override
-    public ErrorCode configClosedloopRamp(
-        double secondsFromNeutralToFull,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
+    public void configOpenLoopRampRate(double secondsNeutralToFull, int timeoutMs) {
+
+    }
+
+
+    @Override
+    public void configClosedLoopRampRate(double secondsNeutralToFull) {
+
     }
 
     @Override
-    public ErrorCode configPeakOutputForward(double percentOut, int timeoutMs) {
-        return ErrorCode.OK;
+    public void configClosedLoopRampRate(double secondsNeutralToFull, int timeoutMs) {
+
     }
 
     @Override
-    public ErrorCode configPeakOutputReverse(double percentOut, int timeoutMs) {
-        return ErrorCode.OK;
+    public void config_PeakOutputForward(double percentOut) {
+
     }
 
     @Override
-    public ErrorCode configNominalOutputForward(double percentOut, int timeoutMs) {
-        return ErrorCode.OK;
+    public void config_PeakOutputForward(double percentOut, int timeoutMs) {
+
+    }
+
+
+    @Override
+    public void config_PeakOutputReverse(double percentOut) {
+
     }
 
     @Override
-    public ErrorCode configNominalOutputReverse(double percentOut, int timeoutMs) {
-        return ErrorCode.OK;
+    public void config_PeakOutputReverse(double percentOut, int timeoutMs) {
+
     }
 
     @Override
-    public ErrorCode configNeutralDeadband(double percentDeadband, int timeoutMs) {
-        return ErrorCode.OK;
+    public void config_NeutralDeadband(double deadbandPercent) {
+
     }
 
     @Override
-    public ErrorCode configVoltageCompSaturation(double voltage, int timeoutMs) {
-        return ErrorCode.OK;
+    public void configVoltageCompensation(double voltage) {
+
     }
 
     @Override
-    public ErrorCode configVoltageMeasurementFilter(
-        int filterWindowSamples,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
-    }
+    public void enableVoltageCompensation(boolean isEnabled) {
 
-    @Override
-    public void enableVoltageCompensation(boolean enable) {
     }
 
     @Override
@@ -239,367 +288,226 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     }
 
     @Override
-    public double getOutputCurrent() {
+    public double getMotorTemperature() {
         return 0;
     }
 
     @Override
-    public ErrorCode configVelocityMeasurementPeriod(
-        SensorVelocityMeasPeriod period,
-        int timeoutMs
-    ) {
-        return null;
-    }
-
-    @Override
-    public double getTemperature() {
-        return 0;
-    }
-
-    @Override
-    public ErrorCode configSelectedFeedbackSensor(
-        RemoteFeedbackDevice feedbackDevice,
-        int pidIdx,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode configSelectedFeedbackCoefficient(
-        double coefficient,
-        int pidIdx,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode configRemoteFeedbackFilter(
-        int deviceID,
-        RemoteSensorSource remoteSensorSource,
-        int remoteOrdinal,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode configRemoteFeedbackFilter(
-        CANCoder canCoderRef,
-        int remoteOrdinal,
-        int timeoutMs
-    ) {
-        return null;
-    }
-
-    @Override
-    public ErrorCode configRemoteFeedbackFilter(
-        BaseTalon talonRef,
-        int remoteOrdinal,
-        int timeoutMs
-    ) {
-        return null;
-    }
-
-    @Override
-    public ErrorCode configSensorTerm(
-        SensorTerm sensorTerm,
-        FeedbackDevice feedbackDevice,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public double getSelectedSensorPosition(int pidIdx) {
+    public double getSensorPosition(int closedLoopSlotID) {
         updateActValues();
         return actualOutput[2];
     }
 
     @Override
-    public double getSelectedSensorVelocity(int pidIdx) {
+    public double getSensorVelocity(int closedLoopSlotID) {
         updateActValues();
         return actualOutput[1];
     }
 
     @Override
-    public ErrorCode setSelectedSensorPosition(
-        double sensorPos,
-        int pidIdx,
-        int timeoutMs
-    ) {
-        processSet(ControlMode.Position, sensorPos);
-        return ErrorCode.OK;
+    public void setSensorPosition(double sensorPosition, int closedLoopSlotID) {
+        processSet(GreenControlMode.POSITION_CONTROL, sensorPosition);
     }
 
     @Override
-    public ErrorCode setControlFramePeriod(ControlFrame frame, int periodMs) {
-        return ErrorCode.OK;
+    public void setSensorPosition(double sensorPosition, int closedLoopSlotID, int timeoutMs) {
+        setSensorPosition(sensorPosition, closedLoopSlotID);
+    }
+
+
+    @Override
+    public void enableLimitSwitches(boolean isEnabled) {
+
     }
 
     @Override
-    public ErrorCode setStatusFramePeriod(
-        StatusFrame frame,
-        int periodMs,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public int getStatusFramePeriod(StatusFrame frame, int timeoutMs) {
-        return 0;
-    }
-
-    @Override
-    public ErrorCode configForwardLimitSwitchSource(
-        RemoteLimitSwitchSource type,
-        LimitSwitchNormal normalOpenOrClose,
-        int deviceID,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode configReverseLimitSwitchSource(
-        RemoteLimitSwitchSource type,
-        LimitSwitchNormal normalOpenOrClose,
-        int deviceID,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public void overrideLimitSwitchesEnable(boolean enable) {
-    }
-
-    @Override
-    public ErrorCode configForwardSoftLimitThreshold(
-        double forwardSensorLimit,
-        int timeoutMs
-    ) {
+    public void configForwardSoftLimit(double forwardSoftLimit) {
         usingLimit = true;
-        fwdLimit = (int) forwardSensorLimit;
-
-        return ErrorCode.OK;
+        fwdLimit = (int) forwardSoftLimit;
     }
 
     @Override
-    public ErrorCode configReverseSoftLimitThreshold(
-        double reverseSensorLimit,
-        int timeoutMs
-    ) {
+    public void configForwardSoftLimit(double forwardSoftLimit, int timeoutMs) {
+        configForwardSoftLimit(forwardSoftLimit);
+    }
+
+
+    @Override
+    public void configReverseSoftLimit(double reverseSoftLimit) {
         usingLimit = true;
-        revLimit = (int) reverseSensorLimit;
-        return ErrorCode.OK;
+        revLimit = (int) reverseSoftLimit;
     }
 
     @Override
-    public ErrorCode configForwardSoftLimitEnable(boolean enable, int timeoutMs) {
-        return ErrorCode.OK;
+    public void configReverseSoftLimit(double reverseSoftLimit, int timeoutMs) {
+        configReverseSoftLimit(reverseSoftLimit);
+    }
+
+
+    @Override
+    public void enableForwardSoftLimit(boolean isEnabled) {
+        usingLimit = isEnabled;
+        softLimitStatus = updateSoftLimitStatus(
+            softLimitStatus,
+            isEnabled ? SoftLimitStatus.FORWARD : SoftLimitStatus.FORWARD_DISABLE
+        );
     }
 
     @Override
-    public ErrorCode configReverseSoftLimitEnable(boolean enable, int timeoutMs) {
-        return ErrorCode.OK;
+    public void enableForwardSoftLimit(boolean isEnabled, int timeoutMs) {
+        enableForwardSoftLimit(isEnabled);
+    }
+
+
+    @Override
+    public void enableReverseSoftLimit(boolean isEnabled) {
+        usingLimit = isEnabled;
+        softLimitStatus = updateSoftLimitStatus(
+            softLimitStatus,
+            isEnabled ? SoftLimitStatus.REVERSE : SoftLimitStatus.REVERSE_DISABLE
+        );
     }
 
     @Override
-    public void overrideSoftLimitsEnable(boolean enable) {
+    public void enableReverseSoftLimit(boolean isEnabled, int timeoutMs) {
+        enableReverseSoftLimit(isEnabled);
     }
 
     @Override
-    public ErrorCode config_kP(int slotIdx, double value, int timeoutMs) {
-        return ErrorCode.OK;
+    public void enableSoftLimits(boolean isEnabled) {
+        usingLimit = isEnabled;
+        softLimitStatus = updateSoftLimitStatus(
+            softLimitStatus,
+            isEnabled ? SoftLimitStatus.BOTH : SoftLimitStatus.DISABLED
+        );
     }
 
     @Override
-    public ErrorCode config_kI(int slotIdx, double value, int timeoutMs) {
-        return ErrorCode.OK;
+    public void set_kP(int pidSlotID, double kP) {
+
     }
 
     @Override
-    public ErrorCode config_kD(int slotIdx, double value, int timeoutMs) {
-        return ErrorCode.OK;
+    public void set_kI(int pidSlotID, double kI) {
+
     }
 
     @Override
-    public ErrorCode config_kF(int slotIdx, double value, int timeoutMs) {
-        return ErrorCode.OK;
+    public void set_kD(int pidSlotID, double kD) {
+
     }
 
     @Override
-    public ErrorCode config_IntegralZone(int slotIdx, double izone, int timeoutMs) {
-        return ErrorCode.OK;
+    public void set_kF(int pidSlotID, double kF) {
+
     }
 
     @Override
-    public ErrorCode configAllowableClosedloopError(
-        int slotIdx,
-        double allowableCloseLoopError,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
+    public void setArbitraryFeedForward(double feedForward) {
+
     }
 
     @Override
-    public ErrorCode configMaxIntegralAccumulator(
-        int slotIdx,
-        double iaccum,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
+    public void selectPIDSlot(int pidSlotID, int closedLoopSlotID) {
+
     }
 
     @Override
-    public ErrorCode configClosedLoopPeakOutput(
-        int slotIdx,
-        double percentOut,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
+    public void set_iZone(int pidSlotID, double iZone) {
+
     }
 
     @Override
-    public ErrorCode configClosedLoopPeriod(int slotIdx, int loopTimeMs, int timeoutMs) {
-        return ErrorCode.OK;
+    public void configAllowableErrorClosedLoop(int pidSlotID, double allowableError) {
+
     }
 
     @Override
-    public ErrorCode configAuxPIDPolarity(boolean invert, int timeoutMs) {
-        return ErrorCode.OK;
+    public void configAllowableErrorClosedLoop(int pidSlotID, double allowableError, int timeoutMs) {
+
+    }
+
+
+    @Override
+    public void setMaxIAccumulation(int pidSlotID, double maxIAccum) {
+
     }
 
     @Override
-    public ErrorCode setIntegralAccumulator(double iaccum, int pidIdx, int timeoutMs) {
-        return ErrorCode.OK;
+    public void setPeakOutputClosedLoop(int pidSlotID, double peakOutput) {
+
     }
 
     @Override
-    public double getClosedLoopError(int pidIdx) {
+    public void setPeakOutputClosedLoop(int pidSlotID, double peakOutput, int timeoutMs) {
+
+    }
+
+
+    @Override
+    public void setIAccumulation(int closedLoopSlotID, double IAccum) {
+
+    }
+
+    @Override
+    public double getClosedLoopError() {
         return 0;
     }
 
     @Override
-    public double getIntegralAccumulator(int pidIdx) {
+    public double getIAccum(int closedLoopSlotID) {
         return 0;
     }
 
     @Override
-    public double getErrorDerivative(int pidIdx) {
+    public double getErrorDerivative(int closedLoopSlotID) {
         return 0;
     }
 
     @Override
-    public void selectProfileSlot(int slotIdx, int pidIdx) {
+    public void setMotionProfileMaxVelocity(double maxVelocity) {
+        motionMagicCruiseVel = maxVelocity;
     }
 
     @Override
-    public double getClosedLoopTarget(int pidIdx) {
-        return 0;
+    public void setMotionProfileMaxVelocity(double maxVelocity, int timeoutMs) {
+        setMotionProfileMaxVelocity(maxVelocity);
+    }
+
+
+    @Override
+    public void setMotionProfileMaxAcceleration(double maxAcceleration) {
+        motionMagicAccel = maxAcceleration;
     }
 
     @Override
-    public double getActiveTrajectoryPosition() {
-        return 0;
+    public void setMotionProfileMaxAcceleration(double maxAcceleration, int timeoutMs) {
+        setMotionProfileMaxAcceleration(maxAcceleration);
     }
 
     @Override
-    public double getActiveTrajectoryVelocity() {
-        return 0;
+    public void configMotionCurve(MotionCurveType motionCurveType, int curveStrength) {
+
     }
 
     @Override
-    public ErrorCode configMotionCruiseVelocity(
-        double sensorUnitsPer100ms,
-        int timeoutMs
-    ) {
-        motionMagicCruiseVel = sensorUnitsPer100ms;
-        return ErrorCode.OK;
+    public void clearMotionProfileTrajectoryBuffer() {
+
     }
 
     @Override
-    public ErrorCode configMotionAcceleration(
-        double sensorUnitsPer100msPerSec,
-        int timeoutMs
-    ) {
-        motionMagicAccel = sensorUnitsPer100msPerSec;
-        return ErrorCode.OK;
+    public String get_LastError() {
+        return "Ghost motor, no errors!";
     }
 
     @Override
-    public ErrorCode configMotionSCurveStrength(int curveStrength, int timeoutMs) {
-        return ErrorCode.OK;
+    public String get_Faults() {
+        return "Ghost motor, no faults!";
     }
 
     @Override
-    public ErrorCode configMotionProfileTrajectoryPeriod(
-        int baseTrajDurationMs,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode clearMotionProfileTrajectories() {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public int getMotionProfileTopLevelBufferCount() {
-        return 0;
-    }
-
-    @Override
-    public ErrorCode pushMotionProfileTrajectory(TrajectoryPoint trajPt) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public boolean isMotionProfileTopLevelBufferFull() {
-        return false;
-    }
-
-    @Override
-    public void processMotionProfileBuffer() {
-    }
-
-    @Override
-    public ErrorCode getMotionProfileStatus(MotionProfileStatus statusToFill) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode clearMotionProfileHasUnderrun(int timeoutMs) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode changeMotionControlFramePeriod(int periodMs) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode getLastError() {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode getFaults(Faults toFill) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode getStickyFaults(StickyFaults toFill) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode clearStickyFaults(int timeoutMs) {
-        return ErrorCode.OK;
+    public String get_StickyFaults() {
+        return "Ghost motor, no sticky faults!";
     }
 
     @Override
@@ -613,130 +521,33 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     }
 
     @Override
-    public ErrorCode configSetCustomParam(int newValue, int paramIndex, int timeoutMs) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public int configGetCustomParam(int paramIndex, int timoutMs) {
-        return 0;
-    }
-
-    @Override
-    public ErrorCode configSetParameter(
-        ParamEnum param,
-        double value,
-        int subValue,
-        int ordinal,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode configSetParameter(
-        int param,
-        double value,
-        int subValue,
-        int ordinal,
-        int timeoutMs
-    ) {
-        return null;
-    }
-
-    @Override
-    public double configGetParameter(ParamEnum paramEnum, int ordinal, int timeoutMs) {
-        return 0;
-    }
-
-    @Override
-    public double configGetParameter(int paramEnum, int ordinal, int timeoutMs) {
-        return 0;
-    }
-
-    @Override
-    public int getBaseID() {
-        return 0;
-    }
-
-    @Override
     public int getDeviceID() {
         return -1;
     }
 
     @Override
-    public ControlMode getControlMode() {
-        return null;
+    public GreenControlMode get_ControlMode() {
+        return controlMode;
     }
 
     @Override
-    public void follow(IMotorController masterToFollow) {
+    public void follow(IGreenMotor leader) {
+
     }
 
     @Override
-    public void valueUpdated() {
-    }
-
-    @Override
-    public ErrorCode configSelectedFeedbackSensor(
-        FeedbackDevice feedbackDevice,
-        int pidIdx,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode configSupplyCurrentLimit(
-        SupplyCurrentLimitConfiguration currLimitCfg,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode setStatusFramePeriod(
-        StatusFrameEnhanced frame,
-        int periodMs,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public int getStatusFramePeriod(StatusFrameEnhanced frame, int timeoutMs) {
+    public double getSupplyCurrent() {
         return 0;
     }
 
     @Override
-    public ErrorCode configVelocityMeasurementPeriod(
-        VelocityMeasPeriod period,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
+    public void restore_FactoryDefaults(int timeoutMs) {
+
     }
 
     @Override
-    public ErrorCode configVelocityMeasurementWindow(int windowSize, int timeoutMs) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode configForwardLimitSwitchSource(
-        LimitSwitchSource type,
-        LimitSwitchNormal normalOpenOrClose,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
-    }
-
-    @Override
-    public ErrorCode configReverseLimitSwitchSource(
-        LimitSwitchSource type,
-        LimitSwitchNormal normalOpenOrClose,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
+    public boolean isVoltageCompensationEnabled() {
+        return false;
     }
 
     @Override
@@ -745,28 +556,27 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     }
 
     @Override
+    public void setQuadraturePosition(int quadraturePosition) {
+        desiredDemand[2] = quadraturePosition;
+    }
+
+    @Override
     public int getPulseWidthPosition() {
         return (int) (absInitOffset + actualOutput[2]) % absMotorPPR;
     }
 
     @Override
-    public ErrorCode setQuadraturePosition(int newPosition) {
-        desiredDemand[2] = newPosition;
-        return ErrorCode.OK;
+    public boolean isFollower() {
+        return false;
     }
 
     @Override
-    public String getName() {
-        return name;
+    public SoftLimitStatus getSoftLimitStatus() {
+        return softLimitStatus;
     }
 
     @Override
-    public ErrorCode configAllSettings(BaseTalonConfiguration allConfigs, int timeoutMs) {
-        return null;
-    }
+    public void configControlFramePeriod(ControlFrame controlFrame, int periodms) {
 
-    @Override
-    public ErrorCode configFactoryDefault(int timeoutMs) {
-        return null;
     }
 }

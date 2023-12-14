@@ -1,23 +1,47 @@
 subsystems:
     drivetrain:
         implemented: true
-        talons:
-            FLAz: 2
-            FRAz: 12
-            RLAz: 10
-            RRAz: 15
-        falcons:
-            FLDr: 3
-            FRDr: 13
-            RLDr: 1
-            RRDr: 14
-        invertMotor:
-            - FRDr
-            - RRDr
-            - FLAz
-            - FRAz
-            - RLAz
-            - RRAz
+        motors:
+            FLDr:
+                motorType: TalonFX
+                motorName: FLDr
+                id: 3
+                invertMotor: false
+            FRDr:
+                motorType: TalonFX
+                motorName: FLDr
+                id: 13
+                invertMotor: true
+            RLDr:
+                motorType: TalonFX
+                motorName: FLDr
+                id: 1
+                invertMotor: false
+            RRDr:
+                motorType: TalonFX
+                motorName: FLDr
+                id: 14
+                invertMotor: true
+            FLAz:
+                motorType: TalonSRX
+                motorName: FLDr
+                id: 2
+                invertMotor: true
+            FRAz:
+                motorType: TalonSRX
+                motorName: FLDr
+                id: 12
+                invertMotor: true
+            RLAz:
+                motorType: TalonSRX
+                motorName: FLDr
+                id: 10
+                invertMotor: true
+            RRAz:
+                motorType: TalonSRX
+                motorName: FLDr
+                id: 15
+                invertMotor: true
         invertSensorPhase:
             - FLAz
             - FRAz
@@ -77,7 +101,7 @@ subsystems:
             autoBalanceDivider: 30
             autoBalanceThreshold: 1.5
 infrastructure:
-    canivoreBusName: rio
+    canBusName: rio
     # power distribution
     pdId: 9
     pdIsRev: false
@@ -88,7 +112,7 @@ infrastructure:
     # pigeon
     pigeonId: 32
     isPigeon2: true
-controlboard: example
+inputHandler: example
 constants:
     # drivetrain misc
     maxAllowablePoseError: 0.1

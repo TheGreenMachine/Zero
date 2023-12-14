@@ -3,9 +3,12 @@ package com.team1816.lib.hardware.factory;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.*;
+import com.team1816.lib.hardware.MotorConfiguration;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.SubsystemConfig;
+import com.team1816.lib.hardware.components.DeviceIdMismatchException;
 import com.team1816.lib.hardware.components.motor.*;
+import com.team1816.lib.hardware.components.motor.configurations.FeedbackDeviceType;
 import com.team1816.lib.util.logUtil.GreenLogger;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -38,127 +41,151 @@ public class MotorFactory {
 
     // Create a CANTalon with the default (out of the box) configuration.
     public static IGreenMotor createDefaultTalon(
-        int id,
-        String name,
-        boolean isFalcon,
-        SubsystemConfig subsystems,
-        Map<String, PIDSlotConfiguration> pidConfigList,
-        int remoteSensorId,
-        String canBus
+            int id,
+            String name,
+            boolean isFalcon,
+            SubsystemConfig subsystems,
+            Map<String, PIDSlotConfiguration> pidConfigList,
+            int remoteSensorId,
+            String canBus
     ) {
+        GreenLogger.log(
+                "Creating " +
+                        "TalonFX" +
+                        " id:" +
+                        id
+        );
+
         return createTalon(
-            id,
-            name,
-            isFalcon,
-            subsystems,
-            pidConfigList,
-            remoteSensorId,
-            canBus
+                id,
+                name,
+                isFalcon,
+                subsystems,
+                pidConfigList,
+                remoteSensorId,
+                canBus
         );
     }
 
     public static IGreenMotor createFollowerTalon(
-        int id,
-        String name,
-        boolean isFalcon,
-        IGreenMotor main,
-        SubsystemConfig subsystem,
-        Map<String, PIDSlotConfiguration> pidConfigList,
-        String canBus
+            int id,
+            String name,
+            boolean isFalcon,
+            IGreenMotor main,
+            SubsystemConfig subsystem,
+            Map<String, PIDSlotConfiguration> pidConfigList,
+            String canBus
     ) {
         final IGreenMotor talon = createTalon(
-            id,
-            name,
-            isFalcon,
-            subsystem,
-            pidConfigList,
-            -1, // never can have a remote sensor on Follower,
-            canBus
+                id,
+                name,
+                isFalcon,
+                subsystem,
+                pidConfigList,
+                -1, // never can have a remote sensor on Follower,
+                canBus
         );
         GreenLogger.log(
-            "Slaving talon on " + id + " to talon on " + main.getDeviceID()
+                "Slaving talon on " + id + " to talon on " + main.getDeviceID()
         );
         talon.follow(main);
         return talon;
     }
 
     private static IGreenMotor createTalon(
-        int id,
-        String name,
-        boolean isFalcon,
-        SubsystemConfig subsystem,
-        Map<String, PIDSlotConfiguration> pidConfigList,
-        int remoteSensorId,
-        String canBus
+            int id,
+            String name,
+            boolean isFalcon,
+            SubsystemConfig subsystem,
+            Map<String, PIDSlotConfiguration> pidConfigList,
+            int remoteSensorId,
+            String canBus
     ) {
         IGreenMotor talon = isFalcon
-            ? new LazyTalonFX(id, name, canBus)
-            : new LazyTalonSRX(id, name);
+                ? new LazyTalonFX(id, name, canBus)
+                : new LazyTalonSRX(id, name);
         configMotor(talon, name, subsystem, pidConfigList, remoteSensorId);
 
         return talon;
     }
 
     public static IGreenMotor createGhostMotor(
-        int maxVelTicks100ms,
-        int absInitOffset,
-        String name,
-        SubsystemConfig subsystem
+            int maxVelTicks100ms,
+            int absInitOffset,
+            String name,
+            SubsystemConfig subsystem
     ) {
         IGreenMotor motor = new GhostMotor(maxVelTicks100ms, absInitOffset, name);
         configMotor(motor, name, subsystem, null, -1);
         return motor;
     }
 
-    public static IGreenMotor createDefaultVictor(int id, String name) {
-        return createVictor(id, name);
+    public static IGreenMotor createDefaultVictor(
+            int id,
+            String name,
+            SubsystemConfig subsystem,
+            Map<String, PIDSlotConfiguration> pidConfigList,
+            int remoteSensorId
+    ) {
+        return createVictor(id, name, subsystem, pidConfigList, remoteSensorId);
     }
 
     public static IGreenMotor createFollowerVictor(
-        int id,
-        String name,
-        IGreenMotor main
+            int id,
+            String name,
+            IGreenMotor main,
+            SubsystemConfig subsystem,
+            Map<String, PIDSlotConfiguration> pidConfigList
     ) {
-        final IGreenMotor victor = createVictor(id, name);
+        final IGreenMotor victor = createVictor(id, name, subsystem, pidConfigList, -1);
         GreenLogger.log(
-            "Slaving victor on " + id + " to talon on " + main.getDeviceID()
+                "Slaving victor on " + id + " to talon on " + main.getDeviceID()
         );
         victor.follow(main);
         return victor;
     }
 
-    // This is currently treating a VictorSPX, which implements IMotorController as an IGreenMotor, which implements IMotorControllerEnhanced
-    public static IGreenMotor createVictor(int id, String name) {
+    public static IGreenMotor createVictor(
+            int id,
+            String name,
+            SubsystemConfig subsystem,
+            Map<String, PIDSlotConfiguration> pidConfigList,
+            int remoteSensorId
+    ) {
         IGreenMotor victor = new LazyVictorSPX(id, name);
 
-        victor.configReverseLimitSwitchSource(
-            LimitSwitchSource.Deactivated,
-            LimitSwitchNormal.NormallyOpen,
-            kTimeoutMs
-        );
+        configMotor(victor, name, subsystem, pidConfigList, remoteSensorId);
+        victor.configReverseLimitSwitch(true);
         return victor;
     }
 
     public static IGreenMotor createSpark(
-        int id,
-        String name,
-        SubsystemConfig subsystem,
-        Map<String, PIDSlotConfiguration> pidConfigList
+            int id,
+            String name,
+            SubsystemConfig subsystem,
+            Map<String, PIDSlotConfiguration> pidConfigList
     ) {
-        // TODO add sparkMax config pid based on pidConfigList thru configAllSettings?
-        return new LazySparkMax(id, name);
+
+        IGreenMotor spark = new LazySparkMax(id, name);
+        configMotor(spark, name, subsystem, pidConfigList, -1);
+        return spark;
     }
 
-    public static IGreenMotor createSpark(
-        int id,
-        String name,
-        SubsystemConfig subsystem
+    public static IGreenMotor createFollowerSpark(
+            int id,
+            String name,
+            SubsystemConfig subsystem,
+            Map<String, PIDSlotConfiguration> pidConfigList,
+            IGreenMotor leader
     ) {
-        return new LazySparkMax(id, name);
+        IGreenMotor followerSpark = createSpark(id, name, subsystem, pidConfigList);
+        followerSpark.follow(leader);
+        followerSpark.setInverted(leader.getInverted());
+        return followerSpark;
     }
 
-    public static CANCoder createCanCoder(int canCoderID, boolean invertCanCoder) {
-        CANCoder canCoder = new CANCoder(canCoderID);
+    public static CANCoder createCanCoder(int canCoderID, String canBus, boolean invertCanCoder) {
+        CANCoder canCoder = new CANCoder(canCoderID, canBus);
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
             canCoder.configFactoryDefault(kTimeoutMs);
         }
@@ -167,156 +194,151 @@ public class MotorFactory {
     }
 
     private static void configMotor(
-        IGreenMotor motor,
-        String name,
-        SubsystemConfig subsystem,
-        Map<String, PIDSlotConfiguration> pidConfigList,
-        int remoteSensorId
+            IGreenMotor motor,
+            String name,
+            SubsystemConfig subsystem,
+            Map<String, PIDSlotConfiguration> pidConfigList,
+            int remoteSensorId
     ) {
-        // note this is not necessarily a talon! we're faking out CTRE to be able to "configure" spark/ghost motors
-        BaseTalonConfiguration motorConfig;
-
-        // type of configuration (based on motor type)
-        if (motor instanceof TalonFX) {
-            motorConfig = new TalonFXConfiguration();
-        } else {
-            // note: spark and ghost motors won't do anything with the motorConfig
-            motorConfig = new TalonSRXConfiguration();
-        }
-
-        // setting pid
-        if (pidConfigList != null) {
-            pidConfigList.forEach(
-                (slot, slotConfig) -> {
-                    switch (slot.toLowerCase()) {
-                        case "slot0":
-                            motorConfig.slot0 = toSlotConfiguration(slotConfig);
-                            break;
-                        case "slot1":
-                            motorConfig.slot1 = toSlotConfiguration(slotConfig);
-                            break;
-                        case "slot2":
-                            motorConfig.slot2 = toSlotConfiguration(slotConfig);
-                            break;
-                        case "slot3":
-                            motorConfig.slot3 = toSlotConfiguration(slotConfig);
-                            break;
-                    }
-                }
-            );
-        }
-        motor.selectProfileSlot(0, 0);
-
-        // binding remote sensors to respective motors
-        if (remoteSensorId >= 0) {
-            motorConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
-            motorConfig.remoteFilter0.remoteSensorDeviceID = remoteSensorId;
-            motorConfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
-        } else {
-            motorConfig.primaryPID.selectedFeedbackSensor =
-                (motor instanceof TalonFX)
-                    ? FeedbackDevice.IntegratedSensor
-                    : FeedbackDevice.CTRE_MagEncoder_Relative;
-        }
+        MotorConfiguration motorConfiguration = subsystem.motors.get(name);
+        boolean isTalon = !(motor instanceof LazySparkMax || motor instanceof GhostMotor); // Talon also refers to VictorSPX, isCTRE just looks worse :)
 
         // for newly attached motors only
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
             GreenLogger.log("Resetting motor factory defaults");
-            motor.configFactoryDefault(kTimeoutMs);
-            motorConfig.forwardSoftLimitThreshold = FORWARD_SOFT_LIMIT;
-            motorConfig.forwardSoftLimitEnable = ENABLE_SOFT_LIMIT;
+            motor.restore_FactoryDefaults(kTimeoutMs);
 
-            motorConfig.reverseSoftLimitThreshold = REVERSE_SOFT_LIMIT;
-            motorConfig.reverseSoftLimitEnable = ENABLE_SOFT_LIMIT;
-            motorConfig.nominalOutputForward = 0;
-            motorConfig.nominalOutputReverse = 0;
-            motorConfig.neutralDeadband = NEUTRAL_DEADBAND;
+            motor.configForwardSoftLimit(FORWARD_SOFT_LIMIT);
+            motor.enableForwardSoftLimit(ENABLE_SOFT_LIMIT);
 
-            motorConfig.peakOutputForward = 1.0;
-            motorConfig.peakOutputReverse = -1.0;
+            motor.configReverseSoftLimit(REVERSE_SOFT_LIMIT);
+            motor.enableReverseSoftLimit(ENABLE_SOFT_LIMIT);
 
-            motorConfig.velocityMeasurementWindow =
-                VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW;
+            motor.config_NeutralDeadband(NEUTRAL_DEADBAND);
 
-            motorConfig.openloopRamp = OPEN_LOOP_RAMP_RATE;
-            motorConfig.closedloopRamp = CLOSED_LOOP_RAMP_RATE;
-            if (motorConfig instanceof TalonFXConfiguration) {
-                ((TalonFXConfiguration) motorConfig).supplyCurrLimit =
-                    new SupplyCurrentLimitConfiguration(ENABLE_CURRENT_LIMIT, 40, 80, 1);
-            } else {
-                ((TalonSRXConfiguration) motorConfig).peakCurrentLimit = 80;
-                ((TalonSRXConfiguration) motorConfig).peakCurrentDuration = 1;
-                ((TalonSRXConfiguration) motorConfig).continuousCurrentLimit = 40;
+            motor.config_PeakOutputForward(1.0);
+            motor.config_PeakOutputReverse(-1.0); // Use negative values for reverse peak output.
+
+            motor.configOpenLoopRampRate(OPEN_LOOP_RAMP_RATE);
+            motor.configClosedLoopRampRate(CLOSED_LOOP_RAMP_RATE);
+
+            // CTRE exclusive configs
+            if (isTalon) {
+                ((BaseMotorController)motor).configVelocityMeasurementWindow(VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW);
+
+                ((IMotorController)motor).configNominalOutputForward(0, kTimeoutMs); //TODO these should get removed when phoenix 6 rolls around
+                ((IMotorController)motor).configNominalOutputReverse(0, kTimeoutMs);
             }
+        }
 
-            motorConfig.clearPositionOnLimitF = false;
-            motorConfig.clearPositionOnLimitR = false;
-
-            motorConfig.enableOptimizations = true;
-
-            motor.overrideLimitSwitchesEnable(ENABLE_LIMIT_SWITCH);
-
-            motor.setNeutralMode(NEUTRAL_MODE);
-
-            motor.setControlFramePeriod(
-                ControlFrame.Control_3_General,
-                CONTROL_FRAME_PERIOD_MS
+        // PID configuration
+        if (pidConfigList != null) {
+            pidConfigList.forEach(
+                    (slot, slotConfig) -> {
+                        int slotNum = ((int)slot.charAt(4)) - 48; //Minus 48 because charAt processes as a char, and digit ASCII values are themselves + 48
+                        motor.set_kP(slotNum, slotConfig.kP != null ? slotConfig.kP : 0);
+                        motor.set_kI(slotNum, slotConfig.kI != null ? slotConfig.kI : 0);
+                        motor.set_kD(slotNum, slotConfig.kD != null ? slotConfig.kD : 0);
+                        motor.set_kF(slotNum, slotConfig.kF != null ? slotConfig.kF : 0);
+                        motor.set_iZone(slotNum, slotConfig.iZone != null ? slotConfig.iZone : 0);
+                        motor.configAllowableErrorClosedLoop(slotNum, slotConfig.allowableError != null ? slotConfig.allowableError : 0);
+                    }
             );
         }
 
-        // applying configs to motor
-        motor.configAllSettings(motorConfig, kTimeoutMs);
+        // Setting to PID slot 0 and primary closed loop
+        motor.selectPIDSlot(0,0);
+
+        // Current limits
+        motor.configCurrentLimit(
+                new SupplyCurrentLimitConfiguration(ENABLE_CURRENT_LIMIT,
+                        motorConfiguration.currentLimit != null ? motorConfiguration.currentLimit : 40, //Default 40
+                        motorConfiguration.currentLimitThreshold != null ? motorConfiguration.currentLimitThreshold : 80, // Default 80
+                        motorConfiguration.currentLimitTriggerTime != null ? motorConfiguration.currentLimitTriggerTime : 1 // Default 1
+                )
+        );
+
+        motor.enableLimitSwitches(ENABLE_LIMIT_SWITCH);
+
+        // Setting up control frame with milliseconds (time is unused for sparks)
+        motor.configControlFramePeriod(
+                ControlFrame.Control_3_General,
+                CONTROL_FRAME_PERIOD_MS
+        );
 
         // inversion
         int id = motor.getDeviceID();
+        if (id != motorConfiguration.id && RobotBase.isReal()) {
+            GreenLogger.log(new DeviceIdMismatchException(name));
+        } else {
+            boolean invertMotor = motorConfiguration.invertMotor;
+            if (invertMotor) {
+                GreenLogger.log("        Inverting " + name + " with ID " + id);
+            }
+            motor.setInverted(invertMotor);
 
-        boolean invertMotor = subsystem.invertMotor.contains(name);
-        if (invertMotor) {
-            GreenLogger.log("        Inverting " + name + " with ID " + id);
         }
-        motor.setInverted(invertMotor);
 
-        boolean invertSensorPhase = subsystem.invertSensorPhase.contains(name);
-        if (invertSensorPhase) {
-            GreenLogger.log(
-                "       Inverting sensor phase of " + name + " with ID " + id
-            );
+        motor.setNeutralMode(NEUTRAL_MODE);
+
+        // CTRE-Exclusive configurations
+        if (isTalon) {
+            if (remoteSensorId >= 0) {
+                motor.selectFeedbackSensor(FeedbackDeviceType.REMOTE_SENSOR_0);
+                ((BaseMotorController)motor).configRemoteFeedbackFilter(remoteSensorId, RemoteSensorSource.CANCoder, 0);
+            } else {
+                motor.selectFeedbackSensor(
+                        motor.get_MotorType() == IGreenMotor.MotorType.TalonFX ?
+                                FeedbackDeviceType.INTEGRATED_SENSOR :
+                                FeedbackDeviceType.RELATIVE_MAG_ENCODER
+                );
+            }
+
+            ((BaseMotorController)motor).configClearPositionOnLimitF(false, kTimeoutMs);
+            ((BaseMotorController)motor).configClearPositionOnLimitR(false, kTimeoutMs);
+
+            // sensor phase inversion
+            boolean invertSensorPhase = subsystem.invertSensorPhase.contains(name);
+            if (invertSensorPhase) {
+                GreenLogger.log(
+                        "       Inverting sensor phase of " + name + " with ID " + id
+                );
+            }
+
+            motor.setSensorPhase(invertSensorPhase);
+
+        } else {
+            motor.selectFeedbackSensor(FeedbackDeviceType.HALL_SENSOR); // Only using hall sensors on sparks at the moment
         }
-        motor.setSensorPhase(invertSensorPhase);
+
     }
 
-    private static CANCoderConfiguration configureCanCoder(boolean invertCanCoder) {
-        CANCoderConfiguration canCoderConfig = new CANCoderConfiguration();
-        canCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
-        canCoderConfig.sensorDirection = invertCanCoder;
-        canCoderConfig.initializationStrategy =
-            SensorInitializationStrategy.BootToAbsolutePosition;
-        canCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
-        return canCoderConfig;
+    private static CANCoderConfiguration configureCanCoder ( boolean invertCanCoder){
+            CANCoderConfiguration canCoderConfig = new CANCoderConfiguration();
+            canCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
+            canCoderConfig.sensorDirection = invertCanCoder;
+            canCoderConfig.initializationStrategy =
+                    SensorInitializationStrategy.BootToAbsolutePosition;
+            canCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
+            return canCoderConfig;
     }
 
-    private static SlotConfiguration toSlotConfiguration(
-        PIDSlotConfiguration pidConfiguration
-    ) {
-        SlotConfiguration slotConfig = new SlotConfiguration();
-        if (pidConfiguration != null) {
-            if (pidConfiguration.kP != null) slotConfig.kP = pidConfiguration.kP;
-            if (pidConfiguration.kI != null) slotConfig.kI = pidConfiguration.kI;
-            if (pidConfiguration.kD != null) slotConfig.kD = pidConfiguration.kD;
-            if (pidConfiguration.kP != null) slotConfig.kF = pidConfiguration.kF;
-            if (pidConfiguration.iZone != null) slotConfig.integralZone =
-                pidConfiguration.iZone;
-            if (
-                pidConfiguration.allowableError != null
-            ) slotConfig.allowableClosedloopError = pidConfiguration.allowableError;
+    private static SlotConfiguration toSlotConfiguration (
+                PIDSlotConfiguration pidConfiguration
+    ){
+            SlotConfiguration slotConfig = new SlotConfiguration();
+            if (pidConfiguration != null) {
+                if (pidConfiguration.kP != null) slotConfig.kP = pidConfiguration.kP;
+                if (pidConfiguration.kI != null) slotConfig.kI = pidConfiguration.kI;
+                if (pidConfiguration.kD != null) slotConfig.kD = pidConfiguration.kD;
+                if (pidConfiguration.kP != null) slotConfig.kF = pidConfiguration.kF; // TODO should be kF notnull?
+                if (pidConfiguration.iZone != null) slotConfig.integralZone =
+                        pidConfiguration.iZone;
+                if (
+                        pidConfiguration.allowableError != null
+                ) slotConfig.allowableClosedloopError = pidConfiguration.allowableError;
+            }
+            return slotConfig;
         }
-        return slotConfig;
-    }
-
-    public enum MotorType {
-        TalonSRX,
-        Falcon,
-        SparkMax,
-        Ghost,
-    }
 }
+

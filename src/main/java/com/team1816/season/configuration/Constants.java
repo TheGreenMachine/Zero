@@ -1,6 +1,7 @@
 package com.team1816.season.configuration;
 
 import com.google.inject.Singleton;
+import com.team1816.lib.Injector;
 import com.team1816.lib.auto.Polygon;
 import com.team1816.lib.auto.Symmetry;
 import com.team1816.lib.hardware.factory.RobotFactory;
@@ -19,7 +20,7 @@ public class Constants {
     /**
      * Factory & Stem
      */
-    private static final RobotFactory factory = Robot.getFactory();
+    private static final RobotFactory factory = Injector.get(RobotFactory.class);
 
     public static final Pose2d EmptyPose2d = new Pose2d();
     public static final Rotation2d EmptyRotation2d = new Rotation2d();
@@ -31,6 +32,11 @@ public class Constants {
     public static final Quaternion EmptyQuaternion = new Quaternion();
 
     public static final double kLooperDt = factory.getConstant("kLooperDt", .020);
+
+    /**
+     * Git Hash
+     */
+    public static final String kGitHash = factory.getGitHash();
 
     /**
      * CAN Timeouts
@@ -99,8 +105,9 @@ public class Constants {
     public static final double kCameraMountingAngleY = 0; // degrees
     public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters
 
-    public static boolean kLoggingRobot = factory.getConstant("logRobot") > 0;
-    public static boolean kLoggingDrivetrain = factory.getConstant("logDrivetrain") > 0 && kLoggingRobot;
+    public static final double kLoggingDiskPartitionRatio = 0.25; // percent of storage space allotted for logging
+    public static final boolean kLoggingRobot = factory.getConstant("logRobot") > 0;
+    public static final boolean kLoggingDrivetrain = factory.getConstant("logDrivetrain") > 0 && kLoggingRobot;
 
     public static final double kBallEjectionDuration = factory.getConstant(
         "shooter",
