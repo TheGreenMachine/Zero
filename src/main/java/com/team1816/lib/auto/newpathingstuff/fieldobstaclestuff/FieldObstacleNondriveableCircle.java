@@ -84,4 +84,8 @@ public class FieldObstacleNondriveableCircle extends FieldObstacle {
         else
             return true;
     }
+
+    public double getRadius(){
+        return radius;
+    }
 }

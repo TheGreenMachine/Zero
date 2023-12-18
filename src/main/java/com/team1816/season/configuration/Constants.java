@@ -155,6 +155,8 @@ public class Constants {
     //This one isn't an exact measurement, it is still in meters but is a buffer value added to the length and width of the robot to avoid close collisions with obstacles
     public static final double robotSizeLeeway = 0.01;
     //TODO set this
+    public static final double boundingBoxLeeway = 0.01;
+    //TODO set this
     public static final double timeInSecondsIncrement = 0.2;
 
     /**

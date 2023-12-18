@@ -19,7 +19,7 @@ public class Bresenham {
         if (y2 < y1) incy = -1;
         x = x1; y = y1;
         if (dx > dy) {
-            pixels.add(new Pixel(x, y, 0, false));
+            pixels.add(new Pixel(x, y, 0));
             e = 2 * dy - dx;
             inc1 = 2 * (dy - dx);
             inc2 = 2 * dy;
@@ -33,12 +33,12 @@ public class Bresenham {
                 else
                     e += inc2;
                 x += incx;
-                pixels.add(new Pixel(x, y, 0, false));
+                pixels.add(new Pixel(x, y, 0));
             }
         }
         else
         {
-            pixels.add(new Pixel(x, y, 0, false));
+            pixels.add(new Pixel(x, y, 0));
             e = 2 * dx - dy;
             inc1 = 2 * (dx - dy);
             inc2 = 2 * dx;
@@ -52,7 +52,7 @@ public class Bresenham {
                 else
                     e += inc2;
                 y += incy;
-                pixels.add(new Pixel(x, y, 0, false));
+                pixels.add(new Pixel(x, y, 0));
             }
         }
         return pixels;

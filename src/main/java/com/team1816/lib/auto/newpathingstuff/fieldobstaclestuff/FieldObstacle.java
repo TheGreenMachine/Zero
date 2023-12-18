@@ -1,7 +1,6 @@
 package com.team1816.lib.auto.newpathingstuff.fieldobstaclestuff;
 
-
-
+import com.team1816.lib.auto.newpathingstuff.Pixel;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -24,16 +23,19 @@ public abstract class FieldObstacle {
     private final double robotWidth = Constants.robotWidth;
     private final double robotLength = Constants.robotLength;
     private final double robotSizeLeeway = Constants.robotSizeLeeway;
+    private final double boundingBoxLeeway = Constants.boundingBoxLeeway;
     private final double timeInSecondsIncrement = Constants.timeInSecondsIncrement;
     private final double robotHalfWidthLeft = robotCenter.getX() + robotSizeLeeway;
     private final double robotHalfWidthRight = robotWidth - robotCenter.getX() + robotSizeLeeway;
     private final double robotHalfLengthBottom = robotCenter.getY() + robotSizeLeeway;
     private final double robotHalfLengthTop = robotLength - robotCenter.getY() + robotSizeLeeway;
+    private final Pixel pointInObstacle;
 
 
     public FieldObstacle(List<Translation2d> vertices){
         //TODO make sure this works with a null input, 0 points, 1 points, or 2 points
         this.vertices = vertices;
+        pointInObstacle = findPointInObstacle();
     }
 
     /**
@@ -81,10 +83,10 @@ public abstract class FieldObstacle {
         }
 
         //literally just to avoid double inexact calculation errors, shouldn't increase calculation size
-        maxX++;
-        minX--;
-        maxY++;
-        minY--;
+        maxX+=boundingBoxLeeway;
+        minX-=boundingBoxLeeway;
+        maxY+=boundingBoxLeeway;
+        minY-=boundingBoxLeeway;
 
         return new ArrayList<>(List.of(new Translation2d(maxX, maxY), new Translation2d(minX, maxY), new Translation2d(minX, minY), new Translation2d(maxX, minY)));
     }
@@ -198,6 +200,27 @@ public abstract class FieldObstacle {
     }
 
     /**
+     * Returns a Pixel within the shape
+     * @return Pixel
+     */
+    public Pixel findPointInObstacle(){
+        int xShift = 0;
+        ArrayList<Translation2d> boundingBox= new ArrayList<>(getGeneralObstacleBoundingBox());
+        Translation2d centerOfObstacle = new Translation2d((boundingBox.get(0).getX()+boundingBox.get(2).getX())/2, (boundingBox.get(0).getY()+boundingBox.get(2).getY())/2);
+
+        while(xShift<boundingBox.get(0).getX()-centerOfObstacle.getX()){
+            if(contains(new Translation2d(centerOfObstacle.getX()+xShift, centerOfObstacle.getY())))
+                return new Pixel((int)(centerOfObstacle.getX()+xShift), (int)(centerOfObstacle.getY()), 0);
+            else if(contains(new Translation2d(centerOfObstacle.getX()-xShift, centerOfObstacle.getY())))
+                return new Pixel((int)(centerOfObstacle.getX()-xShift), (int)(centerOfObstacle.getY()), 0);
+            xShift+=1/Constants.pixelsInMeter;
+        }
+
+        //TODO log error couldn't find a containing point
+        return null;
+    }
+
+    /**
      * returns the list of vertices of the game object in successive, connected side, order (in the order you think it's in)
      *
      * @return vertices
@@ -208,5 +231,9 @@ public abstract class FieldObstacle {
 
     public double getTimeInSecondsIncrement() {
         return timeInSecondsIncrement;
+    }
+
+    public Pixel getPointInObstacle() {
+        return pointInObstacle;
     }
 }

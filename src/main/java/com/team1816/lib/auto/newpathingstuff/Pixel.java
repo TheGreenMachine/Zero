@@ -19,11 +19,11 @@ public class Pixel {
      * Sets values of the pixel
      * @param x
      * @param y
-     * @param cartesian if true, then y is counted from the bottom, otherwise from the top
+     * @param time
      */
-    public Pixel(int x, int y, double time, boolean cartesian){
+    public Pixel(int x, int y, double time){
         this.x = x;
-        this.y = cartesian ? Constants.yPixels-y-1 : y;
+        this.y = y;
         this.time = time;
     }
 
@@ -38,7 +38,7 @@ public class Pixel {
     }
 
     public Pixel copy(){
-        return new Pixel (x, y, time, false);
+        return new Pixel (x, y, time);
     }
 
     //this might not do what I want it to

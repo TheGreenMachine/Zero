@@ -209,37 +209,37 @@ public class ImprovedTrajectoryPathing {
         yInterceptFieldRight = slope*(Constants.xPixels-1)+yInterceptAxis;
         xInterceptFieldTop = (Constants.yPixels-1-yInterceptAxis)/slope;
 
-        Pixel maxIntercept = new Pixel(midpointX, midpointY, 0, false);
+        Pixel maxIntercept = new Pixel(midpointX, midpointY, 0);
         double maxInterceptDistance = -1;
 
         if(yInterceptAxis<0 || yInterceptAxis>Constants.yPixels-1)
             if(new Translation2d(0, yInterceptAxis).getDistance(midpoint) > maxInterceptDistance){
                 maxInterceptDistance = new Translation2d(0, yInterceptAxis).getDistance(midpoint);
-                maxIntercept = new Pixel(0,(int)yInterceptAxis,0,false);
+                maxIntercept = new Pixel(0,(int)yInterceptAxis,0);
             }
         if(xInterceptAxis<0 || xInterceptAxis>Constants.xPixels-1)
             if(new Translation2d(0, xInterceptAxis).getDistance(midpoint) > maxInterceptDistance){
                 maxInterceptDistance = new Translation2d(0, xInterceptAxis).getDistance(midpoint);
-                maxIntercept = new Pixel((int)xInterceptAxis,0,0,false);
+                maxIntercept = new Pixel((int)xInterceptAxis,0,0);
             }
         if(yInterceptFieldRight<0 || yInterceptFieldRight>Constants.yPixels-1)
             if(new Translation2d(0, yInterceptFieldRight).getDistance(midpoint) > maxInterceptDistance){
                 maxInterceptDistance = new Translation2d(0, yInterceptFieldRight).getDistance(midpoint);
-                maxIntercept = new Pixel(Constants.xPixels,(int)yInterceptFieldRight,0,false);
+                maxIntercept = new Pixel(Constants.xPixels,(int)yInterceptFieldRight,0);
             }
         if(xInterceptFieldTop<0 || xInterceptFieldTop>Constants.xPixels-1)
             if(new Translation2d(0, xInterceptFieldTop).getDistance(midpoint) > maxInterceptDistance){
                 maxInterceptDistance = new Translation2d(0, xInterceptFieldTop).getDistance(midpoint);
-                maxIntercept = new Pixel((int)xInterceptFieldTop,Constants.yPixels,0,false);
+                maxIntercept = new Pixel((int)xInterceptFieldTop,Constants.yPixels,0);
             }
 
 
 
         for(Pixel pixel : Bresenham.draw_line(midpointX, midpointY, maxIntercept.getX(), maxIntercept.getY())){
-            Pixel oppositePixel = new Pixel(midpointX-pixel.getX()+midpointX, midpointY-pixel.getY()+midpointY, 0, false);
-            if(!fieldPixelMap.checkPixel(pixel))
+            Pixel oppositePixel = new Pixel(midpointX-pixel.getX()+midpointX, midpointY-pixel.getY()+midpointY, 0);
+            if(!FieldPixelMap.checkPixel(pixel))
                 return new Translation2d(pixel.getX(), pixel.getY());
-            else if(!fieldPixelMap.checkPixel(oppositePixel))
+            else if(!FieldPixelMap.checkPixel(oppositePixel))
                 return new Translation2d(oppositePixel.getX(), oppositePixel.getY());
         }
 
