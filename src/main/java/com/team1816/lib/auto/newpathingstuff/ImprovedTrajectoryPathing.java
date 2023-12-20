@@ -235,7 +235,7 @@ public class ImprovedTrajectoryPathing {
 
 
 
-        for(Pixel pixel : Bresenham.draw_line(midpointX, midpointY, maxIntercept.getX(), maxIntercept.getY())){
+        for(Pixel pixel : BresenhamBad.draw_line(midpointX, midpointY, maxIntercept.getX(), maxIntercept.getY())){
             Pixel oppositePixel = new Pixel(midpointX-pixel.getX()+midpointX, midpointY-pixel.getY()+midpointY, 0);
             if(!FieldPixelMap.checkPixel(pixel))
                 return new Translation2d(pixel.getX(), pixel.getY());

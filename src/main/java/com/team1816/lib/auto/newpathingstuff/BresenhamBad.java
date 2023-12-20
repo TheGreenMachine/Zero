@@ -2,7 +2,7 @@ package com.team1816.lib.auto.newpathingstuff;
 
 import java.util.ArrayList;
 
-public class Bresenham {
+public class BresenhamBad {
     // function for line generation using Bresenham's line drawing algorithm
     public static ArrayList<Pixel> draw_line(int x1, int x2, int y1, int y2) {
         ArrayList<Pixel> pixels = new ArrayList<>();

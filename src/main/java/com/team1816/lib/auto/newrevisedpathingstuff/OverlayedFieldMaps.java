@@ -1,19 +1,19 @@
-package com.team1816.lib.auto.revisedpathingstuff;
+package com.team1816.lib.auto.newrevisedpathingstuff;
 
 import java.util.ArrayList;
 
-public class OverlayedFieldMapsTest {
-    private ArrayList<FieldMapTest> fieldMaps = new ArrayList<>();
+public class OverlayedFieldMaps {
+    private ArrayList<FieldMap> fieldMaps = new ArrayList<>();
 
     private int mapX;
     private int mapY;
 
-    public OverlayedFieldMapsTest(int mapX, int mapY){
+    public OverlayedFieldMaps(int mapX, int mapY){
         this.mapX = mapX;
         this.mapY = mapY;
     }
 
-    public void addFieldMap(FieldMapTest fieldMap){
+    public void addFieldMap(FieldMap fieldMap){
         assert(fieldMap.getMapX() == mapX && fieldMap.getMapY() == mapY);
 
         fieldMaps.add(fieldMap);
@@ -38,7 +38,7 @@ public class OverlayedFieldMapsTest {
     public int[][] getOverlayedFieldMaps(){
         int[][] overlayedFieldMaps = new int[mapY][mapX];
 
-        for(FieldMapTest map : fieldMaps)
+        for(FieldMap map : fieldMaps)
             for(int j = 0; j < mapY; j++)
                 for(int i = 0; i < mapX; i++)
                     if(map.checkPixelHasObject(i, j))

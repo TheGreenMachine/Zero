@@ -1,14 +1,14 @@
-package com.team1816.lib.auto.revisedpathingstuff;
+package com.team1816.lib.auto.newrevisedpathingstuff;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
-public class FieldMapTest {
+public class FieldMap {
     private boolean[][] fieldPixelMap;
 
-    FieldMapTest(int mapLengthX, int mapWidthY){
+    FieldMap(int mapLengthX, int mapWidthY){
         fieldPixelMap = new boolean[mapWidthY][mapLengthX];
     }
 
@@ -77,7 +77,7 @@ public class FieldMapTest {
         this.drawCircleQuadrant((int)centerX, (int)centerY, quadrant1, quadrant2, quadrant3, quadrant4, radius, fillQuadrant);
     }
     public void drawCircleQuadrant(int centerX, int centerY, boolean quadrant1, boolean quadrant2, boolean quadrant3, boolean quadrant4, double radius, boolean fillQuadrant){
-        FieldMapTest tempFieldMap = new FieldMapTest(this.getMapX(), this.getMapY());
+        FieldMap tempFieldMap = new FieldMap(this.getMapX(), this.getMapY());
 
         Bresenham.drawQuadrant(tempFieldMap, centerX, centerY, radius,  quadrant1, quadrant2, quadrant3, quadrant4);
 
@@ -158,7 +158,7 @@ public class FieldMapTest {
         assert(verticesX.length == verticesY.length);
 
         if(fillPolygon) {
-            FieldMapTest tempFieldMap = new FieldMapTest(this.getMapX(), this.getMapY());
+            FieldMap tempFieldMap = new FieldMap(this.getMapX(), this.getMapY());
 
             for(int i = 0; i < verticesX.length - 1; i++)
                 tempFieldMap.drawLine(verticesX[i], verticesY[i], verticesX[i+1], verticesY[i+1]);
@@ -201,7 +201,7 @@ public class FieldMapTest {
         return fieldPixelMap[0].length;
     }
 
-    public boolean mapSizeEqual(FieldMapTest otherMap){
+    public boolean mapSizeEqual(FieldMap otherMap){
         return this.getMapX() == otherMap.getMapX() && this.getMapY() == otherMap.getMapY();
     }
 
@@ -218,8 +218,8 @@ public class FieldMapTest {
         return intMap;
     }
 
-    public FieldMapTest getCopy(){
-        FieldMapTest mapCopy = new FieldMapTest(this.getMapX(), this.getMapY());
+    public FieldMap getCopy(){
+        FieldMap mapCopy = new FieldMap(this.getMapX(), this.getMapY());
         mapCopy.addOtherMap(this);
         return mapCopy;
     }
@@ -287,7 +287,7 @@ public class FieldMapTest {
         yMax++;
         yMin--;
 
-        FieldMapTest otherMap = this.getCopy();
+        FieldMap otherMap = this.getCopy();
 
         if(xMin >= 0 && yMin >= 0)
             otherMap.fillSimplePolygon(xMin, yMin, xMax, xMin, yMax, yMin);
@@ -306,12 +306,12 @@ public class FieldMapTest {
         this.inverseAddOtherMap(otherMap, xMax, xMin, yMax, yMin);
     }
 
-    public void addOtherMap(FieldMapTest otherMap){
+    public void addOtherMap(FieldMap otherMap){
         assert(this.mapSizeEqual(otherMap));
 
         this.addOtherMap(otherMap, this.getMapX()-1, 0, this.getMapY()-1, 0);
     }
-    public void addOtherMap(FieldMapTest otherMap, int xMax, int xMin, int yMax, int yMin){
+    public void addOtherMap(FieldMap otherMap, int xMax, int xMin, int yMax, int yMin){
         assert(this.mapSizeEqual(otherMap));
 
         for(int j = yMin; j <= yMax; j++)
@@ -320,18 +320,25 @@ public class FieldMapTest {
                     this.drawPixel(i, j);
     }
 
-    public void inverseAddOtherMap(FieldMapTest otherMap){
+    public void inverseAddOtherMap(FieldMap otherMap){
         assert(this.mapSizeEqual(otherMap));
 
         this.inverseAddOtherMap(otherMap, this.getMapX(), 0, this.getMapY(), 0);
     }
-    public void inverseAddOtherMap(FieldMapTest otherMap, int xMax, int xMin, int yMax, int yMin){
+    public void inverseAddOtherMap(FieldMap otherMap, int xMax, int xMin, int yMax, int yMin){
         assert(this.mapSizeEqual(otherMap));
 
         for(int j = yMin; j < yMax; j++)
             for(int i = xMin; i < xMax; i++)
                 if(!this.checkPixelHasObject(i, j) && !otherMap.checkPixelHasObject(i, j))
                     this.drawPixel(i, j);
+    }
+
+    public int[] getPerpPixel(double startMinRadius, int startPixelX, int startPixelY, int endPixelX, int endPixelY){
+        assert(!this.checkPixelHasObjectOrOffMap(startPixelX, startPixelY));
+        assert(!this.checkPixelHasObjectOrOffMap(endPixelX, endPixelY));
+
+        return Bresenham.drawPerpLine(this, startMinRadius, startPixelX, startPixelY, endPixelX, endPixelY);
     }
 
     public String toString(){

@@ -39,7 +39,7 @@ public class FieldPixelMap {
 
     public static void drawLine(Translation2d start, Translation2d end){
         //TODO program this, remember to bloat the object pixel space
-        for(Pixel pixel : Bresenham.draw_line((int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY())){
+        for(Pixel pixel : BresenhamBad.draw_line((int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY())){
             fieldPixelMap[pixel.getX()][pixel.getY()] = true;
         }
     }

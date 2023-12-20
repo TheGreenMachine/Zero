@@ -1,9 +1,9 @@
-package com.team1816.lib.auto.revisedpathingstuff;
+package com.team1816.lib.auto.newrevisedpathingstuff;
 
-public class UpdatableAndExpandableFieldMapTest {
-    private final FieldMapTest stableMap;
-    private final FieldMapTest updatableMap;
-    private FieldMapTest currentMap;
+public class UpdatableAndExpandableFieldMap {
+    private final FieldMap stableMap;
+    private final FieldMap updatableMap;
+    private FieldMap currentMap;
 
     private boolean updatableMapChanged;
 
@@ -17,7 +17,7 @@ public class UpdatableAndExpandableFieldMapTest {
      * @param stableMap a FieldMapTest of all nonupdating obstacles of the field
      * @param updatableMap a FieldMapTest of all updating obstacles of the field
      */
-    public UpdatableAndExpandableFieldMapTest(int mapX, int mapY, FieldMapTest stableMap, FieldMapTest updatableMap, double expansionWidth){
+    public UpdatableAndExpandableFieldMap(int mapX, int mapY, FieldMap stableMap, FieldMap updatableMap, double expansionWidth){
         assert(stableMap.mapSizeEqual(updatableMap));
         assert(stableMap.getMapX() == mapX && stableMap.getMapY() == mapY);
 
@@ -26,7 +26,7 @@ public class UpdatableAndExpandableFieldMapTest {
 
         this.updatableMap = updatableMap.getCopy();
 
-        currentMap = new FieldMapTest(mapX, mapY);
+        currentMap = new FieldMap(mapX, mapY);
         currentMap.addOtherMap(stableMap);
         currentMap.addOtherMap(getExpandedMap(updatableMap, expansionWidth));
 
@@ -37,8 +37,8 @@ public class UpdatableAndExpandableFieldMapTest {
         this.expansionWidth = expansionWidth;
     }
 
-    private FieldMapTest getExpandedMap(FieldMapTest map, double expansionWidth){
-        FieldMapTest expandedMap = map.getCopy();
+    private FieldMap getExpandedMap(FieldMap map, double expansionWidth){
+        FieldMap expandedMap = map.getCopy();
 
         if(expansionWidth <= 0)
             return expandedMap;
@@ -120,7 +120,7 @@ public class UpdatableAndExpandableFieldMapTest {
     }
 
     public boolean isPerfectOverlay(){
-        OverlayedFieldMapsTest overlayedMaps = new OverlayedFieldMapsTest(mapX, mapY);
+        OverlayedFieldMaps overlayedMaps = new OverlayedFieldMaps(mapX, mapY);
 
         overlayedMaps.addFieldMap(this.getTargetExpandedMap(stableMap));
         overlayedMaps.addFieldMap(currentMap);
@@ -136,7 +136,7 @@ public class UpdatableAndExpandableFieldMapTest {
     }
 
     public String printExpansionMapTest(){
-        OverlayedFieldMapsTest overlayedMaps = new OverlayedFieldMapsTest(mapX, mapY);
+        OverlayedFieldMaps overlayedMaps = new OverlayedFieldMaps(mapX, mapY);
 
         overlayedMaps.addFieldMap(this.getTargetExpandedMap(stableMap));
         overlayedMaps.addFieldMap(currentMap);
@@ -145,7 +145,7 @@ public class UpdatableAndExpandableFieldMapTest {
     }
 
     public String printOverlayedMaps(boolean indicateOverlay, boolean overlayStableMap, boolean overlayUpdatableMap, boolean overlayCurrentMap){
-        OverlayedFieldMapsTest overlayedMaps = new OverlayedFieldMapsTest(mapX, mapY);
+        OverlayedFieldMaps overlayedMaps = new OverlayedFieldMaps(mapX, mapY);
 
         if(overlayStableMap)
             overlayedMaps.addFieldMap(stableMap);
@@ -160,8 +160,8 @@ public class UpdatableAndExpandableFieldMapTest {
             return overlayedMaps.toString();
     }
 
-    public FieldMapTest getTargetExpandedMap(FieldMapTest map){
-        FieldMapTest targetExpandedMap = new FieldMapTest(map.getMapX(), map.getMapY());
+    public FieldMap getTargetExpandedMap(FieldMap map){
+        FieldMap targetExpandedMap = new FieldMap(map.getMapX(), map.getMapY());
 
         for(int j = 0; j < map.getMapY(); j++)
             for(int i = 0; i < map.getMapX(); i++)
@@ -172,7 +172,7 @@ public class UpdatableAndExpandableFieldMapTest {
     }
 
     public int[][] getOverlayedMaps(boolean overlayStableMap, boolean overlayUpdatableMap, boolean overlayCurrentMap){
-        OverlayedFieldMapsTest overlayedMaps = new OverlayedFieldMapsTest(mapX, mapY);
+        OverlayedFieldMaps overlayedMaps = new OverlayedFieldMaps(mapX, mapY);
 
         if(overlayStableMap)
             overlayedMaps.addFieldMap(stableMap);
@@ -184,11 +184,11 @@ public class UpdatableAndExpandableFieldMapTest {
         return overlayedMaps.getOverlayedFieldMaps();
     }
 
-    public FieldMapTest getCurrentMap() {
+    public FieldMap getCurrentMap() {
         return currentMap;
     }
 
-    public FieldMapTest getUpdatableMap(){
+    public FieldMap getUpdatableMap(){
         updatableMapChanged = true;
 
         return updatableMap;
