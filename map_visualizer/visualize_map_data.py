@@ -15,45 +15,87 @@
 
 print("Sorry, the visualizer is not operational as of now!")
 
+# import pygame and numpy modules
 import pygame
+import numpy as np
 
-# pygame setup
-pygame.init()
-screen = pygame.display.set_mode((1280, 720))
-clock = pygame.time.Clock()
+map_data = []
+map_width = 0
+map_height = 0
+
+with open("example.map_data") as f:
+    full_map_data = f.read()
+    
+    map_width = int(full_map_data[5:(full_map_data.find("x"))])
+    map_height = int(full_map_data[(full_map_data.find("x")+1):(full_map_data.find("\n"))])
+    
+    str_map_data = full_map_data[(full_map_data.find("\n")+1):]
+    
+    map_data = np.frombuffer(str_map_data.encode(), dtype=np.uint8)
+    
+    print("The map width is", map_width, "and the map height is", map_height)
+
+# create a 2x2 array of white pixels
+pixels = np.full ((map_width, map_height, 3), 0, dtype=np.uint8)
+
+for i in range(0, map_height):
+    for j in range(0, map_width):
+        pixel_color = map_data[i * map_width + j] * 255
+        pixels[j, i] = (pixel_color, pixel_color, pixel_color)
+
+WINDOW_WIDTH  = 1280
+WINDOW_HEIGHT = 720
+
+# initialize pygame and create a window
+pygame.init ()
+window = pygame.display.set_mode ((WINDOW_WIDTH, WINDOW_HEIGHT))
+pygame.display.set_caption ("Pygame Example")
+
+# create a surface from the pixel array
+image = pygame.surfarray.make_surface (pixels)
+
+# create a rectangle object for the image
+rect = image.get_rect ()
+
+rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+rect.size = (WINDOW_WIDTH, WINDOW_HEIGHT)
+
+speed = 5
+
+clock = pygame.time.Clock ()
+
 running = True
-dt = 0
-
-player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
 while running:
-    # poll for events
-    # pygame.QUIT event means the user clicked X to close your window
-    for event in pygame.event.get():
+    clock.tick (60)
+
+    for event in pygame.event.get ():
         if event.type == pygame.QUIT:
             running = False
 
-    # fill the screen with a color to wipe away anything from last frame
-    screen.fill("purple")
+    keys = pygame.key.get_pressed ()
 
-    pygame.draw.circle(screen, "red", player_pos, 40)
+    if keys [pygame.K_LEFT]:
+        rect.x -= speed
+    if keys [pygame.K_RIGHT]:
+        rect.x += speed
+    if keys [pygame.K_UP]:
+        rect.y -= speed
+    if keys [pygame.K_DOWN]:
+        rect.y += speed
+        
+    if keys [pygame.K_ESCAPE]:
+        running = False
+        break
 
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        player_pos.y -= 300 * dt
-    if keys[pygame.K_s]:
-        player_pos.y += 300 * dt
-    if keys[pygame.K_a]:
-        player_pos.x -= 300 * dt
-    if keys[pygame.K_d]:
-        player_pos.x += 300 * dt
+    rect.x = max (0, min (rect.x, window.get_width () - rect.width))
+    rect.y = max (0, min (rect.y, window.get_height () - rect.height))
 
-    # flip() the display to put your work on screen
-    pygame.display.flip()
+    window.fill ((123, 123, 123))
 
-    # limits FPS to 60
-    # dt is delta time in seconds since last frame, used for framerate-
-    # independent physics.
-    dt = clock.tick(60) / 1000
+    window.blit (image, rect)
 
-pygame.quit()
+    pygame.display.flip ()
+
+# quit pygame and exit the program
+pygame.quit ()
