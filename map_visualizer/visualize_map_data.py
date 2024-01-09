@@ -23,7 +23,9 @@ map_data = []
 map_width = 0
 map_height = 0
 
-with open("example.map_data") as f:
+choosen_map_file_to_load = input("Please choose a file to visualize (e.g. 'example.map_data'):").strip()
+
+with open(choosen_map_file_to_load) as f:
     full_map_data = f.read()
     
     map_width = int(full_map_data[5:(full_map_data.find("x"))])
