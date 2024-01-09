@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*/
+    /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
@@ -61,19 +61,19 @@ public final class Main {
 //        System.out.println(y);
 //        System.out.println(x == y);
 //
-//        Trajectory traj2 = BetterTrajectoryPathing.calculateTrajectory(
-//                null,
-//                new TrajectoryConfig(kPathFollowingMaxVelMeters, kPathFollowingMaxAccelMeters),
-//                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-//                new Pose2d(10, 10, Rotation2d.fromDegrees(0)),
-//                false,
-//                true
-//        );
-//
-//        System.out.println(traj2);
-//        System.out.println(traj2.getTotalTimeSeconds());
+        Trajectory traj2 = BetterTrajectoryPathing.calculateTrajectory(
+                null,
+                new TrajectoryConfig(kPathFollowingMaxVelMeters, kPathFollowingMaxAccelMeters),
+                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+                new Pose2d(10, 10, Rotation2d.fromDegrees(0)),
+                false,
+                true
+        );
+
+        System.out.println(traj2);
+        System.out.println(traj2.getTotalTimeSeconds());
 //        System.out.println(traj2.getStates());
 
-        RobotBase.startRobot(Robot::new);
+//        RobotBase.startRobot(Robot::new);
     }
 }

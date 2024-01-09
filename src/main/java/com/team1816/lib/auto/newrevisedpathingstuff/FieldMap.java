@@ -1,5 +1,6 @@
 package com.team1816.lib.auto.newrevisedpathingstuff;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -366,5 +367,25 @@ public class FieldMap {
         stringReturn.append("\n");
 
         return stringReturn.toString();
+    }
+
+    public void writeToFile(String output) {
+        try {
+            if (fieldPixelMap.length > 0) {
+                FileWriter writer = new FileWriter("obstacle_map.map_data");
+
+                writer.write("Size:" + fieldPixelMap[0].length + "x" + fieldPixelMap.length + "\n");
+
+                for (boolean[] row : fieldPixelMap) {
+                    for (boolean pixel : row) {
+                        writer.write(pixel ? 1 : 0);
+                    }
+                }
+
+                writer.close();
+            }
+        } catch (Exception IOException) {
+            System.out.println("Unable to write to file. Encounter an error instead: " + IOException.toString());
+        }
     }
 }

@@ -8,10 +8,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.*;
 
 import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxAccelMeters;
 import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxVelMeters;
@@ -207,6 +206,9 @@ public class BetterTrajectoryPathing{
                     }
                 }
         }
+
+        obstacleMap.getCurrentMap().writeToFile("obstacle_map.map_data");
+
         return generateTrajectory(
                 startPose,
                 changedWaypoints,
