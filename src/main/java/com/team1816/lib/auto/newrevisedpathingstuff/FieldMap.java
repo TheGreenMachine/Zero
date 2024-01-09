@@ -28,6 +28,9 @@ public class FieldMap {
         return x >= 0 && x < this.getMapX() && y>= 0 && y < this.getMapY();
     }
 
+    public boolean checkPixelHasObjectOrOffMap(int[] pixel){
+        return checkPixelHasObjectOrOffMap(pixel[0], pixel[1]);
+    }
     public boolean checkPixelHasObjectOrOffMap(int x, int y){
         if(x >= 0 && x < this.getMapX() && y>= 0 && y < this.getMapY())
             return fieldPixelMap[y][x];
@@ -332,6 +335,10 @@ public class FieldMap {
             for(int i = xMin; i < xMax; i++)
                 if(!this.checkPixelHasObject(i, j) && !otherMap.checkPixelHasObject(i, j))
                     this.drawPixel(i, j);
+    }
+
+    public int[] getPerpPixel(double startMinRadius, int[] startPixel, int[] endPixel){
+        return getPerpPixel(startMinRadius, startPixel[0], startPixel[1], endPixel[0], endPixel[1]);
     }
 
     public int[] getPerpPixel(double startMinRadius, int startPixelX, int startPixelY, int endPixelX, int endPixelY){

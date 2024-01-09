@@ -110,6 +110,16 @@
           "weight": 2.5,
           "width": 0.3499999940395355
         },
+        "Barrier": {
+          "arrows": false,
+          "color": [
+            0.5,
+            0.0,
+            0.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
         "EstimatedRobot": {
           "arrowColor": [
             0.5980392098426819,

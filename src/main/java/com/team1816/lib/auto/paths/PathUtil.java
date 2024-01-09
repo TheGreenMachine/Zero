@@ -1,5 +1,6 @@
 package com.team1816.lib.auto.paths;
 
+import com.team1816.lib.auto.newrevisedpathingstuff.BetterTrajectoryPathing;
 import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -47,9 +48,11 @@ public class PathUtil {
         }
         /* Configures trajectory constraints */
         TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAccel);
-        Trajectory baseTrajectory = edu.wpi.first.math.trajectory.TrajectoryGenerator.generateTrajectory(
-            waypointsMeters,
-            config
+        Trajectory baseTrajectory = BetterTrajectoryPathing.calculateTrajectory(
+                waypointsMeters,
+                config,
+                true,
+                true
         );
         return baseTrajectory;
     }
@@ -84,9 +87,11 @@ public class PathUtil {
         TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAccel);
         config.setStartVelocity(initial.vxMetersPerSecond);
         config.setEndVelocity(0);
-        var baseTrajectory = edu.wpi.first.math.trajectory.TrajectoryGenerator.generateTrajectory(
+        var baseTrajectory = BetterTrajectoryPathing.calculateTrajectory(
             waypointsMeters,
-            config
+            initial,
+                true,
+                true
         );
         return baseTrajectory;
     }

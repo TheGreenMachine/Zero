@@ -156,18 +156,31 @@ public class Constants {
     public static final double robotSizeLeeway = 0.01;
     //TODO set this
     public static final double boundingBoxLeeway = 0.01;
-    //TODO set this
-    public static final double timeInSecondsIncrement = 0.2;
 
     /**
      * FieldPixelMap
      */
-    //TODO set this
-    public static final int pixelsInMeter = 100;
+
+    /**
+     * FieldMap
+     */
     //TODO set this
     public static final int xPixels = 1654;
     //TODO set this
     public static final int yPixels = 802;
+    //TODO set this
+    public static final int pixelsInMeter = 100;
+    //TODO set this
+    public static final double timeInSecondsIncrement = 0.01;
+    //TODO set this
+    //Centimeters
+    public static final double robotCircleFromCenterRadius = 76.2;
+    //TODO set this
+    //Meters
+    public static final double startMinRadius = 0.1;
+    //TODO set this
+    //Meters
+    public static final double waypointRemovalRadius = 0.05;
 
     /**
      * Simulation

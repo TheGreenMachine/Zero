@@ -217,6 +217,12 @@ public class RobotState {
      */
     public synchronized void outputToSmartDashboard() {
         field.setRobotPose(fieldToVehicle);
+        field.getObject("Barrier").setPoses(
+                new Pose2d(new Translation2d(2.9, 5.4), Rotation2d.fromDegrees(0)),
+                new Pose2d(new Translation2d(2.9, .5), Rotation2d.fromDegrees(0)),
+                new Pose2d(new Translation2d(3.5, 1.54), Rotation2d.fromDegrees(0)),
+                new Pose2d(new Translation2d(3.5, 3.9), Rotation2d.fromDegrees(0))
+        );
         if (RobotBase.isSimulation()) {
             // elevator
             double actEleExtMeters = (actualElevatorExtensionInches * 0.0254);
