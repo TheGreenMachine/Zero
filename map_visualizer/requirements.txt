@@ -1,4 +1,3 @@
 pygame==2.5.2
-numpy==1.26:wq
-:wq
-:wq:.2
+numpy==1.26.3
+pygame_widgets==1.1.5

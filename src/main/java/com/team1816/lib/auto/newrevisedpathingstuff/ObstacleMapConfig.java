@@ -9,7 +9,7 @@ public class ObstacleMapConfig {
         //List of permanent obstacles
         int[][][] stableObstacles = {
                 {{290, 540}, {290, 154}, {350, 154}, {350, 540}},
-//                {{450, 540}, {450, 50}, {475, 154}, {475, 390}}
+                {{450, 540}, {450, 50}, {475, 154}, {475, 390}}
         };
 
         //List of updatable obstacles
