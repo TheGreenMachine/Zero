@@ -13,24 +13,32 @@
 # Also, maybe write up quick little documentation that provides details on how to use it, 
 # what features it includes, etc.
 
+# Maybe we should limit the amount of layers to something like 10? 
+# That would allow me to make unique colors manually that are distinct and mix well.
+
+
 import pygame
 import pygame_widgets as pw
-from pygame_widgets.button import Button
+from pygame_widgets.button import Button, ButtonArray
+from pygame_widgets.dropdown import Dropdown
 import numpy as np
 import random
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
+import copy
 
 filetypes = (
     ('map files', '*.map_data'),
     ('All files', '*.*')
 )
 
-filename = fd.askopenfilename(
-    title='Open a file',
-    initialdir='.',
-    filetypes=filetypes)
+# filename = fd.askopenfilename(
+#     title='Open a file',
+#     initialdir='.',
+#     filetypes=filetypes)
+
+filename = ""
 
 files_loaded = []
 
@@ -57,19 +65,22 @@ def write_to_pixels(file_path: str):
     
     pixel_color = (random.randint(128, 255), random.randint(128, 255), random.randint(128, 255))
     
-    unique_color_picked = False
+    if file_path not in files_loaded:
+        unique_color_picked = False
     
-    while not unique_color_picked:
-        found_match = False
-        for color in colors_used:
-            found_match = found_match and color == pixel_color
+        while not unique_color_picked:
+            found_match = False
+            for color in colors_used:
+                found_match = found_match and color == pixel_color
+            
+            if not found_match:
+                unique_color_picked = True
+            else:
+                pixel_color = (random.randint(128, 255), random.randint(128, 255), random.randint(128, 255))
         
-        if not found_match:
-            unique_color_picked = True
-        else:
-            pixel_color = (random.randint(128, 255), random.randint(128, 255), random.randint(128, 255))
-    
-    colors_used.append(pixel_color)
+        colors_used.append(pixel_color)
+    else:
+        pixel_color = colors_used[files_loaded.index(file_path)]
     
     old_width = map_width
     old_height = map_height
@@ -99,28 +110,13 @@ def write_to_pixels(file_path: str):
     for i in range(0, map_height):
         for j in range(0, map_width):
             if bool(map_data[i * map_width + j]): 
-                pixels[j, i] = pixel_color  
+                # might not want to add the pixel colors together.
+                pixels[j, i] += pixel_color  
 
 def clear_pixels():
     global pixels
     
     pixels[:] = (0, 0, 0)
-
-# clear_pixels()
-
-# choosen_map_file_to_load = input("Please choose a file to visualize (e.g. 'example.map_data'):").strip()
-
-write_to_pixels(filename)
-
-files_loaded.append(filename)
-
-# clear_pixels()
-# write_to_pixels("example.map_data")
-
-# clear_pixels()
-# write_to_pixels("example.map_data")
-
-# clear_pixels()
 
 WINDOW_WIDTH  = 1280
 WINDOW_HEIGHT = 720
@@ -140,26 +136,64 @@ rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
 speed = 5
 
 clock = pygame.time.Clock()
+layer_buttons = []
 
-buttons_to_run = []
+files_enabled = []
+
+def reload_pixels():
+    global files_enabled
+    global files_loaded
+    global image
+    global rect
+    
+    clear_pixels()
+    
+    for idx, enabled in enumerate(files_enabled):
+        layer_buttons[idx].setText(f"Layer: {idx} X")
+    
+        if enabled:
+            layer_buttons[idx].setText(f"Layer: {idx} O")
+            write_to_pixels(files_loaded[idx])
+                    
+    image = pygame.surfarray.make_surface(pixels)
+    
+    previous_x = rect.x
+    previous_y = rect.y
+
+    rect = image.get_rect()
+    
+    rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+    
+    rect.x = previous_x
+    rect.y = previous_y
+
+def enable_or_disable_filename(idx: int):
+    global files_enabled
+    
+    files_enabled[idx] = not files_enabled[idx]
+    
+    reload_pixels()
 
 def load_file():
     global filename
     global files_loaded
+    global files_enabled
     global filetypes
     global updated_files
     global rect
     global image
+    global layer_buttons
     
     filename = fd.askopenfilename(
         title='Open a file',
         initialdir='.',
         filetypes=filetypes)
     
-    if filename != "":
+    if filename != "" and filename not in files_loaded:
         write_to_pixels(filename)
         
         files_loaded.append(filename)
+        files_enabled.append(True)
         image = pygame.surfarray.make_surface(pixels)
     
         previous_x = rect.x
@@ -167,18 +201,63 @@ def load_file():
     
         rect = image.get_rect()
         
+        rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+        
         rect.x = previous_x
         rect.y = previous_y
+        
+        layer_buttons = []
+        
+        for idx, file_path in enumerate(files_loaded):
+            hover_color = colors_used[idx]
+            
+            hover_color = (hover_color[0] - 23, hover_color[1] - 23, hover_color[2] - 23)
+             
+            pressed_color = (hover_color[0] - 23, hover_color[1] - 23, hover_color[2] - 23) 
+            
+            layer_buttons.append(Button(
+                window,
+                15, 105 + 45 * (idx), 95, 35,
+                text=f"Layer: {idx} O",
+                inactiveColour=colors_used[idx],
+                hoverColour=hover_color,
+                pressedColour=pressed_color,
+                onClick = lambda i=idx: enable_or_disable_filename(i)
+            ))
 
-buttons_to_run.append(Button(
+button = Button(
     window,
-    30, 30, 120, 75,
+    15, 15, 95, 35,
     text="Load Map",
     inactiveColour=(255, 0, 0),
+    hoverColour=(128, 0, 0),
     pressedColour=(0, 255, 0),
-    radius = 20,
+    radius = 2,
     onClick = load_file,
-))
+)
+
+def clear_layers():
+    global files_loaded
+    global files_enabled
+    global colors_used
+    global layer_buttons
+    
+    colors_used = []
+    files_loaded = []
+    files_enabled = []
+    layer_buttons = []
+    
+    reload_pixels()
+
+clear_layers_button = Button(
+    window,
+    WINDOW_WIDTH - 110, 15, 95, 35,
+    text = "Clear layers",
+    inactiveColour=(255, 255, 255),
+    hoverColour=(175, 175, 175),
+    pressedColour=(128, 128, 128),
+    onClick = clear_layers,
+)
 
 running = True
 
@@ -190,10 +269,6 @@ while running:
         if event.type == pygame.QUIT:
             running = False
             break
-    pw.update(events)
-    
-    for button in buttons_to_run:
-        button.listen(events)
 
     keys = pygame.key.get_pressed()
     
@@ -218,9 +293,7 @@ while running:
     
     window.blit(image, rect)
 
-    for button in buttons_to_run:
-        button.draw()
-    
+    pw.update(events)
     pygame.display.flip()
     pygame.display.update()
 
