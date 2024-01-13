@@ -41,6 +41,7 @@ filetypes = (
 filename = ""
 
 files_loaded = []
+files_blobbed = []
 
 map_data = []
 map_width = 2
@@ -53,8 +54,11 @@ pixel_color = (random.randint(128, 255), random.randint(128, 255), random.randin
 
 colors_used = []
 
+def clamp(n: int, smallest: int, largest: int) -> int: 
+    return max(smallest, min(n, largest))
+
 # This function sucks, but I don't care.
-def write_to_pixels(file_path: str):
+def write_to_pixels(file_path: str, blob: bool = False):
     global pixel_color
     global pixels
     global colors_used
@@ -110,6 +114,21 @@ def write_to_pixels(file_path: str):
     for i in range(0, map_height):
         for j in range(0, map_width):
             if bool(map_data[i * map_width + j]): 
+                if blob:
+                    # A stupid piece of code that makes the pixels wider.
+                    pixels[clamp(j-1, 0, map_width), i] += pixel_color
+                    pixels[clamp(j+1, 0, map_width), i] += pixel_color
+                    pixels[j, clamp(i-1, 0, map_height)] += pixel_color
+                    pixels[j, clamp(i+1, 0, map_height)] += pixel_color
+                    pixels[clamp(j-1, 0, map_width), clamp(i-1, 0, map_height)] += pixel_color
+                    pixels[clamp(j+1, 0, map_width), clamp(i-1, 0, map_height)] += pixel_color
+                    pixels[clamp(j-1, 0, map_width), clamp(i+1, 0, map_height)] += pixel_color
+                    pixels[clamp(j+1, 0, map_width), clamp(i+1, 0, map_height)] += pixel_color
+                    pixels[clamp(j-2, 0, map_width), i] += pixel_color
+                    pixels[clamp(j+2, 0, map_width), i] += pixel_color
+                    pixels[j, clamp(i-2, 0, map_height)] += pixel_color
+                    pixels[j, clamp(i+2, 0, map_height)] += pixel_color
+                    
                 # might not want to add the pixel colors together.
                 pixels[j, i] += pixel_color  
 
@@ -137,6 +156,7 @@ speed = 5
 
 clock = pygame.time.Clock()
 layer_buttons = []
+blob_buttons = []
 
 files_enabled = []
 
@@ -153,7 +173,13 @@ def reload_pixels():
     
         if enabled:
             layer_buttons[idx].setText(f"Layer: {idx} O")
-            write_to_pixels(files_loaded[idx])
+            write_to_pixels(files_loaded[idx], files_blobbed[idx])
+    
+    for idx, blobbed in enumerate(files_blobbed):
+        blob_buttons[idx].setText("Blob X")
+        
+        if blobbed:
+            blob_buttons[idx].setText("Blob O")
                     
     image = pygame.surfarray.make_surface(pixels)
     
@@ -174,15 +200,24 @@ def enable_or_disable_filename(idx: int):
     
     reload_pixels()
 
+def blob_filename(idx: int):
+    global files_blobbed
+    
+    files_blobbed[idx] = not files_blobbed[idx]
+    
+    reload_pixels()
+
 def load_file():
     global filename
     global files_loaded
     global files_enabled
+    global files_blobbed
     global filetypes
     global updated_files
     global rect
     global image
     global layer_buttons
+    global blob_buttons
     
     filename = fd.askopenfilename(
         title='Open a file',
@@ -194,6 +229,7 @@ def load_file():
         
         files_loaded.append(filename)
         files_enabled.append(True)
+        files_blobbed.append(False)
         image = pygame.surfarray.make_surface(pixels)
     
         previous_x = rect.x
@@ -207,6 +243,7 @@ def load_file():
         rect.y = previous_y
         
         layer_buttons = []
+        blob_buttons = []
         
         for idx, file_path in enumerate(files_loaded):
             hover_color = colors_used[idx]
@@ -224,6 +261,16 @@ def load_file():
                 pressedColour=pressed_color,
                 onClick = lambda i=idx: enable_or_disable_filename(i)
             ))
+            
+            blob_buttons.append(Button(
+                window,
+                115, 105 + 45 * (idx), 95, 35,
+                text = "Blob X",
+                inactiveColour=colors_used[idx],
+                hoverColour=hover_color,
+                pressedColour=pressed_color,
+                onClick = lambda i=idx: blob_filename(i)
+            ))
 
 button = Button(
     window,
@@ -239,13 +286,17 @@ button = Button(
 def clear_layers():
     global files_loaded
     global files_enabled
+    global files_blobbed
     global colors_used
     global layer_buttons
+    global blob_buttons
     
     colors_used = []
     files_loaded = []
     files_enabled = []
+    files_blobbed = []
     layer_buttons = []
+    blob_buttons = []
     
     reload_pixels()
 
